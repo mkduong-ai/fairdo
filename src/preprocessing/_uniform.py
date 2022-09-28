@@ -1,0 +1,206 @@
+import numpy as np
+import pandas as pd
+from scipy.spatial.distance import cdist
+
+from src.preprocessing import Preprocessing, discrepancy
+
+
+class LowDiscMinimization(Preprocessing):
+
+    def __init__(self, frac=0.8, m=5,
+                 protected_attribute=None, label=None,
+                 drop_protected_attribute=False,
+                 drop_label=False,
+                 drop_features=False,
+                 dim_reduction=False, n_components=2, random_state=None):
+        super().__init__(frac=frac, protected_attribute=protected_attribute, label=label,
+                         drop_protected_attribute=drop_protected_attribute,
+                         drop_label=drop_label,
+                         drop_features=drop_features,
+                         dim_reduction=dim_reduction, n_components=n_components)
+        self.dataset = None
+        self.transformed_data = None
+        self.m = m
+        self.random_state = random_state
+        np.random.seed(random_state)
+
+    def transform(self):
+        if self.dataset is None:
+            raise Exception('Model not fitted.')
+
+        sample_set = self.transformed_data.copy()
+        samples = self.transformed_data.sample(n=1, replace=False)
+        sample_set.drop(index=samples.index, inplace=True)
+
+        n = int(len(self.transformed_data) * self.frac)
+        for i in range(1, n):
+            # create candidates
+            cands = sample_set.sample(n=min(self.m, len(sample_set)), replace=False)
+
+            # creating multiple lists with different samples + candidates
+            multi_samples = [
+                pd.concat((samples, cands.iloc[j:j + 1]), axis=0) for j in range(min(self.m, len(self.dataset - i)))]
+
+            # calculate the discrepancies
+            discrepancies = list(map(discrepancy.discrepancy, multi_samples))
+            min_disc_idx = np.argmin(discrepancies)
+
+            # candidate with lowest discrepancy is the next sample
+            samples = multi_samples[min_disc_idx]
+
+            # delete sampled sample
+            sample_set.drop(index=cands.iloc[min_disc_idx].name, inplace=True)
+
+        self.samples = self.dataset.loc[samples.index]
+        return self.samples
+
+
+class MaximalMinDistance(Preprocessing):
+
+    def __init__(self, frac=0.8, m=5, window_size=100,
+                 protected_attribute=None, label=None,
+                 drop_protected_attribute=False,
+                 drop_label=False,
+                 drop_features=False,
+                 dim_reduction=False, n_components=2, random_state=None):
+        super().__init__(frac=frac, protected_attribute=protected_attribute, label=label,
+                         drop_protected_attribute=drop_protected_attribute,
+                         drop_label=drop_label,
+                         drop_features=drop_features,
+                         dim_reduction=dim_reduction, n_components=n_components)
+        self.m = m
+        self.window_size = window_size
+        self.random_state = random_state
+        np.random.seed(random_state)
+
+    def transform(self):
+        if self.dataset is None:
+            raise Exception('Model not fitted.')
+
+        # first sample
+        sample_set = self.transformed_data.copy()
+        samples = self.transformed_data.sample(n=1, replace=False)
+        sample_set.drop(index=samples.index, inplace=True)
+
+        n = int(self.frac * len(self.transformed_data))
+        for i in range(1, n):
+            # create candidates
+            cands = sample_set.sample(n=min(self.m, len(sample_set)),
+                                      replace=False)
+
+            dists = cdist(cands,
+                          samples
+                          .sample(min(self.window_size, len(samples)), replace=False))
+            min_dists = np.min(dists, axis=1)
+            argmax_min_dist = np.argmax(min_dists)
+
+            # update indices
+            samples = pd.concat((samples, cands.iloc[argmax_min_dist:argmax_min_dist+1]), axis=0)
+            sample_set.drop(index=cands.iloc[argmax_min_dist].name, inplace=True)
+
+        self.samples = self.dataset.loc[samples.index]
+        return self.samples
+
+
+class MitchellsSampling(MaximalMinDistance):
+
+    def __init__(self, frac=0.8, m=5,
+                 protected_attribute=None, label=None,
+                 drop_protected_attribute=False,
+                 drop_label=False,
+                 drop_features=False,
+                 dim_reduction=False, n_components=2, random_state=None):
+        super().__init__(frac=frac, m=m, window_size=0,
+                         protected_attribute=protected_attribute, label=label,
+                         drop_protected_attribute=drop_protected_attribute,
+                         drop_label=drop_label,
+                         drop_features=drop_features,
+                         dim_reduction=dim_reduction, n_components=n_components, random_state=random_state)
+
+
+class MinimalMinDistance(Preprocessing):
+    """
+    Deletes samples with smallest distance to its nearest neighbor
+    """
+
+    def __init__(self, frac=0.8, m=5, window_size=100,
+                 protected_attribute=None, label=None,
+                 drop_protected_attribute=False,
+                 drop_label=False,
+                 drop_features=False,
+                 dim_reduction=False, n_components=2, random_state=None):
+        super().__init__(frac=frac, protected_attribute=protected_attribute, label=label,
+                         drop_protected_attribute=drop_protected_attribute,
+                         drop_label=drop_label,
+                         drop_features=drop_features,
+                         dim_reduction=dim_reduction, n_components=n_components)
+        self.m = m
+        self.window_size = window_size
+        self.random_state = random_state
+        np.random.seed(random_state)
+
+    def transform(self):
+        if self.dataset is None:
+            raise Exception('Model not fitted.')
+
+        # preparation
+        samples = self.transformed_data.copy()
+
+        n = (len(self.transformed_data) -
+             int(len(self.transformed_data) * self.frac))
+        for i in range(1, n):
+            # create candidates
+            cands = samples.sample(n=min(self.m, len(samples)), replace=False)
+
+            # calculate distances between candidates and samples
+            dists = cdist(cands, samples.sample(n=min(self.window_size, len(samples)), replace=False)
+                          .drop(index=cands.index, errors='ignore', inplace=False))
+            min_dists = np.min(dists, axis=1)
+            argmin_min_dist = np.argmin(min_dists)
+
+            # update samples
+            samples.drop(index=cands.index[argmin_min_dist], inplace=True)
+
+        self.samples = self.dataset.loc[samples.index]
+        return self.samples
+
+
+class LeastDiscriminatingSampling(MaximalMinDistance):
+    """
+    Wrapper class for MaximalMinDistanceWindow
+    """
+
+    def __init__(self, frac=0.8, m=5,
+                 protected_attribute=None, label=None,
+                 drop_protected_attribute=False,
+                 drop_label=False,
+                 drop_features=False,
+                 dim_reduction=False, n_components=2, random_state=None):
+        super().__init__(frac=frac, m=m, window_size=100,
+                         protected_attribute=protected_attribute, label=label,
+                         drop_protected_attribute=drop_protected_attribute,
+                         drop_label=drop_label,
+                         drop_features=drop_features,
+                         dim_reduction=dim_reduction, n_components=n_components, random_state=random_state)
+
+
+class MostDiscriminatingSamplesRemover(MinimalMinDistance):
+    """
+    Wrapper class for MinimalMinDistance
+    """
+
+    def __init__(self, frac=0.8, m=5, window_size=100,
+                 protected_attribute=None, label=None,
+                 drop_protected_attribute=False,
+                 drop_label=False,
+                 drop_features=False,
+                 dim_reduction=False, n_components=2, random_state=None):
+        super().__init__(frac=frac, protected_attribute=protected_attribute, label=label,
+                         drop_protected_attribute=drop_protected_attribute,
+                         drop_label=drop_label,
+                         drop_features=drop_features,
+                         dim_reduction=dim_reduction, n_components=n_components)
+        self.m = m
+        self.window_size = window_size
+        self.random_state = random_state
+        np.random.seed(random_state)
