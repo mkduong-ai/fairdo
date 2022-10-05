@@ -276,8 +276,12 @@ def evaluate_ml_models(results: dict, models_trained: dict, X_test, y_test, z_te
             results[key_model][key_preproc]['Balanced Accuracy'] = \
                 balanced_accuracy_score(y_test, y_pred_argmax)
 
-            results[key_model][key_preproc]['AUC'] = \
-                roc_auc_score(y_test, y_pred[:, 1]) # sklearn documentation: greater label
+            if len(y_pred.shape) < 2:
+                results[key_model][key_preproc]['AUC'] = \
+                    roc_auc_score(y_test, y_pred) # sklearn documentation: greater label
+            else:
+                results[key_model][key_preproc]['AUC'] = \
+                    roc_auc_score(y_test, y_pred[:, 1])  # sklearn documentation: greater label
 
             # Fairness Notion
             # independence
