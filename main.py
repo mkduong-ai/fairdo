@@ -461,7 +461,7 @@ def run_all_experimental_settings():
                      "DisparateImpactRemover(sensitive_attribute=protected_attribute)",
                      "LFR(unprivileged_groups=unprivileged_groups,"
                          "privileged_groups=privileged_groups,"
-                         "k=10, Ax=0.01, Ay=1.0, Az=10.0)",
+                         "k=5, Ax=0.01, Ay=1.0, Az=10.0)",
                      "PreprocessingWrapper(MetricOptimizer(frac=0.75,"
                                                           "m=5,"
                                                           "fairness_metric=disparate_impact_ratio_objective,"
