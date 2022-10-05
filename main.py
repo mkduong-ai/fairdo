@@ -18,7 +18,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.base import clone
 
 # fair preprocessors
-from aif360.algorithms.preprocessing import DisparateImpactRemover, LFR
+from aif360.algorithms.preprocessing import DisparateImpactRemover, LFR, Reweighing
 from src.preprocessing import MetricOptimizer, OriginalData, PreprocessingWrapper
 
 # evaluation
@@ -204,7 +204,7 @@ def evaluate_dataset_metrics(key: str, dataset_metric: BinaryLabelDatasetMetric)
     return evaluate_dataset_metric(key, dataset_metric)
 
 
-def train_models(models_trained: dict, Xs_preproc: dict, ys_preproc: dict):
+def train_models(models_trained: dict, Xs_preproc: dict, ys_preproc: dict, ws_preproc: dict):
     """
 
     Parameters
@@ -212,6 +212,7 @@ def train_models(models_trained: dict, Xs_preproc: dict, ys_preproc: dict):
     models_trained: dict
     Xs_preproc: dict of features
     ys_preproc: dict of labels
+    ws_preproc: dict of sample weights
 
     Returns
     -------
@@ -223,8 +224,13 @@ def train_models(models_trained: dict, Xs_preproc: dict, ys_preproc: dict):
         for key_preproc in value_model:
             model = models_trained[key_model][key_preproc]
 
-            models_trained[key_model][key_preproc] = \
-                pipeline(type(model).__name__, model).fit(Xs_preproc[key_preproc], ys_preproc[key_preproc])
+            try:
+                models_trained[key_model][key_preproc] = \
+                    pipeline(type(model).__name__, model).fit(Xs_preproc[key_preproc], ys_preproc[key_preproc],
+                                                              sample_weight=ws_preproc[key_preproc])
+            except:
+                models_trained[key_model][key_preproc] = \
+                    pipeline(type(model).__name__, model).fit(Xs_preproc[key_preproc], ys_preproc[key_preproc])
 
     return models_trained
 
@@ -351,8 +357,10 @@ def preprocess_pipeline(dataset_train: BinaryLabelDataset, dataset_test: BinaryL
     # prepare training dataset
     X_train = dataset_train.features
     y_train = dataset_train.labels.ravel()
+    w_train = dataset_train.instance_weights.ravel()
     Xs_preproc = {key: value.features for key, value in preproc_datasets.items()}
     ys_preproc = {key: value.labels.ravel() for key, value in preproc_datasets.items()}
+    ws_preproc = {key: value.instance_weights.ravel() for key, value in preproc_datasets.items()}
 
     # initialize ML models
     models_trained = {type(model).__name__:
@@ -360,7 +368,7 @@ def preprocess_pipeline(dataset_train: BinaryLabelDataset, dataset_test: BinaryL
                       models}
 
     # train models
-    models_trained = train_models(models_trained, Xs_preproc, ys_preproc)
+    models_trained = train_models(models_trained, Xs_preproc, ys_preproc, ws_preproc)
 
     # evaluate classification
     X_test, y_test = dataset_test.features, dataset_test.labels.ravel()
@@ -435,7 +443,7 @@ def run_all_experimental_settings():
               DecisionTreeClassifier(),
               RandomForestClassifier(),
               SVC(probability=True),
-              MLPClassifier()]
+              MLPClassifier()] # MLP does not support sample weight
     """
     seed = 1
     n_runs = 20
@@ -491,7 +499,9 @@ def run_fast():
                                                           "m=5,"
                                                           "fairness_metric=statistical_parity_absolute_difference,"
                                                           "protected_attribute=protected_attribute,"
-                                                          "label=dataset_orig.label_names[0]))"]
+                                                          "label=dataset_orig.label_names[0]))",
+                     "Reweighing(unprivileged_groups=unprivileged_groups,"
+                     "privileged_groups=privileged_groups)"]
 
     run_experiments(models=models,
                     dataset=dataset,
