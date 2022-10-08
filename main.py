@@ -228,9 +228,13 @@ def train_models(models_trained: dict, Xs_preproc: dict, ys_preproc: dict, ws_pr
                 models_trained[key_model][key_preproc] = \
                     pipeline(type(model).__name__, model).fit(Xs_preproc[key_preproc], ys_preproc[key_preproc],
                                                               sample_weight=ws_preproc[key_preproc])
+
+                print('fit with samples weight')
             except:
                 models_trained[key_model][key_preproc] = \
                     pipeline(type(model).__name__, model).fit(Xs_preproc[key_preproc], ys_preproc[key_preproc])
+            except:
+                # TODO: This solver needs samples of at least 2 classes in the data, but the data contains only one class: 0.0
 
     return models_trained
 
@@ -415,6 +419,7 @@ def run_experiments(models, dataset="compas", protected_attribute="race", prepro
     dataset_results_list = [None for _ in range(n_runs)]
     results_list = [None for _ in range(n_runs)]
     for i in range(n_runs):
+        print(f"Run: {i}")
         dataset_results_list[i], results_list[i] = preprocess_pipeline(splits[i][0], splits[i][1],
                                                                        privileged_groups,
                                                                        unprivileged_groups,
@@ -450,7 +455,7 @@ def run_all_experimental_settings():
               MLPClassifier()] # MLP does not support sample weight
     """
     seed = 1
-    n_runs = 20
+    n_runs = 3
 
     dataset_pro_attributes = [('adult', 'sex'),
                               ('compas', 'race'),
@@ -468,7 +473,7 @@ def run_all_experimental_settings():
                          "k=5, Ax=0.01, Ay=1.0, Az=10.0)",
                      "PreprocessingWrapper(MetricOptimizer(frac=0.75,"
                                                           "m=5,"
-                                                          "fairness_metric=disparate_impact_ratio_objective,"
+                                                          "fairness_metric=statistical_parity_absolute_difference,"
                                                           "protected_attribute=protected_attribute,"
                                                           "label=dataset_orig.label_names[0]))",
                      "Reweighing(unprivileged_groups=unprivileged_groups,"
