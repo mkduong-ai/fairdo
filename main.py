@@ -229,10 +229,11 @@ def train_models(models_trained: dict, Xs_preproc: dict, ys_preproc: dict, ws_pr
                     pipeline(type(model).__name__, model).fit(Xs_preproc[key_preproc], ys_preproc[key_preproc],
                                                               sample_weight=ws_preproc[key_preproc])
                 print('Sample weight worked')
+                # todo: use name of class as passed argument
             except:
                 models_trained[key_model][key_preproc] = \
                     pipeline(type(model).__name__, model).fit(Xs_preproc[key_preproc], ys_preproc[key_preproc])
-                # TODO: fix this
+                # TODO: fix this. Use dummy classifier
 
 
     return models_trained
