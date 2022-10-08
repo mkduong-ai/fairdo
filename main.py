@@ -228,13 +228,12 @@ def train_models(models_trained: dict, Xs_preproc: dict, ys_preproc: dict, ws_pr
                 models_trained[key_model][key_preproc] = \
                     pipeline(type(model).__name__, model).fit(Xs_preproc[key_preproc], ys_preproc[key_preproc],
                                                               sample_weight=ws_preproc[key_preproc])
-
-                print('fit with samples weight')
+                print('Sample weight worked')
             except:
                 models_trained[key_model][key_preproc] = \
                     pipeline(type(model).__name__, model).fit(Xs_preproc[key_preproc], ys_preproc[key_preproc])
-            except:
-                # TODO: This solver needs samples of at least 2 classes in the data, but the data contains only one class: 0.0
+                # TODO: fix this
+
 
     return models_trained
 
@@ -286,6 +285,7 @@ def evaluate_ml_models(results: dict, models_trained: dict, X_test, y_test, z_te
             else:
                 results[key_model][key_preproc]['AUC'] = \
                     roc_auc_score(y_test, y_pred[:, 1])  # sklearn documentation: greater label
+                # TODO: fix this
 
             # Fairness Notion
             # independence
