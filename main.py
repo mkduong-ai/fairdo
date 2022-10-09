@@ -8,6 +8,7 @@ from aif360.datasets import AdultDataset, BankDataset, CompasDataset, GermanData
 # import folktables
 
 # machine learning
+from sklearn.dummy import DummyClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
@@ -231,9 +232,13 @@ def train_models(models_trained: dict, Xs_preproc: dict, ys_preproc: dict, ws_pr
                 print('Sample weight worked')
                 # todo: use name of class as passed argument
             except:
-                models_trained[key_model][key_preproc] = \
-                    pipeline(type(model).__name__, model).fit(Xs_preproc[key_preproc], ys_preproc[key_preproc])
-                # TODO: fix this. Use dummy classifier
+                # fix logistic regression for 1 class
+                if key_model == 'LogisticRegression' and len(np.unique(ys_preproc[key_preproc])) == 1:
+                    models_trained[key_model][key_preproc] = \
+                        DummyClassifier(strategy='constant', constant=np.unique(ys_preproc[key_preproc])[0])
+                else:
+                    models_trained[key_model][key_preproc] = \
+                        pipeline(type(model).__name__, model).fit(Xs_preproc[key_preproc], ys_preproc[key_preproc])
 
     return models_trained
 
