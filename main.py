@@ -377,9 +377,6 @@ def preprocess_pipeline(dataset_train: BinaryLabelDataset, dataset_test: BinaryL
 
     # evaluate classification fairness
     # prepare training dataset
-    X_train = dataset_train.features
-    y_train = dataset_train.labels.ravel()
-    w_train = dataset_train.instance_weights.ravel()
     Xs_preproc = {key: value.features for key, value in preproc_datasets.items()}
     ys_preproc = {key: value.labels.ravel() for key, value in preproc_datasets.items()}
     ws_preproc = {key: value.instance_weights.ravel() for key, value in preproc_datasets.items()}
