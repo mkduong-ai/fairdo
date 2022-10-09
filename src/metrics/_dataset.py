@@ -72,7 +72,10 @@ def disparate_impact_ratio(y: np.array, z: np.array,
     unpriv = np.sum(y & (1 - z)) / np.sum(1 - z)
 
     if priv == 0:
-        warnings.warn("y=1 and z=1 are not apparent in the dataset.")
+        warnings.warn("Disparate impact cannot be calculated. y=1 and z=1 are not apparent in the dataset.")
+        warnings.warn("Return 1 (fair).")
+
+        return 1
 
     return unpriv/priv
 

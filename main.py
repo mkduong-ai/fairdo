@@ -235,7 +235,6 @@ def train_models(models_trained: dict, Xs_preproc: dict, ys_preproc: dict, ws_pr
                     pipeline(type(model).__name__, model).fit(Xs_preproc[key_preproc], ys_preproc[key_preproc])
                 # TODO: fix this. Use dummy classifier
 
-
     return models_trained
 
 
@@ -284,9 +283,14 @@ def evaluate_ml_models(results: dict, models_trained: dict, X_test, y_test, z_te
                 results[key_model][key_preproc]['AUC'] = \
                     roc_auc_score(y_test, y_pred) # sklearn documentation: greater label
             else:
-                results[key_model][key_preproc]['AUC'] = \
-                    roc_auc_score(y_test, y_pred[:, 1])  # sklearn documentation: greater label
-                # TODO: fix this
+                if y_pred.shape[1] == 2:
+                    results[key_model][key_preproc]['AUC'] = \
+                        roc_auc_score(y_test, y_pred[:, 1])  # sklearn documentation: greater label
+                else:
+                    print(y_test)
+                    print(y_pred)
+                    results[key_model][key_preproc]['AUC'] = \
+                        roc_auc_score(y_test, y_pred)
 
             # Fairness Notion
             # independence

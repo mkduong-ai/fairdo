@@ -1,14 +1,8 @@
 # Code
 - stop criterion for fairness optimizer [x]
-- allow other hyperparameters []
 - fix only contains one class []
+- allow other hyperparameters []
 - individual fairness []
-
-
-## Ideas
-- [x] CD takes a metric to optimize on
-  - [ ] window size
-- [] Adds data points for which the metric is improved
 
 ## Todo
 - [x] Implement new methods
