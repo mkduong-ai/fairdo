@@ -208,6 +208,7 @@ def evaluate_dataset_metrics(key: str, dataset_metric: BinaryLabelDatasetMetric)
 
 def train_models(models_trained: dict, Xs_preproc: dict, ys_preproc: dict, ws_preproc: dict):
     """
+    The keys of Xs, ys, ws represent preprocessing methods
 
     Parameters
     ----------
@@ -234,11 +235,12 @@ def train_models(models_trained: dict, Xs_preproc: dict, ys_preproc: dict, ws_pr
                 # todo: use name of class as passed argument
             except:
                 # fix logistic regression for 1 class
-                if key_model == 'LogisticRegression' and len(np.unique(ys_preproc[key_preproc])) == 1:
+                uniqueness = np.unique(ys_preproc[key_preproc])
+                if key_model == 'LogisticRegression' and len(uniqueness) == 1:
                     warnings.warn("Fix for LogisticRegression for one available class.")
                     models_trained[key_model][key_preproc] = \
                         DummyClassifier(strategy='constant',
-                                        constant=np.unique(ys_preproc[key_preproc])[0]).\
+                                        constant=uniqueness[0]).\
                             fit(Xs_preproc[key_preproc], ys_preproc[key_preproc])
                 else:
                     models_trained[key_model][key_preproc] = \
@@ -296,8 +298,6 @@ def evaluate_ml_models(results: dict, models_trained: dict, X_test, y_test, z_te
                     results[key_model][key_preproc]['AUC'] = \
                         roc_auc_score(y_test, y_pred[:, 1])  # sklearn documentation: greater label
                 else:
-                    print(y_test)
-                    print(y_pred)
                     results[key_model][key_preproc]['AUC'] = \
                         roc_auc_score(y_test, y_pred)
 
