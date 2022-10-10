@@ -31,16 +31,16 @@ def plot_classification_results(results_df: pd.DataFrame, x_axis='Mutual Informa
 
     """
     # plot
-    x_mean = results_df.groupby(['Model']).mean()[x_axis]
-    y_mean = results_df.groupby(['Model']).mean()[y_axis]
+    x_mean = results_df.groupby(['ModelPreprocessor']).mean()[x_axis]
+    y_mean = results_df.groupby(['ModelPreprocessor']).mean()[y_axis]
     # confidence interval
     # xerr = 1.96 * results_df.groupby(['Model']).std()[x_axis]
     # yerr = 1.96 * results_df.groupby(['Model']).std()[y_axis]
     # std error
     # xerr_std = results_df.groupby(['Model']).std()[x_axis]/np.sqrt(results_df.groupby(['Model'])[x_axis].count())
     # yerr_std = results_df.groupby(['Model']).std()[y_axis]/np.sqrt(results_df.groupby(['Model'])[y_axis].count())
-    xerr_std = results_df.groupby(['Model']).std()[x_axis]
-    yerr_std = results_df.groupby(['Model']).std()[y_axis]
+    xerr_std = results_df.groupby(['ModelPreprocessor']).std()[x_axis]
+    yerr_std = results_df.groupby(['ModelPreprocessor']).std()[y_axis]
 
     xerr = xerr_std
     yerr = yerr_std

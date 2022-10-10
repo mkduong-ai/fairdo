@@ -343,12 +343,13 @@ def results_to_df(results):
     df_list = []
     for key_model in results:
         df = pd.DataFrame(results[key_model]).transpose()
+        df['Model'] = key_model
         df['Preprocessor'] = df.index
 
         df_list.append(df)
 
     df_concat = pd.concat(df_list, keys=list(results.keys()))
-    df_concat['Model'] = df_concat.index
+    df_concat['ModelPreprocessor'] = df_concat.index
     df_concat = df_concat.reset_index()
     df_concat = df_concat.drop(columns=['level_0', 'level_1'])
 
@@ -503,7 +504,7 @@ def run_fast():
     # settings
     dataset = "compas"  # "adult", "german", "compas", "bank"
     protected_attribute = "race"  # sex, age, race
-    n_runs = 5
+    n_runs = 2
     seed = 1
 
     # declare machine learning models
