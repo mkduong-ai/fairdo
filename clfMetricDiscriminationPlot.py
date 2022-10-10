@@ -9,6 +9,7 @@ sns.set_theme(style='darkgrid')
 
 def plot_classification_results(results_df: pd.DataFrame, x_axis='Mutual Information', y_axis='F1 Score',
                                 dataset='compas', protected_attribute='race',
+                                model=None,
                                 filepath='.pdf'):
     """
 
@@ -36,8 +37,10 @@ def plot_classification_results(results_df: pd.DataFrame, x_axis='Mutual Informa
     # xerr = 1.96 * results_df.groupby(['Model']).std()[x_axis]
     # yerr = 1.96 * results_df.groupby(['Model']).std()[y_axis]
     # std error
-    xerr_std = results_df.groupby(['Model']).std()[x_axis]/np.sqrt(results_df.groupby(['Model'])[x_axis].count())
-    yerr_std = results_df.groupby(['Model']).std()[y_axis]/np.sqrt(results_df.groupby(['Model'])[y_axis].count())
+    # xerr_std = results_df.groupby(['Model']).std()[x_axis]/np.sqrt(results_df.groupby(['Model'])[x_axis].count())
+    # yerr_std = results_df.groupby(['Model']).std()[y_axis]/np.sqrt(results_df.groupby(['Model'])[y_axis].count())
+    xerr_std = results_df.groupby(['Model']).std()[x_axis]
+    yerr_std = results_df.groupby(['Model']).std()[y_axis]
 
     xerr = xerr_std
     yerr = yerr_std
@@ -76,7 +79,7 @@ def main():
               'Average Odds Abs Diff'
               'Average Odds Error']
     y_axes = ['Accuracy', 'F1 Score', 'Balanced Accuracy', 'AUC']
-    x_axis = 'Disparate Impact Obj'
+    x_axis = 'Statistical Parity Abs Diff'
     y_axis = 'AUC'
 
     # read and plot
