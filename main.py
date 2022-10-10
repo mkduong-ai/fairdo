@@ -221,7 +221,7 @@ def train_models(models_trained: dict, Xs_preproc: dict, ys_preproc: dict, ws_pr
     -------
     models_trained: dict
     """
-    pipeline = lambda name, model: Pipeline([('scaler', StandardScaler()), (name, model)])
+    # pipeline = lambda name, model: Pipeline([('scaler', StandardScaler()), (name, model)])
 
     for key_model, value_model in models_trained.items():
         for key_preproc in value_model:
@@ -229,10 +229,8 @@ def train_models(models_trained: dict, Xs_preproc: dict, ys_preproc: dict, ws_pr
 
             try:
                 models_trained[key_model][key_preproc] = \
-                    pipeline(type(model).__name__, model).fit(Xs_preproc[key_preproc], ys_preproc[key_preproc],
-                                                              sample_weight=ws_preproc[key_preproc])
-                print('Sample weight worked')
-                # todo: use name of class as passed argument
+                    models_trained[key_model][key_preproc].fit(Xs_preproc[key_preproc], ys_preproc[key_preproc],
+                                                               sample_weight=ws_preproc[key_preproc])
             except:
                 # fix logistic regression for 1 class
                 uniqueness = np.unique(ys_preproc[key_preproc])
@@ -244,7 +242,7 @@ def train_models(models_trained: dict, Xs_preproc: dict, ys_preproc: dict, ws_pr
                             fit(Xs_preproc[key_preproc], ys_preproc[key_preproc])
                 else:
                     models_trained[key_model][key_preproc] = \
-                        pipeline(type(model).__name__, model).fit(Xs_preproc[key_preproc], ys_preproc[key_preproc])
+                        models_trained[key_model][key_preproc].fit(Xs_preproc[key_preproc], ys_preproc[key_preproc])
 
     return models_trained
 
@@ -463,7 +461,8 @@ def run_all_experimental_settings():
               DecisionTreeClassifier(),
               RandomForestClassifier(),
               SVC(probability=True),
-              MLPClassifier()] # MLP does not support sample weight
+              MLPClassifier(), # MLP does not support sample weight
+              KNeighborsClassifier()] # KNN does not support sample weight
     """
     seed = 1
     n_runs = 3
