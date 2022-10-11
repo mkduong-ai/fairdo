@@ -143,6 +143,7 @@ def selecting_dataset(dataset_used: str, protected_attribute_used: str):
                                          metadata={'label_maps': label_map,
                                                    'protected_attribute_maps': protected_attribute_maps})
         elif protected_attribute_used == "foreign_worker":
+            # TODO: this part is broken
             privileged_groups = [{'foreign_worker': 0}]
             unprivileged_groups = [{'foreign_worker': 1}]
 
@@ -471,8 +472,7 @@ def run_all_experimental_settings():
     dataset_pro_attributes = [('adult', 'sex'),
                               ('compas', 'race'),
                               ('german', 'foreign_worker')]
-    dataset_pro_attributes = [('compas', 'race'),
-                              ('german', 'foreign_worker')]
+    dataset_pro_attributes = [('german', 'age')]
 
     models = [KNeighborsClassifier(),
               LogisticRegression(),
