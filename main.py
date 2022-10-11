@@ -471,6 +471,8 @@ def run_all_experimental_settings():
     dataset_pro_attributes = [('adult', 'sex'),
                               ('compas', 'race'),
                               ('german', 'foreign_worker')]
+    dataset_pro_attributes = [('compas', 'race'),
+                              ('german', 'foreign_worker')]
 
     models = [KNeighborsClassifier(),
               LogisticRegression(),
