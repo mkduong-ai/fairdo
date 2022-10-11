@@ -33,7 +33,8 @@ from sklearn.metrics import roc_auc_score, balanced_accuracy_score, f1_score, ac
 from src.metrics import mutual_information, normalized_mutual_information,\
     rdc, statistical_parity_absolute_difference, \
     equal_opportunity_absolute_difference, disparate_impact_ratio, disparate_impact_ratio_objective,\
-    predictive_equality_absolute_difference, average_odds_error, average_odds_absolute_difference
+    predictive_equality_absolute_difference, average_odds_error, average_odds_absolute_difference,\
+    consistency_score, consistency_score_objective
 
 
 def selecting_dataset(dataset_used: str, protected_attribute_used: str):
@@ -334,6 +335,13 @@ def evaluate_ml_models(results: dict, models_trained: dict, X_test, y_test, z_te
             results[key_model][key_preproc]['Average Odds Error'] = \
                 average_odds_error(y_test, y_pred_argmax, z_test)
 
+            # individual fairness
+            results[key_model][key_preproc]['Consistency'] = \
+                consistency_score(X_test, y_pred_argmax, n_neighbors=5)
+
+            results[key_model][key_preproc]['Consistency Obj'] = \
+                consistency_score_objective(X_test, y_pred_argmax, n_neighbors=5)
+
     return results
 
 
@@ -535,7 +543,7 @@ def run_fast():
 
 
 def main():
-    fast_run = False
+    fast_run = True
 
     if fast_run:
         run_fast()

@@ -92,7 +92,9 @@ def main():
               'Equal Opportunity Abs Diff',
               'Predictive Equality Abs Diff',
               'Average Odds Abs Diff'
-              'Average Odds Error']
+              'Average Odds Error',
+              'Consistency',
+              'Consistency Obj']
     y_axes = ['Accuracy', 'F1 Score', 'Balanced Accuracy', 'AUC']
 
     # settings
