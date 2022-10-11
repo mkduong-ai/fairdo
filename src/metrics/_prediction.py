@@ -111,10 +111,6 @@ def average_odds_difference(y_true: np.array, y_pred: np.array, z: np.array,
     return (eod + ped)/2
 
 
-def average_odds_absolute_difference(*args, **kwargs):
-    return np.abs(average_odds_difference(*args, **kwargs))
-
-
 def average_odds_error(y_true: np.array, y_pred: np.array, z: np.array,
                        positive_label=1, privileged_group=1, **kwargs) -> float:
     """

@@ -48,8 +48,8 @@ def plot_classification_results(results_df: pd.DataFrame, x_axis='Mutual Informa
     xerr_std = results_df.groupby(groups).std()[x_axis]
     yerr_std = results_df.groupby(groups).std()[y_axis]
     # confidence interval
-    # xerr = 1.96 * results_df.groupby(['Model']).std()[x_axis]
-    # yerr = 1.96 * results_df.groupby(['Model']).std()[y_axis]
+    # xerr = 1.96 * results_df.groupby(groups).std()[x_axis]
+    # yerr = 1.96 * results_df.groupby(groups).std()[y_axis]
     # std error
     # xerr_std = results_df.groupby(['Model']).std()[x_axis]/np.sqrt(results_df.groupby(['Model'])[x_axis].count())
     # yerr_std = results_df.groupby(['Model']).std()[y_axis]/np.sqrt(results_df.groupby(['Model'])[y_axis].count())
@@ -57,6 +57,8 @@ def plot_classification_results(results_df: pd.DataFrame, x_axis='Mutual Informa
     xerr = xerr_std
     yerr = yerr_std
 
+    # figsize
+    plt.figure(figsize=(5, 3.5), dpi=80)
     for i in range(len(x_mean)):
         if model is not None:
             print(x_mean)
@@ -67,13 +69,13 @@ def plot_classification_results(results_df: pd.DataFrame, x_axis='Mutual Informa
                      xerr=xerr.iloc[i], yerr=yerr.iloc[i],
                      fmt='.', label=label, alpha=0.7)
 
-    plt.legend(loc='lower right', prop={'size': 8})
+    plt.legend(loc='lower right', prop={'size': 11})
     plt.xlabel(f"{protected_attribute.capitalize()} Discrimination ({x_axis})")
     plt.ylabel(y_axis)
-    plt.title(f"{dataset.upper()} Dataset")
+    # plt.title(f"{dataset.upper()} Dataset")
     ax = plt.gca()
     if all(x_mean < 1):
-        ax.set_xlim([0, 1])
+        ax.set_xlim([0, 0.5])
     ax.set_ylim([0, 1])
 
     # save plot
@@ -92,11 +94,12 @@ def main():
               'Disparate Impact', 'Disparate Impact Obj',
               'Equal Opportunity Abs Diff',
               'Predictive Equality Abs Diff',
-              'Average Odds Abs Diff'
+              'Average Odds Diff'
               'Average Odds Error',
               'Consistency',
               'Consistency Obj']
     y_axes = ['Accuracy', 'F1 Score', 'Balanced Accuracy', 'AUC']
+    rename_columns = {'DisparateImpactRemover':'DIR'}
 
     # settings
     x_axis = 'Statistical Parity Abs Diff'
@@ -110,6 +113,11 @@ def main():
         # read results.csv file
         filepath = f"keep_results/{dataset}/{protected_attribute}_classification_results.csv"
         clf_results = pd.read_csv(filepath)
+        # rename columns
+        clf_results.rename(columns=rename_columns, inplace=True)
+        # rename values
+
+
         # plot
         plot_classification_results(clf_results, x_axis=x_axis, y_axis=y_axis,
                                     dataset=dataset,
