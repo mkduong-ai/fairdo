@@ -92,10 +92,7 @@ def selecting_dataset(dataset_used: str, protected_attribute_used: str):
                                         features_to_keep=['age', 'education-num'])
     elif dataset_used == "bank":
         if protected_attribute_used == "age":
-            privileged_groups = [{'age': 1}]
-            unprivileged_groups = [{'age': 0}]
-
-            dataset_orig = BankDataset(protected_attribute_names=['age'], privileged_classes=privileged_groups)
+            dataset_orig = BankDataset(protected_attribute_names=['age'])
     elif dataset_used == "compas":
         if protected_attribute_used == "sex":
             privileged_groups = [{'sex': 1}]
@@ -471,8 +468,9 @@ def run_all_experimental_settings():
 
     dataset_pro_attributes = [('adult', 'sex'),
                               ('compas', 'race'),
-                              ('german', 'foreign_worker')]
-    dataset_pro_attributes = [('german', 'age')]
+                              #('german', 'foreign_worker'),
+                              ('bank', 'age')]
+    dataset_pro_attributes = [('bank', 'age')]
 
     models = [KNeighborsClassifier(),
               LogisticRegression(),
