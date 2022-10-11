@@ -14,8 +14,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
-from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
 from sklearn.base import clone
 
@@ -466,13 +466,14 @@ def run_all_experimental_settings():
               KNeighborsClassifier()] # KNN does not support sample weight
     """
     seed = 1
-    n_runs = 3
+    n_runs = 10
 
     dataset_pro_attributes = [('adult', 'sex'),
                               ('compas', 'race'),
                               ('german', 'foreign_worker')]
 
-    models = [LogisticRegression(),
+    models = [KNeighborsClassifier(),
+              LogisticRegression(),
               DecisionTreeClassifier()]
 
 
@@ -508,7 +509,8 @@ def run_fast():
     seed = 1
 
     # declare machine learning models
-    models = [LogisticRegression(),
+    models = [KNeighborsClassifier(),
+              LogisticRegression(),
               DecisionTreeClassifier()]
 
     preprocessors = ["OriginalData()",
@@ -533,7 +535,7 @@ def run_fast():
 
 
 def main():
-    fast_run = True
+    fast_run = False
 
     if fast_run:
         run_fast()
