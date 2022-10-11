@@ -78,7 +78,8 @@ def plot_classification_results(results_df: pd.DataFrame, x_axis='Mutual Informa
 
     # save plot
     # create plot folder
-    plt.savefig(f"{filepath.split('.')[0]}_{model}_{y_axis}_{x_axis}.pdf", bbox_inches='tight')
+    disc_name = x_axis.replace(" ", "")
+    plt.savefig(f"{filepath.split('.')[0]}_{model}_{y_axis}_{disc_name}.pdf", bbox_inches='tight')
     if show:
         plt.show()
 
@@ -103,11 +104,11 @@ def main():
 
     # dataset_pro_attributes = [('adult', 'sex'),
     #                           ('compas', 'race'),
-    #                           ('german', 'foreign_worker')]
-    dataset_pro_attributes = [('compas', 'race')]
+    #                           ('bank', 'age')]
+    dataset_pro_attributes = [('adult', 'sex')]
     for dataset, protected_attribute in dataset_pro_attributes:
         # read results.csv file
-        filepath = f"results/{dataset}/{protected_attribute}_classification_results.csv"
+        filepath = f"keep_results/{dataset}/{protected_attribute}_classification_results.csv"
         clf_results = pd.read_csv(filepath)
         # plot
         plot_classification_results(clf_results, x_axis=x_axis, y_axis=y_axis,
