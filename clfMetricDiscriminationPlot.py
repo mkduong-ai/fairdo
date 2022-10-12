@@ -8,12 +8,12 @@ import seaborn as sns
 sns.set_theme(style='darkgrid')
 
 
-def plot_classification_results(results_df: pd.DataFrame, x_axis='Mutual Information', y_axis='F1 Score',
-                                dataset='compas', protected_attribute='race',
-                                groups=None,
-                                model=None,
-                                filepath='.pdf',
-                                show=False):
+def create_plot_from_clf_results(results_df: pd.DataFrame, x_axis='Mutual Information', y_axis='F1 Score',
+                                 dataset='compas', protected_attribute='race',
+                                 groups=None,
+                                 model=None,
+                                 filepath='.pdf',
+                                 show=False):
     """
 
     Parameters
@@ -100,7 +100,7 @@ def export_plots_over_models_datasets(x_axis: str, y_axis: str, models: list, da
             # rename values
 
             # plot
-            plot_classification_results(clf_results, x_axis=x_axis, y_axis=y_axis,
+            create_plot_from_clf_results(clf_results, x_axis=x_axis, y_axis=y_axis,
                                         dataset=dataset,
                                         protected_attribute=protected_attribute,
                                         model=model,
@@ -110,7 +110,9 @@ def export_plots_over_models_datasets(x_axis: str, y_axis: str, models: list, da
 
 def plot_all_datasets():
     # templates
-    x_axes = ['Mutual Information', 'Randomized Dependence Coefficient',
+    x_axes = ['Mutual Information',
+              'Normalized MI',
+              'Randomized Dependence Coefficient',
               'Pearson Correlation',
               'Statistical Parity Abs Diff',
               'Disparate Impact', 'Disparate Impact Obj',
@@ -136,6 +138,24 @@ def plot_all_datasets():
     export_plots_over_models_datasets(x_axis, y_axis, models, dataset_pro_attributes, rename_columns)
 
 
+def plot_all_datasets_all_metrics():
+    # settings
+    x_axes = ['Statistical Parity Abs Difference',
+              'Normalized MI',
+              'Average Odds Error']
+    y_axes = ['AUC']
+    rename_columns = {'DisparateImpactRemover': 'DIR'}
+
+    # iteration
+    models = ['KNeighborsClassifier', 'LogisticRegression', 'DecisionTreeClassifier']
+    dataset_pro_attributes = [('adult', 'sex'),
+                              ('bank', 'age'),
+                              ('compas', 'race')]
+    for x_axis in x_axes:
+        for y_axis in y_axes:
+            export_plots_over_models_datasets(x_axis, y_axis, models, dataset_pro_attributes, rename_columns)
+
+
 def quick_plot():
     rename_columns = {'DisparateImpactRemover': 'DIR'}
 
@@ -151,7 +171,8 @@ def quick_plot():
 
 def main():
     experiments = {'quick_plot': quick_plot,
-                   'plot_all_datasets': plot_all_datasets}
+                   'plot_all_datasets': plot_all_datasets,
+                   'plot_all_dataset_all_metrics': plot_all_datasets_all_metrics}
 
     pick = 'plot_all_datasets'
 
