@@ -93,7 +93,10 @@ def selecting_dataset(dataset_used: str, protected_attribute_used: str):
                                         features_to_keep=['age', 'education-num'])
     elif dataset_used == "bank":
         if protected_attribute_used == "age":
-            dataset_orig = BankDataset(protected_attribute_names=['age'])
+            privileged_groups = [{'age': 1}]
+            unprivileged_groups = [{'age': 0}]
+
+            dataset_orig = BankDataset(protected_attribute_names=['age'])#, privileged_classes=privileged_groups)
     elif dataset_used == "compas":
         if protected_attribute_used == "sex":
             privileged_groups = [{'sex': 1}]
@@ -158,6 +161,7 @@ def selecting_dataset(dataset_used: str, protected_attribute_used: str):
     if dataset_orig is None:
         raise Exception('dataset_used or protected_attribute_used not available.')
 
+    print(privileged_groups)
     return dataset_orig, privileged_groups, unprivileged_groups
 
 
@@ -456,7 +460,7 @@ def run_experiments(models, dataset="compas", protected_attribute="race", prepro
     print(f"{path} saved")
 
 
-def run_all_experimental_settings():
+def run_comparison_preprocessors():
     """
     dataset_pro_attributes = [('adult', 'sex'),
                               ('compas', 'race'),
@@ -511,8 +515,8 @@ def run_all_experimental_settings():
 
 def run_fast():
     # settings
-    dataset = "compas"  # "adult", "german", "compas", "bank"
-    protected_attribute = "race"  # sex, age, race
+    dataset = "bank"  # "adult", "german", "compas", "bank"
+    protected_attribute = "age"  # sex, age, race
     n_runs = 2
     seed = 1
 
@@ -543,12 +547,13 @@ def run_fast():
 
 
 def main():
-    fast_run = True
+    experiments = {'fast_run': run_fast,
+                   'comparing_preprocessors': run_comparison_preprocessors,
+                   'fairness_agnostic': None}
 
-    if fast_run:
-        run_fast()
-    else:
-        run_all_experimental_settings()
+    pick = 'fast_run'
+
+    experiments[pick]()
 
 
 if __name__ == '__main__':
