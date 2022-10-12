@@ -523,23 +523,27 @@ def run_fairness_agnostic():
               DecisionTreeClassifier()]
 
     metrics = ['statistical_parity_absolute_difference',
-               '']
-    preprocessors_str = ["OriginalData()",
-                         "PreprocessingWrapper(MetricOptimizer(frac=0.75,"
-                                                              "m=5,"
-                                                              "fairness_metric=statistical_parity_absolute_difference,"
-                                                              "protected_attribute=protected_attribute,"
-                                                              "label=dataset_orig.label_names[0]))"]
+               'normalized_mutual_information',
+               'average_odds_error']
 
-    for dataset, protected_attribute in dataset_pro_attributes:
-        print(f"{dataset} ({protected_attribute})")
-        run_experiments(models=models,
-                        dataset=dataset,
-                        protected_attribute=protected_attribute,
-                        preprocessors_str=preprocessors_str,
-                        n_runs=n_runs,
-                        seed=seed,
-                        filepath=f"/{metric}/")
+    for metric in metrics:
+        preprocessing_metric_str = f"PreprocessingWrapper(MetricOptimizer(frac=0.75," \
+                               f"m=5," \
+                               f"fairness_metric={metric}," \
+                               f"protected_attribute=protected_attribute," \
+                               f"label=dataset_orig.label_names[0]))"
+        preprocessors_str = ["OriginalData()",
+                             preprocessing_metric_str]
+
+        for dataset, protected_attribute in dataset_pro_attributes:
+            print(f"{dataset} ({protected_attribute})")
+            run_experiments(models=models,
+                            dataset=dataset,
+                            protected_attribute=protected_attribute,
+                            preprocessors_str=preprocessors_str,
+                            n_runs=n_runs,
+                            seed=seed,
+                            filepath=f"/{metric}/")
 
 
 def run_fast():
