@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+
 sns.set_theme(style='darkgrid')
 
 
@@ -87,11 +88,12 @@ def plot_classification_results(results_df: pd.DataFrame, x_axis='Mutual Informa
 
 
 def export_plots_over_models_datasets(x_axis: str, y_axis: str, models: list, dataset_pro_attributes: list,
-                 rename_columns: dict, show=False):
+                                      rename_columns: dict, show=False,
+                                      filepath_prefix='results'):
     for model in models:
         for dataset, protected_attribute in dataset_pro_attributes:
             # read results.csv file
-            filepath = f"results/{dataset}/{protected_attribute}_classification_results.csv"
+            filepath = f"{filepath_prefix}/{dataset}/{protected_attribute}_classification_results.csv"
             clf_results = pd.read_csv(filepath)
             # rename columns
             clf_results.rename(columns=rename_columns, inplace=True)
@@ -104,6 +106,7 @@ def export_plots_over_models_datasets(x_axis: str, y_axis: str, models: list, da
                                         model=model,
                                         filepath=filepath,
                                         show=show)
+
 
 def plot_all_datasets():
     # templates

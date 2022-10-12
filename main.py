@@ -414,7 +414,7 @@ def preprocess_pipeline(dataset_train: BinaryLabelDataset, dataset_test: BinaryL
 
 def run_experiments(models, dataset="compas", protected_attribute="race", preprocessors_str=None,
                     n_runs=5, seed=1,
-                    filepath='/'):
+                    filepath='results'):
     """
     models:
     preprocessors:
@@ -447,16 +447,16 @@ def run_experiments(models, dataset="compas", protected_attribute="race", prepro
                                                                        models, preprocessors)
 
     # merge results
-    if not os.path.exists(f"results{filepath}{dataset}"):
-        os.makedirs(f"results{filepath}{dataset}")
+    if not os.path.exists(f"{filepath}/{dataset}"):
+        os.makedirs(f"{filepath}/{dataset}")
 
     all_results = pd.concat(results_list, axis=0)
-    path = f"results{filepath}{dataset}/{protected_attribute}_classification_results.csv"
+    path = f"{filepath}/{dataset}/{protected_attribute}_classification_results.csv"
     all_results.to_csv(path)
     print(f"{path} saved")
 
     all_dataset_results = pd.concat(dataset_results_list, axis=0)
-    path = f"results{filepath}{dataset}/{protected_attribute}_dataset.csv"
+    path = f"{filepath}/{dataset}/{protected_attribute}_dataset.csv"
     all_dataset_results.to_csv(path)
     print(f"{path} saved")
 
