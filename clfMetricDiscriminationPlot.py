@@ -111,7 +111,7 @@ def main():
     dataset_pro_attributes = [('adult', 'sex')]
     for dataset, protected_attribute in dataset_pro_attributes:
         # read results.csv file
-        filepath = f"keep_results/{dataset}/{protected_attribute}_classification_results.csv"
+        filepath = f"results/{dataset}/{protected_attribute}_classification_results.csv"
         clf_results = pd.read_csv(filepath)
         # rename columns
         clf_results.rename(columns=rename_columns, inplace=True)
