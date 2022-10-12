@@ -2,7 +2,7 @@ import numpy as np
 from aif360.sklearn.metrics import consistency_score
 
 
-def consistency_score_objective(X, y, n_neighbors=5):
+def consistency_score_objective(X, y, n_neighbors=5, **kwargs):
     """
     Lower score implies more individual fairness
 
