@@ -447,8 +447,8 @@ def run_experiments(models, dataset="compas", protected_attribute="race", prepro
                                                                        models, preprocessors)
 
     # merge results
-    if not os.path.exists(f"results/{dataset}"):
-        os.makedirs(f"results/{dataset}")
+    if not os.path.exists(f"results{filepath}{dataset}"):
+        os.makedirs(f"results{filepath}{dataset}")
 
     all_results = pd.concat(results_list, axis=0)
     path = f"results{filepath}{dataset}/{protected_attribute}_classification_results.csv"
@@ -548,8 +548,8 @@ def run_fairness_agnostic():
 
 def run_fast():
     # settings
-    dataset = "bank"  # "adult", "german", "compas", "bank"
-    protected_attribute = "age"  # sex, age, race
+    dataset = "compas"  # "adult", "german", "compas", "bank"
+    protected_attribute = "race"  # sex, age, race
     n_runs = 2
     seed = 1
 
