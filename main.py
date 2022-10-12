@@ -456,7 +456,7 @@ def run_experiments(models, dataset="compas", protected_attribute="race", prepro
     print(f"{path} saved")
 
     all_dataset_results = pd.concat(dataset_results_list, axis=0)
-    path = f"results{filepath}{dataset}/{protected_attribute}_dataset"
+    path = f"results{filepath}{dataset}/{protected_attribute}_dataset.csv"
     all_dataset_results.to_csv(path)
     print(f"{path} saved")
 
