@@ -412,9 +412,9 @@ def preprocess_pipeline(dataset_train: BinaryLabelDataset, dataset_test: BinaryL
     return all_dataset_evaluation, df_results
 
 
-def run_experiments(models, dataset="compas", protected_attribute="race", preprocessors=None,
+def run_experiments(models, dataset="compas", protected_attribute="race", preprocessors_str=None,
                     n_runs=5, seed=1,
-                    filepath_clfresults='classification_results.csv'):
+                    filepath='/'):
     """
     models:
     preprocessors:
@@ -432,8 +432,9 @@ def run_experiments(models, dataset="compas", protected_attribute="race", prepro
     splits = [dataset_orig.split([0.8], shuffle=True) for _ in range(n_runs)]
 
     # declare and init preprocs
-    for i in range(len(preprocessors)):
-        preprocessors[i] = eval(preprocessors[i])
+    preprocessors = []
+    for i in range(len(preprocessors_str)):
+        preprocessors.append(eval(preprocessors_str[i]))
 
     # pass splits into preprocessing method
     dataset_results_list = [None for _ in range(n_runs)]
@@ -450,12 +451,12 @@ def run_experiments(models, dataset="compas", protected_attribute="race", prepro
         os.makedirs(f"results/{dataset}")
 
     all_results = pd.concat(results_list, axis=0)
-    path = f"results/{dataset}/{protected_attribute}_{filepath_clfresults}"
+    path = f"results{filepath}{dataset}/{protected_attribute}_classification_results.csv"
     all_results.to_csv(path)
     print(f"{path} saved")
 
     all_dataset_results = pd.concat(dataset_results_list, axis=0)
-    path = f"results/{dataset}/{protected_attribute}_dataset_{filepath_clfresults}"
+    path = f"results{filepath}{dataset}/{protected_attribute}_dataset"
     all_dataset_results.to_csv(path)
     print(f"{path} saved")
 
@@ -482,15 +483,13 @@ def run_comparison_preprocessors():
                               ('compas', 'race'),
                               #('german', 'foreign_worker'),
                               ('bank', 'age')]
-    dataset_pro_attributes = [('bank', 'age')]
 
     models = [KNeighborsClassifier(),
               LogisticRegression(),
               DecisionTreeClassifier()]
 
-
     # Optimized Preproc. requires distortion functions
-    preprocessors = ["OriginalData()",
+    preprocessors_str = ["OriginalData()",
                      "DisparateImpactRemover(sensitive_attribute=protected_attribute)",
                      "LFR(unprivileged_groups=unprivileged_groups,"
                          "privileged_groups=privileged_groups,"
@@ -508,9 +507,39 @@ def run_comparison_preprocessors():
         run_experiments(models=models,
                         dataset=dataset,
                         protected_attribute=protected_attribute,
-                        preprocessors=preprocessors,
+                        preprocessors_str=preprocessors_str,
                         n_runs=n_runs,
                         seed=seed)
+
+
+def run_fairness_agnostic():
+    seed = 1
+    n_runs = 10
+
+    dataset_pro_attributes = [('compas', 'race')]
+
+    models = [KNeighborsClassifier(),
+              LogisticRegression(),
+              DecisionTreeClassifier()]
+
+    metrics = ['statistical_parity_absolute_difference',
+               '']
+    preprocessors_str = ["OriginalData()",
+                         "PreprocessingWrapper(MetricOptimizer(frac=0.75,"
+                                                              "m=5,"
+                                                              "fairness_metric=statistical_parity_absolute_difference,"
+                                                              "protected_attribute=protected_attribute,"
+                                                              "label=dataset_orig.label_names[0]))"]
+
+    for dataset, protected_attribute in dataset_pro_attributes:
+        print(f"{dataset} ({protected_attribute})")
+        run_experiments(models=models,
+                        dataset=dataset,
+                        protected_attribute=protected_attribute,
+                        preprocessors_str=preprocessors_str,
+                        n_runs=n_runs,
+                        seed=seed,
+                        filepath=f"/{metric}/")
 
 
 def run_fast():
@@ -525,7 +554,7 @@ def run_fast():
               LogisticRegression(),
               DecisionTreeClassifier()]
 
-    preprocessors = ["OriginalData()",
+    preprocessors_str = ["OriginalData()",
                      "DisparateImpactRemover(sensitive_attribute=protected_attribute)",
                      "LFR(unprivileged_groups=unprivileged_groups,"
                          "privileged_groups=privileged_groups,"
@@ -541,17 +570,17 @@ def run_fast():
     run_experiments(models=models,
                     dataset=dataset,
                     protected_attribute=protected_attribute,
-                    preprocessors=preprocessors,
+                    preprocessors_str=preprocessors_str,
                     n_runs=n_runs,
                     seed=seed)
 
 
 def main():
-    experiments = {'fast_run': run_fast,
-                   'comparing_preprocessors': run_comparison_preprocessors,
-                   'fairness_agnostic': None}
+    experiments = {'run_fast': run_fast,
+                   'run_comparison_preprocessors': run_comparison_preprocessors,
+                   'run_fairness_agnostic': run_fairness_agnostic}
 
-    pick = 'fast_run'
+    pick = 'run_comparison_preprocessors'
 
     experiments[pick]()
 
