@@ -524,7 +524,7 @@ def run_fairness_agnostic():
 
     metrics = ['statistical_parity_absolute_difference',
                'normalized_mutual_information',
-               'average_odds_error']
+               'consistency_score_objective']
 
     for metric in metrics:
         preprocessing_metric_str = f"PreprocessingWrapper(MetricOptimizer(frac=0.75," \
@@ -543,7 +543,7 @@ def run_fairness_agnostic():
                             preprocessors_str=preprocessors_str,
                             n_runs=n_runs,
                             seed=seed,
-                            filepath=f"/{metric}/")
+                            filepath=f"results/{metric}")
 
 
 def run_fast():
@@ -584,7 +584,7 @@ def main():
                    'run_comparison_preprocessors': run_comparison_preprocessors,
                    'run_fairness_agnostic': run_fairness_agnostic}
 
-    pick = 'run_comparison_preprocessors'
+    pick = 'run_fairness_agnostic'
 
     experiments[pick]()
 
