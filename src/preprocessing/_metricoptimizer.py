@@ -9,7 +9,7 @@ class MetricOptimizer(Preprocessing):
     Deletes samples which worsen the discrimination in the dataset
     """
 
-    def __init__(self, frac=0.8, m=5, eps=None,
+    def __init__(self, frac=0.8, m=5, eps=0,
                  deletions=None,
                  fairness_metric=statistical_parity_absolute_difference,
                  protected_attribute=None, label=None,
@@ -78,7 +78,7 @@ class MetricOptimizer(Preprocessing):
             samples = samples_wo_cands_list[opt_cand_index]
 
             # stop criterion if fairness is fulfilled
-            if self.eps is not None:
+            if self.eps > 0:
                 if discrimination_values[opt_cand_index] <= self.eps:
                     break
 
