@@ -75,7 +75,7 @@ def plot_classification_results(results_df: pd.DataFrame, x_axis='Mutual Informa
     # plt.title(f"{dataset.upper()} Dataset")
     ax = plt.gca()
     if all(x_mean < 1):
-        ax.set_xlim([0, 0.5])
+        ax.set_xlim([0, 1])
     ax.set_ylim([0, 1])
 
     # save plot
@@ -86,7 +86,26 @@ def plot_classification_results(results_df: pd.DataFrame, x_axis='Mutual Informa
         plt.show()
 
 
-def main():
+def export_plots_over_models_datasets(x_axis: str, y_axis: str, models: list, dataset_pro_attributes: list,
+                 rename_columns: dict, show=False):
+    for model in models:
+        for dataset, protected_attribute in dataset_pro_attributes:
+            # read results.csv file
+            filepath = f"results/{dataset}/{protected_attribute}_classification_results.csv"
+            clf_results = pd.read_csv(filepath)
+            # rename columns
+            clf_results.rename(columns=rename_columns, inplace=True)
+            # rename values
+
+            # plot
+            plot_classification_results(clf_results, x_axis=x_axis, y_axis=y_axis,
+                                        dataset=dataset,
+                                        protected_attribute=protected_attribute,
+                                        model=model,
+                                        filepath=filepath,
+                                        show=show)
+
+def plot_all_datasets():
     # templates
     x_axes = ['Mutual Information', 'Randomized Dependence Coefficient',
               'Pearson Correlation',
@@ -99,32 +118,41 @@ def main():
               'Consistency',
               'Consistency Obj']
     y_axes = ['Accuracy', 'F1 Score', 'Balanced Accuracy', 'AUC']
-    rename_columns = {'DisparateImpactRemover':'DIR'}
 
     # settings
     x_axis = 'Statistical Parity Abs Diff'
     y_axis = 'AUC'
+    rename_columns = {'DisparateImpactRemover': 'DIR'}
 
-    # dataset_pro_attributes = [('adult', 'sex'),
-    #                           ('compas', 'race'),
-    #                           ('bank', 'age')]
+    # iteration
+    models = ['KNeighborsClassifier', 'LogisticRegression', 'DecisionTreeClassifier']
+    dataset_pro_attributes = [('adult', 'sex'),
+                              ('bank', 'age'),
+                              ('compas', 'race')]
+
+    export_plots_over_models_datasets(x_axis, y_axis, models, dataset_pro_attributes, rename_columns)
+
+
+def quick_plot():
+    rename_columns = {'DisparateImpactRemover': 'DIR'}
+
+    # settings
+    x_axis = 'Disparate Impact Obj'
+    y_axis = 'AUC'
+    model = ['KNeighborsClassifier']
+
     dataset_pro_attributes = [('adult', 'sex')]
-    for dataset, protected_attribute in dataset_pro_attributes:
-        # read results.csv file
-        filepath = f"results/{dataset}/{protected_attribute}_classification_results.csv"
-        clf_results = pd.read_csv(filepath)
-        # rename columns
-        clf_results.rename(columns=rename_columns, inplace=True)
-        # rename values
+
+    export_plots_over_models_datasets(x_axis, y_axis, model, dataset_pro_attributes, rename_columns, show=True)
 
 
-        # plot
-        plot_classification_results(clf_results, x_axis=x_axis, y_axis=y_axis,
-                                    dataset=dataset,
-                                    protected_attribute=protected_attribute,
-                                    model='KNeighborsClassifier',
-                                    filepath=filepath,
-                                    show=True)
+def main():
+    experiments = {'quick_plot': quick_plot,
+                   'plot_all_datasets': plot_all_datasets}
+
+    pick = 'plot_all_datasets'
+
+    experiments[pick]()
 
 
 if __name__ == '__main__':
