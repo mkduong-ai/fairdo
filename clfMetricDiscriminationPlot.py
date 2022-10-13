@@ -65,6 +65,8 @@ def create_plot_from_clf_results(results_df: pd.DataFrame, x_axis='Mutual Inform
             label = eval(x_mean.index[i])[1]
         else:
             label = x_mean.index[i]
+        print(label)
+        print(x_mean.iloc[i])
         plt.errorbar(x=x_mean.iloc[i], y=y_mean.iloc[i],
                      xerr=xerr.iloc[i], yerr=yerr.iloc[i],
                      fmt='.', label=label, alpha=0.7)
