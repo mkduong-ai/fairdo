@@ -493,7 +493,7 @@ def run_comparison_preprocessors():
                      "DisparateImpactRemover(sensitive_attribute=protected_attribute)",
                      "LFR(unprivileged_groups=unprivileged_groups,"
                          "privileged_groups=privileged_groups,"
-                         "k=5, Ax=0.01, Ay=1.0, Az=5.0)",
+                         "k=5, Ax=0.01, Ay=1.0, Az=10.0)",
                      "PreprocessingWrapper(MetricOptimizer(frac=0.75,"
                                                           "m=5,"
                                                           "fairness_metric=statistical_parity_absolute_difference,"
@@ -562,7 +562,7 @@ def run_fast():
                      "DisparateImpactRemover(sensitive_attribute=protected_attribute)",
                      "LFR(unprivileged_groups=unprivileged_groups,"
                          "privileged_groups=privileged_groups,"
-                         "k=5, Ax=0.01, Ay=1.0, Az=5.0)",
+                         "k=5, Ax=0.01, Ay=1.0, Az=10.0)",
                      "PreprocessingWrapper(MetricOptimizer(frac=0.75,"
                                                           "m=5,"
                                                           "fairness_metric=statistical_parity_absolute_difference,"
