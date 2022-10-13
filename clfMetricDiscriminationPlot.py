@@ -62,7 +62,6 @@ def create_plot_from_clf_results(results_df: pd.DataFrame, x_axis='Mutual Inform
     plt.figure(figsize=(5, 3.5), dpi=80)
     for i in range(len(x_mean)):
         if model is not None:
-            print(x_mean)
             label = eval(x_mean.index[i])[1]
         else:
             label = x_mean.index[i]
@@ -77,12 +76,15 @@ def create_plot_from_clf_results(results_df: pd.DataFrame, x_axis='Mutual Inform
     ax = plt.gca()
     if all(x_mean < 1):
         ax.set_xlim([0, 1])
+        if all(x_mean < 0.5):
+            ax.set_xlim([0, 0.5])
     ax.set_ylim([0, 1])
 
     # save plot
     # create plot folder
     disc_name = x_axis.replace(" ", "")
     plt.savefig(f"{filepath.split('.')[0]}_{model}_{y_axis}_{disc_name}.pdf", bbox_inches='tight')
+    print(f"Figure saved under {filepath.split('.')[0]}_{model}_{y_axis}_{disc_name}.pdf")
     if show:
         plt.show()
 
@@ -140,7 +142,7 @@ def plot_all_datasets():
 
 def plot_all_datasets_all_metrics():
     # settings
-    x_axes = ['Statistical Parity Abs Difference',
+    x_axes = ['Statistical Parity Abs Diff',
               'Normalized MI',
               'Average Odds Error']
     y_axes = ['AUC']
