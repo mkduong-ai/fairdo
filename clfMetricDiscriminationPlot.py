@@ -12,7 +12,7 @@ def create_plot_from_clf_results(results_df: pd.DataFrame, x_axis='Mutual Inform
                                  dataset='compas', protected_attribute='race',
                                  groups=None,
                                  model=None,
-                                 filepath='.pdf',
+                                 filepath=None,
                                  show=False):
     """
 
@@ -32,7 +32,7 @@ def create_plot_from_clf_results(results_df: pd.DataFrame, x_axis='Mutual Inform
         Estimator name
     show: boolean
     filepath: str
-        filename of figure
+        prefix of directory to save
     Returns
     -------
 
@@ -65,8 +65,6 @@ def create_plot_from_clf_results(results_df: pd.DataFrame, x_axis='Mutual Inform
             label = eval(x_mean.index[i])[1]
         else:
             label = x_mean.index[i]
-        print(label)
-        print(x_mean.iloc[i])
         plt.errorbar(x=x_mean.iloc[i], y=y_mean.iloc[i],
                      xerr=xerr.iloc[i], yerr=yerr.iloc[i],
                      fmt='.', label=label, alpha=0.7)
@@ -85,6 +83,7 @@ def create_plot_from_clf_results(results_df: pd.DataFrame, x_axis='Mutual Inform
     # save plot
     # create plot folder
     disc_name = x_axis.replace(" ", "")
+    print(filepath)
     plt.savefig(f"{filepath.split('.')[0]}_{model}_{y_axis}_{disc_name}.pdf", bbox_inches='tight')
     print(f"Figure saved under {filepath.split('.')[0]}_{model}_{y_axis}_{disc_name}.pdf")
     if show:
@@ -160,6 +159,22 @@ def plot_all_datasets_all_metrics():
             export_plots_over_models_datasets(x_axis, y_axis, models, dataset_pro_attributes, rename_columns)
 
 
+def plot_fairness_agnostic():
+    # settings
+    x_axes = {'Statistical Parity Abs Diff': 'statistical_parity_absolute_difference',
+              'Normalized MI': 'normalized_mutual_information',
+              'Consistency Obj': 'consistency_score_objective'}
+    y_axis = 'AUC'
+
+    models = ['KNeighborsClassifier', 'LogisticRegression', 'DecisionTreeClassifier']
+    dataset_pro_attributes = [('compas', 'race')]
+    rename_columns = {'DisparateImpactRemover': 'DIR'}
+
+    for metric_name, metric_path in x_axes.items():
+        export_plots_over_models_datasets(metric_name, y_axis, models, dataset_pro_attributes, rename_columns,
+                                          filepath_prefix=f"results/{metric_path}")
+
+
 def quick_plot():
     rename_columns = {'DisparateImpactRemover': 'DIR'}
 
@@ -176,9 +191,10 @@ def quick_plot():
 def main():
     experiments = {'quick_plot': quick_plot,
                    'plot_all_datasets': plot_all_datasets,
-                   'plot_all_dataset_all_metrics': plot_all_datasets_all_metrics}
+                   'plot_all_dataset_all_metrics': plot_all_datasets_all_metrics,
+                   'plot_fairness_agnostic': plot_fairness_agnostic}
 
-    pick = 'plot_all_datasets'
+    pick = 'plot_fairness_agnostic'
 
     experiments[pick]()
 
