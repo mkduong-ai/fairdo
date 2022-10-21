@@ -526,6 +526,8 @@ def run_fairness_agnostic():
                'normalized_mutual_information',
                'consistency_score_objective']
 
+    metrics = ['disparate_impact_ratio_objective']
+
     for metric in metrics:
         preprocessing_metric_str = f"PreprocessingWrapper(MetricOptimizer(frac=0.75," \
                                f"m=5," \
