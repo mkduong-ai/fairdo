@@ -78,6 +78,8 @@ def create_plot_from_clf_results(results_df: pd.DataFrame, x_axis='Mutual Inform
         ax.set_xlim([0, 1])
         if all(x_mean < 0.5):
             ax.set_xlim([0, 0.5])
+            if all(x_mean < 0.1):
+                ax.set_xlim([0, 0.1])
     ax.set_ylim([0, 1])
 
     # save plot
@@ -164,6 +166,7 @@ def plot_fairness_agnostic():
     x_axes = {'Statistical Parity Abs Diff': 'statistical_parity_absolute_difference',
               'Normalized MI': 'normalized_mutual_information',
               'Consistency Obj': 'consistency_score_objective'}
+    x_axes = {'Disparate Impact Obj': 'disparate_impact_ratio_objective'}
     y_axis = 'AUC'
 
     models = ['KNeighborsClassifier', 'LogisticRegression', 'DecisionTreeClassifier']
