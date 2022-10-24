@@ -1,0 +1,7 @@
+numpy
+scipy
+matplotlib
+tensorflow
+aif360
+pytorch
+sdv
