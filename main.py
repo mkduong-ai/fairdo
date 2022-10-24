@@ -161,7 +161,7 @@ def selecting_dataset(dataset_used: str, protected_attribute_used: str):
     if dataset_orig is None:
         raise Exception('dataset_used or protected_attribute_used not available.')
 
-    print(privileged_groups)
+    # print(privileged_groups)
     return dataset_orig, privileged_groups, unprivileged_groups
 
 
