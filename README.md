@@ -7,5 +7,5 @@ python main.py
 
 Create plots from results
 ```python
-python clfMetricDiscriminationPlot.py
+python evaluation/plot_settings.py
 ```
