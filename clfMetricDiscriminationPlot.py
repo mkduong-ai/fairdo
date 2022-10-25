@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -8,13 +8,17 @@ import seaborn as sns
 sns.set_theme(style='darkgrid')
 
 
-def create_plot_from_clf_results(results_df: pd.DataFrame, x_axis='Mutual Information', y_axis='F1 Score',
-                                 dataset='compas', protected_attribute='race',
-                                 groups=None,
-                                 model=None,
-                                 filepath=None,
-                                 show=False):
+def plot_dataframe_aggregate(results_df: pd.DataFrame,
+                             x_axis='Mutual Information', y_axis='F1 Score',
+                             protected_attribute='race',
+                             groups=None,
+                             model=None,
+                             filepath=None,
+                             show=False,
+                             save=True):
     """
+    Plot results_df. Aggregate the results over the column given by 'groups'
+    and show mean and standard deviation.
 
     Parameters
     ----------
@@ -24,15 +28,18 @@ def create_plot_from_clf_results(results_df: pd.DataFrame, x_axis='Mutual Inform
         column of DataFrame for x-axis
     y_axis: str
         column of DataFrame for y-axis
-    dataset: str
     protected_attribute: str
-    groups: list
+        column name of protected attribute in results_df
+    groups: None
         list of strings to group by
     model: str
         Estimator name
-    show: boolean
     filepath: str
-        prefix of directory to save
+        Path of .csv file
+    show: boolean
+        Bool whether to show the plot.
+    save: boolean
+        Bool whether plot should be saved.
     Returns
     -------
 
@@ -48,12 +55,6 @@ def create_plot_from_clf_results(results_df: pd.DataFrame, x_axis='Mutual Inform
     y_mean = results_df.groupby(groups).mean()[y_axis]
     xerr_std = results_df.groupby(groups).std()[x_axis]
     yerr_std = results_df.groupby(groups).std()[y_axis]
-    # confidence interval
-    # xerr = 1.96 * results_df.groupby(groups).std()[x_axis]
-    # yerr = 1.96 * results_df.groupby(groups).std()[y_axis]
-    # std error
-    # xerr_std = results_df.groupby(['Model']).std()[x_axis]/np.sqrt(results_df.groupby(['Model'])[x_axis].count())
-    # yerr_std = results_df.groupby(['Model']).std()[y_axis]/np.sqrt(results_df.groupby(['Model'])[y_axis].count())
 
     xerr = xerr_std
     yerr = yerr_std
@@ -69,10 +70,13 @@ def create_plot_from_clf_results(results_df: pd.DataFrame, x_axis='Mutual Inform
                      xerr=xerr.iloc[i], yerr=yerr.iloc[i],
                      fmt='.', label=label, alpha=0.7)
 
+    # title, legend, labels
+    # plt.title(f"{dataset.upper()} Dataset")
     plt.legend(loc='lower right', prop={'size': 11})
     plt.xlabel(f"{protected_attribute.capitalize()} Discrimination ({x_axis})")
     plt.ylabel(y_axis)
-    # plt.title(f"{dataset.upper()} Dataset")
+
+    # axes ranges
     ax = plt.gca()
     if all(x_mean < 1):
         ax.set_xlim([0, 1])
@@ -82,12 +86,13 @@ def create_plot_from_clf_results(results_df: pd.DataFrame, x_axis='Mutual Inform
                 ax.set_xlim([0, 0.1])
     ax.set_ylim([0, 1])
 
-    # save plot
-    # create plot folder
+    # filename
     disc_name = x_axis.replace(" ", "")
-    print(filepath)
-    plt.savefig(f"{filepath.split('.')[0]}_{model}_{y_axis}_{disc_name}.pdf", bbox_inches='tight')
-    print(f"Figure saved under {filepath.split('.')[0]}_{model}_{y_axis}_{disc_name}.pdf")
+    filename = f"{filepath.split('.')[0]}_{model}_{y_axis}_{disc_name}.pdf"
+    # save plot
+    plt.savefig(filename, bbox_inches='tight')
+    print(f"Figure saved under {filename}")
+
     if show:
         plt.show()
 
@@ -105,12 +110,11 @@ def export_plots_over_models_datasets(x_axis: str, y_axis: str, models: list, da
             # rename values
 
             # plot
-            create_plot_from_clf_results(clf_results, x_axis=x_axis, y_axis=y_axis,
-                                        dataset=dataset,
-                                        protected_attribute=protected_attribute,
-                                        model=model,
-                                        filepath=filepath,
-                                        show=show)
+            plot_dataframe_aggregate(clf_results, x_axis=x_axis, y_axis=y_axis,
+                                     protected_attribute=protected_attribute,
+                                     model=model,
+                                     filepath=filepath,
+                                     show=show)
 
 
 def plot_all_datasets():
