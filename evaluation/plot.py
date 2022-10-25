@@ -1,18 +1,11 @@
 from plot_helper import save_plots_over_models_datasets, save_plots_over_xy_axes
+from settings import get_evaluation_config
 
-x_axes_template = ['Mutual Information',
-                   'Normalized MI',
-                   'Randomized Dependence Coefficient',
-                   'Pearson Correlation',
-                   'Statistical Parity Abs Diff',
-                   'Disparate Impact', 'Disparate Impact Obj',
-                   'Equal Opportunity Abs Diff',
-                   'Predictive Equality Abs Diff',
-                   'Average Odds Diff'
-                   'Average Odds Error',
-                   'Consistency',
-                   'Consistency Obj']
-y_axes_template = ['Accuracy', 'F1 Score', 'Balanced Accuracy', 'AUC']
+
+x_axis_mapper = {'statistical_parity_absolute_difference': 'Statistical Parity Abs Diff',
+                 'normalized_mutual_information': 'Normalized MI',
+                 'consistency_score_objective': 'Consistency Obj',
+                 'disparate_impact_ratio_objective': 'Disparate Impact Obj'}
 
 
 def plot_all_datasets():
@@ -21,10 +14,8 @@ def plot_all_datasets():
     y_axes = ['AUC']
 
     # iteration
-    models = ['KNeighborsClassifier', 'LogisticRegression', 'DecisionTreeClassifier']
-    dataset_pro_attributes = [('adult', 'sex'),
-                              ('bank', 'age'),
-                              ('compas', 'race')]
+    dataset_pro_attributes, models = get_evaluation_config(config='comparison_preprocessors',
+                                                           plot=True)
     save_plots_over_xy_axes(x_axes, y_axes, models, dataset_pro_attributes)
 
 
@@ -36,25 +27,21 @@ def plot_all_datasets_metrics():
     y_axes = ['AUC']
 
     # iteration
-    models = ['KNeighborsClassifier', 'LogisticRegression', 'DecisionTreeClassifier']
-    dataset_pro_attributes = [('adult', 'sex'),
-                              ('bank', 'age'),
-                              ('compas', 'race')]
+    dataset_pro_attributes, models = get_evaluation_config(config='comparison_preprocessors',
+                                                           plot=True)
     save_plots_over_xy_axes(x_axes, y_axes, models, dataset_pro_attributes)
 
 
 def plot_fairness_agnostic():
     # settings
-    x_axes = {'Statistical Parity Abs Diff': 'statistical_parity_absolute_difference',
-              'Normalized MI': 'normalized_mutual_information',
-              'Consistency Obj': 'consistency_score_objective'}
-    x_axes = {'Disparate Impact Obj': 'disparate_impact_ratio_objective'}
     y_axis = 'AUC'
 
-    models = ['KNeighborsClassifier', 'LogisticRegression', 'DecisionTreeClassifier']
-    dataset_pro_attributes = [('compas', 'race')]
+    # preprocess on multiple metrics
+    dataset_pro_attributes, models, metrics = get_evaluation_config(config='fairness_agnostic',
+                                                                    plot=True)
+    x_axes = {k: x_axis_mapper[k] for k in metrics}
 
-    for metric_name, metric_path in x_axes.items():
+    for metric_path, metric_name in x_axes.items():
         save_plots_over_models_datasets(metric_name, y_axis, models, dataset_pro_attributes,
                                         filepath_prefix=f"results/{metric_path}")
 

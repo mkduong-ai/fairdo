@@ -13,6 +13,7 @@ from sklearn.base import clone
 from aif360.algorithms.preprocessing import DisparateImpactRemover, LFR, Reweighing
 
 from evaluation.pipeline import run_experiments
+from evaluation.settings import get_evaluation_config
 from src.preprocessing import MetricOptimizer, OriginalData, PreprocessingWrapper
 
 dataset_pro_attributes_template = [('adult', 'sex'),
@@ -32,15 +33,7 @@ models_template = [LogisticRegression(),
 def run_comparison_preprocessors():
     seed = 1
     n_runs = 10
-
-    dataset_pro_attributes = [('adult', 'sex'),
-                              ('compas', 'race'),
-                              # ('german', 'foreign_worker'),
-                              ('bank', 'age')]
-
-    models = [KNeighborsClassifier(),
-              LogisticRegression(),
-              DecisionTreeClassifier()]
+    dataset_pro_attributes, models = get_evaluation_config(config='comparison_preprocessors')
 
     # Optimized Preproc. requires distortion functions
     preprocessors_str = ["OriginalData()",
@@ -70,17 +63,7 @@ def run_fairness_agnostic():
     seed = 1
     n_runs = 10
 
-    dataset_pro_attributes = [('compas', 'race')]
-
-    models = [KNeighborsClassifier(),
-              LogisticRegression(),
-              DecisionTreeClassifier()]
-
-    metrics = ['statistical_parity_absolute_difference',
-               'normalized_mutual_information',
-               'consistency_score_objective']
-
-    metrics = ['disparate_impact_ratio_objective']
+    dataset_pro_attributes, models, metrics = get_evaluation_config(config='fairness_agnostic')
 
     for metric in metrics:
         preprocessing_metric_str = f"PreprocessingWrapper(MetricOptimizer(frac=1.75," \
@@ -102,17 +85,12 @@ def run_fairness_agnostic():
                             filepath=f"results/{metric}")
 
 
-def run_fast():
+def run_quick():
     # settings
-    dataset = "compas"  # "adult", "german", "compas", "bank"
-    protected_attribute = "race"  # sex, age, race
     n_runs = 2
     seed = 1
 
-    # declare machine learning models
-    models = [KNeighborsClassifier(),
-              LogisticRegression(),
-              DecisionTreeClassifier()]
+    dataset_pro_attributes, models = get_evaluation_config(config='quick')
 
     preprocessors_str = ["OriginalData()",
                          "DisparateImpactRemover(sensitive_attribute=protected_attribute)",
@@ -127,16 +105,18 @@ def run_fast():
                          "Reweighing(unprivileged_groups=unprivileged_groups,"
                          "privileged_groups=privileged_groups)"]
 
-    run_experiments(models=models,
-                    dataset=dataset,
-                    protected_attribute=protected_attribute,
-                    preprocessors_str=preprocessors_str,
-                    n_runs=n_runs,
-                    seed=seed)
+    for dataset, protected_attribute in dataset_pro_attributes:
+        print(f"{dataset} ({protected_attribute})")
+        run_experiments(models=models,
+                        dataset=dataset,
+                        protected_attribute=protected_attribute,
+                        preprocessors_str=preprocessors_str,
+                        n_runs=n_runs,
+                        seed=seed)
 
 
 def main():
-    experiments = {'run_fast': run_fast,
+    experiments = {'run_quick': run_quick,
                    'run_comparison_preprocessors': run_comparison_preprocessors,
                    'run_fairness_agnostic': run_fairness_agnostic}
 
