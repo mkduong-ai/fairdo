@@ -15,28 +15,27 @@ from aif360.algorithms.preprocessing import DisparateImpactRemover, LFR, Reweigh
 from evaluation.pipeline import run_experiments
 from src.preprocessing import MetricOptimizer, OriginalData, PreprocessingWrapper
 
+dataset_pro_attributes_template = [('adult', 'sex'),
+                                   ('compas', 'race'),
+                                   ('german', 'foreign_worker'),
+                                   ('german', 'sex'),
+                                   ('bank', 'age')]
+
+models_template = [LogisticRegression(),
+                   DecisionTreeClassifier(),
+                   RandomForestClassifier(),
+                   SVC(probability=True),
+                   MLPClassifier(),  # MLP does not support sample weight
+                   KNeighborsClassifier()]  # KNN does not support sample weight
+
 
 def run_comparison_preprocessors():
-    """
-    dataset_pro_attributes = [('adult', 'sex'),
-                              ('compas', 'race'),
-                              ('german', 'foreign_worker'),
-                              ('german', 'sex'),
-                              ('bank', 'age')]
-
-    models = [LogisticRegression(),
-              DecisionTreeClassifier(),
-              RandomForestClassifier(),
-              SVC(probability=True),
-              MLPClassifier(), # MLP does not support sample weight
-              KNeighborsClassifier()] # KNN does not support sample weight
-    """
     seed = 1
     n_runs = 10
 
     dataset_pro_attributes = [('adult', 'sex'),
                               ('compas', 'race'),
-                              #('german', 'foreign_worker'),
+                              # ('german', 'foreign_worker'),
                               ('bank', 'age')]
 
     models = [KNeighborsClassifier(),
@@ -45,17 +44,17 @@ def run_comparison_preprocessors():
 
     # Optimized Preproc. requires distortion functions
     preprocessors_str = ["OriginalData()",
-                     "DisparateImpactRemover(sensitive_attribute=protected_attribute)",
-                     "LFR(unprivileged_groups=unprivileged_groups,"
+                         "DisparateImpactRemover(sensitive_attribute=protected_attribute)",
+                         "LFR(unprivileged_groups=unprivileged_groups,"
                          "privileged_groups=privileged_groups,"
                          "k=5, Ax=0.01, Ay=1.0, Az=10.0)",
-                     "PreprocessingWrapper(MetricOptimizer(frac=0.75,"
-                                                          "m=5,"
-                                                          "fairness_metric=statistical_parity_absolute_difference,"
-                                                          "protected_attribute=protected_attribute,"
-                                                          "label=dataset_orig.label_names[0]))",
-                     "Reweighing(unprivileged_groups=unprivileged_groups,"
-                                "privileged_groups=privileged_groups)"]
+                         "PreprocessingWrapper(MetricOptimizer(frac=0.75,"
+                         "m=5,"
+                         "fairness_metric=statistical_parity_absolute_difference,"
+                         "protected_attribute=protected_attribute,"
+                         "label=dataset_orig.label_names[0]))",
+                         "Reweighing(unprivileged_groups=unprivileged_groups,"
+                         "privileged_groups=privileged_groups)"]
 
     for dataset, protected_attribute in dataset_pro_attributes:
         print(f"{dataset} ({protected_attribute})")
@@ -85,10 +84,10 @@ def run_fairness_agnostic():
 
     for metric in metrics:
         preprocessing_metric_str = f"PreprocessingWrapper(MetricOptimizer(frac=0.75," \
-                               f"m=5," \
-                               f"fairness_metric={metric}," \
-                               f"protected_attribute=protected_attribute," \
-                               f"label=dataset_orig.label_names[0]))"
+                                   f"m=5," \
+                                   f"fairness_metric={metric}," \
+                                   f"protected_attribute=protected_attribute," \
+                                   f"label=dataset_orig.label_names[0]))"
         preprocessors_str = ["OriginalData()",
                              preprocessing_metric_str]
 
@@ -116,17 +115,17 @@ def run_fast():
               DecisionTreeClassifier()]
 
     preprocessors_str = ["OriginalData()",
-                     "DisparateImpactRemover(sensitive_attribute=protected_attribute)",
-                     "LFR(unprivileged_groups=unprivileged_groups,"
+                         "DisparateImpactRemover(sensitive_attribute=protected_attribute)",
+                         "LFR(unprivileged_groups=unprivileged_groups,"
                          "privileged_groups=privileged_groups,"
                          "k=5, Ax=0.01, Ay=1.0, Az=10.0)",
-                     "PreprocessingWrapper(MetricOptimizer(frac=0.75,"
-                                                          "m=5,"
-                                                          "fairness_metric=statistical_parity_absolute_difference,"
-                                                          "protected_attribute=protected_attribute,"
-                                                          "label=dataset_orig.label_names[0]))",
-                     "Reweighing(unprivileged_groups=unprivileged_groups,"
-                     "privileged_groups=privileged_groups)"]
+                         "PreprocessingWrapper(MetricOptimizer(frac=0.75,"
+                         "m=5,"
+                         "fairness_metric=statistical_parity_absolute_difference,"
+                         "protected_attribute=protected_attribute,"
+                         "label=dataset_orig.label_names[0]))",
+                         "Reweighing(unprivileged_groups=unprivileged_groups,"
+                         "privileged_groups=privileged_groups)"]
 
     run_experiments(models=models,
                     dataset=dataset,
