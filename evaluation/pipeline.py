@@ -5,18 +5,11 @@ import numpy as np
 import pandas as pd
 
 # datasets
-from aif360.datasets import AdultDataset, BankDataset, CompasDataset, GermanDataset, BinaryLabelDataset
+from aif360.datasets import BinaryLabelDataset
 # import folktables
 
 # machine learning
 from sklearn.dummy import DummyClassifier
-from sklearn.linear_model import LogisticRegression
-from sklearn.svm import SVC
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.neural_network import MLPClassifier
-from sklearn.pipeline import Pipeline
 from sklearn.base import clone
 
 # fair preprocessors
