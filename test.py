@@ -1,11 +1,8 @@
-from main import selecting_dataset
-
-import numpy as np
-import time
+from PreprocessingEvaluation.main import selecting_dataset
 
 # generate synthetic datapoints
-from sdv.tabular import CTGAN
 from sdv.lite import TabularPreset
+
 
 def fix_german_dataset():
     pass

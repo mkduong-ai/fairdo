@@ -2,7 +2,7 @@
 
 Create results
 ```python
-python main.py
+python evaluation/main.py
 ```
 
 Create plots from results

@@ -32,7 +32,7 @@ class Preprocessing(metaclass=abc.ABCMeta):
         self.frac = frac
         self.protected_attribute = protected_attribute
         self.label = label
-        self.drop_protected_attr = drop_protected_attribute
+        self.drop_protected_attribute = drop_protected_attribute
         self.drop_label = drop_label
         self.drop_features = drop_features
         self.dim_reduction = dim_reduction
@@ -63,7 +63,7 @@ class Preprocessing(metaclass=abc.ABCMeta):
             except:
                 print('Type of dataset is unknown.')
 
-        if self.drop_protected_attr and self.protected_attribute is not None:
+        if self.drop_protected_attribute and self.protected_attribute is not None:
             self.dataset = self.dataset.drop(
                 columns=self.protected_attribute, axis=1, inplace=False)
         if self.drop_label and self.label is not None:
@@ -117,6 +117,7 @@ class PreprocessingWrapper:
 
     def fit_transform(self, dataset_train: BinaryLabelDataset) -> BinaryLabelDataset:
         # z_train already included in x_train
+        print(self.__class__.__name__)
         transformed_df_dataset = self.preprocessing.fit_transform(dataset_train.convert_to_dataframe()[0])
 
         transformed_dataset = BinaryLabelDataset(df=transformed_df_dataset,
@@ -129,6 +130,12 @@ class PreprocessingWrapper:
 class OriginalData:
     def __init__(self):
         pass
+
+    def fit(self, dataset):
+        self.dataset = dataset
+
+    def transform(self):
+        return self.dataset
 
     def fit_transform(self, dataset):
         return dataset

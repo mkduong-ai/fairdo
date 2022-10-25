@@ -30,6 +30,7 @@ class MetricOptimizer(Preprocessing):
                          drop_label=drop_label,
                          drop_features=drop_features,
                          dim_reduction=dim_reduction, n_components=n_components)
+        self.preproc = None
         self.fairness_metric = fairness_metric
         self.m = m
         self.eps = eps
@@ -49,7 +50,7 @@ class MetricOptimizer(Preprocessing):
             self.preproc = MetricOptRemover(frac=self.frac, m=self.m, eps=self.eps,
                                             deletions=None,
                                             fairness_metric=self.fairness_metric,
-                                            protected_attribute=None, label=None,
+                                            protected_attribute=self.protected_attribute, label=self.label,
                                             drop_protected_attribute=self.drop_protected_attribute,
                                             drop_label=self.drop_label,
                                             drop_features=self.drop_features,
@@ -59,7 +60,7 @@ class MetricOptimizer(Preprocessing):
             self.preproc = MetricOptGenerator(frac=self.frac, m=self.m, eps=self.eps,
                                               additions=self.additions,
                                               fairness_metric=self.fairness_metric,
-                                              protected_attribute=None, label=None,
+                                              protected_attribute=self.protected_attribute, label=self.label,
                                               data_generator=self.data_generator,
                                               data_generator_params=self.data_generator_params,
                                               drop_protected_attribute=self.drop_protected_attribute,
@@ -68,11 +69,12 @@ class MetricOptimizer(Preprocessing):
                                               dim_reduction=self.dim_reduction, n_components=self.n_components,
                                               random_state=self.random_state)
 
-    def fit(self):
-        self.preproc.fit()
+    def fit(self, dataset):
+        self.preproc.fit(dataset)
+        return self
 
     def transform(self):
-        self.preproc.transform()
+        return self.preproc.transform()
 
 
 class MetricOptRemover(Preprocessing):
@@ -115,8 +117,10 @@ class MetricOptRemover(Preprocessing):
         """
         if self.dataset is None:
             raise Exception('Model not fitted.')
-        if None in (self.protected_attribute, self.label):
-            raise Exception('Protected attribute or label not given.')
+        if self.protected_attribute is None:
+            raise Exception('Protected attribute is None.')
+        if self.label is None:
+            raise Exception('Label is None.')
 
         z = self.transformed_data[self.protected_attribute].to_numpy()
         y = self.transformed_data[self.label].to_numpy()
