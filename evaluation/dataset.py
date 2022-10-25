@@ -1,40 +1,6 @@
-import os
-import warnings
-
-import numpy as np
-import pandas as pd
-
 # datasets
 from aif360.datasets import AdultDataset, BankDataset, CompasDataset, GermanDataset, BinaryLabelDataset
 # import folktables
-
-# machine learning
-from sklearn.dummy import DummyClassifier
-from sklearn.linear_model import LogisticRegression
-from sklearn.svm import SVC
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.neural_network import MLPClassifier
-from sklearn.pipeline import Pipeline
-from sklearn.base import clone
-
-# fair preprocessors
-from aif360.algorithms.preprocessing import DisparateImpactRemover, LFR, Reweighing
-from src.preprocessing import MetricOptimizer, OriginalData, PreprocessingWrapper
-
-# evaluation
-## dataset evaluation
-from aif360.metrics import BinaryLabelDatasetMetric
-## classification metrics
-from sklearn.metrics import roc_auc_score, balanced_accuracy_score, f1_score, accuracy_score, precision_score, \
-    recall_score
-## fairness metrics
-from src.metrics import mutual_information, normalized_mutual_information,\
-    rdc, statistical_parity_absolute_difference, \
-    equal_opportunity_absolute_difference, disparate_impact_ratio, disparate_impact_ratio_objective,\
-    predictive_equality_absolute_difference, average_odds_error, average_odds_difference,\
-    consistency_score, consistency_score_objective
 
 
 def selecting_dataset(dataset_used: str, protected_attribute_used: str):
