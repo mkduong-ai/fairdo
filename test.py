@@ -1,6 +1,7 @@
-from PreprocessingEvaluation.main import selecting_dataset
+from evaluation.dataset import selecting_dataset
 
 # generate synthetic datapoints
+from sdv.tabular import GaussianCopula, CTGAN, TVAE
 from sdv.lite import TabularPreset
 
 
@@ -18,7 +19,9 @@ def main():
     # elapsed = time.perf_counter() - start
     # print(elapsed)
 
-    generator = TabularPreset(name='FAST_ML')
+    # generator = TabularPreset(name='FAST_ML')
+    generator = GaussianCopula()
+    generator.fit(dataset_df)
 
     # Create synthetic data
     synthetic_data = generator.sample(100)

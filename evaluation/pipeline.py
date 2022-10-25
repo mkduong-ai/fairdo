@@ -34,10 +34,10 @@ from src.preprocessing import MetricOptimizer, OriginalData, PreprocessingWrappe
 from aif360.metrics import BinaryLabelDatasetMetric
 
 ## fairness metrics
-from src.metrics import mutual_information, normalized_mutual_information,\
+from src.metrics import mutual_information, normalized_mutual_information, \
     rdc, statistical_parity_absolute_difference, \
-    equal_opportunity_absolute_difference, disparate_impact_ratio, disparate_impact_ratio_objective,\
-    predictive_equality_absolute_difference, average_odds_error, average_odds_difference,\
+    equal_opportunity_absolute_difference, disparate_impact_ratio, disparate_impact_ratio_objective, \
+    predictive_equality_absolute_difference, average_odds_error, average_odds_difference, \
     consistency_score, consistency_score_objective
 
 
@@ -104,7 +104,7 @@ def train_models(models_trained: dict, Xs_preproc: dict, ys_preproc: dict, ws_pr
                     warnings.warn("Fix for LogisticRegression for one available class.")
                     models_trained[key_model][key_preproc] = \
                         DummyClassifier(strategy='constant',
-                                        constant=uniqueness[0]).\
+                                        constant=uniqueness[0]). \
                             fit(Xs_preproc[key_preproc], ys_preproc[key_preproc])
                 else:
                     models_trained[key_model][key_preproc] = \
@@ -131,7 +131,7 @@ def results_to_df(results):
 
 
 def preprocess_pipeline(dataset_train: BinaryLabelDataset, dataset_test: BinaryLabelDataset,
-                        privileged_groups: list, unprivileged_groups: list,
+                        privileged_groups: dict, unprivileged_groups: dict,
                         models: list, preprocessors: list):
     preproc_datasets = {type(preprocessor).__name__: preprocessor.fit_transform(dataset_train) for preprocessor in
                         preprocessors}

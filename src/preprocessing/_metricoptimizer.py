@@ -193,7 +193,7 @@ class MetricOptGenerator(Preprocessing):
             if data_generator_params is not None:
                     self.data_generator = data_generators[data_generator_str](**data_generator_params)
             else:
-                self.data_generator = data_generators[data_generator_str]
+                self.data_generator = data_generators[data_generator_str]()
 
         self.data_generator_params = data_generator_params
         self.random_state = random_state
@@ -292,5 +292,4 @@ class MetricOptGenerator(Preprocessing):
                 if discrimination_values[opt_cand_index] <= self.eps:
                     break
 
-        self.samples = self.dataset.loc[samples.index]
-        return self.samples
+        return samples
