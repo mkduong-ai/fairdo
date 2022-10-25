@@ -1,33 +1,9 @@
-# machine learning
-from sklearn.dummy import DummyClassifier
-from sklearn.linear_model import LogisticRegression
-from sklearn.svm import SVC
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.neural_network import MLPClassifier
-from sklearn.pipeline import Pipeline
-from sklearn.base import clone
-
 # fair preprocessors
 from aif360.algorithms.preprocessing import DisparateImpactRemover, LFR, Reweighing
 
 from evaluation.pipeline import run_experiments
 from evaluation.settings import get_evaluation_config
 from src.preprocessing import MetricOptimizer, OriginalData, PreprocessingWrapper
-
-dataset_pro_attributes_template = [('adult', 'sex'),
-                                   ('compas', 'race'),
-                                   ('german', 'foreign_worker'),
-                                   ('german', 'sex'),
-                                   ('bank', 'age')]
-
-models_template = [LogisticRegression(),
-                   DecisionTreeClassifier(),
-                   RandomForestClassifier(),
-                   SVC(probability=True),
-                   MLPClassifier(),  # MLP does not support sample weight
-                   KNeighborsClassifier()]  # KNN does not support sample weight
 
 
 def run_comparison_preprocessors():

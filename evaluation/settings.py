@@ -1,7 +1,21 @@
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neural_network import MLPClassifier
+from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 
+dataset_pro_attributes_template = [('adult', 'sex'),
+                                   ('compas', 'race'),
+                                   ('german', 'foreign_worker'),
+                                   ('german', 'sex'),
+                                   ('bank', 'age')]
+models_template = [LogisticRegression(),
+                   DecisionTreeClassifier(),
+                   RandomForestClassifier(),
+                   SVC(probability=True),
+                   MLPClassifier(),  # MLP does not support sample weight
+                   KNeighborsClassifier()]  # KNN does not support sample weight
 x_axes_template = ['Mutual Information',
                    'Normalized MI',
                    'Randomized Dependence Coefficient',
