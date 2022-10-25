@@ -40,6 +40,7 @@ from src.metrics import mutual_information, normalized_mutual_information,\
     predictive_equality_absolute_difference, average_odds_error, average_odds_difference,\
     consistency_score, consistency_score_objective
 
+
 def preprocess_dataset(preprocessors, dataset_train):
     """
 

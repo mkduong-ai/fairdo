@@ -83,7 +83,7 @@ def run_fairness_agnostic():
     metrics = ['disparate_impact_ratio_objective']
 
     for metric in metrics:
-        preprocessing_metric_str = f"PreprocessingWrapper(MetricOptimizer(frac=0.75," \
+        preprocessing_metric_str = f"PreprocessingWrapper(MetricOptimizer(frac=1.75," \
                                    f"m=5," \
                                    f"fairness_metric={metric}," \
                                    f"protected_attribute=protected_attribute," \

@@ -61,7 +61,7 @@ class MetricOptimizer(Preprocessing):
                                               additions=self.additions,
                                               fairness_metric=self.fairness_metric,
                                               protected_attribute=self.protected_attribute, label=self.label,
-                                              data_generator=self.data_generator,
+                                              data_generator_str=self.data_generator,
                                               data_generator_params=self.data_generator_params,
                                               drop_protected_attribute=self.drop_protected_attribute,
                                               drop_label=self.drop_label,
@@ -170,7 +170,7 @@ class MetricOptGenerator(Preprocessing):
                  additions=None,
                  fairness_metric=statistical_parity_absolute_difference,
                  protected_attribute=None, label=None,
-                 data_generator='GaussianCopula',
+                 data_generator_str='GaussianCopula',
                  data_generator_params=None,
                  drop_protected_attribute=False,
                  drop_label=False,
@@ -185,15 +185,15 @@ class MetricOptGenerator(Preprocessing):
         self.m = m
         self.eps = eps
         self.additions = additions
-        if data_generator == 'TabularPreset':
+        if data_generator_str == 'TabularPreset':
             self.data_generator = TabularPreset(name='FAST_ML')
         else:
-            self.data_generator = eval(data_generator)
             # init data generator
-            if self.data_generator_params is not None:
-                self.data_generator = self.data_generator(**self.data_generator_params)
+            data_generators = {'GaussianCopula': GaussianCopula}
+            if data_generator_params is not None:
+                    self.data_generator = data_generators[data_generator_str](**data_generator_params)
             else:
-                self.data_generator = self.data_generator()
+                self.data_generator = data_generators[data_generator_str]
 
         self.data_generator_params = data_generator_params
         self.random_state = random_state
@@ -217,7 +217,7 @@ class MetricOptGenerator(Preprocessing):
             except:
                 print('Type of dataset is unknown.')
 
-        if self.drop_protected_attr and self.protected_attribute is not None:
+        if self.drop_protected_attribute and self.protected_attribute is not None:
             self.dataset = self.dataset.drop(
                 columns=self.protected_attribute, axis=1, inplace=False)
         if self.drop_label and self.label is not None:

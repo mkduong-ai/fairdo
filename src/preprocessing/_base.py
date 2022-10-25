@@ -117,7 +117,6 @@ class PreprocessingWrapper:
 
     def fit_transform(self, dataset_train: BinaryLabelDataset) -> BinaryLabelDataset:
         # z_train already included in x_train
-        print(self.__class__.__name__)
         transformed_df_dataset = self.preprocessing.fit_transform(dataset_train.convert_to_dataframe()[0])
 
         transformed_dataset = BinaryLabelDataset(df=transformed_df_dataset,
