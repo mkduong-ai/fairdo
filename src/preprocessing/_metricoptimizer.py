@@ -190,11 +190,13 @@ class MetricOptGenerator(Preprocessing):
         else:
             # init data generator
             data_generators = {'GaussianCopula': GaussianCopula}
-            if data_generator_params is not None:
-                    self.data_generator = data_generators[data_generator_str](**data_generator_params)
+            if data_generator_str in data_generators.keys():
+                if data_generator_params is not None:
+                        self.data_generator = data_generators[data_generator_str](**data_generator_params)
+                else:
+                    self.data_generator = data_generators[data_generator_str]()
             else:
-                self.data_generator = data_generators[data_generator_str]()
-
+                raise Exception('Unknown data generator.')
         self.data_generator_params = data_generator_params
         self.random_state = random_state
         np.random.seed(random_state)
