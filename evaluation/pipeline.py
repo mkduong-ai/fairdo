@@ -122,6 +122,18 @@ def train_models(models_trained: dict, Xs_preproc: dict, ys_preproc: dict, ws_pr
 
 
 def results_to_df(results):
+    """
+    Returns a pandas dataframe from results
+
+    Parameters
+    ----------
+    results: dict
+        results['model']['pre-processor']['accuracy']
+
+    Returns
+    -------
+
+    """
     df_list = []
     for key_model in results:
         df = pd.DataFrame(results[key_model]).transpose()
