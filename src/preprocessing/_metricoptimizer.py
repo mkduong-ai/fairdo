@@ -212,32 +212,10 @@ class MetricOptGenerator(Preprocessing):
         -------
         self
         """
-        self.dataset = dataset
-        if not isinstance(self.dataset, pd.DataFrame):
-            try:
-                self.dataset = self.dataset.convert_to_dataframe()[0]
-            except:
-                print('Type of dataset is unknown.')
-
-        if self.drop_protected_attribute and self.protected_attribute is not None:
-            self.dataset = self.dataset.drop(
-                columns=self.protected_attribute, axis=1, inplace=False)
-        if self.drop_label and self.label is not None:
-            self.dataset = self.dataset.drop(
-                columns=self.label, axis=1, inplace=False)
-        if self.drop_features:
-            if None in (self.protected_attribute, self.label):
-                raise Exception('Protected attribute or label not given.'
-                                'Not possible to determine which columns are features to drop.')
-            else:
-                self.dataset = self.dataset[[self.protected_attribute, self.label]]
-
-        self.transform_data()
-        if self.dim_reduction:
-            self.reduce_dimensionality(self.n_components)
+        super().fit(dataset)
 
         # fit data generator to data
-        self.data_generator.fit(self.dataset)
+        self.data_generator.fit(self.transformed_data)
 
         return self
 

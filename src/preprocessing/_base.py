@@ -110,7 +110,11 @@ class Preprocessing(metaclass=abc.ABCMeta):
 
 
 class PreprocessingWrapper:
-
+    """
+    Wrapper Class for pre-processing methods that take a
+    pandas DataFrame and return a pandas DataFrame instead
+    of a BinaryLabelDataset.
+    """
     def __init__(self, preprocessing):
         self.preprocessing = preprocessing
         self.__class__.__name__ = type(preprocessing).__name__
@@ -128,10 +132,11 @@ class PreprocessingWrapper:
 
 class OriginalData:
     def __init__(self):
-        pass
+        self.dataset = None
 
     def fit(self, dataset):
         self.dataset = dataset
+        return self
 
     def transform(self):
         return self.dataset

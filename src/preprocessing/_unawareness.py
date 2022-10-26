@@ -6,6 +6,8 @@ from src.metrics import statistical_parity_absolute_difference
 
 class Unawareness(Preprocessing):
     """
+    Does not work with aif360 (!)
+
     Fairness through unawareness
     Removes column of protected attribute
     """
