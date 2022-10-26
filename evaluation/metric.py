@@ -34,7 +34,7 @@ def evaluate_ml_models(results: dict, models_trained: dict, X_test, y_test, z_te
     Parameters
     ----------
     results: dict
-        e.g. stores results in results['LogisticRegression']['DisparateImpactRemover']['Accuracy]
+        e.g. stores results in results['LogisticRegression']['DisparateImpactRemover']['Accuracy']
     models_trained: dict
         e.g. models are in models_trained['LogisticRegression']['DisparateImpactRemover']
     X_test: ndarray
