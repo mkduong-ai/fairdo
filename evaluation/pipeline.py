@@ -40,7 +40,7 @@ def preprocess_dataset(preprocessors, dataset_train):
     Parameters
     ----------
     preprocessors: list of preprocessors
-    dataset_train: pandas DataFrame
+    dataset_train: pd.DataFrame
 
     Returns
     -------
@@ -50,9 +50,25 @@ def preprocess_dataset(preprocessors, dataset_train):
             preprocessors}
 
 
-def get_BinaryLabelDatasetMetric(dataset_train: pd.DataFrame, preproc_datasets: list,
-                                 privileged_groups: list,
-                                 unprivileged_groups: list):
+def get_BinaryLabelDatasetMetric(dataset_train: BinaryLabelDataset, preproc_datasets: dict,
+                                 privileged_groups: dict,
+                                 unprivileged_groups: dict):
+    """
+    Returns BinaryLabelDatasetMetric for both the unprocessed training data
+    and the pre-processed training data.
+
+    Parameters
+    ----------
+    dataset_train: BinaryLabelDataset
+    preproc_datasets: dict
+    privileged_groups: dict
+    unprivileged_groups: dict
+
+    Returns
+    -------
+    BinaryLabelDatasetMetric, BinaryLabelDatasetMetric
+
+    """
     dataset_metric = BinaryLabelDatasetMetric(dataset_train,
                                               unprivileged_groups=unprivileged_groups,
                                               privileged_groups=privileged_groups)
@@ -67,6 +83,7 @@ def get_BinaryLabelDatasetMetric(dataset_train: pd.DataFrame, preproc_datasets: 
 
 def train_models(models_trained: dict, Xs_preproc: dict, ys_preproc: dict, ws_preproc: dict):
     """
+    models_train is a dict of dicts. Machine learning models -> Pre-processors
     The keys of Xs, ys, ws represent preprocessing methods
 
     Parameters
@@ -84,8 +101,6 @@ def train_models(models_trained: dict, Xs_preproc: dict, ys_preproc: dict, ws_pr
 
     for key_model, value_model in models_trained.items():
         for key_preproc in value_model:
-            model = models_trained[key_model][key_preproc]
-
             try:
                 models_trained[key_model][key_preproc] = \
                     models_trained[key_model][key_preproc].fit(Xs_preproc[key_preproc], ys_preproc[key_preproc],
@@ -126,6 +141,28 @@ def results_to_df(results):
 def preprocess_pipeline(dataset_train: BinaryLabelDataset, dataset_test: BinaryLabelDataset,
                         privileged_groups: dict, unprivileged_groups: dict,
                         models: list, preprocessors: list):
+    """
+    Pipeline for evaluating pre-processors:
+    1. Pre-process dataset_train with all pre-processors
+    2. Evaluate pre-processed dataset_train
+    3. Train machine learning models on each pre-processed dataset_train
+    4. Evaluate on multiple metrics (performance, fairness)
+
+    Parameters
+    ----------
+    dataset_train: BinaryLabelDataset
+    dataset_test: BinaryLabelDataset
+    privileged_groups: dict
+    unprivileged_groups: dict
+    models: list
+    preprocessors: list of preprocessors from aif360
+        pre-processors that work on BinaryLabelDataset
+
+    Returns
+    -------
+
+    """
+    # dictionary with (key, value) = (pre-processor name, BinaryLabelDataset)
     preproc_datasets = {type(preprocessor).__name__: preprocessor.fit_transform(dataset_train) for preprocessor in
                         preprocessors}
 
@@ -137,9 +174,9 @@ def preprocess_pipeline(dataset_train: BinaryLabelDataset, dataset_test: BinaryL
                                      unprivileged_groups)
 
     dataset_evaluation = evaluate_dataset_metrics('Dataset (Original)', dataset_metric)
-    all_dataset_evaluation = pd.concat(
+    df_all_dataset_evaluation = pd.concat(
         [evaluate_dataset_metrics(key, value) for key, value in preproc_dataset_metrics.items()])
-    all_dataset_evaluation = pd.concat([dataset_evaluation, all_dataset_evaluation])
+    df_all_dataset_evaluation = pd.concat([dataset_evaluation, df_all_dataset_evaluation])
 
     # evaluate classification fairness
     # prepare training dataset
@@ -166,15 +203,20 @@ def preprocess_pipeline(dataset_train: BinaryLabelDataset, dataset_test: BinaryL
     results = evaluate_ml_models(results, models_trained, X_test, y_test, z_test)
     df_results = results_to_df(results)
 
-    return all_dataset_evaluation, df_results
+    return df_all_dataset_evaluation, df_results
 
 
 def run_experiments(models, dataset="compas", protected_attribute="race", preprocessors_str=None,
                     n_runs=5, seed=1,
                     filepath='results'):
     """
-    models:
-    preprocessors:
+    Runs the experiment for n_runs times with given machine learning models
+    and pre-processing methods for a given dataset that discriminated on protected_attribute.
+
+    models: list
+        list of estimators with .fit()
+    preprocessors: list
+        list of strings
     n_run: number of runs
         Calmon et al. 2017 proposed 5-fold cross validation
 
