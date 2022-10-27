@@ -14,11 +14,11 @@ class MetricOptimizer(Preprocessing):
     Deletes samples which worsen the discrimination in the dataset
     """
 
-    def __init__(self, frac=0.8, m=5, eps=0,
+    def __init__(self, protected_attribute, label,
+                 frac=0.8, m=5, eps=0,
                  additions=None,
                  deletions=None,
                  fairness_metric=statistical_parity_absolute_difference,
-                 protected_attribute=None, label=None,
                  data_generator='GaussianCopula',
                  data_generator_params=None,
                  drop_protected_attribute=False,
@@ -82,10 +82,11 @@ class MetricOptRemover(Preprocessing):
     Deletes samples which worsen the discrimination in the dataset
     """
 
-    def __init__(self, frac=0.8, m=5, eps=0,
+    def __init__(self,
+                 protected_attribute, label,
+                 frac=0.8, m=5, eps=0,
                  deletions=None,
                  fairness_metric=statistical_parity_absolute_difference,
-                 protected_attribute=None, label=None,
                  drop_protected_attribute=False,
                  drop_label=False,
                  drop_features=False,
@@ -103,24 +104,8 @@ class MetricOptRemover(Preprocessing):
         np.random.seed(random_state)
 
     def transform(self):
-        """
-
-        Parameters
-        ----------
-        fairness_metric: callable
-            metric from fairness notion for datasets
-            Smaller values indicate smaller discrimination
-
-        Returns
-        -------
-
-        """
         if self.dataset is None:
             raise Exception('Model not fitted.')
-        if self.protected_attribute is None:
-            raise Exception('Protected attribute is None.')
-        if self.label is None:
-            raise Exception('Label is None.')
 
         z = self.transformed_data[self.protected_attribute].to_numpy()
         y = self.transformed_data[self.label].to_numpy()
@@ -166,10 +151,10 @@ class MetricOptGenerator(Preprocessing):
     Deletes samples which worsen the discrimination in the dataset
     """
 
-    def __init__(self, frac=1.2, m=5, eps=0,
+    def __init__(self, protected_attribute, label,
+                 frac=1.2, m=5, eps=0,
                  additions=None,
                  fairness_metric=statistical_parity_absolute_difference,
-                 protected_attribute=None, label=None,
                  data_generator_str='GaussianCopula',
                  data_generator_params=None,
                  drop_protected_attribute=False,
@@ -220,18 +205,6 @@ class MetricOptGenerator(Preprocessing):
         return self
 
     def transform(self):
-        """
-
-        Parameters
-        ----------
-        fairness_metric: callable
-            metric from fairness notion for datasets
-            Smaller values indicate smaller discrimination
-
-        Returns
-        -------
-
-        """
         if self.dataset is None:
             raise Exception('Model not fitted.')
         if None in (self.protected_attribute, self.label):

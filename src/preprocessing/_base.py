@@ -8,7 +8,8 @@ from sklearn.decomposition import PCA
 
 class Preprocessing(metaclass=abc.ABCMeta):
 
-    def __init__(self, frac=0.8, protected_attribute=None, label=None,
+    def __init__(self, protected_attribute, label,
+                 frac=0.8,
                  drop_protected_attribute=False,
                  drop_label=False,
                  drop_features=False,
@@ -131,7 +132,7 @@ class PreprocessingWrapper:
 
 
 class OriginalData:
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.dataset = None
 
     def fit(self, dataset):
