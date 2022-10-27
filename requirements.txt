@@ -1,7 +1,7 @@
 numpy
 scipy
 matplotlib
-tensorflow
-aif360
-pytorch
+seaborn
+sklearn
 sdv
+aif360
