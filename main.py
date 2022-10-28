@@ -3,7 +3,7 @@ from aif360.algorithms.preprocessing import DisparateImpactRemover, LFR, Reweigh
 
 from evaluation.pipeline import run_experiments
 from evaluation.settings import get_evaluation_config
-from src.preprocessing import MetricOptimizer, OriginalData, PreprocessingWrapper
+from fado.preprocessing import MetricOptimizer, OriginalData, PreprocessingWrapper
 
 
 def run_comparison_preprocessors():

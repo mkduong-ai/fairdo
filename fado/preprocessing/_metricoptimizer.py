@@ -5,8 +5,8 @@ import pandas as pd
 from sdv.tabular import GaussianCopula, CTGAN, TVAE
 from sdv.lite import TabularPreset
 
-from src.preprocessing._base import Preprocessing
-from src.metrics import statistical_parity_absolute_difference
+from fado.preprocessing._base import Preprocessing
+from fado.metrics import statistical_parity_absolute_difference
 
 
 class MetricOptimizer(Preprocessing):

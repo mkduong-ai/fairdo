@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from scipy.spatial.distance import cdist
 
-from src.preprocessing import Preprocessing
+from fado.preprocessing import Preprocessing
 
 
 class LowDiscMinimization(Preprocessing):

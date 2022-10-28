@@ -1,7 +1,7 @@
 import numpy as np
 
-from src.preprocessing._base import Preprocessing
-from src.metrics import statistical_parity_absolute_difference
+from fado.preprocessing._base import Preprocessing
+from fado.metrics import statistical_parity_absolute_difference
 
 
 class Unawareness(Preprocessing):

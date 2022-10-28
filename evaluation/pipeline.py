@@ -20,14 +20,14 @@ from evaluation.dataset import selecting_dataset
 from evaluation.metric import evaluate_ml_models, evaluate_dataset_metrics
 
 # method
-from src.preprocessing import MetricOptimizer, OriginalData, PreprocessingWrapper
+from fado.preprocessing import MetricOptimizer, OriginalData, PreprocessingWrapper
 
 # evaluation
 ## dataset evaluation
 from aif360.metrics import BinaryLabelDatasetMetric
 
 ## fairness metrics
-from src.metrics import mutual_information, normalized_mutual_information, \
+from fado.metrics import mutual_information, normalized_mutual_information, \
     rdc, statistical_parity_absolute_difference, \
     equal_opportunity_absolute_difference, disparate_impact_ratio, disparate_impact_ratio_objective, \
     predictive_equality_absolute_difference, average_odds_error, average_odds_difference, \
