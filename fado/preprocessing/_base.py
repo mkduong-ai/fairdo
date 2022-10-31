@@ -96,7 +96,8 @@ class Preprocessing(metaclass=abc.ABCMeta):
         if np.all(is_number(self.dataset.dtypes)):
             self.transformed_data = self.dataset.copy()
         else:
-            self.transformed_data = pd.get_dummies(self.dataset)
+            raise Exception(f"All columns must be numeric. The datatypes of the columns are:\n{self.dataset.dtypes}")
+            #self.transformed_data = pd.get_dummies(self.dataset)
 
         # drop columns with same values in all rows
         nunique = self.transformed_data.nunique()
@@ -105,9 +106,9 @@ class Preprocessing(metaclass=abc.ABCMeta):
             columns=cols_to_drop, axis=1, inplace=False)
 
         # Min-Max Normalization
-        self.transformed_data = \
-            (self.transformed_data - self.transformed_data.min()) / \
-            (self.transformed_data.max() - self.transformed_data.min())
+        # self.transformed_data = \
+        #     (self.transformed_data - self.transformed_data.min()) / \
+        #     (self.transformed_data.max() - self.transformed_data.min())
 
 
 class PreprocessingWrapper:
