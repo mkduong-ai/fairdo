@@ -16,6 +16,12 @@ notably reducing the discrimination.
 
 ### Installation Manual
 
+### Developer
+
+```python
+pip install -e.
+```
+
 ## Usage
 
 ## Evaluation
