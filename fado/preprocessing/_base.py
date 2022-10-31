@@ -100,10 +100,10 @@ class Preprocessing(metaclass=abc.ABCMeta):
             #self.transformed_data = pd.get_dummies(self.dataset)
 
         # drop columns with same values in all rows
-        nunique = self.transformed_data.nunique()
-        cols_to_drop = nunique[nunique == 1].index
-        self.transformed_data = self.transformed_data.drop(
-            columns=cols_to_drop, axis=1, inplace=False)
+        # nunique = self.transformed_data.nunique()
+        # cols_to_drop = nunique[nunique == 1].index
+        # self.transformed_data = self.transformed_data.drop(
+        #     columns=cols_to_drop, axis=1, inplace=False)
 
         # Min-Max Normalization
         # self.transformed_data = \
