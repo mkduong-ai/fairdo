@@ -77,38 +77,20 @@ class Preprocessing(metaclass=abc.ABCMeta):
             else:
                 self.dataset = self.dataset[[self.protected_attribute, self.label]]
 
-        self.transform_data()
-        if self.dim_reduction:
-            self.reduce_dimensionality(self.n_components)
+        self.check_datatype()
         return self
 
     def fit_transform(self, dataset):
         return self.fit(dataset).transform()
 
-    def reduce_dimensionality(self, n_components=2):
-        pca = PCA(n_components)
-        self.transformed_data = pd.DataFrame(
-            pca.fit_transform(self.transformed_data))
-
-    def transform_data(self):
+    def check_datatype(self):
         # One Hot Encoding
-        is_number = np.vectorize(lambda x: np.issubdtype(x, np.number))
+        is_number = np.vectorize(lambda x: np.issubdtype(x, np.number) or np.issubdtype(x, bool))
         if np.all(is_number(self.dataset.dtypes)):
             self.transformed_data = self.dataset.copy()
         else:
             raise Exception(f"All columns must be numeric. The datatypes of the columns are:\n{self.dataset.dtypes}")
             #self.transformed_data = pd.get_dummies(self.dataset)
-
-        # drop columns with same values in all rows
-        # nunique = self.transformed_data.nunique()
-        # cols_to_drop = nunique[nunique == 1].index
-        # self.transformed_data = self.transformed_data.drop(
-        #     columns=cols_to_drop, axis=1, inplace=False)
-
-        # Min-Max Normalization
-        # self.transformed_data = \
-        #     (self.transformed_data - self.transformed_data.min()) / \
-        #     (self.transformed_data.max() - self.transformed_data.min())
 
 
 class PreprocessingWrapper:
