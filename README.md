@@ -14,7 +14,11 @@ notably reducing the discrimination.
 
 ### Dependencies
 
-### Installation Manual
+### Manual Installation
+
+```bash
+python setup.py install
+```
 
 ### Developer
 
@@ -22,7 +26,8 @@ notably reducing the discrimination.
 pip install -e.
 ```
 
-## Usage
+## Example Usage
+
 
 ## Evaluation
 

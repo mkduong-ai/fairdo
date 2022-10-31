@@ -107,6 +107,7 @@ class MetricOptRemover(Preprocessing):
         if self.dataset is None:
             raise Exception('Model not fitted.')
 
+        #print(self.transformed_data)
         z = self.transformed_data[self.protected_attribute].to_numpy()
         y = self.transformed_data[self.label].to_numpy()
 
