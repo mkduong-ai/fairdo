@@ -28,6 +28,32 @@ pip install -e.
 
 ## Example Usage
 
+In the following example, we use the iris dataset. The protected attribute
+is the species and the label is petal length. We binarize both features.
+
+```python
+# Imports
+from fado.preprocessing import MetricOptimizer
+from sklearn.preprocessing import LabelEncoder
+import pandas as pd
+
+# Loading a sample database and encoding for appropiate usage
+iris = pd.read_csv('https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv')
+le = LabelEncoder()
+iris_transform = iris.apply(le.fit_transform)
+iris_transform['species'] = iris_transform['species'] == 0
+iris_transform['petal_length'] = iris_transform['petal_length'] > 9
+
+# Initialize
+preproc = MetricOptimizer(frac=0.75,
+                          protected_attribute='species',
+                          label='petal_length')
+                          
+iris_fair = preproc.fit_transform(iris_transform)
+```
+
+More ``jupyter notebooks`` examples can be viewed in ``tutorials/``.
+
 
 ## Evaluation
 
