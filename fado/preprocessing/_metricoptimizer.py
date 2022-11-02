@@ -222,12 +222,12 @@ class MetricOptGenerator(Preprocessing):
                  len(self.transformed_data))
         else:
             n = self.additions
-        for i in range(1, n):
+        for i in range(0, n):
             # create candidates
             cands = self.data_generator.sample(self.m)
 
             # list consists of single candidates added to dataset
-            samples_concat_list = [pd.concat([samples, cands.iloc[[i]]], ignore_index=True) for i in range(len(cands))]
+            samples_concat_list = [pd.concat([samples, cands.iloc[[j]]], ignore_index=True) for j in range(len(cands))]
 
             discrimination_values = []
             for j in range(self.m):
