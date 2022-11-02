@@ -13,6 +13,7 @@ notably reducing the discrimination.
 ## Installation
 
 ### Dependencies
+numpy, pandas, seaborn, scikit-learn, aif360, sdv
 
 ### Manual Installation
 
@@ -20,7 +21,7 @@ notably reducing the discrimination.
 python setup.py install
 ```
 
-### Developer
+### Development
 
 ```python
 pip install -e.
