@@ -171,6 +171,7 @@ class MetricOptGenerator(Preprocessing):
         self.m = m
         self.eps = eps
         self.additions = additions
+        self.fitted = False
         if data_generator_str == 'TabularPreset':
             self.data_generator = TabularPreset(name='FAST_ML')
         else:
@@ -200,8 +201,10 @@ class MetricOptGenerator(Preprocessing):
         """
         super().fit(dataset)
 
-        # fit data generator to data
-        self.data_generator.fit(self.transformed_data)
+        # fit data generator to data if not fitted
+        if not self.fitted:
+            self.data_generator.fit(self.transformed_data)
+            self.fitted = True
 
         return self
 
@@ -210,9 +213,6 @@ class MetricOptGenerator(Preprocessing):
             raise Exception('Model not fitted.')
         if None in (self.protected_attribute, self.label):
             raise Exception('Protected attribute or label not given.')
-
-        z = self.transformed_data[self.protected_attribute].to_numpy()
-        y = self.transformed_data[self.label].to_numpy()
 
         # preparation
         samples = self.transformed_data.copy()
