@@ -1,4 +1,4 @@
-from plot_helper import save_plots_over_models_datasets, save_plots_over_xy_axes
+from plot.helper import save_plots_over_models_datasets, save_plots_over_xy_axes
 from settings import get_evaluation_config
 
 

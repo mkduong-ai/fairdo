@@ -7,8 +7,9 @@ from aif360.metrics import BinaryLabelDatasetMetric
 ## classification metrics
 from sklearn.metrics import roc_auc_score, balanced_accuracy_score, f1_score, accuracy_score, precision_score, \
     recall_score
+
 ## fairness metrics
-from src.fado.metrics import mutual_information, normalized_mutual_information,\
+from fado.metrics import mutual_information, normalized_mutual_information,\
     rdc, statistical_parity_absolute_difference, \
     equal_opportunity_absolute_difference, disparate_impact_ratio, disparate_impact_ratio_objective,\
     predictive_equality_absolute_difference, average_odds_error, average_odds_difference,\

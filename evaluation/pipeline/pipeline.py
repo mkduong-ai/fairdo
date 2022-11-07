@@ -1,6 +1,11 @@
+from .dataset import selecting_dataset
+from .metric import evaluate_ml_models, evaluate_dataset_metrics
+
+# intern
 import os
 import warnings
 
+# third party
 import numpy as np
 import pandas as pd
 
@@ -12,19 +17,8 @@ from aif360.datasets import BinaryLabelDataset
 from sklearn.dummy import DummyClassifier
 from sklearn.base import clone
 
-# fair preprocessors
-
-# evaluation
-from evaluation.pipeline.dataset import selecting_dataset
-from evaluation.pipeline.metric import evaluate_ml_models, evaluate_dataset_metrics
-
-# method
-
-# evaluation
-## dataset evaluation
 from aif360.metrics import BinaryLabelDatasetMetric
 
-## fairness metrics
 
 
 def preprocess_dataset(preprocessors, dataset_train):

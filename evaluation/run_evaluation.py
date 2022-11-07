@@ -1,9 +1,11 @@
+from pipeline.pipeline import run_experiments
+from pipeline.helper import PreprocessingWrapper
+from settings import get_evaluation_config
+
+from fado.preprocessing import MetricOptimizer, OriginalData
+
 # fair preprocessors
 from aif360.algorithms.preprocessing import DisparateImpactRemover, LFR, Reweighing
-
-from evaluation.pipeline import run_experiments
-from evaluation.settings import get_evaluation_config
-from fado.preprocessing import MetricOptimizer, OriginalData, PreprocessingWrapper
 
 
 def run_comparison_preprocessors():
