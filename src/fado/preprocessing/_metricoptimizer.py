@@ -1,12 +1,12 @@
+from ._base import Preprocessing
+from src.fado.metrics import statistical_parity_absolute_difference
+
+# third party
 import numpy as np
 import pandas as pd
 
 # generate synthetic datapoints
-from sdv.tabular import GaussianCopula
-from sdv.lite import TabularPreset
-
-from fado.preprocessing._base import Preprocessing
-from src.fado.metrics import statistical_parity_absolute_difference
+from copulas.multivariate import GaussianMultivariate
 
 
 class MetricOptimizer(Preprocessing):
@@ -61,7 +61,7 @@ class MetricOptimizer(Preprocessing):
                                               additions=self.additions,
                                               fairness_metric=self.fairness_metric,
                                               protected_attribute=self.protected_attribute, label=self.label,
-                                              data_generator_str=self.data_generator,
+                                              data_generator=self.data_generator,
                                               data_generator_params=self.data_generator_params,
                                               drop_protected_attribute=self.drop_protected_attribute,
                                               drop_label=self.drop_label,
@@ -156,8 +156,7 @@ class MetricOptGenerator(Preprocessing):
                  frac=1.2, m=5, eps=0,
                  additions=None,
                  fairness_metric=statistical_parity_absolute_difference,
-                 data_generator_str='GaussianCopula',
-                 data_generator_params=None,
+                 data_generator='GaussianCopula',
                  drop_protected_attribute=False,
                  drop_label=False,
                  drop_features=False,
@@ -172,19 +171,15 @@ class MetricOptGenerator(Preprocessing):
         self.eps = eps
         self.additions = additions
         self.fitted = False
-        if data_generator_str == 'TabularPreset':
-            self.data_generator = TabularPreset(name='FAST_ML')
-        else:
+        if isinstance(data_generator, str):
+            data_generators = {'GaussianCopula': GaussianMultivariate}
             # init data generator
-            data_generators = {'GaussianCopula': GaussianCopula}
-            if data_generator_str in data_generators.keys():
-                if data_generator_params is not None:
-                        self.data_generator = data_generators[data_generator_str](**data_generator_params)
-                else:
-                    self.data_generator = data_generators[data_generator_str]()
+            if data_generator in data_generators.keys():
+                self.data_generator = data_generators[data_generator]()
             else:
                 raise Exception('Unknown data generator.')
-        self.data_generator_params = data_generator_params
+        else:
+            self.data_generator = data_generator
         self.random_state = random_state
         np.random.seed(random_state)
 

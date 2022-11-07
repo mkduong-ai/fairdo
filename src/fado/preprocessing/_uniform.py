@@ -1,8 +1,9 @@
-import numpy as np
-import pandas as pd
-from scipy.spatial.distance import cdist
+from ._base import Preprocessing
 
-from fado.preprocessing import Preprocessing
+# third party
+import numpy as np
+from scipy.spatial.distance import cdist
+import pandas as pd
 
 
 class LowDiscMinimization(Preprocessing):

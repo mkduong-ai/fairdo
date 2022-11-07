@@ -1,6 +1,7 @@
-import numpy as np
+from ._base import Preprocessing
 
-from fado.preprocessing._base import Preprocessing
+# third party
+import numpy as np
 
 
 class Unawareness(Preprocessing):
