@@ -1,5 +1,11 @@
 from .dataset import selecting_dataset
+from .helper import PreprocessingWrapper
 from .metric import evaluate_ml_models, evaluate_dataset_metrics
+
+# fado
+from fado.preprocessing import MetricOptimizer, OriginalData
+from fado.metrics import statistical_parity_absolute_difference
+
 
 # intern
 import os
@@ -18,7 +24,6 @@ from sklearn.dummy import DummyClassifier
 from sklearn.base import clone
 
 from aif360.metrics import BinaryLabelDatasetMetric
-
 
 
 def preprocess_dataset(preprocessors, dataset_train):
