@@ -6,7 +6,6 @@ from .metric import evaluate_ml_models, evaluate_dataset_metrics
 from fado.preprocessing import MetricOptimizer, OriginalData
 from fado.metrics import statistical_parity_absolute_difference
 
-
 # intern
 import os
 import warnings
@@ -23,7 +22,9 @@ from aif360.datasets import BinaryLabelDataset
 from sklearn.dummy import DummyClassifier
 from sklearn.base import clone
 
+# aif360
 from aif360.metrics import BinaryLabelDatasetMetric
+from aif360.algorithms.preprocessing import DisparateImpactRemover, LFR, Reweighing
 
 
 def preprocess_dataset(preprocessors, dataset_train):
@@ -135,7 +136,7 @@ def results_to_df(results):
         df_list.append(df)
 
     df_concat = pd.concat(df_list, keys=list(results.keys()))
-    df_concat['ModelPreprocessor'] = df_concat.index
+    df_concat['ModelPreprocessor'] = df_concat.index.to_numpy()
     df_concat = df_concat.reset_index()
     df_concat = df_concat.drop(columns=['level_0', 'level_1'])
 

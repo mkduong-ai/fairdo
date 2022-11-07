@@ -98,7 +98,7 @@ def main():
                    'run_comparison_preprocessors': run_comparison_preprocessors,
                    'run_fairness_agnostic': run_fairness_agnostic}
 
-    pick = 'run_fairness_agnostic'
+    pick = 'run_quick'
 
     experiments[pick]()
 

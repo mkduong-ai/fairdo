@@ -50,11 +50,10 @@ def quick_plot():
     # settings
     x_axes = ['Disparate Impact Obj']
     y_axes = ['AUC']
-    models = ['KNeighborsClassifier']
 
-    dataset_pro_attributes = [('adult', 'sex')]
+    dataset_pro_attributes, models = get_evaluation_config(config='quick', plot=True)
 
-    save_plots_over_xy_axes(x_axes, y_axes, models, dataset_pro_attributes, show=True)
+    save_plots_over_xy_axes(x_axes, y_axes, models, dataset_pro_attributes, show=False)
 
 
 def main():
@@ -63,7 +62,7 @@ def main():
                    'plot_all_dataset_metrics': plot_all_datasets_metrics,
                    'plot_fairness_agnostic': plot_fairness_agnostic}
 
-    pick = 'plot_fairness_agnostic'
+    pick = 'quick_plot'
 
     experiments[pick]()
 
