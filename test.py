@@ -1,8 +1,7 @@
-from evaluation.dataset import selecting_dataset
+from evaluation.pipeline.dataset import selecting_dataset
 
 # generate synthetic datapoints
-from sdv.tabular import GaussianCopula, CTGAN, TVAE
-from sdv.lite import TabularPreset
+from sdv.tabular import GaussianCopula
 
 
 def fix_german_dataset():

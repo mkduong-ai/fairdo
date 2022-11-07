@@ -15,8 +15,8 @@ from sklearn.base import clone
 # fair preprocessors
 
 # evaluation
-from evaluation.dataset import selecting_dataset
-from evaluation.metric import evaluate_ml_models, evaluate_dataset_metrics
+from evaluation.pipeline.dataset import selecting_dataset
+from evaluation.pipeline.metric import evaluate_ml_models, evaluate_dataset_metrics
 
 # method
 
