@@ -13,25 +13,18 @@ from sklearn.dummy import DummyClassifier
 from sklearn.base import clone
 
 # fair preprocessors
-from aif360.algorithms.preprocessing import DisparateImpactRemover, LFR, Reweighing
 
 # evaluation
 from evaluation.dataset import selecting_dataset
 from evaluation.metric import evaluate_ml_models, evaluate_dataset_metrics
 
 # method
-from fado.preprocessing import MetricOptimizer, OriginalData, PreprocessingWrapper
 
 # evaluation
 ## dataset evaluation
 from aif360.metrics import BinaryLabelDatasetMetric
 
 ## fairness metrics
-from fado.metrics import mutual_information, normalized_mutual_information, \
-    rdc, statistical_parity_absolute_difference, \
-    equal_opportunity_absolute_difference, disparate_impact_ratio, disparate_impact_ratio_objective, \
-    predictive_equality_absolute_difference, average_odds_error, average_odds_difference, \
-    consistency_score, consistency_score_objective
 
 
 def preprocess_dataset(preprocessors, dataset_train):

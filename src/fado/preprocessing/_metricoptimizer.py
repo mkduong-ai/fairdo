@@ -2,11 +2,11 @@ import numpy as np
 import pandas as pd
 
 # generate synthetic datapoints
-from sdv.tabular import GaussianCopula, CTGAN, TVAE
+from sdv.tabular import GaussianCopula
 from sdv.lite import TabularPreset
 
 from fado.preprocessing._base import Preprocessing
-from fado.metrics import statistical_parity_absolute_difference
+from src.fado.metrics import statistical_parity_absolute_difference
 
 
 class MetricOptimizer(Preprocessing):
