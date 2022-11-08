@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 
 # generate synthetic datapoints
-from copulas.multivariate import GaussianMultivariate
+from sdv.tabular import GaussianCopula
 
 
 class MetricOptimizer(Preprocessing):
@@ -137,7 +137,7 @@ class MetricOptGenerator(Preprocessing):
         self.additions = additions
         self.data_fitted = False
         if isinstance(data_generator, str):
-            data_generators = {'GaussianCopula': GaussianMultivariate}
+            data_generators = {'GaussianCopula': GaussianCopula}
             # init data generator
             if data_generator in data_generators.keys():
                 self.data_generator = data_generators[data_generator]()
