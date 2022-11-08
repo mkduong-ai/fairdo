@@ -1,5 +1,5 @@
 from ._base import Preprocessing
-from src.fado.metrics import statistical_parity_absolute_difference
+from fado.metrics import statistical_parity_absolute_difference
 
 # third party
 import numpy as np
@@ -182,7 +182,9 @@ class MetricOptGenerator(Preprocessing):
                  len(samples))
         else:
             n = self.additions
+        print(n)
         for i in range(0, n):
+            print(i)
             # create candidates
             cands = self.data_generator.sample(self.m)
 
