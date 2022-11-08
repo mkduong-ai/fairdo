@@ -2,6 +2,8 @@ import numpy as np
 from scipy.stats import rankdata
 from sklearn.metrics import mutual_info_score, normalized_mutual_info_score
 
+import warnings
+
 
 def mutual_information(y: np.array, z: np.array, bins=2, **kwargs) -> float:
     """
@@ -39,7 +41,9 @@ def normalized_mutual_information(y: np.array, z: np.array, **kwargs) -> float:
     float
     """
     # Normalizes mutual information to 0 (independence) and 1 (perfect correlation)
-    return normalized_mutual_info_score(y, z)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        return normalized_mutual_info_score(y, z)
 
 
 def separation():

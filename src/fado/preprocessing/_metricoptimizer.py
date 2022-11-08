@@ -175,7 +175,7 @@ class MetricOptGenerator(Preprocessing):
             raise Exception('Protected attribute or label not given.')
 
         # preparation
-        samples = self.transformed_data.copy()
+        samples = self.dataset.copy()
 
         if self.additions is None:
             n = (int(len(samples) * self.frac) -
