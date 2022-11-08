@@ -182,9 +182,8 @@ class MetricOptGenerator(Preprocessing):
                  len(samples))
         else:
             n = self.additions
-        print(n)
+
         for i in range(0, n):
-            print(i)
             # create candidates
             cands = self.data_generator.sample(self.m)
 
