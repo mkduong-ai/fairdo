@@ -39,12 +39,12 @@ def run_comparison_preprocessors():
 
 def run_fairness_agnostic():
     seed = 1
-    n_runs = 10
+    n_runs = 1
 
     dataset_pro_attributes, models, metrics = get_evaluation_config(config='fairness_agnostic')
 
     for metric in metrics:
-        preprocessing_metric_str = f"PreprocessingWrapper(MetricOptimizer(frac=1.75," \
+        preprocessing_metric_str = f"PreprocessingWrapper(MetricOptimizer(frac=1.01," \
                                    f"m=5," \
                                    f"fairness_metric={metric}," \
                                    f"protected_attribute=protected_attribute," \
@@ -98,7 +98,7 @@ def main():
                    'run_comparison_preprocessors': run_comparison_preprocessors,
                    'run_fairness_agnostic': run_fairness_agnostic}
 
-    pick = 'run_quick'
+    pick = 'run_fairness_agnostic'
 
     experiments[pick]()
 

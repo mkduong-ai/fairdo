@@ -54,8 +54,8 @@ def get_evaluation_config(config='comparison_preprocessors', plot=False):
                   LogisticRegression(),
                   DecisionTreeClassifier()]
 
-        metrics = ['statistical_parity_absolute_difference',
-                   'normalized_mutual_information',
+        metrics = [#'statistical_parity_absolute_difference',
+                   #'normalized_mutual_information',
                    'consistency_score_objective',
                    'disparate_impact_ratio_objective']
 
