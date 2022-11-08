@@ -163,7 +163,7 @@ class MetricOptGenerator(Preprocessing):
 
         # fit data generator to data if not fitted
         if not self.data_fitted:
-            self.data_generator.fit(self.transformed_data)
+            self.data_generator.fit(dataset)
             self.data_fitted = True
 
         return self
