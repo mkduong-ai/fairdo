@@ -20,16 +20,8 @@ class MetricOptimizer(Preprocessing):
                  deletions=None,
                  fairness_metric=statistical_parity_absolute_difference,
                  data_generator='GaussianCopula',
-                 data_generator_params=None,
-                 drop_protected_attribute=False,
-                 drop_label=False,
-                 drop_features=False,
-                 dim_reduction=False, n_components=2, random_state=None):
-        super().__init__(frac=frac, protected_attribute=protected_attribute, label=label,
-                         drop_protected_attribute=drop_protected_attribute,
-                         drop_label=drop_label,
-                         drop_features=drop_features,
-                         dim_reduction=dim_reduction, n_components=n_components)
+                 data_generator_params=None, random_state=None):
+        super().__init__(frac=frac, protected_attribute=protected_attribute, label=label)
         self.preproc = None
         self.fairness_metric = fairness_metric
         self.m = m
@@ -47,26 +39,17 @@ class MetricOptimizer(Preprocessing):
 
     def init_preproc(self):
         if self.frac < 1:
-            self.preproc = MetricOptRemover(frac=self.frac, m=self.m, eps=self.eps,
-                                            deletions=None,
+            self.preproc = MetricOptRemover(protected_attribute=self.protected_attribute, label=self.label,
+                                            frac=self.frac, m=self.m, eps=self.eps,
+                                            deletions=self.deletions,
                                             fairness_metric=self.fairness_metric,
-                                            protected_attribute=self.protected_attribute, label=self.label,
-                                            drop_protected_attribute=self.drop_protected_attribute,
-                                            drop_label=self.drop_label,
-                                            drop_features=self.drop_features,
-                                            dim_reduction=self.dim_reduction, n_components=self.n_components,
                                             random_state=self.random_state)
         else:
-            self.preproc = MetricOptGenerator(frac=self.frac, m=self.m, eps=self.eps,
+            self.preproc = MetricOptGenerator(protected_attribute=self.protected_attribute, label=self.label,
+                                              frac=self.frac, m=self.m, eps=self.eps,
                                               additions=self.additions,
                                               fairness_metric=self.fairness_metric,
-                                              protected_attribute=self.protected_attribute, label=self.label,
                                               data_generator=self.data_generator,
-                                              data_generator_params=self.data_generator_params,
-                                              drop_protected_attribute=self.drop_protected_attribute,
-                                              drop_label=self.drop_label,
-                                              drop_features=self.drop_features,
-                                              dim_reduction=self.dim_reduction, n_components=self.n_components,
                                               random_state=self.random_state)
 
     def fit(self, dataset):
@@ -82,20 +65,11 @@ class MetricOptRemover(Preprocessing):
     Deletes samples which worsen the discrimination in the dataset
     """
 
-    def __init__(self,
-                 protected_attribute, label,
+    def __init__(self, protected_attribute, label,
                  frac=0.8, m=5, eps=0,
                  deletions=None,
-                 fairness_metric=statistical_parity_absolute_difference,
-                 drop_protected_attribute=False,
-                 drop_label=False,
-                 drop_features=False,
-                 dim_reduction=False, n_components=2, random_state=None):
-        super().__init__(frac=frac, protected_attribute=protected_attribute, label=label,
-                         drop_protected_attribute=drop_protected_attribute,
-                         drop_label=drop_label,
-                         drop_features=drop_features,
-                         dim_reduction=dim_reduction, n_components=n_components)
+                 fairness_metric=statistical_parity_absolute_difference, random_state=None):
+        super().__init__(frac=frac, protected_attribute=protected_attribute, label=label)
         self.fairness_metric = fairness_metric
         self.m = m
         self.eps = eps
@@ -107,7 +81,6 @@ class MetricOptRemover(Preprocessing):
         if self.dataset is None:
             raise Exception('Model not fitted.')
 
-        #print(self.transformed_data)
         z = self.transformed_data[self.protected_attribute].to_numpy()
         y = self.transformed_data[self.label].to_numpy()
 
@@ -115,8 +88,8 @@ class MetricOptRemover(Preprocessing):
         samples = self.transformed_data.copy()
 
         if self.deletions is None:
-            n = (len(self.transformed_data) -
-                 int(len(self.transformed_data) * self.frac))
+            n = (len(samples) -
+                 int(len(samples) * self.frac))
         else:
             n = self.deletions
         for i in range(1, n):
@@ -143,8 +116,8 @@ class MetricOptRemover(Preprocessing):
                 if discrimination_values[opt_cand_index] <= self.eps:
                     break
 
-        self.samples = self.dataset.loc[samples.index]
-        return self.samples
+        self.transformed_data = self.dataset.loc[samples.index]
+        return self.transformed_data
 
 
 class MetricOptGenerator(Preprocessing):
@@ -156,21 +129,13 @@ class MetricOptGenerator(Preprocessing):
                  frac=1.2, m=5, eps=0,
                  additions=None,
                  fairness_metric=statistical_parity_absolute_difference,
-                 data_generator='GaussianCopula',
-                 drop_protected_attribute=False,
-                 drop_label=False,
-                 drop_features=False,
-                 dim_reduction=False, n_components=2, random_state=None):
-        super().__init__(frac=frac, protected_attribute=protected_attribute, label=label,
-                         drop_protected_attribute=drop_protected_attribute,
-                         drop_label=drop_label,
-                         drop_features=drop_features,
-                         dim_reduction=dim_reduction, n_components=n_components)
+                 data_generator='GaussianCopula', random_state=None):
+        super().__init__(frac=frac, protected_attribute=protected_attribute, label=label)
         self.fairness_metric = fairness_metric
         self.m = m
         self.eps = eps
         self.additions = additions
-        self.fitted = False
+        self.data_fitted = False
         if isinstance(data_generator, str):
             data_generators = {'GaussianCopula': GaussianMultivariate}
             # init data generator
@@ -197,9 +162,9 @@ class MetricOptGenerator(Preprocessing):
         super().fit(dataset)
 
         # fit data generator to data if not fitted
-        if not self.fitted:
+        if not self.data_fitted:
             self.data_generator.fit(self.transformed_data)
-            self.fitted = True
+            self.data_fitted = True
 
         return self
 
@@ -213,8 +178,8 @@ class MetricOptGenerator(Preprocessing):
         samples = self.transformed_data.copy()
 
         if self.additions is None:
-            n = (int(len(self.transformed_data) * self.frac) -
-                 len(self.transformed_data))
+            n = (int(len(samples) * self.frac) -
+                 len(samples))
         else:
             n = self.additions
         for i in range(0, n):
@@ -240,5 +205,5 @@ class MetricOptGenerator(Preprocessing):
             if self.eps > 0:
                 if discrimination_values[opt_cand_index] <= self.eps:
                     break
-
-        return samples
+        self.transformed_data = samples
+        return self.transformed_data

@@ -12,17 +12,8 @@ class Unawareness(Preprocessing):
     Removes column of protected attribute
     """
 
-    def __init__(self,
-                 protected_attribute=None, label=None,
-                 drop_protected_attribute=False,
-                 drop_label=False,
-                 drop_features=False,
-                 dim_reduction=False, n_components=2, random_state=None):
-        super().__init__(protected_attribute=protected_attribute, label=label,
-                         drop_protected_attribute=drop_protected_attribute,
-                         drop_label=drop_label,
-                         drop_features=drop_features,
-                         dim_reduction=dim_reduction, n_components=n_components)
+    def __init__(self, protected_attribute=None, label=None, random_state=None):
+        super().__init__(protected_attribute=protected_attribute, label=label)
         self.random_state = random_state
         np.random.seed(random_state)
 
@@ -40,4 +31,5 @@ class Unawareness(Preprocessing):
         if self.protected_attribute is None:
             raise Exception('Protected attribute not given.')
 
-        return self.transformed_data.drop(columns=self.protected_attribute)
+        self.transformed_data = self.dataset.drop(columns=self.protected_attribute)
+        return self.transformed_data
