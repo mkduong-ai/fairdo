@@ -4,7 +4,8 @@ from .metric import evaluate_ml_models, evaluate_dataset_metrics
 
 # fado
 from fado.preprocessing import MetricOptimizer, OriginalData
-from fado.metrics import statistical_parity_absolute_difference
+from fado.metrics import statistical_parity_absolute_difference, normalized_mutual_information, \
+    consistency_score_objective, disparate_impact_ratio_objective
 
 # intern
 import os
