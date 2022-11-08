@@ -13,7 +13,7 @@ notably reducing the discrimination.
 ## Installation
 
 ### Dependencies
-numpy, pandas, seaborn, scikit-learn, aif360, sdv
+Python (>=3.8, <4), numpy, pandas, scikit-learn, copulas
 
 ### Manual Installation
 
