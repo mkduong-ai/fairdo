@@ -51,6 +51,7 @@ class MetricOptimizer(Preprocessing):
                                               fairness_metric=self.fairness_metric,
                                               data_generator=self.data_generator,
                                               random_state=self.random_state)
+        self.__class__.__name__ = type(self.preproc).__name__
 
     def fit(self, dataset):
         self.preproc.fit(dataset)
@@ -70,6 +71,8 @@ class MetricOptRemover(Preprocessing):
                  deletions=None,
                  fairness_metric=statistical_parity_absolute_difference, random_state=None):
         super().__init__(frac=frac, protected_attribute=protected_attribute, label=label)
+        if self.frac >= 1:
+            raise Exception('Fraction frac can not be greater or equal to 1.')
         self.fairness_metric = fairness_metric
         self.m = m
         self.eps = eps
@@ -131,6 +134,8 @@ class MetricOptGenerator(Preprocessing):
                  fairness_metric=statistical_parity_absolute_difference,
                  data_generator='GaussianCopula', random_state=None):
         super().__init__(frac=frac, protected_attribute=protected_attribute, label=label)
+        if self.frac <= 1:
+            raise Exception('Fraction frac can not be less or equal to 1.')
         self.fairness_metric = fairness_metric
         self.m = m
         self.eps = eps
