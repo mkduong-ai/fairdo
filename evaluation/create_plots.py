@@ -8,18 +8,19 @@ x_axis_mapper = {'statistical_parity_absolute_difference': 'Statistical Parity A
                  'disparate_impact_ratio_objective': 'Disparate Impact Obj'}
 
 
-def plot_all_datasets():
+def plot_all_datasets(frac):
     # settings
     x_axes = ['Statistical Parity Abs Diff']
     y_axes = ['AUC']
 
     # iteration
     dataset_pro_attributes, models, filepath = get_evaluation_config(config='comparison_preprocessors',
+                                                                     frac=frac,
                                                                      plot=True)
     save_plots_over_xy_axes(x_axes, y_axes, models, dataset_pro_attributes, filepath_prefix=filepath)
 
 
-def plot_all_datasets_metrics():
+def plot_all_datasets_metrics(frac):
     # settings
     x_axes = ['Statistical Parity Abs Diff',
               'Normalized MI',
@@ -28,16 +29,18 @@ def plot_all_datasets_metrics():
 
     # iteration
     dataset_pro_attributes, models, filepath = get_evaluation_config(config='comparison_preprocessors',
+                                                                     frac=frac,
                                                                      plot=True)
     save_plots_over_xy_axes(x_axes, y_axes, models, dataset_pro_attributes, filepath_prefix=filepath)
 
 
-def plot_fairness_agnostic():
+def plot_fairness_agnostic(frac):
     # settings
     y_axis = 'AUC'
 
     # preprocess on multiple metrics
     dataset_pro_attributes, models, metrics, filepath = get_evaluation_config(config='fairness_agnostic',
+                                                                              frac=frac,
                                                                               plot=True)
     x_axes = {k: x_axis_mapper[k] for k in metrics}
 
@@ -46,12 +49,14 @@ def plot_fairness_agnostic():
                                         filepath_prefix=f"{filepath}/{metric_path}")
 
 
-def quick_plot():
+def quick_plot(frac):
     # settings
     x_axes = ['Disparate Impact Obj']
     y_axes = ['AUC']
 
-    dataset_pro_attributes, models, filepath = get_evaluation_config(config='quick', plot=True)
+    dataset_pro_attributes, models, filepath = get_evaluation_config(config='quick',
+                                                                     frac=frac,
+                                                                     plot=True)
 
     save_plots_over_xy_axes(x_axes, y_axes, models, dataset_pro_attributes, show=False,
                             filepath_prefix=f"{filepath}")
@@ -64,8 +69,9 @@ def main():
                    'plot_fairness_agnostic': plot_fairness_agnostic}
 
     pick = 'quick_plot'
+    frac = 1.25
 
-    experiments[pick]()
+    experiments[pick](frac=frac)
 
 
 if __name__ == '__main__':

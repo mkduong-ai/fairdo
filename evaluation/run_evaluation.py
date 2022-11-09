@@ -11,7 +11,8 @@ from aif360.algorithms.preprocessing import DisparateImpactRemover, LFR, Reweigh
 def run_comparison_preprocessors(frac=0.75):
     seed = 1
     n_runs = 10
-    dataset_pro_attributes, models, filepath = get_evaluation_config(config='comparison_preprocessors')
+    dataset_pro_attributes, models, filepath = get_evaluation_config(config='comparison_preprocessors',
+                                                                     frac=frac)
 
     # Optimized Preproc. requires distortion functions
     preprocessors_str = ["OriginalData()",
@@ -42,7 +43,8 @@ def run_fairness_agnostic(frac=0.75):
     seed = 1
     n_runs = 10
 
-    dataset_pro_attributes, models, metrics, filepath = get_evaluation_config(config='fairness_agnostic')
+    dataset_pro_attributes, models, metrics, filepath = get_evaluation_config(config='fairness_agnostic',
+                                                                              frac=frac)
 
     for metric in metrics:
         preprocessing_metric_str = f"PreprocessingWrapper(MetricOptimizer(frac={frac}," \
@@ -69,7 +71,8 @@ def run_quick(frac=0.75):
     n_runs = 2
     seed = 1
 
-    dataset_pro_attributes, models, filepath = get_evaluation_config(config='quick')
+    dataset_pro_attributes, models, filepath = get_evaluation_config(config='quick',
+                                                                     frac=frac)
 
     preprocessors_str = ["OriginalData()",
                          "DisparateImpactRemover(sensitive_attribute=protected_attribute)",
@@ -100,9 +103,10 @@ def main():
                    'run_comparison_preprocessors': run_comparison_preprocessors,
                    'run_fairness_agnostic': run_fairness_agnostic}
 
-    pick = 'run_comparison_preprocessors'
+    pick = 'run_quick'
+    frac = 1.25
 
-    experiments[pick]()
+    experiments[pick](frac=frac)
 
 
 if __name__ == '__main__':

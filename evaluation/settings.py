@@ -31,12 +31,15 @@ x_axes_template = ['Mutual Information',
 y_axes_template = ['Accuracy', 'F1 Score', 'Balanced Accuracy', 'AUC']
 
 
-def get_evaluation_config(config='comparison_preprocessors', method='MetricOptRemover', plot=False):
+def get_evaluation_config(config='comparison_preprocessors', frac=0.75, plot=False):
     models = [KNeighborsClassifier(),
               LogisticRegression(),
               DecisionTreeClassifier()]
 
-    filepath = f"results/{method}"
+    if frac < 1:
+        filepath = f"results/MetricOptRemover"
+    else:
+        filepath = f"results/MetricOptGenerator"
 
     if config == 'comparison_preprocessors':
         dataset_pro_attributes = [('adult', 'sex'),
