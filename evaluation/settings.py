@@ -31,10 +31,12 @@ x_axes_template = ['Mutual Information',
 y_axes_template = ['Accuracy', 'F1 Score', 'Balanced Accuracy', 'AUC']
 
 
-def get_evaluation_config(config='comparison_preprocessors', method='', plot=False):
+def get_evaluation_config(config='comparison_preprocessors', method='MetricOptRemover', plot=False):
     models = [KNeighborsClassifier(),
               LogisticRegression(),
               DecisionTreeClassifier()]
+
+    filepath = f"results/{method}"
 
     if config == 'comparison_preprocessors':
         dataset_pro_attributes = [('adult', 'sex'),
@@ -46,7 +48,7 @@ def get_evaluation_config(config='comparison_preprocessors', method='', plot=Fal
         if plot:
             models = list(map(lambda x: type(x).__name__, models))
 
-        return dataset_pro_attributes, models
+        return dataset_pro_attributes, models, filepath
     elif config == 'fairness_agnostic':
         dataset_pro_attributes = [('compas', 'race')]
 
@@ -58,11 +60,11 @@ def get_evaluation_config(config='comparison_preprocessors', method='', plot=Fal
         if plot:
             models = list(map(lambda x: type(x).__name__, models))
 
-        return dataset_pro_attributes, models, metrics
+        return dataset_pro_attributes, models, metrics, filepath
     elif config == 'quick':
         dataset_pro_attributes = [('compas', 'race')]
 
         if plot:
             models = list(map(lambda x: type(x).__name__, models))
 
-        return dataset_pro_attributes, models
+        return dataset_pro_attributes, models, filepath

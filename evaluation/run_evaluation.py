@@ -8,10 +8,10 @@ from fado.preprocessing import MetricOptimizer, OriginalData
 from aif360.algorithms.preprocessing import DisparateImpactRemover, LFR, Reweighing
 
 
-def run_comparison_preprocessors(filepath='results', frac=0.75):
+def run_comparison_preprocessors(frac=0.75):
     seed = 1
     n_runs = 10
-    dataset_pro_attributes, models = get_evaluation_config(config='comparison_preprocessors')
+    dataset_pro_attributes, models, filepath = get_evaluation_config(config='comparison_preprocessors')
 
     # Optimized Preproc. requires distortion functions
     preprocessors_str = ["OriginalData()",
@@ -38,11 +38,11 @@ def run_comparison_preprocessors(filepath='results', frac=0.75):
                         filepath=filepath)
 
 
-def run_fairness_agnostic(filepath='results', frac=0.75):
+def run_fairness_agnostic(frac=0.75):
     seed = 1
     n_runs = 10
 
-    dataset_pro_attributes, models, metrics = get_evaluation_config(config='fairness_agnostic')
+    dataset_pro_attributes, models, metrics, filepath = get_evaluation_config(config='fairness_agnostic')
 
     for metric in metrics:
         preprocessing_metric_str = f"PreprocessingWrapper(MetricOptimizer(frac={frac}," \
@@ -64,12 +64,12 @@ def run_fairness_agnostic(filepath='results', frac=0.75):
                             filepath=f"{filepath}/{metric}")
 
 
-def run_quick(filepath='results', frac=0.75):
+def run_quick(frac=0.75):
     # settings
     n_runs = 2
     seed = 1
 
-    dataset_pro_attributes, models = get_evaluation_config(config='quick')
+    dataset_pro_attributes, models, filepath = get_evaluation_config(config='quick')
 
     preprocessors_str = ["OriginalData()",
                          "DisparateImpactRemover(sensitive_attribute=protected_attribute)",

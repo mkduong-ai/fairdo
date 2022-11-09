@@ -14,9 +14,9 @@ def plot_all_datasets():
     y_axes = ['AUC']
 
     # iteration
-    dataset_pro_attributes, models = get_evaluation_config(config='comparison_preprocessors',
-                                                           plot=True)
-    save_plots_over_xy_axes(x_axes, y_axes, models, dataset_pro_attributes)
+    dataset_pro_attributes, models, filepath = get_evaluation_config(config='comparison_preprocessors',
+                                                                     plot=True)
+    save_plots_over_xy_axes(x_axes, y_axes, models, dataset_pro_attributes, filepath_prefix=filepath)
 
 
 def plot_all_datasets_metrics():
@@ -27,9 +27,9 @@ def plot_all_datasets_metrics():
     y_axes = ['AUC']
 
     # iteration
-    dataset_pro_attributes, models = get_evaluation_config(config='comparison_preprocessors',
-                                                           plot=True)
-    save_plots_over_xy_axes(x_axes, y_axes, models, dataset_pro_attributes)
+    dataset_pro_attributes, models, filepath = get_evaluation_config(config='comparison_preprocessors',
+                                                                     plot=True)
+    save_plots_over_xy_axes(x_axes, y_axes, models, dataset_pro_attributes, filepath_prefix=filepath)
 
 
 def plot_fairness_agnostic():
@@ -37,13 +37,13 @@ def plot_fairness_agnostic():
     y_axis = 'AUC'
 
     # preprocess on multiple metrics
-    dataset_pro_attributes, models, metrics = get_evaluation_config(config='fairness_agnostic',
-                                                                    plot=True)
+    dataset_pro_attributes, models, metrics, filepath = get_evaluation_config(config='fairness_agnostic',
+                                                                              plot=True)
     x_axes = {k: x_axis_mapper[k] for k in metrics}
 
     for metric_path, metric_name in x_axes.items():
         save_plots_over_models_datasets(metric_name, y_axis, models, dataset_pro_attributes,
-                                        filepath_prefix=f"results/{metric_path}")
+                                        filepath_prefix=f"{filepath}/{metric_path}")
 
 
 def quick_plot():
@@ -51,9 +51,10 @@ def quick_plot():
     x_axes = ['Disparate Impact Obj']
     y_axes = ['AUC']
 
-    dataset_pro_attributes, models = get_evaluation_config(config='quick', plot=True)
+    dataset_pro_attributes, models, filepath = get_evaluation_config(config='quick', plot=True)
 
-    save_plots_over_xy_axes(x_axes, y_axes, models, dataset_pro_attributes, show=False)
+    save_plots_over_xy_axes(x_axes, y_axes, models, dataset_pro_attributes, show=False,
+                            filepath_prefix=f"{filepath}")
 
 
 def main():

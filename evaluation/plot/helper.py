@@ -136,7 +136,7 @@ def save_plots_over_models_datasets(x_axis: str, y_axis: str, models: list, data
 
 
 def save_plots_over_xy_axes(x_axes: list, y_axes: list, models: list, dataset_pro_attributes: list,
-                            show=False):
+                            show=False, filepath_prefix='results'):
     """
 
     Parameters
@@ -153,10 +153,12 @@ def save_plots_over_xy_axes(x_axes: list, y_axes: list, models: list, dataset_pr
          ('compas', 'race')]
     show: bool
         Whether to show the plot.
+    filepath_prefix: str
     Returns
     -------
 
     """
     for x_axis in x_axes:
         for y_axis in y_axes:
-            save_plots_over_models_datasets(x_axis, y_axis, models, dataset_pro_attributes, show=show)
+            save_plots_over_models_datasets(x_axis, y_axis, models, dataset_pro_attributes, show=show,
+                                            filepath_prefix=filepath_prefix)
