@@ -9,22 +9,17 @@ def fix_german_dataset():
 
 
 def main():
-    dataset, privileged_groups, unprivileged_groups = selecting_dataset('adult', 'sex')
+    dataset, privileged_groups, unprivileged_groups = selecting_dataset('german', 'foreign_worker')
     dataset_df, dataset_dict = dataset.convert_to_dataframe()
 
-    # start = time.perf_counter()
-    # ctgan = CTGAN(epochs=10)
-    # ctgan.fit(dataset_df)
-    # elapsed = time.perf_counter() - start
-    # print(elapsed)
-
-    # generator = TabularPreset(name='FAST_ML')
-    generator = GaussianCopula()
-    generator.fit(dataset_df)
+    #generator = GaussianCopula()
+    #generator.fit(dataset_df)
 
     # Create synthetic data
-    synthetic_data = generator.sample(100)
-    print(type(synthetic_data))
+    #synthetic_data = generator.sample(100)
+    #print(synthetic_data.head())
+    print(dataset_df.sample(20))
+    # print(dataset_dict)
 
 
 if __name__ == "__main__":
