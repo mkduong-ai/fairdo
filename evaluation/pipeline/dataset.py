@@ -105,20 +105,27 @@ def selecting_dataset(dataset_used: str, protected_attribute_used: str):
             label_map = {1.0: 'Good Credit', 0.0: 'Bad Credit'}
             protected_attribute_maps = [{1.0: 'Old', 0.0: 'Young'}]
             dataset_orig = GermanDataset(protected_attribute_names=['age'],
+                                         categorical_features=['status', 'credit_history', 'purpose',
+                                                               'savings', 'employment', 'other_debtors', 'property',
+                                                               'installment_plans', 'housing', 'skill_level',
+                                                               'telephone', 'sex', 'foreign_worker'],
                                          features_to_drop=['personal_status'],
-                                         privileged_classes=[['Old']],
+                                         privileged_classes=[lambda x: x > 25],
                                          metadata={'label_maps': label_map,
                                                    'protected_attribute_maps': protected_attribute_maps})
         elif protected_attribute_used == "foreign_worker":
-            # TODO: this part is broken
-            privileged_groups = [{'foreign_worker': 0}]
-            unprivileged_groups = [{'foreign_worker': 1}]
+            privileged_groups = [{'foreign_worker': 1}]
+            unprivileged_groups = [{'foreign_worker': 0}]
 
             label_map = {1.0: 'Good Credit', 0.0: 'Bad Credit'}
-            protected_attribute_maps = [{1.0: 'foreigner', 0.0: 'native'}]
+            protected_attribute_maps = [{1.0: 'native', 0.0: 'foreigner'}]
             dataset_orig = GermanDataset(protected_attribute_names=['foreign_worker'],
+                                         categorical_features=['status', 'credit_history', 'purpose',
+                                                               'savings', 'employment', 'other_debtors', 'property',
+                                                               'installment_plans', 'housing', 'skill_level',
+                                                               'telephone', 'sex'],
                                          features_to_drop=['personal_status'],
-                                         privileged_classes=[['foreigner']],
+                                         privileged_classes=[lambda x: x == 'A202'],
                                          metadata={'label_maps': label_map,
                                                    'protected_attribute_maps': protected_attribute_maps})
     else:
