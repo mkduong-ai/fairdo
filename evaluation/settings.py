@@ -31,7 +31,11 @@ x_axes_template = ['Mutual Information',
 y_axes_template = ['Accuracy', 'F1 Score', 'Balanced Accuracy', 'AUC']
 
 
-def get_evaluation_config(config='comparison_preprocessors', plot=False):
+def get_evaluation_config(config='comparison_preprocessors', method='', plot=False):
+    models = [KNeighborsClassifier(),
+              LogisticRegression(),
+              DecisionTreeClassifier()]
+
     if config == 'comparison_preprocessors':
         dataset_pro_attributes = [('adult', 'sex'),
                                   ('bank', 'age'),
@@ -39,20 +43,12 @@ def get_evaluation_config(config='comparison_preprocessors', plot=False):
                                   ('german', 'foreign_worker'),
                                   ]
 
-        models = [KNeighborsClassifier(),
-                  LogisticRegression(),
-                  DecisionTreeClassifier()]
-
         if plot:
             models = list(map(lambda x: type(x).__name__, models))
 
         return dataset_pro_attributes, models
     elif config == 'fairness_agnostic':
         dataset_pro_attributes = [('compas', 'race')]
-
-        models = [KNeighborsClassifier(),
-                  LogisticRegression(),
-                  DecisionTreeClassifier()]
 
         metrics = ['statistical_parity_absolute_difference',
                    'normalized_mutual_information',
@@ -65,10 +61,6 @@ def get_evaluation_config(config='comparison_preprocessors', plot=False):
         return dataset_pro_attributes, models, metrics
     elif config == 'quick':
         dataset_pro_attributes = [('compas', 'race')]
-
-        models = [KNeighborsClassifier(),
-                  LogisticRegression(),
-                  DecisionTreeClassifier()]
 
         if plot:
             models = list(map(lambda x: type(x).__name__, models))
