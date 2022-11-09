@@ -73,7 +73,7 @@ def selecting_dataset(dataset_used: str, protected_attribute_used: str):
             dataset_orig = CompasDataset(protected_attribute_names=['sex'], privileged_classes=[['Male']],
                                          categorical_features=['c_charge_degree', 'age_cat'],
                                          features_to_keep=['c_charge_degree', 'priors_count', 'age_cat'],
-                                         metadata={'label_maps': [{1.0: 'Did recid.', 0.0: 'No recid.'}],
+                                         metadata={'label_maps': label_map,
                                                    'protected_attribute_maps': protected_attribute_maps})
         elif protected_attribute_used == "race":
             privileged_groups = [{'race': 1}]
