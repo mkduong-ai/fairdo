@@ -101,9 +101,9 @@ class MetricOptRemover(Preprocessing):
 
             discrimination_values = []
             for j in range(self.m):
-                x = samples_wo_cands_list[j].drop(columns=[self.label, self.protected_attribute])
-                y = samples_wo_cands_list[j][self.label]
-                z = samples_wo_cands_list[j][self.protected_attribute]
+                x = np.array(samples_wo_cands_list[j].drop(columns=[self.label, self.protected_attribute]))
+                y = np.array(samples_wo_cands_list[j][self.label])
+                z = np.array(samples_wo_cands_list[j][self.protected_attribute])
                 discrimination_values.append(self.fairness_metric(x=x, y=y, z=z))
 
             opt_cand_index = np.argmin(discrimination_values)
@@ -192,9 +192,9 @@ class MetricOptGenerator(Preprocessing):
 
             discrimination_values = []
             for j in range(self.m):
-                x = samples_concat_list[j].drop(columns=[self.label, self.protected_attribute])
-                y = samples_concat_list[j][self.label]
-                z = samples_concat_list[j][self.protected_attribute]
+                x = np.array(samples_concat_list[j].drop(columns=[self.label, self.protected_attribute]))
+                y = np.array(samples_concat_list[j][self.label])
+                z = np.array(samples_concat_list[j][self.protected_attribute])
                 discrimination_values.append(self.fairness_metric(x=x, y=y, z=z))
 
             opt_cand_index = np.argmin(discrimination_values)

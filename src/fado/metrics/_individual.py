@@ -4,6 +4,7 @@ from sklearn.neighbors import NearestNeighbors
 
 def consistency_score(x: np.array, y: np.array, n_neighbors=5, **kwargs) -> float:
     """
+    Consistency Score in Learning Fair Representations (Zemel et al. 2013)
 
     Parameters
     ----------
@@ -20,10 +21,7 @@ def consistency_score(x: np.array, y: np.array, n_neighbors=5, **kwargs) -> floa
     nbrs.fit(x)
     indices = nbrs.kneighbors(x, return_distance=False)
 
-    print(f"indices: {indices.shape}")
-    print(f"y: {y}")
-    print(len(y))
-    return 1 - abs(y - y[indices].mean(axis=1)).mean()
+    return 1 - np.mean(np.abs(y - np.mean(y[indices], axis=1)))
 
 
 def consistency_score_objective(x: np.array, y: np.array, n_neighbors=5, **kwargs) -> float:
