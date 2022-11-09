@@ -8,7 +8,7 @@ from fado.preprocessing import MetricOptimizer, OriginalData
 from aif360.algorithms.preprocessing import DisparateImpactRemover, LFR, Reweighing
 
 
-def run_comparison_preprocessors():
+def run_comparison_preprocessors(filepath='results', frac=0.75):
     seed = 1
     n_runs = 10
     dataset_pro_attributes, models = get_evaluation_config(config='comparison_preprocessors')
@@ -19,7 +19,7 @@ def run_comparison_preprocessors():
                          "LFR(unprivileged_groups=unprivileged_groups,"
                          "privileged_groups=privileged_groups,"
                          "k=5, Ax=0.01, Ay=1.0, Az=10.0)",
-                         "PreprocessingWrapper(MetricOptimizer(frac=0.75,"
+                         f"PreprocessingWrapper(MetricOptimizer(frac={frac},"
                          "m=5,"
                          "fairness_metric=statistical_parity_absolute_difference,"
                          "protected_attribute=protected_attribute,"
@@ -34,17 +34,18 @@ def run_comparison_preprocessors():
                         protected_attribute=protected_attribute,
                         preprocessors_str=preprocessors_str,
                         n_runs=n_runs,
-                        seed=seed)
+                        seed=seed,
+                        filepath=filepath)
 
 
-def run_fairness_agnostic():
+def run_fairness_agnostic(filepath='results', frac=0.75):
     seed = 1
-    n_runs = 1
+    n_runs = 10
 
     dataset_pro_attributes, models, metrics = get_evaluation_config(config='fairness_agnostic')
 
     for metric in metrics:
-        preprocessing_metric_str = f"PreprocessingWrapper(MetricOptimizer(frac=1.01," \
+        preprocessing_metric_str = f"PreprocessingWrapper(MetricOptimizer(frac={frac}," \
                                    f"m=5," \
                                    f"fairness_metric={metric}," \
                                    f"protected_attribute=protected_attribute," \
@@ -60,10 +61,10 @@ def run_fairness_agnostic():
                             preprocessors_str=preprocessors_str,
                             n_runs=n_runs,
                             seed=seed,
-                            filepath=f"results/{metric}")
+                            filepath=f"{filepath}/{metric}")
 
 
-def run_quick():
+def run_quick(filepath='results', frac=0.75):
     # settings
     n_runs = 2
     seed = 1
@@ -75,7 +76,7 @@ def run_quick():
                          "LFR(unprivileged_groups=unprivileged_groups,"
                          "privileged_groups=privileged_groups,"
                          "k=5, Ax=0.01, Ay=1.0, Az=10.0)",
-                         "PreprocessingWrapper(MetricOptimizer(frac=0.75,"
+                         f"PreprocessingWrapper(MetricOptimizer(frac={frac},"
                          "m=5,"
                          "fairness_metric=statistical_parity_absolute_difference,"
                          "protected_attribute=protected_attribute,"
@@ -90,7 +91,8 @@ def run_quick():
                         protected_attribute=protected_attribute,
                         preprocessors_str=preprocessors_str,
                         n_runs=n_runs,
-                        seed=seed)
+                        seed=seed,
+                        filepath=f"{filepath}/quick")
 
 
 def main():
@@ -98,7 +100,7 @@ def main():
                    'run_comparison_preprocessors': run_comparison_preprocessors,
                    'run_fairness_agnostic': run_fairness_agnostic}
 
-    pick = 'run_fairness_agnostic'
+    pick = 'run_comparison_preprocessors'
 
     experiments[pick]()
 
