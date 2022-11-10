@@ -55,7 +55,7 @@ def get_evaluation_config(config='comparison_preprocessors', frac=0.75, plot=Fal
     elif config == 'fairness_agnostic':
         dataset_pro_attributes = [('compas', 'race')]
 
-        metrics = ['statistical_parity_absolute_difference',
+        metrics = [#'statistical_parity_absolute_difference',
                    'normalized_mutual_information',
                    'consistency_score_objective',
                    'disparate_impact_ratio_objective']
