@@ -59,7 +59,7 @@ def quick_plot(frac):
                                                                      plot=True)
 
     save_plots_over_xy_axes(x_axes, y_axes, models, dataset_pro_attributes, show=False,
-                            filepath_prefix=f"{filepath}")
+                            filepath_prefix=f"{filepath}/quick")
 
 
 def main():
