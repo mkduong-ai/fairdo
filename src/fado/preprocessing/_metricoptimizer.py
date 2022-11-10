@@ -67,7 +67,7 @@ class MetricOptRemover(Preprocessing):
     """
 
     def __init__(self, protected_attribute, label,
-                 frac=0.8, m=5, eps=0,
+                 frac=0.75, m=5, eps=0,
                  deletions=None,
                  fairness_metric=statistical_parity_absolute_difference, random_state=None):
         super().__init__(frac=frac, protected_attribute=protected_attribute, label=label)
@@ -126,7 +126,7 @@ class MetricOptGenerator(Preprocessing):
     """
 
     def __init__(self, protected_attribute, label,
-                 frac=1.2, m=5, eps=0,
+                 frac=1.25, m=5, eps=0,
                  additions=None,
                  fairness_metric=statistical_parity_absolute_difference,
                  data_generator='GaussianCopula', random_state=None):
