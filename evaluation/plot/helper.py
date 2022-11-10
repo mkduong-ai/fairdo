@@ -49,6 +49,7 @@ def plot_dataframe_aggregate(results_df: pd.DataFrame,
         results_df = results_df[results_df['Model'] == model]
 
     # means and standard deviation
+    results_df = results_df.drop(columns=['Model', 'Preprocessor'])
     x_mean = results_df.groupby(groups).mean()[x_axis]
     y_mean = results_df.groupby(groups).mean()[y_axis]
     xerr_std = results_df.groupby(groups).std()[x_axis]
@@ -89,7 +90,7 @@ def plot_dataframe_aggregate(results_df: pd.DataFrame,
     filename = f"{filepath.split('.')[0]}_{model}_{y_axis}_{disc_name}.pdf"
     # save plot
     if save:
-        plt.savefig(filename, bbox_inches='tight')
+        plt.savefig(filename, bbox_inches='tight', pad_inches=0)
         print(f"Figure saved under {filename}")
 
     if show:
