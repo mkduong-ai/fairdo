@@ -81,8 +81,8 @@ def plot_dataframe_aggregate(results_df: pd.DataFrame,
         ax.set_xlim([0, 1])
         if all(x_mean < 0.5):
             ax.set_xlim([0, 0.5])
-            if all(x_mean < 0.1):
-                ax.set_xlim([0, 0.1])
+            #if all(x_mean < 0.1):
+            #    ax.set_xlim([0, 0.1])
     ax.set_ylim([0, 1])
 
     # filename
@@ -95,6 +95,8 @@ def plot_dataframe_aggregate(results_df: pd.DataFrame,
 
     if show:
         plt.show()
+
+    plt.close()
 
 
 def save_plots_over_models_datasets(x_axis: str, y_axis: str, models: list, dataset_pro_attributes: list,

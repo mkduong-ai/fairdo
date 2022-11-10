@@ -45,7 +45,7 @@ def get_evaluation_config(config='comparison_preprocessors', frac=0.75, plot=Fal
         dataset_pro_attributes = [('adult', 'sex'),
                                   ('bank', 'age'),
                                   ('compas', 'race'),
-                                  ('german', 'foreign_worker'),
+                                  #('german', 'foreign_worker'),
                                   ]
 
         if plot:
