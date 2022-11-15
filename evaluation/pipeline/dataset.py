@@ -62,7 +62,7 @@ def selecting_dataset(dataset_used: str, protected_attribute_used: str):
             privileged_groups = [{'age': 1}]
             unprivileged_groups = [{'age': 0}]
 
-            dataset_orig = BankDataset(protected_attribute_names=['age'])#, privileged_classes=privileged_groups)
+            dataset_orig = BankDataset(protected_attribute_names=['age'])
     elif dataset_used == "compas":
         if protected_attribute_used == "sex":
             privileged_groups = [{'sex': 1}]
