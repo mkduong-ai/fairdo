@@ -55,7 +55,7 @@ def evaluate_ml_models(results: dict, models_trained: dict, X_test, y_test, z_te
             # Classification Metric
             y_pred = \
                 models_trained[key_model][key_preproc].predict_proba(X_test)
-            y_pred_argmax = np.argmax(y_pred, axis=1)
+            y_pred_argmax = models_trained[key_model][key_preproc].classes_[np.argmax(y_pred, axis=1)]
 
             results[key_model][key_preproc]['Accuracy'] = \
                 accuracy_score(y_test, y_pred_argmax)

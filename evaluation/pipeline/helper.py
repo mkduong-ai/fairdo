@@ -16,6 +16,8 @@ class PreprocessingWrapper:
         transformed_df_dataset = self.preprocessing.fit_transform(dataset_train.convert_to_dataframe()[0])
 
         transformed_dataset = BinaryLabelDataset(df=transformed_df_dataset,
+                                                 favorable_label=dataset_train.favorable_label,
+                                                 unfavorable_label=dataset_train.unfavorable_label,
                                                  protected_attribute_names=dataset_train.protected_attribute_names,
                                                  label_names=dataset_train.label_names)
 

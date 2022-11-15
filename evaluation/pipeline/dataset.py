@@ -91,7 +91,7 @@ def selecting_dataset(dataset_used: str, protected_attribute_used: str):
             privileged_groups = [{'sex': 1}]
             unprivileged_groups = [{'sex': 0}]
 
-            label_map = {1.0: 'Good Credit', 0.0: 'Bad Credit'}
+            label_map = [{1.0: 'Good Credit', 2.0: 'Bad Credit'}]
             protected_attribute_maps = [{1.0: 'Male', 0.0: 'Female'}]
             dataset_orig = GermanDataset(protected_attribute_names=['sex'],
                                          features_to_drop=['personal_status'],
@@ -102,7 +102,7 @@ def selecting_dataset(dataset_used: str, protected_attribute_used: str):
             privileged_groups = [{'age': 1}]
             unprivileged_groups = [{'age': 0}]
 
-            label_map = {1.0: 'Good Credit', 0.0: 'Bad Credit'}
+            label_map = [{1.0: 'Good Credit', 2.0: 'Bad Credit'}]
             protected_attribute_maps = [{1.0: 'Old', 0.0: 'Young'}]
             dataset_orig = GermanDataset(protected_attribute_names=['age'],
                                          categorical_features=['status', 'credit_history', 'purpose',
@@ -117,7 +117,7 @@ def selecting_dataset(dataset_used: str, protected_attribute_used: str):
             privileged_groups = [{'foreign_worker': 1}]
             unprivileged_groups = [{'foreign_worker': 0}]
 
-            label_map = {1.0: 'Good Credit', 0.0: 'Bad Credit'}
+            label_map = [{1.0: 'Good Credit', 2.0: 'Bad Credit'}]
             protected_attribute_maps = [{1.0: 'native', 0.0: 'foreigner'}]
             dataset_orig = GermanDataset(protected_attribute_names=['foreign_worker'],
                                          categorical_features=['status', 'credit_history', 'purpose',
@@ -129,9 +129,6 @@ def selecting_dataset(dataset_used: str, protected_attribute_used: str):
                                          metadata={'label_maps': label_map,
                                                    'protected_attribute_maps': protected_attribute_maps})
     else:
-        raise Exception('dataset_used or protected_attribute_used not available.')
-
-    if dataset_orig is None:
         raise Exception('dataset_used or protected_attribute_used not available.')
 
     # print(privileged_groups)
