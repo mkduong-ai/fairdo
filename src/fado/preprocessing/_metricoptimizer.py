@@ -130,6 +130,28 @@ class MetricOptGenerator(Preprocessing):
                  additions=None,
                  fairness_metric=statistical_parity_absolute_difference,
                  data_generator='GaussianCopula', random_state=None):
+        """
+
+        Parameters
+        ----------
+        protected_attribute: str
+            String of column that is discriminated
+        label: str
+            String of column that represents the prediction label
+        frac: float
+            A multiplicative of the given dataset's size
+        m: int
+            Number of candidates
+        eps: float
+        additions: int
+            If additions is given, then frac is ignored. Number of samples to be added to the dataset.
+        fairness_metric:
+            A fairness metric which can take x, y, or z as array parameters and calculates a fairness score.
+        data_generator:
+            A string indicating the generative model or the generative model itself with
+            .fit() and .sample() methods.
+        random_state: int
+        """
         super().__init__(frac=frac, protected_attribute=protected_attribute, label=label)
         if self.frac <= 1:
             raise Exception('Fraction frac can not be less or equal to 1.')
