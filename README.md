@@ -59,12 +59,13 @@ More ``jupyter notebooks`` examples can be viewed in ``tutorials/``.
 ## Evaluation
 
 Create results
-```python
-python main.py
+```bash
+cd evaluation
+python run_evaluation.py
 ```
 
 Create plots from results
-```python
+```bash
 cd evaluation
 python create_plots.py
 ```
