@@ -103,7 +103,7 @@ def main():
                    'run_comparison_preprocessors': run_comparison_preprocessors,
                    'run_fairness_agnostic': run_fairness_agnostic}
 
-    pick = 'run_comparison_preprocessors'
+    pick = 'run_fairness_agnostic'
     frac = 0.75
 
     experiments[pick](frac=frac)

@@ -42,9 +42,9 @@ def get_evaluation_config(config='comparison_preprocessors', frac=0.75, plot=Fal
         filepath = f"results/MetricOptGenerator"
 
     if config == 'comparison_preprocessors':
-        dataset_pro_attributes = [#('adult', 'sex'),
-                                  #('bank', 'age'),
-                                  #('compas', 'race'),
+        dataset_pro_attributes = [('adult', 'sex'),
+                                  ('bank', 'age'),
+                                  ('compas', 'race'),
                                   ('german', 'foreign_worker'),
                                   ]
 
