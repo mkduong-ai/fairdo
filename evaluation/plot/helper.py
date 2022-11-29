@@ -59,7 +59,7 @@ def plot_dataframe_aggregate(results_df: pd.DataFrame,
     yerr = yerr_std
 
     # figsize
-    plt.figure(figsize=(5, 3.5), dpi=80)
+    plt.figure(figsize=(5, 2.5), dpi=80)
     for i in range(len(x_mean)):
         if model is not None:
             label = eval(x_mean.index[i])[1]
@@ -71,7 +71,7 @@ def plot_dataframe_aggregate(results_df: pd.DataFrame,
 
     # title, legend, labels
     # plt.title(f"{dataset.upper()} Dataset")
-    plt.legend(loc='lower right', prop={'size': 11})
+    plt.legend(loc='lower right', prop={'size': 8})
     plt.xlabel(f"{protected_attribute.capitalize()} Discrimination ({x_axis})")
     plt.ylabel(y_axis)
 

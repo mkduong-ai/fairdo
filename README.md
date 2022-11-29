@@ -65,5 +65,6 @@ python main.py
 
 Create plots from results
 ```python
-python evaluation/plot_settings.py
+cd evaluation
+python create_plots.py
 ```
