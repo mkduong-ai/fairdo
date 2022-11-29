@@ -30,8 +30,8 @@ def equal_opportunity_difference(y_true: np.array, y_pred: np.array, z: np.array
     y_true = y_true.astype(int)
     y_pred = y_pred.astype(int)
     z = z.astype(int)
-    priv_eo = np.sum(y_true & z & y_pred) / np.sum(y_true & z)
-    unpriv_eo = np.sum(y_true & (1 - z) & y_pred) / np.sum(y_true & (1 - z))
+    priv_eo = np.sum(y_pred & y_true & z) / np.sum(y_true & z)
+    unpriv_eo = np.sum(y_pred & y_true & (1 - z)) / np.sum(y_true & (1 - z))
 
     return priv_eo - unpriv_eo
 
