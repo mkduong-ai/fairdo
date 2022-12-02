@@ -29,7 +29,7 @@ def evaluate_dataset_metrics(key: str, dataset_metric: BinaryLabelDatasetMetric)
     return evaluate_dataset_metric(key, dataset_metric)
 
 
-def evaluate_ml_models(results: dict, models_trained: dict, X_test, y_test, z_test) -> dict:
+def evaluate_ml_models(results: dict, models_trained: dict, X_test, y_test, z_test, privileged_groups) -> dict:
     """
 
     Parameters
@@ -43,12 +43,13 @@ def evaluate_ml_models(results: dict, models_trained: dict, X_test, y_test, z_te
         flattened (n,) shape
     z_test: ndarray
         flattened (n,) shape
+    privileged_groups: list of dict
 
     Returns
     -------
     dict
     """
-
+    privileged_group = np.array(list(privileged_groups[0].values()))
     # evaluate the models
     for key_model in models_trained:
         for key_preproc in models_trained[key_model]:

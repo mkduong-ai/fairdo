@@ -206,7 +206,8 @@ def preprocess_pipeline(dataset_train: BinaryLabelDataset, dataset_test: BinaryL
     results = {type(model).__name__:
                    {type(preprocessor).__name__: {} for preprocessor in preprocessors} for model in models}
 
-    results = evaluate_ml_models(results, models_trained, X_test, y_test, z_test)
+    results = evaluate_ml_models(results, models_trained, X_test, y_test, z_test,
+                                 privileged_groups)
     df_results = results_to_df(results)
 
     return df_all_dataset_evaluation, df_results
