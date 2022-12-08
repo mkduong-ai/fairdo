@@ -63,6 +63,7 @@ Create results
 cd evaluation
 python run_evaluation.py
 ```
+The results are saved under ``evaluation/results/...``.
 
 Create plots from results
 ```bash
