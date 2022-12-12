@@ -74,7 +74,7 @@ def plot_dataframe_aggregate(results_df: pd.DataFrame,
 
     # title, legend, labels
     # plt.title(f"{dataset.upper()} Dataset")
-    plt.legend(loc='lower right', prop={'size': 10})
+    plt.legend(loc='lower right', prop={'size': 8})
     #plt.xlabel(f"{protected_attribute.capitalize()} Discrimination ({x_axis})")
     plt.xlabel(f"{dataset.capitalize()} ({x_axis})")
     plt.ylabel(y_axis)
