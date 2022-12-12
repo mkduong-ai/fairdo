@@ -8,6 +8,7 @@ sns.set_theme(style='darkgrid')
 
 def plot_dataframe_aggregate(results_df: pd.DataFrame,
                              x_axis='Mutual Information', y_axis='F1 Score',
+                             dataset='COMPAS',
                              protected_attribute='race',
                              groups=None,
                              model=None,
@@ -26,6 +27,8 @@ def plot_dataframe_aggregate(results_df: pd.DataFrame,
         column of DataFrame for x-axis
     y_axis: str
         column of DataFrame for y-axis
+    dataset: str
+        Name of dataset
     protected_attribute: str
         column name of protected attribute in results_df
     groups: None
@@ -72,7 +75,8 @@ def plot_dataframe_aggregate(results_df: pd.DataFrame,
     # title, legend, labels
     # plt.title(f"{dataset.upper()} Dataset")
     plt.legend(loc='lower right', prop={'size': 8})
-    plt.xlabel(f"{protected_attribute.capitalize()} Discrimination ({x_axis})")
+    #plt.xlabel(f"{protected_attribute.capitalize()} Discrimination ({x_axis})")
+    plt.xlabel(f"{dataset.capitalize()} ({x_axis})")
     plt.ylabel(y_axis)
 
     # axes ranges
@@ -132,6 +136,7 @@ def save_plots_over_models_datasets(x_axis: str, y_axis: str, models: list, data
 
             # plot
             plot_dataframe_aggregate(clf_results, x_axis=x_axis, y_axis=y_axis,
+                                     dataset=dataset,
                                      protected_attribute=protected_attribute,
                                      model=model,
                                      filepath=filepath,
@@ -163,5 +168,7 @@ def save_plots_over_xy_axes(x_axes: list, y_axes: list, models: list, dataset_pr
     """
     for x_axis in x_axes:
         for y_axis in y_axes:
-            save_plots_over_models_datasets(x_axis, y_axis, models, dataset_pro_attributes, show=show,
+            save_plots_over_models_datasets(x_axis=x_axis, y_axis=y_axis,
+                                            models=models, dataset_pro_attributes=dataset_pro_attributes,
+                                            show=show,
                                             filepath_prefix=filepath_prefix)
