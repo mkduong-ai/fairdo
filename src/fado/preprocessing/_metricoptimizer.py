@@ -15,7 +15,7 @@ class MetricOptimizer(Preprocessing):
     """
 
     def __init__(self, protected_attribute, label,
-                 frac=0.8, m=5, eps=0,
+                 frac=0.75, m=5, eps=0,
                  additions=None,
                  deletions=None,
                  fairness_metric=statistical_parity_absolute_difference,
