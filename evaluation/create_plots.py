@@ -68,8 +68,8 @@ def main():
                    'plot_all_dataset_metrics': plot_all_datasets_metrics,
                    'plot_fairness_agnostic': plot_fairness_agnostic}
 
-    pick = 'plot_all_datasets'
-    frac = 1.25
+    pick = 'plot_fairness_agnostic'
+    frac = 0.75
 
     experiments[pick](frac=frac)
 
