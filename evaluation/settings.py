@@ -58,8 +58,9 @@ def get_evaluation_config(config='comparison_preprocessors', frac=0.75, plot=Fal
         metrics = [#'statistical_parity_absolute_difference',
                    'normalized_mutual_information',
                    'consistency_score_objective',
-                   'disparate_impact_ratio_objective']
-        metrics = ['pearsonr']
+                   'disparate_impact_ratio_objective',
+                   'pearsonr']
+        metrics = ['pearsonr_abs']
 
         if plot:
             models = list(map(lambda x: type(x).__name__, models))
