@@ -9,7 +9,7 @@ from sklearn.metrics import roc_auc_score, balanced_accuracy_score, f1_score, ac
     recall_score
 
 ## fairness metrics
-from fado.metrics import mutual_information, normalized_mutual_information,\
+from fado.metrics import pearsonr, mutual_information, normalized_mutual_information,\
     rdc, statistical_parity_absolute_difference, \
     equal_opportunity_absolute_difference, disparate_impact_ratio, disparate_impact_ratio_objective,\
     predictive_equality_absolute_difference, average_odds_error, average_odds_difference,\
@@ -96,7 +96,7 @@ def evaluate_ml_models(results: dict, models_trained: dict, X_test, y_test, z_te
                 rdc(y_pred_argmax, z_test)
 
             results[key_model][key_preproc]['Pearson Correlation'] = \
-                np.abs(np.corrcoef(y_pred_argmax, z_test)[0, 1])
+                pearsonr(y_pred_argmax, z_test)
 
             # parity based measures
             results[key_model][key_preproc]['Statistical Parity Abs Diff'] = \
