@@ -5,6 +5,23 @@ from sklearn.metrics import mutual_info_score, normalized_mutual_info_score
 import warnings
 
 
+def pearsonr(y: np.array, z: np.array, **kwargs) -> float:
+    """
+    Calculates the Pearson correlation between two variables.
+
+    Parameters
+    ----------
+    y: np.array
+    z: np.array
+    kwargs: keyworded arguments
+
+    Returns
+    -------
+    float
+    """
+    return np.corrcoef(y.reshape(1, -1), z.reshape(1, -1))[0, 1]
+
+
 def mutual_information(y: np.array, z: np.array, bins=2, **kwargs) -> float:
     """
     Measures whether two variables are independent by calculating their mutual information
