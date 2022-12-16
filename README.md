@@ -58,6 +58,13 @@ More ``jupyter notebooks`` examples can be viewed in ``tutorials/``.
 
 ## Evaluation
 
+As the evaluation script depends on other algorithms, it is necessary to install the appropriate packages by:
+
+```bash
+cd evaluation
+pip install -r requirements.txt
+```
+
 Create results
 ```bash
 cd evaluation
@@ -70,3 +77,7 @@ Create plots from results
 cd evaluation
 python create_plots.py
 ```
+The plots are stored in the same directory as their corresponding .csv file.
+
+To modify or change several settings (datasets, metrics, #runs) in the evaluation,
+change the file ``evaluation/settings.py``.
