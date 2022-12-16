@@ -3,9 +3,10 @@ from settings import get_evaluation_config
 
 
 x_axis_mapper = {'statistical_parity_absolute_difference': 'Statistical Parity Abs Diff',
+                 'disparate_impact_ratio_objective': 'Disparate Impact Obj',
                  'normalized_mutual_information': 'Normalized MI',
                  'consistency_score_objective': 'Consistency Obj',
-                 'disparate_impact_ratio_objective': 'Disparate Impact Obj'}
+                 'pearsonr': 'Pearson Correlation'}
 
 
 def plot_all_datasets(frac):
@@ -69,7 +70,7 @@ def main():
                    'plot_fairness_agnostic': plot_fairness_agnostic}
 
     pick = 'plot_fairness_agnostic'
-    frac = 0.75
+    frac = 1.25
 
     experiments[pick](frac=frac)
 
