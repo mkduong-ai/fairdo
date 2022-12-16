@@ -1,6 +1,7 @@
 from ._base import Preprocessing
 from fado.metrics import statistical_parity_absolute_difference
 
+
 # third party
 import numpy as np
 import pandas as pd
@@ -70,6 +71,25 @@ class MetricOptRemover(Preprocessing):
                  frac=0.75, m=5, eps=0,
                  deletions=None,
                  fairness_metric=statistical_parity_absolute_difference, random_state=None):
+        """
+
+        Parameters
+        ----------
+        protected_attribute: str
+            String of column that is discriminated
+        label: str
+            String of column that represents the prediction label
+        frac: float
+            A multiplicative of the given dataset's size
+        m: int
+            Number of candidates
+        eps: float
+        deletions: int
+            If deletions is given, then frac is ignored. Number of samples to be removed from the dataset.
+        fairness_metric:
+            A fairness metric which can take x, y, or z as array parameters and calculates a fairness score.
+        random_state: int
+        """
         super().__init__(frac=frac, protected_attribute=protected_attribute, label=label)
         if self.frac >= 1:
             raise Exception('Fraction frac can not be greater or equal to 1.')
