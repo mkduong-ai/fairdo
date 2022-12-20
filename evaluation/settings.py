@@ -67,7 +67,7 @@ def get_evaluation_config(config='comparison_preprocessors', frac=0.75, plot=Fal
 
         return dataset_pro_attributes, models, metrics, filepath
     elif config == 'quick':
-        dataset_pro_attributes = [('compas', 'race')]
+        dataset_pro_attributes = [('german', 'foreign_worker')]
 
         if plot:
             models = list(map(lambda x: type(x).__name__, models))
