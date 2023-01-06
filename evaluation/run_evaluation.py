@@ -104,7 +104,7 @@ def main():
                    'run_fairness_agnostic': run_fairness_agnostic}
 
     pick = 'run_fairness_agnostic'
-    frac = 0.75
+    frac = 0.25
 
     experiments[pick](frac=frac)
 
