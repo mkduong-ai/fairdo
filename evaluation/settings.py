@@ -59,7 +59,7 @@ def get_evaluation_config(config='comparison_preprocessors', frac=0.75, plot=Fal
                    'normalized_mutual_information',
                    'consistency_score_objective',
                    'disparate_impact_ratio_objective',
-                   'pearsonr']
+                   'pearsonr_abs']
         #metrics = ['pearsonr_abs']
 
         if plot:
