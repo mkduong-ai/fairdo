@@ -5,7 +5,7 @@ import warnings
 def statistical_parity_difference(y: np.array, z: np.array,
                                   positive_label=1, privileged_group=1, **kwargs) -> float:
     """
-    Difference in equalized opportunities (Lee et al. 2022)
+    Difference in statistical parity (Lee et al. 2022)
 
     Parameters
     ----------
