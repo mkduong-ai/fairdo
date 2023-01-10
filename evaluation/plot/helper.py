@@ -62,7 +62,7 @@ def plot_dataframe_aggregate(results_df: pd.DataFrame,
     yerr = yerr_std
 
     # figsize
-    plt.figure(figsize=(4, 2), dpi=80)
+    plt.figure(figsize=(5, 2), dpi=80)
     for i in range(len(x_mean)):
         if model is not None:
             label = eval(x_mean.index[i])[1]
