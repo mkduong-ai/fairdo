@@ -100,7 +100,7 @@ class MetricOptRemover(Preprocessing):
         self.random_state = random_state
         np.random.seed(random_state)
 
-    def transform(self):
+    def transform(self, index=False):
         if self.dataset is None:
             raise Exception('Model not fitted.')
 
@@ -137,7 +137,10 @@ class MetricOptRemover(Preprocessing):
                     break
 
         self.transformed_data = self.dataset.loc[samples.index]
-        return self.transformed_data
+        if index:
+            return samples.index
+        else:
+            return self.transformed_data
 
 
 class MetricOptGenerator(Preprocessing):
@@ -212,7 +215,7 @@ class MetricOptGenerator(Preprocessing):
 
         return self
 
-    def transform(self):
+    def transform(self, index=False):
         if self.dataset is None:
             raise Exception('Model not fitted.')
         if None in (self.protected_attribute, self.label):
