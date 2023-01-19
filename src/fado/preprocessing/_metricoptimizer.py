@@ -117,7 +117,7 @@ class MetricOptRemover(Preprocessing):
             cands = samples.sample(n=min(self.m, len(samples)), replace=False)
 
             # list consists of single candidates removed from samples
-            samples_wo_cands_list = [samples.drop(index=i, inplace=False) for i in cands.index]  # slowest operation
+            samples_wo_cands_list = [samples.drop(index=j, inplace=False) for j in cands.index]  # slowest operation
 
             discrimination_values = []
             for j in range(self.m):
@@ -132,9 +132,8 @@ class MetricOptRemover(Preprocessing):
             samples = samples_wo_cands_list[opt_cand_index]
 
             # stop criterion if fairness is fulfilled
-            if self.eps > 0:
-                if discrimination_values[opt_cand_index] <= self.eps:
-                    break
+            if discrimination_values[opt_cand_index] <= self.eps:
+                break
 
         self.transformed_data = self.dataset.loc[samples.index]
         if index:
@@ -250,8 +249,8 @@ class MetricOptGenerator(Preprocessing):
             samples = samples_concat_list[opt_cand_index]
 
             # stop criterion if fairness is fulfilled
-            if self.eps > 0:
-                if discrimination_values[opt_cand_index] <= self.eps:
-                    break
+            if discrimination_values[opt_cand_index] <= self.eps:
+                break
+
         self.transformed_data = samples
         return self.transformed_data
