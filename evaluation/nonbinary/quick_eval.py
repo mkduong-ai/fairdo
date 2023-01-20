@@ -52,6 +52,17 @@ def metricopt_wrapper(dataframe, label, protected_attributes, disc_measure=stati
 
 
 def method_random(f, dims):
+    """
+
+    Parameters
+    ----------
+    f: callable
+    dims: int
+
+    Returns
+    -------
+
+    """
     current_solution = np.random.randint(0, 2, size=dims)
     current_fitness = f(current_solution)
     for i in range(100):
@@ -116,15 +127,17 @@ def plot(results):
 
 
 def main():
-    # dataset
+    # settings
     df, label, protected_attributes = load_data('adult')
+    # create objective function
     f_obj = lambda x, disc_measure: f(x, dataframe=df, label=label, protected_attributes=protected_attributes,
                                       disc_measure=disc_measure)
     disc_measures = [statistical_parity_absolute_difference, normalized_mutual_information]
+    # Todo: function name always lambda...
     functions = [lambda x: f_obj(x, disc_measure=disc_measure) for disc_measure in disc_measures]
 
     dims = len(df) # number of dimensions of x
-    n_runs = 1 # number of times to run each method
+    n_runs = 3 # number of times to run each method
     methods = [method_random]#, method2, method3]
 
     # create results dictionary
@@ -140,6 +153,7 @@ def main():
             for i in range(n_runs):
                 results[method.__name__][func.__name__].append(method(func, dims)[1])
 
+    print(results)
     print('Plotting results...')
     plot(results)
 
