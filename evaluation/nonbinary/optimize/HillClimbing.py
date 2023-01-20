@@ -1,11 +1,10 @@
 import numpy as np
 
 '''
-In this implementation, the initial solution is randomly generated, and the function repeatedly generates a new random neighbor solution and decides whether to accept it based on its fitness. The algorithm stops when no better solutions can be found by generating new neighbors.
-
+In this implementation, the initial solution is randomly generated, and the function repeatedly generates a new random neighbor solution and decides whether to accept it based on its fitness.
+The algorithm stops when no better solutions can be found by generating new neighbors.
 It's important to note that the results of this algorithm may vary depending on the specific function you're trying to minimize, as well as the initial state of the algorithm.
-
-Also, note that the algorithm may get stuck in local minima,  in this case, it can be improved by using techniques such as simulated annealing which allows for "jumping out" of local minima with a certain probability, or by using a technique called random restart, where the algorithm is run multiple times with different random initial solutions to increase the chances of finding the global optimum.
+Also, note that the algorithm may get stuck in local minima, in this case, it can be improved by using techniques such as simulated annealing which allows for "jumping out" of local minima with a certain probability, or by using a technique called random restart, where the algorithm is run multiple times with different random initial solutions to increase the chances of finding the global optimum.
 '''
 
 def f(x):

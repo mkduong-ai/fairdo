@@ -2,14 +2,13 @@ import numpy as np
 import queue
 
 '''
-In this algorithm, we start by creating the initial node, which is a tuple of the form (fitness, lower_bound, upper_bound). The fitness is the value of the function for the lower_bound, and the lower_bound and upper_bound are binary vectors of dimension d.
-
-The initial node's upper and lower bounds are both initialized to all zeros and all ones respectively. The algorithm then repeatedly selects the node with the best lower bound from the priority queue and checks if it can be branched. If it can be branched, it creates two child nodes (left and right) by setting the upper and lower bounds of the child node to the upper and lower bounds of the parent node.
-
+In this algorithm, we start by creating the initial node, which is a tuple of the form (fitness, lower_bound, upper_bound).
+The fitness is the value of the function for the lower_bound, and the lower_bound and upper_bound are binary vectors of dimension d.
+The initial node's upper and lower bounds are both initialized to all zeros and all ones respectively.
+The algorithm then repeatedly selects the node with the best lower bound from the priority queue and checks if it can be branched.
+If it can be branched, it creates two child nodes (left and right) by setting the upper and lower bounds of the child node to the upper and lower bounds of the parent node.
 The algorithm stops when the priority queue is empty. The best_solution and best_fitness are returned as the solution of the problem.
-
 This is a basic implementation of Branch and Bound algorithm and can be improved with more advanced techniques such as dynamic programming and cutting plane method.
-
 It's important to note that the results of this algorithm may vary depending on the specific function you're trying to minimize.
 '''
 
