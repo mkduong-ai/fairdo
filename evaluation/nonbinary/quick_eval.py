@@ -3,7 +3,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import LabelEncoder
 
+# load metrics
 from fado.metrics import statistical_parity_absolute_difference, normalized_mutual_information
+from fado.metrics.nonbinary import nb_statistical_parity_sum_abs_difference, nb_statistical_parity_max_abs_difference, \
+    nb_normalized_mutual_information
+
+# load methods
 from fado.preprocessing import MetricOptimizer, MetricOptRemover
 
 
@@ -49,6 +54,21 @@ def metricopt_wrapper(dataframe, label, protected_attributes, disc_measure=stati
 
     preproc = preproc.fit(dataframe)
     return preproc.transform()
+
+
+def method_original(f, dims):
+    """
+
+    Parameters
+    ----------
+    f: callable
+    dims: int
+
+    Returns
+    -------
+
+    """
+    return np.ones(dims), f(np.ones(dims))
 
 
 def method_random(f, dims):
@@ -107,8 +127,11 @@ def f(binary_vector, dataframe, label, protected_attributes, disc_measure=statis
     x, y, z = keep_xyz_samples(x, y, z, binary_vector)
 
     # TODO: handle multiple protected attributes (?)
+
     y = y.to_numpy().flatten()
     z = z.to_numpy().flatten()
+    print(z)
+    print(set(z))
     return disc_measure(x=x, y=y, z=z)
 
 
@@ -120,8 +143,8 @@ def plot(results):
             std = np.std(values)
             plt.scatter(f"{method} {func}", mean, label=f"{method} {func}")
             plt.errorbar(f"{method} {func}", mean, yerr=std, fmt='o')
-            plt.xlabel('Method and Function')
-            plt.ylabel('Minimum Value')
+            plt.xlabel('Method and Objective Function')
+            plt.ylabel('Discrimination')
             plt.legend()
     plt.show()
 
@@ -132,13 +155,16 @@ def main():
     # create objective function
     f_obj = lambda x, disc_measure: f(x, dataframe=df, label=label, protected_attributes=protected_attributes,
                                       disc_measure=disc_measure)
-    disc_measures = [statistical_parity_absolute_difference, normalized_mutual_information]
-    # Todo: function name always lambda...
+    disc_measures = [nb_statistical_parity_sum_abs_difference,
+                     nb_statistical_parity_max_abs_difference,
+                     nb_normalized_mutual_information]
     functions = [lambda x: f_obj(x, disc_measure=disc_measure) for disc_measure in disc_measures]
+    for func, disc_measure in zip(functions, disc_measures):
+        func.__name__ = disc_measure.__name__
 
     dims = len(df) # number of dimensions of x
     n_runs = 3 # number of times to run each method
-    methods = [method_random]#, method2, method3]
+    methods = [method_random, method_original]
 
     # create results dictionary
     results = {}
