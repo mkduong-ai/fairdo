@@ -130,8 +130,7 @@ def f(binary_vector, dataframe, label, protected_attributes, disc_measure=statis
 
     y = y.to_numpy().flatten()
     z = z.to_numpy().flatten()
-    print(z)
-    print(set(z))
+    # print(set(z))
     return disc_measure(x=x, y=y, z=z)
 
 
@@ -163,7 +162,7 @@ def main():
         func.__name__ = disc_measure.__name__
 
     dims = len(df) # number of dimensions of x
-    n_runs = 3 # number of times to run each method
+    n_runs = 5 # number of times to run each method
     methods = [method_random, method_original]
 
     # create results dictionary
