@@ -55,8 +55,7 @@ def mutual_information(y: np.array, z: np.array, bins=2, **kwargs) -> float:
     float
     """
     # discrimination measurement
-    c_zy = np.histogram2d(z, y, bins)[0]
-    mi = mutual_info_score(None, None, contingency=c_zy)
+    mi = mutual_info_score(y, z)
     return mi
 
 

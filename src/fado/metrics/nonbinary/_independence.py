@@ -2,6 +2,8 @@ import numpy as np
 from scipy.stats import rankdata
 from sklearn.metrics import mutual_info_score, normalized_mutual_info_score
 
+import warnings
+
 
 def nb_mutual_information(y: np.array, z: np.array, **kwargs) -> float:
     """
