@@ -112,6 +112,14 @@ class MetricOptRemover(Preprocessing):
                  int(len(samples) * self.frac))
         else:
             n = self.deletions
+
+        # check whether dataset is already fair
+        x = np.array(samples.drop(columns=[self.label, self.protected_attribute]))
+        y = np.array(samples[self.label])
+        z = np.array(samples[self.protected_attribute])
+        if self.fairness_metric(x=x, y=y, z=z) <= self.eps:
+            return samples
+
         for i in range(1, n):
             # create candidates
             cands = samples.sample(n=min(self.m, len(samples)), replace=False)
@@ -228,6 +236,13 @@ class MetricOptGenerator(Preprocessing):
                  len(samples))
         else:
             n = self.additions
+
+        # check whether dataset is already fair
+        x = np.array(samples.drop(columns=[self.label, self.protected_attribute]))
+        y = np.array(samples[self.label])
+        z = np.array(samples[self.protected_attribute])
+        if self.fairness_metric(x=x, y=y, z=z) <= self.eps:
+            return samples
 
         for i in range(0, n):
             # create candidates
