@@ -92,7 +92,7 @@ def simulated_annealing_method(f, dims):
     current_fitness: float
         The fitness of the best solution found by the algorithm
     """
-    return simulated_annealing(f, d=dims, T_max=1, T_min=1e-6, alpha=0.95, max_iter=1000)
+    return simulated_annealing(f, d=dims, T_max=1, T_min=1e-6, alpha=0.95, max_iter=100)
 
 
 def simulated_annealing_constraint(d, num_steps, n):

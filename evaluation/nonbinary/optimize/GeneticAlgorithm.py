@@ -33,7 +33,7 @@ def generate_population(pop_size, d):
     return np.random.randint(2, size=(pop_size, d))
 
 
-def evaluate_population(population):
+def evaluate_population(f, population):
     # evaluate the function for each vector in the population
     return np.apply_along_axis(f, 1, population)
 
@@ -92,11 +92,13 @@ def select_parents_constraint(population, fitness, pop_size, n):
     return np.array(parents)
 
 
-def genetic_algorithm(pop_size, d, num_generations):
+def genetic_algorithm(f, pop_size, d, num_generations):
     """
 
     Parameters
     ----------
+    f: function
+        function to minimize
     pop_size: int
         population size (number of individuals)
     d: int
@@ -121,7 +123,7 @@ def genetic_algorithm(pop_size, d, num_generations):
         # mutate the offspring
         offspring = mutate(offspring)
         # evaluate the function for the new offspring
-        offspring_fitness = evaluate_population(offspring)
+        offspring_fitness = evaluate_population(f, offspring)
         # create the new population
         population = np.concatenate((parents, offspring))
         fitness = np.concatenate((fitness[:parents.shape[0]], offspring_fitness))
@@ -147,7 +149,7 @@ def genetic_algorithm_method(func, dims):
     -------
 
     """
-    return genetic_algorithm(pop_size=50, d=dims, num_generations=100)
+    return genetic_algorithm(f=func, pop_size=50, d=dims, num_generations=100)
 
 
 def genetic_algorithm_constraint(pop_size, d, num_generations, n):
