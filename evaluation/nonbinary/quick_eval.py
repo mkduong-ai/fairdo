@@ -167,8 +167,8 @@ def main():
     n_runs = 5 # number of times to run each method
     methods = [method_random,
                method_original,
-               SimulatedAnnealing.simulated_annealing_method,
-               GeneticAlgorithm.genetic_algorithm_method]
+               SimulatedAnnealing.simulated_annealing_method,]
+               # GeneticAlgorithm.genetic_algorithm_method]
 
     # create results dictionary
     results = {}
