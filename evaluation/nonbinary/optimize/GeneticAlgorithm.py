@@ -83,31 +83,6 @@ as well as the specific function you're trying to minimize.
 '''
 
 
-def genetic_algorithm_constraint(pop_size, d, num_generations, n):
-    # generate the initial population
-    population = generate_population(pop_size, d)
-    # evaluate the function for each vector in the population
-    fitness = evaluate_population(population)
-    # perform the genetic algorithm for the specified number of generations
-    for generation in range(num_generations):
-        # select the parents
-        parents = select_parents_constraint(population, fitness, pop_size, n)
-        # create the offspring
-        offspring_size = (pop_size-parents.shape[0], d)
-        offspring = crossover(parents, offspring_size)
-        # mutate the offspring
-        offspring = mutate(offspring)
-        # evaluate the function for the new offspring
-        offspring_fitness = evaluate_population(offspring)
-        # create the new population
-        population = np.concatenate((parents, offspring))
-        fitness = np.concatenate((fitness[:parents.shape[0]], offspring_fitness))
-        # select the best individuals to keep for the next generation
-        idx = np.argsort(fitness)[:pop_size]
-        population = population[idx]
-    return population[0], fitness[0]
-
-
 def select_parents_constraint(population, fitness, pop_size, n):
     parents = []
     while len(parents) < pop_size:
@@ -118,6 +93,20 @@ def select_parents_constraint(population, fitness, pop_size, n):
 
 
 def genetic_algorithm(pop_size, d, num_generations):
+    """
+
+    Parameters
+    ----------
+    pop_size: int
+        population size (number of individuals)
+    d: int
+        number of dimensions
+    num_generations: int
+        number of generations
+    Returns
+    -------
+
+    """
     # generate the initial population
     population = generate_population(pop_size, d)
     # evaluate the function for each vector in the population
@@ -142,3 +131,45 @@ def genetic_algorithm(pop_size, d, num_generations):
         fitness = fitness[idx]
     
     return population, fitness
+
+
+def genetic_algorithm_method(func, dims):
+    """
+    Genetic Algorithm method
+    Parameters
+    ----------
+    func: function
+        function to optimize
+    dims: int
+        number of dimensions
+
+    Returns
+    -------
+
+    """
+    return genetic_algorithm(pop_size=50, d=dims, num_generations=100)
+
+
+def genetic_algorithm_constraint(pop_size, d, num_generations, n):
+    # generate the initial population
+    population = generate_population(pop_size, d)
+    # evaluate the function for each vector in the population
+    fitness = evaluate_population(population)
+    # perform the genetic algorithm for the specified number of generations
+    for generation in range(num_generations):
+        # select the parents
+        parents = select_parents_constraint(population, fitness, pop_size, n)
+        # create the offspring
+        offspring_size = (pop_size-parents.shape[0], d)
+        offspring = crossover(parents, offspring_size)
+        # mutate the offspring
+        offspring = mutate(offspring)
+        # evaluate the function for the new offspring
+        offspring_fitness = evaluate_population(offspring)
+        # create the new population
+        population = np.concatenate((parents, offspring))
+        fitness = np.concatenate((fitness[:parents.shape[0]], offspring_fitness))
+        # select the best individuals to keep for the next generation
+        idx = np.argsort(fitness)[:pop_size]
+        population = population[idx]
+    return population[0], fitness[0]

@@ -27,13 +27,42 @@ def f(x):
     return sum(x)
 
 
-def simulated_annealing(d, T_max, T_min, alpha):
+def simulated_annealing(f, d, T_max, T_min, alpha, max_iter=1000):
+    """
+
+    Parameters
+    ----------
+    f: callable
+        The function to be minimized
+    d: int
+        dimension of the binary vector
+    T_max: float
+        The initial temperature, which should be set high enough to allow the algorithm to
+        escape local optima and explore the search space.
+    T_min: float
+        The final temperature, which should be set low enough to ensure that the algorithm has
+        converged to a local minimum.
+    alpha: float
+        The temperature decay rate, which should be set between 0 and 1. A value of 0.9 is often used.
+    max_iter: int
+        The maximum number of iterations to perform. This is used to prevent the algorithm from running
+        indefinitely if it fails to converge.
+
+    Returns
+    -------
+    current_solution: np.array
+        The best solution found by the algorithm
+    current_fitness: float
+        The fitness of the best solution found by the algorithm
+    """
+
     # Initialize the current solution randomly
     current_solution = np.random.randint(2, size=d)
     current_fitness = f(current_solution)
     T = T_max
+    iter = 0
     # Repeat until the temperature reach the minimum
-    while T > T_min:
+    while T > T_min and iter < max_iter:
         for i in range(d):
             # Generate a random neighbor
             new_solution = current_solution.copy()
@@ -46,6 +75,24 @@ def simulated_annealing(d, T_max, T_min, alpha):
                 current_fitness = new_fitness
         T = T*alpha  # decrease the temperature
     return current_solution, current_fitness
+
+
+def simulated_annealing_method(f, dims):
+    """
+    Parameters
+    ----------
+    f: callable
+        The function to be minimized
+    dims: int
+        dimension of the binary vector
+    Returns
+    -------
+    current_solution: np.array
+        The best solution found by the algorithm
+    current_fitness: float
+        The fitness of the best solution found by the algorithm
+    """
+    return simulated_annealing(f, d=dims, T_max=1, T_min=1e-6, alpha=0.95, max_iter=1000)
 
 
 def simulated_annealing_constraint(d, num_steps, n):
@@ -76,4 +123,5 @@ def simulated_annealing_constraint(d, num_steps, n):
 
 
 def penalty(x, n):
+    # Not normalized
     return abs(sum(x) - n)

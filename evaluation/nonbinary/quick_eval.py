@@ -11,6 +11,9 @@ from fado.metrics.nonbinary import nb_statistical_parity_sum_abs_difference, nb_
 # load methods
 from fado.preprocessing import MetricOptimizer, MetricOptRemover
 
+# load optimization methods
+from optimize import SimulatedAnnealing, GeneticAlgorithm
+
 
 def load_data(dataset_str):
     """
@@ -127,7 +130,6 @@ def f(binary_vector, dataframe, label, protected_attributes, disc_measure=statis
     x, y, z = keep_xyz_samples(x, y, z, binary_vector)
 
     # TODO: handle multiple protected attributes (?)
-
     y = y.to_numpy().flatten()
     z = z.to_numpy().flatten()
     # print(set(z))
@@ -154,7 +156,7 @@ def main():
     # create objective function
     f_obj = lambda x, disc_measure: f(x, dataframe=df, label=label, protected_attributes=protected_attributes,
                                       disc_measure=disc_measure)
-    disc_measures = [nb_statistical_parity_sum_abs_difference,
+    disc_measures = [#nb_statistical_parity_sum_abs_difference,
                      nb_statistical_parity_max_abs_difference,
                      nb_normalized_mutual_information]
     functions = [lambda x: f_obj(x, disc_measure=disc_measure) for disc_measure in disc_measures]
@@ -163,7 +165,10 @@ def main():
 
     dims = len(df) # number of dimensions of x
     n_runs = 5 # number of times to run each method
-    methods = [method_random, method_original]
+    methods = [method_random,
+               method_original,
+               SimulatedAnnealing.simulated_annealing_method,
+               GeneticAlgorithm.genetic_algorithm_method]
 
     # create results dictionary
     results = {}

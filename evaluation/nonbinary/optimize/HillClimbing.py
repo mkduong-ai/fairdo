@@ -1,10 +1,15 @@
 import numpy as np
 
 '''
-In this implementation, the initial solution is randomly generated, and the function repeatedly generates a new random neighbor solution and decides whether to accept it based on its fitness.
+In this implementation, the initial solution is randomly generated, and the function repeatedly generates a new random
+neighbor solution and decides whether to accept it based on its fitness.
 The algorithm stops when no better solutions can be found by generating new neighbors.
-It's important to note that the results of this algorithm may vary depending on the specific function you're trying to minimize, as well as the initial state of the algorithm.
-Also, note that the algorithm may get stuck in local minima, in this case, it can be improved by using techniques such as simulated annealing which allows for "jumping out" of local minima with a certain probability, or by using a technique called random restart, where the algorithm is run multiple times with different random initial solutions to increase the chances of finding the global optimum.
+It's important to note that the results of this algorithm may vary depending on the specific function
+you're trying to minimize, as well as the initial state of the algorithm.
+Also, note that the algorithm may get stuck in local minima, in this case, it can be improved by using techniques such
+as simulated annealing which allows for "jumping out" of local minima with a certain probability,
+or by using a technique called random restart, where the algorithm is run multiple times with different random initial
+solutions to increase the chances of finding the global optimum.
 '''
 
 
@@ -37,9 +42,12 @@ def hill_climbing(d):
 
 
 '''
-In this example, I've added a constraint to the Hill Climbing algorithm that the sum of x has to be equal to a user-given number n. This is done by checking the sum of the new solution after it's generated, if it doesn't meet the constraint, the algorithm will continue to generate a new solution.
+In this example, I've added a constraint to the Hill Climbing algorithm that the sum of x has to be equal to a
+user-given number n. This is done by checking the sum of the new solution after it's generated, if it doesn't meet the
+constraint, the algorithm will continue to generate a new solution.
 
-It's important to note that the results of this algorithm may vary depending on the specific function you're trying to minimize and the specific parameter values you choose.
+It's important to note that the results of this algorithm may vary depending on the specific function
+you're trying to minimize and the specific parameter values you choose.
 '''
 
 
@@ -67,10 +75,15 @@ def hill_climbing_constraint(d, n):
             break
     return current_solution, current_fitness
 
-'''
-In this example, the Hill Climbing algorithm is run multiple times with different random initial solutions, this is the random restarts technique. This increases the chances of finding the global optimum and also deals with the exploration-exploitation trade-off. The algorithm stops when no better solutions can be found. The best solution found among all restarts is returned.
 
-It's important to note that the number of restarts and the initial temperature should be chosen based on the specific problem at hand, as well as the desired trade-offs between exploration and exploitation.
+'''
+In this example, the Hill Climbing algorithm is run multiple times with different random initial solutions,
+this is the random restarts technique. This increases the chances of finding the global optimum and also deals with the
+exploration-exploitation trade-off. The algorithm stops when no better solutions can be found.
+The best solution found among all restarts is returned.
+
+It's important to note that the number of restarts and the initial temperature should be chosen based on the specific
+problem at hand, as well as the desired trade-offs between exploration and exploitation.
 '''
 
 
