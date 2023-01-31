@@ -181,6 +181,7 @@ def main():
     for method in methods:
         for func in functions:
             for i in range(n_runs):
+                print(method.__name__, func.__name__, i)
                 results[method.__name__][func.__name__].append(method(func, dims)[1])
 
     print(results)
