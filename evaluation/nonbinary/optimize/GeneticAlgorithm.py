@@ -14,22 +14,29 @@ Here is an example of a research paper that uses the genetic algorithm to solve 
   publisher={IEEE}
 }
 
-This paper describes an efficient multi-objective genetic algorithm called NSGA-II that can handle constraints by applying a penalty function approach. The algorithm has been widely used in various fields of research, such as engineering, economics, and finance.
+This paper describes an efficient multi-objective genetic algorithm called NSGA-II that can handle constraints by
+applying a penalty function approach.
+The algorithm has been widely used in various fields of research, such as engineering, economics, and finance.
 
-You can use this approach in your research work, by adding the constraint to your fitness function and applying a penalty function to the solutions that do not satisfy the constraint.
+You can use this approach in your research work, by adding the constraint to your fitness function and applying
+a penalty function to the solutions that do not satisfy the constraint.
 '''
+
 
 def f(x):
     # replace this with your own blackbox function
     return sum(x)
 
+
 def generate_population(pop_size, d):
     # generate a population of binary vectors
     return np.random.randint(2, size=(pop_size, d))
 
+
 def evaluate_population(population):
     # evaluate the function for each vector in the population
     return np.apply_along_axis(f, 1, population)
+
 
 def select_parents(population, fitness, num_parents):
     # select the best individuals from the population to be parents
@@ -38,6 +45,7 @@ def select_parents(population, fitness, num_parents):
         idx = np.random.choice(np.flatnonzero(fitness == fitness.min()))
         parents[i, :] = population[idx, :]
     return parents
+
 
 def crossover(parents, offspring_size):
     # perform crossover on the parents to generate new offspring
@@ -54,6 +62,7 @@ def crossover(parents, offspring_size):
         offspring[k, crossover_point:] = parents[parent2_idx, crossover_point:]
     return offspring
 
+
 def mutate(offspring):
     # mutate the offspring by flipping random bits
     mutation_rate = 0.01
@@ -63,11 +72,17 @@ def mutate(offspring):
     return offspring
     
 '''
-In this example, the select_parents_constraint function is used to select the parents for the next generation. This function selects parents from the population randomly but only those individuals whose sum of entries is equal to n. The genetic_algorithm_constraint function is modified to use this new selection process. The final population is returned and the fitness of the best individual is returned.
+In this example, the select_parents_constraint function is used to select the parents for the next generation.
+This function selects parents from the population randomly but only those individuals whose sum of entries is equal to n.
+The genetic_algorithm_constraint function is modified to use this new selection process.
+The final population is returned and the fitness of the best individual is returned.
 
-It's important to note that the results of this algorithm may vary depending on the specific parameter values you choose (e.g. mutation rate, population size, number of generations), as well as the specific function you're trying to minimize.
+It's important to note that the results of this algorithm may vary depending on the specific parameter values you choose
+(e.g. mutation rate, population size, number of generations),
+as well as the specific function you're trying to minimize.
 '''
-    
+
+
 def genetic_algorithm_constraint(pop_size, d, num_generations, n):
     # generate the initial population
     population = generate_population(pop_size, d)
@@ -92,6 +107,7 @@ def genetic_algorithm_constraint(pop_size, d, num_generations, n):
         population = population[idx]
     return population[0], fitness[0]
 
+
 def select_parents_constraint(population, fitness, pop_size, n):
     parents = []
     while len(parents) < pop_size:
@@ -99,6 +115,7 @@ def select_parents_constraint(population, fitness, pop_size, n):
         if sum(population[idx]) == n:
             parents.append(population[idx])
     return np.array(parents)
+
 
 def genetic_algorithm(pop_size, d, num_generations):
     # generate the initial population

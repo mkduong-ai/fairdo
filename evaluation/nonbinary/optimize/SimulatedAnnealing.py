@@ -9,16 +9,23 @@ d: the dimension of the binary vector
 T_max: the initial temperature
 T_min: the final temperature
 alpha : the temperature decay rate
-In this implementation, the initial solution is randomly generated, and the function repeatedly generates a new random neighbor solution and decides whether to accept it based on its fitness and the current temperature. The temperature is decreased after each iteration using the decay rate. The algorithm stops when the temperature reaches the minimum.
+In this implementation, the initial solution is randomly generated, and the function repeatedly generates a new random
+neighbor solution and decides whether to accept it based on its fitness and the current temperature.
+The temperature is decreased after each iteration using the decay rate.
+The algorithm stops when the temperature reaches the minimum.
 
-It's important to note that the results of this algorithm may vary depending on the specific parameter values you choose (e.g. T_max, T_min, alpha), as well as the specific function you're trying to minimize.
+It's important to note that the results of this algorithm may vary depending on the specific parameter
+values you choose (e.g. T_max, T_min, alpha), as well as the specific function you're trying to minimize.
 
-Also, note that the stopping criterion can be improved. For example, it could be based on the number of iterations, or based on the improvement of the solution.
+Also, note that the stopping criterion can be improved. For example, it could be based on the number of iterations,
+or based on the improvement of the solution.
 '''
+
 
 def f(x):
     # replace this with your own blackbox function
     return sum(x)
+
 
 def simulated_annealing(d, T_max, T_min, alpha):
     # Initialize the current solution randomly
@@ -39,6 +46,7 @@ def simulated_annealing(d, T_max, T_min, alpha):
                 current_fitness = new_fitness
         T = T*alpha  # decrease the temperature
     return current_solution, current_fitness
+
 
 def simulated_annealing_constraint(d, num_steps, n):
     # Initialize the current solution randomly
@@ -65,6 +73,7 @@ def simulated_annealing_constraint(d, num_steps, n):
             current_fitness = new_fitness
         temperature *= cooling_rate
     return current_solution, current_fitness
+
 
 def penalty(x, n):
     return abs(sum(x) - n)
