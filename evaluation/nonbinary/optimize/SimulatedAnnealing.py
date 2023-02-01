@@ -8,14 +8,14 @@ The function takes in three parameters:
 d: the dimension of the binary vector
 T_max: the initial temperature
 T_min: the final temperature
-alpha : the temperature decay rate
+cooling_rate : the temperature decay rate
 In this implementation, the initial solution is randomly generated, and the function repeatedly generates a new random
 neighbor solution and decides whether to accept it based on its fitness and the current temperature.
 The temperature is decreased after each iteration using the decay rate.
 The algorithm stops when the temperature reaches the minimum.
 
 It's important to note that the results of this algorithm may vary depending on the specific parameter
-values you choose (e.g. T_max, T_min, alpha), as well as the specific function you're trying to minimize.
+values you choose (e.g. T_max, T_min, cooling_rate), as well as the specific function you're trying to minimize.
 
 Also, note that the stopping criterion can be improved. For example, it could be based on the number of iterations,
 or based on the improvement of the solution.
@@ -27,7 +27,81 @@ def f(x):
     return sum(x)
 
 
-def simulated_annealing(f, d, T_max, T_min, alpha, max_iter=1000):
+def acceptance_probability(delta, temperature):
+    return np.exp(-delta / temperature)
+
+
+def penalty(x, n):
+    # Not normalized
+    return abs(sum(x) - n)
+
+
+def penalty_normalized(x, n):
+    # Normalized
+    return abs(sum(x) - n) / n
+
+
+def simulated_annealing_constraint(f, d, n, T_max, T_min, cooling_rate, max_iter=1000,
+                                   penalty=penalty_normalized):
+    """
+
+    Parameters
+    ----------
+    f: callable
+        The function to be minimized
+    d: int
+        dimension of the binary vector
+    n: int
+        constraint on the number of 1s in the binary vector
+    T_max: float
+        The initial temperature, which should be set high enough to allow the algorithm to
+        escape local optima and explore the search space.
+    T_min: float
+        The final temperature, which should be set low enough to ensure that the algorithm has
+        converged to a local minimum.
+    cooling_rate: float
+        The temperature decay rate, which should be set between 0 and 1. A value of 0.9 is often used.
+    max_iter: int
+        The maximum number of iterations to perform. This is used to prevent the algorithm from running
+        indefinitely if it fails to converge.
+    penalty: callable
+        The penalty function that penalizes the fitness of a solution if it does not satisfy the constraint
+
+    Returns
+    -------
+    current_solution: np.array
+        The best solution found by the algorithm
+    current_fitness: float
+        The fitness of the best solution found by the algorithm
+    """
+
+    # Initialize the current solution randomly
+    current_solution = np.random.randint(2, size=d)
+    current_fitness = f(current_solution)
+    temperature = T_max
+    iteration = 0
+    # Repeat until the temperature reach the minimum
+    while temperature > T_min and iteration < max_iter:
+        # Generate a random neighbor
+        new_solution = current_solution.copy()
+        i = np.random.randint(d)
+        new_solution[i] = 1 - new_solution[i]
+        new_fitness = f(new_solution)
+        # check the constraint
+        if n != 0 and sum(new_solution) != n:
+            new_fitness += penalty(new_solution, n)
+        # Accept the new solution with a probability
+        delta = new_fitness - current_fitness # if delta < 0, new solution is better
+        if delta < 0 or acceptance_probability(delta, temperature) > np.random.rand():
+            # Acceptance probability already includes the delta < 0. Only checked for clarity.
+            current_solution = new_solution
+            current_fitness = new_fitness
+        temperature *= cooling_rate  # decrease the temperature
+        iteration += 1
+    return current_solution, current_fitness
+
+
+def simulated_annealing(f, d, T_max, T_min, cooling_rate, max_iter=1000):
     """
 
     Parameters
@@ -42,7 +116,7 @@ def simulated_annealing(f, d, T_max, T_min, alpha, max_iter=1000):
     T_min: float
         The final temperature, which should be set low enough to ensure that the algorithm has
         converged to a local minimum.
-    alpha: float
+    cooling_rate: float
         The temperature decay rate, which should be set between 0 and 1. A value of 0.9 is often used.
     max_iter: int
         The maximum number of iterations to perform. This is used to prevent the algorithm from running
@@ -57,24 +131,7 @@ def simulated_annealing(f, d, T_max, T_min, alpha, max_iter=1000):
     """
 
     # Initialize the current solution randomly
-    current_solution = np.random.randint(2, size=d)
-    current_fitness = f(current_solution)
-    T = T_max
-    iter = 0
-    # Repeat until the temperature reach the minimum
-    while T > T_min and iter < max_iter:
-        for i in range(d):
-            # Generate a random neighbor
-            new_solution = current_solution.copy()
-            new_solution[i] = 1 - new_solution[i]
-            new_fitness = f(new_solution)
-            # Accept the new solution with a probability
-            delta = new_fitness - current_fitness
-            if delta < 0 or math.exp(-delta/T) > random.random():
-                current_solution = new_solution
-                current_fitness = new_fitness
-        T = T*alpha  # decrease the temperature
-    return current_solution, current_fitness
+    return simulated_annealing_constraint(f, d, 0, T_max, T_min, cooling_rate, max_iter)
 
 
 def simulated_annealing_method(f, dims):
@@ -92,36 +149,4 @@ def simulated_annealing_method(f, dims):
     current_fitness: float
         The fitness of the best solution found by the algorithm
     """
-    return simulated_annealing(f, d=dims, T_max=1, T_min=1e-6, alpha=0.95, max_iter=100)
-
-
-def simulated_annealing_constraint(d, num_steps, n):
-    # Initialize the current solution randomly
-    current_solution = np.random.randint(2, size=d)
-    current_fitness = f(current_solution)
-    # Set the initial temperature
-    temperature = 1
-    # Set the cooling rate
-    cooling_rate = 0.99
-    # Repeat until the temperature is low
-    for step in range(num_steps):
-        # Generate a random neighbor
-        new_solution = current_solution.copy()
-        i = np.random.randint(d)
-        new_solution[i] = 1 - new_solution[i]
-        new_fitness = f(new_solution)
-        # check the constraint
-        if sum(new_solution) != n:
-            new_fitness += penalty(new_solution, n)
-        # Check if the new solution is better
-        delta = new_fitness - current_fitness
-        if delta < 0 or np.random.rand() < np.exp(-delta / temperature):
-            current_solution = new_solution
-            current_fitness = new_fitness
-        temperature *= cooling_rate
-    return current_solution, current_fitness
-
-
-def penalty(x, n):
-    # Not normalized
-    return abs(sum(x) - n)
+    return simulated_annealing(f, d=dims, T_max=1, T_min=1e-6, cooling_rate=0.95, max_iter=100)
