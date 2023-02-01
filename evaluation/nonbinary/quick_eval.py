@@ -136,7 +136,7 @@ def f(binary_vector, dataframe, label, protected_attributes, disc_measure=statis
     return disc_measure(x=x, y=y, z=z)
 
 
-def plot(results):
+def plot(results, save_path=None):
     # Plot the mean and standard deviation of the results using Matplotlib
     for method, method_results in results.items():
         for func, values in method_results.items():
@@ -148,6 +148,9 @@ def plot(results):
             plt.ylabel('Discrimination')
             plt.legend()
     plt.show()
+
+    if save_path is not None:
+        plt.savefig(save_path)
 
 
 def main():
@@ -186,7 +189,7 @@ def main():
 
     print(results)
     print('Plotting results...')
-    plot(results)
+    plot(results, save_path='results.pdf')
 
 
 if __name__ == "__main__":
