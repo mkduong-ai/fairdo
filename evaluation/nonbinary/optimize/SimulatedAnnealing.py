@@ -2,25 +2,6 @@ import random
 import numpy as np
 import math
 
-'''
-The function takes in three parameters:
-
-d: the dimension of the binary vector
-T_max: the initial temperature
-T_min: the final temperature
-cooling_rate : the temperature decay rate
-In this implementation, the initial solution is randomly generated, and the function repeatedly generates a new random
-neighbor solution and decides whether to accept it based on its fitness and the current temperature.
-The temperature is decreased after each iteration using the decay rate.
-The algorithm stops when the temperature reaches the minimum.
-
-It's important to note that the results of this algorithm may vary depending on the specific parameter
-values you choose (e.g. T_max, T_min, cooling_rate), as well as the specific function you're trying to minimize.
-
-Also, note that the stopping criterion can be improved. For example, it could be based on the number of iterations,
-or based on the improvement of the solution.
-'''
-
 
 def f(x):
     # replace this with your own blackbox function
@@ -32,12 +13,40 @@ def acceptance_probability(delta, temperature):
 
 
 def penalty(x, n):
-    # Not normalized
+    """
+    Penalty function that penalizes the fitness of a solution if it does not satisfy the constraint.
+    The number of 1s in the binary vector should be equal to n. If it is not, the penalty is the absolute
+    difference between the number of 1s and n.
+
+    Parameters
+    ----------
+    x: numpy array
+        vector
+    n: int
+        constraint
+
+    Returns
+    -------
+    penalty: float
+    """
     return abs(sum(x) - n)
 
 
 def penalty_normalized(x, n):
-    # Normalized
+    """
+    Percentage of the sum of the entries of the vector x that is greater than n
+
+    Parameters
+    ----------
+    x: numpy array
+        vector
+    n: int
+        constraint
+
+    Returns
+    -------
+    penalty: float
+    """
     return abs(sum(x) - n) / n
 
 
