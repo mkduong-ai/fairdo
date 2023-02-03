@@ -147,10 +147,10 @@ def plot(results, save_path=None):
             plt.xlabel('Method and Objective Function')
             plt.ylabel('Discrimination')
             plt.legend()
-    plt.show()
-
     if save_path is not None:
         plt.savefig(save_path)
+
+    plt.show()
 
 
 def main():
