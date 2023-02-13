@@ -97,15 +97,6 @@ def method_random(f, dims):
     return current_solution, current_fitness
 
 
-def keep_xyz_samples(x, y, z, binary_vector):
-    assert len(x) == len(y) == len(z), "x, y, z must have the same length"
-    assert len(binary_vector) == len(x), "Binary vector must have the same length as x, y, z"
-    # Convert binary_vector to a boolean mask
-    mask = np.array(binary_vector) == 1
-    # Use the boolean mask to filter x, y, z
-    return x[mask], y[mask], z[mask]
-
-
 def f(binary_vector, dataframe, label, protected_attributes, disc_measure=statistical_parity_absolute_difference):
     """
 
@@ -127,12 +118,13 @@ def f(binary_vector, dataframe, label, protected_attributes, disc_measure=statis
     cols_to_drop = protected_attributes + [label]
     x = dataframe.drop(columns=cols_to_drop)
 
-    x, y, z = keep_xyz_samples(x, y, z, binary_vector)
+    # only keep the columns that are selected by the heuristic
+    mask = np.array(binary_vector) == 1
+    x, y, z = x[mask], y[mask], z[mask]
 
-    # TODO: handle multiple protected attributes (?)
+    # Note: This does not handle multiple protected attributes
     y = y.to_numpy().flatten()
     z = z.to_numpy().flatten()
-    # print(set(z))
     return disc_measure(x=x, y=y, z=z)
 
 
