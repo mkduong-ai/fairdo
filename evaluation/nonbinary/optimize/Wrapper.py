@@ -44,6 +44,7 @@ class PreprocessingHeuristicWrapper(Preprocessing):
                  label,
                  **kwargs):
         """
+        Preprocessing wrapper for heuristic methods
 
         Parameters
         ----------
