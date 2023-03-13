@@ -74,7 +74,7 @@ def method_original(f, dims):
     return np.ones(dims), f(np.ones(dims))
 
 
-def method_random(f, dims):
+def method_random(f, dims, pop_size=50, num_generations=100):
     """
 
     Parameters
@@ -88,7 +88,7 @@ def method_random(f, dims):
     """
     current_solution = np.random.randint(0, 2, size=dims)
     current_fitness = f(current_solution)
-    for i in range(100):
+    for i in range(pop_size * num_generations):
         new_solution = np.random.randint(0, 2, size=dims)
         new_fitness = f(new_solution)
         if new_fitness < current_fitness:
