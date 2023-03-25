@@ -146,7 +146,10 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations):
         number of generations
     Returns
     -------
-
+    population: np.array of size (d,)
+        The best solution found by the algorithm
+    fitness: float
+        The fitness of the best solution found by the algorithm
     """
     # generate the initial population
     population = generate_population(pop_size, d)
@@ -202,6 +205,9 @@ def genetic_algorithm_method(func, dims):
 
     Returns
     -------
-
+    population: np.array of size (d,)
+        The best solution found by the algorithm
+    fitness: float
+        The fitness of the best solution found by the algorithm
     """
     return genetic_algorithm(f=func, d=dims, pop_size=50, num_generations=100)
