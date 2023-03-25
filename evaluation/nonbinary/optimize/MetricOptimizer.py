@@ -2,6 +2,7 @@ import numpy as np
 
 
 # TODO: add constraint
+# TODO: if not better, do not do anything
 def metric_optimizer_remover_constraint(f, d, n_constraint,
                                 frac=0.75,
                                 m_cands=5):
