@@ -30,9 +30,9 @@ def metric_optimizer_remover_constraint(f, d, n_constraint,
     else:
         raise Exception('Frac not valid. Fraction frac must be smaller than 1.')
 
-    initial_solution = np.zeros(d)
+    initial_solution = np.ones(d)
     solution = np.copy(initial_solution)
-    best_fitness = 1 # assume 1 is worst fitness
+    fitness = 1 # assume 1 is worst fitness
     for i in range(n):
         # choose m random indices that have a value 1
         idx = np.where(solution == 1)[0]
@@ -40,14 +40,15 @@ def metric_optimizer_remover_constraint(f, d, n_constraint,
         # flip each bit once and save fitness
         scores = []
         for j in cands_idx:
-            solution[j] = 1 - solution[j]
+            solution[j] = 1 - solution[j] # flip bit
             scores.append(f(solution))
+            solution[j] = 1 - solution[j] # revert flip
         # select best candidate
         best_cand = np.argmin(scores)
         solution[best_cand] = 1 - solution[best_cand]
-        best_fitness = f(solution)
+        fitness = f(solution)
 
-    return solution, best_fitness
+    return solution, fitness
 
 
 def metric_optimizer_remover(f, d, m_cands):
