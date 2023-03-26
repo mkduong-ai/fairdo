@@ -45,6 +45,11 @@ def metric_optimizer_remover_constraint(f, d, n_constraint,
     initial_solution = np.ones(d)
     solution = np.copy(initial_solution)
     fitness = 1 # assume 1 is worst fitness
+
+    # check if dataset is already fair and return solution immediately
+    if f(initial_solution) <= eps:
+        return initial_solution, f(initial_solution)
+    # removal loop
     for i in range(n):
         # choose m random indices that have a value 1
         idx = np.where(solution == 1)[0]
