@@ -5,7 +5,8 @@ import numpy as np
 # TODO: if not better, do not do anything
 def metric_optimizer_remover_constraint(f, d, n_constraint,
                                 frac=0.75,
-                                m_cands=5):
+                                m_cands=5,
+                                eps=0):
     """
     Parameters
     ----------
@@ -21,7 +22,7 @@ def metric_optimizer_remover_constraint(f, d, n_constraint,
         number of candidates to select
     Returns
     -------
-    population: np.array of size (d,)
+    solution: np.array of size (d,)
         The best solution found by the algorithm
     fitness: float
         The fitness of the best solution found by the algorithm
@@ -44,10 +45,13 @@ def metric_optimizer_remover_constraint(f, d, n_constraint,
             solution[j] = 1 - solution[j] # flip bit
             scores.append(f(solution))
             solution[j] = 1 - solution[j] # revert flip
-        # select best candidate
+        # select best candidate and flip bit
         best_cand = np.argmin(scores)
-        solution[best_cand] = 1 - solution[best_cand]
+        solution[cands_idx[best_cand]] = 1 - solution[cands_idx[best_cand]]
         fitness = f(solution)
+        # stop early if discrimination threshold satisfied
+        if fitness <= eps:
+            break
 
     return solution, fitness
 
@@ -64,7 +68,7 @@ def metric_optimizer_remover(f, d, m_cands):
         number of candidates to select
     Returns
     -------
-    population: np.array of size (d,)
+    solution: np.array of size (d,)
         The best solution found by the algorithm
     fitness: float
         The fitness of the best solution found by the algorithm

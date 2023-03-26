@@ -1,27 +1,11 @@
 import numpy as np
 
+from evaluation.nonbinary.optimize.Penalty import penalty_normalized
+
 
 def f(x):
     # replace this with your own blackbox function
     return sum(x)
-
-
-def penalty_normalized(x, n):
-    """
-    Percentage of the sum of the entries of the vector x that is greater than n
-
-    Parameters
-    ----------
-    x: numpy array
-        vector
-    n: int
-        constraint
-
-    Returns
-    -------
-    penalty: float
-    """
-    return abs(sum(x) - n) / n
 
 
 def generate_population(pop_size, d):

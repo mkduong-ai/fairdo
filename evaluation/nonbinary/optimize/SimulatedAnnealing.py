@@ -1,6 +1,7 @@
-import random
 import numpy as np
-import math
+
+from evaluation.nonbinary.optimize.Penalty import penalty
+from evaluation.nonbinary.optimize.Penalty import penalty_normalized
 
 
 def f(x):
@@ -10,44 +11,6 @@ def f(x):
 
 def acceptance_probability(delta, temperature):
     return np.exp(-delta / temperature)
-
-
-def penalty(x, n):
-    """
-    Penalty function that penalizes the fitness of a solution if it does not satisfy the constraint.
-    The number of 1s in the binary vector should be equal to n. If it is not, the penalty is the absolute
-    difference between the number of 1s and n.
-
-    Parameters
-    ----------
-    x: numpy array
-        vector
-    n: int
-        constraint
-
-    Returns
-    -------
-    penalty: float
-    """
-    return abs(sum(x) - n)
-
-
-def penalty_normalized(x, n):
-    """
-    Percentage of the sum of the entries of the vector x that is greater than n
-
-    Parameters
-    ----------
-    x: numpy array
-        vector
-    n: int
-        constraint
-
-    Returns
-    -------
-    penalty: float
-    """
-    return abs(sum(x) - n) / n
 
 
 def simulated_annealing_constraint(f, d, n, T_max, T_min, cooling_rate, max_iter=1000,
