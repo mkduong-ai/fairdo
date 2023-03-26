@@ -18,7 +18,10 @@ def penalty(x, n):
     -------
     penalty: float
     """
-    return np.abs(np.sum(x) - n)
+    if n != 0:
+        return np.abs(np.sum(x) - n)
+    else:
+        return 0
 
 
 def penalty_normalized(x, n):
@@ -36,4 +39,7 @@ def penalty_normalized(x, n):
     -------
     penalty: float
     """
-    return np.abs(np.sum(x) - n) / n
+    if n != 0:
+        return np.abs(np.sum(x) - n) / n
+    else:
+        return 0
