@@ -37,7 +37,7 @@ def metric_optimizer_remover_constraint(f, d, n_constraint,
     fitness: float
         The fitness of the best solution found by the algorithm
     """
-    if frac < 1:
+    if frac <= 1:
         n = int(d * (1-frac))
     else:
         raise Exception('Frac not valid. Fraction frac must be smaller than 1.')
