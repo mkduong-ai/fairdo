@@ -4,9 +4,8 @@ from evaluation.nonbinary.optimize.Penalty import penalty
 from evaluation.nonbinary.optimize.Penalty import penalty_normalized
 
 
-# TODO: add constraint
 # TODO: if not better, do not do anything
-def metric_optimizer_remover_constraint(f, d, n_constraint,
+def metric_optimizer_remover_constraint(f, d, n_constraint=0,
                                         frac=0.75,
                                         m_cands=5,
                                         eps=0,
@@ -47,8 +46,8 @@ def metric_optimizer_remover_constraint(f, d, n_constraint,
     fitness = 1 # assume 1 is worst fitness
 
     # check if dataset is already fair and return solution immediately
-    if f(initial_solution) <= eps:
-        return initial_solution, f(initial_solution)
+    if f(initial_solution) + penalty(initial_solution, n_constraint) <= eps:
+        return initial_solution, f(initial_solution) + penalty(initial_solution, n_constraint)
     # removal loop
     for i in range(n):
         # choose m random indices that have a value 1
@@ -58,12 +57,12 @@ def metric_optimizer_remover_constraint(f, d, n_constraint,
         scores = []
         for j in cands_idx:
             solution[j] = 1 - solution[j] # flip bit
-            scores.append(f(solution))
+            scores.append(f(solution) + penalty(initial_solution, n_constraint))
             solution[j] = 1 - solution[j] # revert flip
         # select best candidate and flip bit
         best_cand = np.argmin(scores)
         solution[cands_idx[best_cand]] = 1 - solution[cands_idx[best_cand]]
-        fitness = f(solution)
+        fitness = f(solution) + penalty(initial_solution, n_constraint)
         # stop early if discrimination threshold satisfied
         if fitness <= eps:
             break
