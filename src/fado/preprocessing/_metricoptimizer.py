@@ -91,8 +91,8 @@ class MetricOptRemover(Preprocessing):
         random_state: int
         """
         super().__init__(frac=frac, protected_attribute=protected_attribute, label=label)
-        if self.frac >= 1:
-            raise Exception('Fraction frac can not be greater or equal to 1.')
+        if self.frac > 1:
+            raise Exception('Fraction frac can not be greater than 1.')
         self.fairness_metric = fairness_metric
         self.m = m
         self.eps = eps
@@ -183,8 +183,8 @@ class MetricOptGenerator(Preprocessing):
         random_state: int
         """
         super().__init__(frac=frac, protected_attribute=protected_attribute, label=label)
-        if self.frac <= 1:
-            raise Exception('Fraction frac can not be less or equal to 1.')
+        if self.frac < 1:
+            raise Exception('Fraction frac can not be less than 1.')
         self.fairness_metric = fairness_metric
         self.m = m
         self.eps = eps
