@@ -1,25 +1,35 @@
 import numpy as np
 
+from evaluation.nonbinary.optimize.Penalty import penalty
+from evaluation.nonbinary.optimize.Penalty import penalty_normalized
+
 
 # TODO: add constraint
 # TODO: if not better, do not do anything
 def metric_optimizer_remover_constraint(f, d, n_constraint,
-                                frac=0.75,
-                                m_cands=5,
-                                eps=0):
+                                        frac=0.75,
+                                        m_cands=5,
+                                        eps=0,
+                                        penalty=penalty_normalized):
     """
     Parameters
     ----------
-    f: function
+    f: callable
         function to optimize
     d: int
         number of dimensions
     n_constraint: int
         constraint of number of 1s
     frac: float
-        A multiplicative of the given dataset's size
+        A multiplicative or fraction of the given dataset's size
     m_cands: int
         number of candidates to select
+    eps: float
+        stop criterion. Returns solution if f(solution) <= eps.
+    penalty: callable
+        The penalty function that penalizes the fitness of a solution if it does not satisfy the constraint.
+        Parameters: solution (np.array), n (int)
+        Returns: float
     Returns
     -------
     solution: np.array of size (d,)

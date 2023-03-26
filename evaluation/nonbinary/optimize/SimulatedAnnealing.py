@@ -38,6 +38,8 @@ def simulated_annealing_constraint(f, d, n, T_max, T_min, cooling_rate, max_iter
         indefinitely if it fails to converge.
     penalty: callable
         The penalty function that penalizes the fitness of a solution if it does not satisfy the constraint
+        Parameters: solution (np.array), n (int)
+        Returns: float
 
     Returns
     -------
