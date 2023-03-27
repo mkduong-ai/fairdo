@@ -59,37 +59,37 @@ def load_data(dataset_str):
 #     return preproc.transform()
 
 
-def method_original(f, dims):
+def method_original(f, d):
     """
 
     Parameters
     ----------
     f: callable
-    dims: int
+    d: int
 
     Returns
     -------
 
     """
-    return np.ones(dims), f(np.ones(dims))
+    return np.ones(d), f(np.ones(d))
 
 
-def method_random(f, dims, pop_size=50, num_generations=100):
+def method_random(f, d, pop_size=50, num_generations=100):
     """
 
     Parameters
     ----------
     f: callable
-    dims: int
+    d: int
 
     Returns
     -------
 
     """
-    current_solution = np.random.randint(0, 2, size=dims)
+    current_solution = np.random.randint(0, 2, size=d)
     current_fitness = f(current_solution)
     for i in range(pop_size * num_generations):
-        new_solution = np.random.randint(0, 2, size=dims)
+        new_solution = np.random.randint(0, 2, size=d)
         new_fitness = f(new_solution)
         if new_fitness < current_fitness:
             current_solution = new_solution
@@ -148,6 +148,8 @@ def plot(results, save_path=None):
 def main():
     # settings
     df, label, protected_attributes = load_data('adult')
+    print('Successfully loaded data.')
+
     # create objective function
     f_obj = lambda x, disc_measure: f(x, dataframe=df, label=label, protected_attributes=protected_attributes,
                                       disc_measure=disc_measure)
@@ -163,7 +165,7 @@ def main():
     methods = [method_random,
                method_original,
                SimulatedAnnealing.simulated_annealing_method,
-               GeneticAlgorithm.genetic_algorithm_method,
+               #GeneticAlgorithm.genetic_algorithm_method,
                MetricOptimizer.metric_optimizer_remover]
 
     # create results dictionary
@@ -174,11 +176,13 @@ def main():
             results[method.__name__][func.__name__] = []
 
     # run experiments and save to results
+    print('Running experiments...')
     for method in methods:
         for func in functions:
             for i in range(n_runs):
                 print(method.__name__, func.__name__, i)
                 results[method.__name__][func.__name__].append(method(f=func, d=dims)[1])
+    print('Done.')
 
     print(results)
     print('Plotting results...')

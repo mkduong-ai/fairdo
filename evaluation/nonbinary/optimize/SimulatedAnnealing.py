@@ -1,7 +1,7 @@
 import numpy as np
 
-from evaluation.nonbinary.optimize.Penalty import penalty
-from evaluation.nonbinary.optimize.Penalty import penalty_normalized
+from optimize.Penalty import penalty
+from optimize.Penalty import penalty_normalized
 
 
 def f(x):
