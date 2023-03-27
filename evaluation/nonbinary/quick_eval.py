@@ -1,3 +1,7 @@
+import time
+import datetime
+import csv
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -128,12 +132,22 @@ def f(binary_vector, dataframe, label, protected_attributes, disc_measure=statis
     return disc_measure(x=x, y=y, z=z)
 
 
-def plot(results, save_path=None):
+def save_results(results, save_path):
+    with open(save_path, 'w') as f:
+        writer = csv.writer(f)
+        writer.writerow(['Method', 'Objective', 'Value', 'Time'])
+        for method, method_results in results.items():
+            for func, results in method_results.items():
+                for value in results['func_values']:
+                    writer.writerow([method, func, value])
+
+
+def plot_results(results, save_path=None):
     # Plot the mean and standard deviation of the results using Matplotlib
     for method, method_results in results.items():
-        for func, values in method_results.items():
-            mean = np.mean(values)
-            std = np.std(values)
+        for func, results in method_results.items():
+            mean = np.mean(results['func_values'])
+            std = np.std(results['func_values'])
             plt.scatter(f"{method} {func}", mean, label=f"{method} {func}")
             plt.errorbar(f"{method} {func}", mean, yerr=std, fmt='o')
             plt.xlabel('Method and Objective Function')
@@ -154,17 +168,17 @@ def main():
     f_obj = lambda x, disc_measure: f(x, dataframe=df, label=label, protected_attributes=protected_attributes,
                                       disc_measure=disc_measure)
     disc_measures = [#nb_statistical_parity_sum_abs_difference,
-                     nb_statistical_parity_max_abs_difference,
+                     # nb_statistical_parity_max_abs_difference,
                      nb_normalized_mutual_information]
     functions = [lambda x: f_obj(x, disc_measure=disc_measure) for disc_measure in disc_measures]
     for func, disc_measure in zip(functions, disc_measures):
         func.__name__ = disc_measure.__name__
 
     dims = len(df) # number of dimensions of x
-    n_runs = 5 # number of times to run each method
-    methods = [method_random,
-               method_original,
-               SimulatedAnnealing.simulated_annealing_method,
+    n_runs = 1 # number of times to run each method
+    methods = [#method_random,
+               # method_original,
+               # SimulatedAnnealing.simulated_annealing_method,
                #GeneticAlgorithm.genetic_algorithm_method,
                MetricOptimizer.metric_optimizer_remover]
 
@@ -173,7 +187,9 @@ def main():
     for method in methods:
         results[method.__name__] = {}
         for func in functions:
-            results[method.__name__][func.__name__] = []
+            results[method.__name__][func.__name__] = {}
+            results[method.__name__][func.__name__]['func_values'] = []
+            results[method.__name__][func.__name__]['elapsed_time'] = []
 
     # run experiments and save to results
     print('Running experiments...')
@@ -181,12 +197,19 @@ def main():
         for func in functions:
             for i in range(n_runs):
                 print(method.__name__, func.__name__, i)
-                results[method.__name__][func.__name__].append(method(f=func, d=dims)[1])
+                start_time = time.time()
+                results[method.__name__][func.__name__]['func_values'].append(method(f=func, d=dims)[1])
+                results[method.__name__][func.__name__]['elapsed_time'].append(time.time() - start_time)
     print('Done.')
 
     print(results)
+
+    print('Saving results...')
+    filename_date = datetime.datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
+    save_results(results, save_path=f"results_{filename_date}.csv")
+
     print('Plotting results...')
-    plot(results, save_path='results.pdf')
+    plot_results(results, save_path=f"results_{filename_date}.pdf")
 
 
 if __name__ == "__main__":

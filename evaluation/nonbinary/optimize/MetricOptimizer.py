@@ -51,7 +51,7 @@ def metric_optimizer_remover_constraint(f, d, n_constraint=0,
     # removal loop
     for i in range(n):
         # choose m random indices that have a value 1
-        idx = np.where(solution == 1)[0]
+        idx = np.where(solution == 1)[0] # TODO: Expensive step
         cands_idx = np.random.choice(idx, m_cands, replace=False)
         # flip each bit once and save fitness
         scores = []
@@ -70,7 +70,7 @@ def metric_optimizer_remover_constraint(f, d, n_constraint=0,
     return solution, fitness
 
 
-def metric_optimizer_remover(f, d, m_cands):
+def metric_optimizer_remover(f, d, m_cands=5):
     """
     Parameters
     ----------
