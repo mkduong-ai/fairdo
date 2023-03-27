@@ -177,14 +177,14 @@ def genetic_algorithm(f, d, pop_size, num_generations):
     return genetic_algorithm_constraint(f=f, d=d, n=0, pop_size=pop_size, num_generations=num_generations)
 
 
-def genetic_algorithm_method(func, dims):
+def genetic_algorithm_method(f, d):
     """
     Genetic Algorithm method
     Parameters
     ----------
-    func: function
+    f: function
         function to optimize
-    dims: int
+    d: int
         number of dimensions
 
     Returns
@@ -194,4 +194,4 @@ def genetic_algorithm_method(func, dims):
     fitness: float
         The fitness of the best solution found by the algorithm
     """
-    return genetic_algorithm(f=func, d=dims, pop_size=50, num_generations=100)
+    return genetic_algorithm(f=f, d=d, pop_size=50, num_generations=100)

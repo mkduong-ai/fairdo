@@ -108,13 +108,13 @@ def simulated_annealing(f, d, T_max, T_min, cooling_rate, max_iter=1000):
     return simulated_annealing_constraint(f, d, 0, T_max, T_min, cooling_rate, max_iter)
 
 
-def simulated_annealing_method(f, dims):
+def simulated_annealing_method(f, d):
     """
     Parameters
     ----------
     f: callable
         The function to be minimized
-    dims: int
+    d: int
         dimension of the binary vector
     Returns
     -------
@@ -123,4 +123,4 @@ def simulated_annealing_method(f, dims):
     current_fitness: float
         The fitness of the best solution found by the algorithm
     """
-    return simulated_annealing(f, d=dims, T_max=1, T_min=1e-6, cooling_rate=0.95, max_iter=100)
+    return simulated_annealing(f, d=d, T_max=1, T_min=1e-6, cooling_rate=0.95, max_iter=100)

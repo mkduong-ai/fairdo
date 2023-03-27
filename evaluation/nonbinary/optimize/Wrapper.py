@@ -49,9 +49,9 @@ class PreprocessingHeuristicWrapper(Preprocessing):
         Parameters
         ----------
         heuristic: callable
-            method that takes func, dims and returns a binary np.array of shape (dims, ) that optimizes func and the
-            value of func at the solution.
-        func: callable
+            method that takes f, d and returns a binary np.array of shape (d, ) that optimizes disc_measure
+            and the value of f at the solution.
+        disc_measure: callable
             function to be optimized by heuristic
         protected_attribute: str
         label: str

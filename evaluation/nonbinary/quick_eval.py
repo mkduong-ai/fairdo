@@ -9,10 +9,10 @@ from fado.metrics.nonbinary import nb_statistical_parity_sum_abs_difference, nb_
     nb_normalized_mutual_information
 
 # load methods
-from fado.preprocessing import MetricOptimizer, MetricOptRemover
+# from fado.preprocessing import MetricOptimizer, MetricOptRemover
 
 # load optimization methods
-from optimize import SimulatedAnnealing, GeneticAlgorithm
+from optimize import SimulatedAnnealing, GeneticAlgorithm, MetricOptimizer
 
 
 def load_data(dataset_str):
@@ -49,14 +49,14 @@ def load_data(dataset_str):
         return data, label, protected_attributes
 
 
-def metricopt_wrapper(dataframe, label, protected_attributes, disc_measure=statistical_parity_absolute_difference):
-    preproc = MetricOptRemover(frac=0.75,
-                               protected_attribute=protected_attributes[0],
-                               label=label,
-                               fairness_metric=disc_measure)
-
-    preproc = preproc.fit(dataframe)
-    return preproc.transform()
+# def metricopt_wrapper(dataframe, label, protected_attributes, disc_measure=statistical_parity_absolute_difference):
+#     preproc = MetricOptRemover(frac=0.75,
+#                                protected_attribute=protected_attributes[0],
+#                                label=label,
+#                                fairness_metric=disc_measure)
+#
+#     preproc = preproc.fit(dataframe)
+#     return preproc.transform()
 
 
 def method_original(f, dims):
@@ -163,7 +163,8 @@ def main():
     methods = [method_random,
                method_original,
                SimulatedAnnealing.simulated_annealing_method,
-               GeneticAlgorithm.genetic_algorithm_method]
+               GeneticAlgorithm.genetic_algorithm_method,
+               MetricOptimizer.metric_optimizer_remover]
 
     # create results dictionary
     results = {}
@@ -177,7 +178,7 @@ def main():
         for func in functions:
             for i in range(n_runs):
                 print(method.__name__, func.__name__, i)
-                results[method.__name__][func.__name__].append(method(func, dims)[1])
+                results[method.__name__][func.__name__].append(method(f=func, d=dims)[1])
 
     print(results)
     print('Plotting results...')
