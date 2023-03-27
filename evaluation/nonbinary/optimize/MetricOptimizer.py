@@ -49,9 +49,10 @@ def metric_optimizer_remover_constraint(f, d, n_constraint=0,
     if f(initial_solution) + penalty(initial_solution, n_constraint) <= eps:
         return initial_solution, f(initial_solution) + penalty(initial_solution, n_constraint)
     # removal loop
+    idx = list(range(d))
     for i in range(n):
-        # choose m random indices that have a value 1
-        idx = np.where(solution == 1)[0] # TODO: Expensive step
+        print(i)
+        # select m_cands random candidates
         cands_idx = np.random.choice(idx, m_cands, replace=False)
         # flip each bit once and save fitness
         scores = []
@@ -63,6 +64,8 @@ def metric_optimizer_remover_constraint(f, d, n_constraint=0,
         best_cand = np.argmin(scores)
         solution[cands_idx[best_cand]] = 1 - solution[cands_idx[best_cand]]
         fitness = f(solution) + penalty(initial_solution, n_constraint)
+        # update idx
+        idx.remove(cands_idx[best_cand])
         # stop early if discrimination threshold satisfied
         if fitness <= eps:
             break
