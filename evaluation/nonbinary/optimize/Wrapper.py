@@ -97,3 +97,12 @@ class PreprocessingHeuristicWrapper(Preprocessing):
         """
         mask = self.heuristic(self.func, self.dims)[0] == 1
         return self.dataset[mask]
+
+# def metricopt_wrapper(dataframe, label, protected_attributes, disc_measure=statistical_parity_absolute_difference):
+#     preproc = MetricOptRemover(frac=0.75,
+#                                protected_attribute=protected_attributes[0],
+#                                label=label,
+#                                fairness_metric=disc_measure)
+#
+#     preproc = preproc.fit(dataframe)
+#     return preproc.transform()

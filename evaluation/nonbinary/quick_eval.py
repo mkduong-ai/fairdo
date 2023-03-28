@@ -12,11 +12,11 @@ from fado.metrics import statistical_parity_absolute_difference, normalized_mutu
 from fado.metrics.nonbinary import nb_statistical_parity_sum_abs_difference, nb_statistical_parity_max_abs_difference, \
     nb_normalized_mutual_information
 
-# load methods
+# load fado library
 # from fado.preprocessing import MetricOptimizer, MetricOptRemover
 
 # load optimization methods
-from optimize import SimulatedAnnealing, GeneticAlgorithm, MetricOptimizer
+from optimize import SimulatedAnnealing, GeneticAlgorithm, MetricOptimizer, Baseline
 
 
 def load_data(dataset_str):
@@ -28,7 +28,9 @@ def load_data(dataset_str):
 
     Returns
     -------
-    df, label, protected_attribute
+    df: pandas DataFrame
+    label: str
+    protected_attribute: str
     """
     if dataset_str == 'adult':
         data = pd.read_csv("https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.data", header=None,
@@ -51,54 +53,6 @@ def load_data(dataset_str):
         data = pd.get_dummies(data, columns=categorical_cols)
 
         return data, label, protected_attributes
-
-
-# def metricopt_wrapper(dataframe, label, protected_attributes, disc_measure=statistical_parity_absolute_difference):
-#     preproc = MetricOptRemover(frac=0.75,
-#                                protected_attribute=protected_attributes[0],
-#                                label=label,
-#                                fairness_metric=disc_measure)
-#
-#     preproc = preproc.fit(dataframe)
-#     return preproc.transform()
-
-
-def method_original(f, d):
-    """
-
-    Parameters
-    ----------
-    f: callable
-    d: int
-
-    Returns
-    -------
-
-    """
-    return np.ones(d), f(np.ones(d))
-
-
-def method_random(f, d, pop_size=50, num_generations=100):
-    """
-
-    Parameters
-    ----------
-    f: callable
-    d: int
-
-    Returns
-    -------
-
-    """
-    current_solution = np.random.randint(0, 2, size=d)
-    current_fitness = f(current_solution)
-    for i in range(pop_size * num_generations):
-        new_solution = np.random.randint(0, 2, size=d)
-        new_fitness = f(new_solution)
-        if new_fitness < current_fitness:
-            current_solution = new_solution
-            current_fitness = new_fitness
-    return current_solution, current_fitness
 
 
 def f(binary_vector, dataframe, label, protected_attributes, disc_measure=statistical_parity_absolute_difference):
@@ -130,6 +84,35 @@ def f(binary_vector, dataframe, label, protected_attributes, disc_measure=statis
     y = y.to_numpy().flatten()
     z = z.to_numpy().flatten()
     return disc_measure(x=x, y=y, z=z)
+
+
+def results_to_df(results):
+    """
+    Returns a pandas dataframe from results
+
+    Parameters
+    ----------
+    results: dict
+        results['model']['pre-processor']['accuracy']
+
+    Returns
+    -------
+
+    """
+    df_list = []
+    for key_model in results:
+        df = pd.DataFrame(results[key_model]).transpose()
+        df['Model'] = key_model
+        df['Preprocessor'] = df.index
+
+        df_list.append(df)
+
+    df_concat = pd.concat(df_list, keys=list(results.keys()))
+    df_concat['ModelPreprocessor'] = df_concat.index.to_numpy()
+    df_concat = df_concat.reset_index()
+    df_concat = df_concat.drop(columns=['level_0', 'level_1'])
+
+    return df_concat
 
 
 def save_results(results, save_path):
@@ -176,8 +159,9 @@ def main():
 
     dims = len(df) # number of dimensions of x
     n_runs = 1 # number of times to run each method
-    methods = [#method_random,
-               # method_original,
+    # create methods
+    methods = [Baseline.method_random,
+               # Baseline.method_original,
                # SimulatedAnnealing.simulated_annealing_method,
                #GeneticAlgorithm.genetic_algorithm_method,
                MetricOptimizer.metric_optimizer_remover]

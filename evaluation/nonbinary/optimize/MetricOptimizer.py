@@ -4,9 +4,8 @@ from optimize.Penalty import penalty
 from optimize.Penalty import penalty_normalized
 
 
-# TODO: if not better, do not do anything
 def metric_optimizer_remover_constraint(f, d, n_constraint=0,
-                                        frac=0.75,
+                                        frac=0.90,
                                         m_cands=5,
                                         eps=0,
                                         penalty=penalty_normalized):
