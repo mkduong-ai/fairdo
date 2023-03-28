@@ -1,10 +1,12 @@
 import time
 import datetime
 import csv
+import os
 
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
 from sklearn.preprocessing import LabelEncoder
 
 # load metrics
@@ -86,46 +88,36 @@ def f(binary_vector, dataframe, label, protected_attributes, disc_measure=statis
     return disc_measure(x=x, y=y, z=z)
 
 
-def results_to_df(results):
+def convert_results_to_dataframe(results):
     """
-    Returns a pandas dataframe from results
+    Converts the results to a pandas dataframe
 
     Parameters
     ----------
     results: dict
-        results['model']['pre-processor']['accuracy']
+        results['method']['objective/time/func_values']
 
     Returns
     -------
 
     """
-    df_list = []
-    for key_model in results:
-        df = pd.DataFrame(results[key_model]).transpose()
-        df['Model'] = key_model
-        df['Preprocessor'] = df.index
+    for i in results.keys():
+        # convert each result to a dataframe
+        results[i] = pd.DataFrame.from_dict(results[i], orient='index')
 
-        df_list.append(df)
+        # Reset the index (method) to convert it into a column
+        results[i].reset_index(inplace=True)
 
-    df_concat = pd.concat(df_list, keys=list(results.keys()))
-    df_concat['ModelPreprocessor'] = df_concat.index.to_numpy()
-    df_concat = df_concat.reset_index()
-    df_concat = df_concat.drop(columns=['level_0', 'level_1'])
+        # Rename the index column
+        results[i] = results[i].rename({'index': 'Method'}, axis=1)
 
-    return df_concat
-
-
-def save_results(results, save_path):
-    with open(save_path, 'w') as f:
-        writer = csv.writer(f)
-        writer.writerow(['Method', 'Objective', 'Value', 'Time'])
-        for method, method_results in results.items():
-            for func, results in method_results.items():
-                for value in results['func_values']:
-                    writer.writerow([method, func, value])
+    results_list = list(results.values())
+    results_df = pd.concat(results_list, axis=0).reset_index()
+    results_df = results_df.drop(columns=['index'])
+    return results_df
 
 
-def plot_results(results, save_path=None):
+def plot_results_deprecated(results, save_path=None):
     # Plot the mean and standard deviation of the results using Matplotlib
     for method, method_results in results.items():
         for func, results in method_results.items():
@@ -137,12 +129,174 @@ def plot_results(results, save_path=None):
             plt.ylabel('Discrimination')
             plt.legend()
     if save_path is not None:
-        plt.savefig(save_path)
+        plt.savefig(save_path, format='pdf')
 
     plt.show()
 
 
+def plot_results(results_df,
+                 groups=None,
+                 save_path=None):
+    """
+    Plots the results
+
+    Parameters
+    ----------
+    results_df: pandas DataFrame
+    groups: list of strings
+        list of columns to group by
+    save_path: str
+        path to save the plot
+
+    Returns
+    -------
+    None
+    """
+    if groups is None:
+        groups = ['Method', 'Objective Function']
+
+    # aggregate the results
+    discs_mean = results_df.groupby(groups).mean()
+    discs_std = results_df.groupby(groups).std()
+
+    # Plot the mean and standard deviation of the results using Matplotlib
+    plt.figure(figsize=(10, 8))
+
+    # Create the error bar plot using Matplotlib and Seaborn
+    sns.set(style="whitegrid")
+    ax = sns.errorbar(x=discs_mean.index, y=discs_mean['values'], yerr=discs_std['values'], fmt='o', capsize=5)
+
+    # Set the x and y axis labels
+    ax.set_xlabel('Group', fontsize=14)
+    ax.set_ylabel('Value', fontsize=14)
+
+    # Set the title of the plot
+    ax.set_title('Error Bar Plot', fontsize=16)
+
+    # Set the legend
+    plt.legend(['Values'], fontsize=12)
+
+    # Show the plot
+    plt.show()
+
+    if save_path is not None:
+        plt.savefig(save_path, format='pdf')
+
+
+def run_experiment(data_str, disc_measures, methods):
+    """
+    Runs the experiment
+    Parameters
+    ----------
+    data_str: str
+        name of the dataset
+    disc_measures: list of callables
+        list of discrimination measures
+    methods: dict
+        dictionary of methods
+
+    Returns
+    -------
+    results: dict
+        results['method']['objective/time/func_values']
+    """
+    # settings
+    df, label, protected_attributes = load_data(data_str)
+    print('Successfully loaded data.')
+
+    # create objective function
+    f_obj = lambda x, disc_measure: f(x, dataframe=df, label=label, protected_attributes=protected_attributes,
+                                      disc_measure=disc_measure)
+    functions = [lambda x: f_obj(x, disc_measure=disc_measure) for disc_measure in disc_measures]
+    for func, disc_measure in zip(functions, disc_measures):
+        func.__name__ = disc_measure.__name__
+
+    # run experiments
+    results = {}
+    for method_name, method in methods.items():
+        print(f'Running {method_name}...')
+        results[method_name] = {}
+        for func in functions:
+            print(f'Optimizing {func.__name__}...')
+            start_time = time.time()
+            results[method_name][func.__name__] = method(f=func, d=df.shape[0])[1]
+            end_time = time.time()
+            results[method_name]['time'] = end_time - start_time
+            # information about the data
+            results[method_name]['data'] = data_str
+            results[method_name]['label'] = label
+            results[method_name]['protected_attributes'] = protected_attributes
+
+    return results
+
+
+def run_experiments(data_str, disc_measures, methods, n_runs=10):
+    """
+    Runs the experiments for n_runs times
+    Parameters
+    ----------
+    data_str: str
+        name of the dataset
+    disc_measures: list
+        list of discrimination measures
+    methods: dict
+        dictionary of methods
+    n_runs: int
+        number of runs
+
+    Returns
+    -------
+    results: dict
+        results['run']['method']['objective/time/func_values']
+    """
+    results = {}
+    for i in range(n_runs):
+        print(f'Run {i+1} of {n_runs}')
+        results[i] = run_experiment(data_str, disc_measures, methods)
+    return results
+
+
 def main():
+    data_str = 'adult'
+    n_runs = 2
+    # create objective functions
+    disc_measures = [# statistical_parity_absolute_difference,
+                     # normalized_mutual_information,
+                     # nb_statistical_parity_sum_abs_difference,
+                     # nb_statistical_parity_max_abs_difference,
+                     nb_normalized_mutual_information]
+    # create methods
+    methods = {'Baseline (Original)': Baseline.method_original,
+               'Baseline (Random)': Baseline.method_random,
+               #'Simulated Annealing': SimulatedAnnealing.simulated_annealing_method,
+               #'Genetic Algorithm': GeneticAlgorithm.genetic_algorithm_method,
+               #'Metric Optimizer': MetricOptimizer.metric_optimizer_remover}
+               }
+
+    # create save path
+    save_path = f'results/nonbinary/{data_str}.csv'
+    if not os.path.exists(f'results/nonbinary/{data_str}'):
+        os.makedirs(f'results/nonbinary/{data_str}')
+    filename_date = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+    save_path = f'results/nonbinary/{data_str}/{filename_date}.csv'
+
+    # run experiment
+    results = run_experiments(data_str=data_str,
+                              disc_measures=disc_measures,
+                              methods=methods,
+                              n_runs=n_runs)
+
+    # convert results to proper dataframe
+    results_df = convert_results_to_dataframe(results)
+
+    # save results
+    results_df.to_csv(save_path, index_label='index')
+
+    # plot results
+    plot_results(results_df, save_path=save_path)
+
+
+def main_old():
     # settings
     df, label, protected_attributes = load_data('adult')
     print('Successfully loaded data.')
