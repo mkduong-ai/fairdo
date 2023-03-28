@@ -296,59 +296,5 @@ def main():
     plot_results(results_df, save_path=save_path)
 
 
-def main_old():
-    # settings
-    df, label, protected_attributes = load_data('adult')
-    print('Successfully loaded data.')
-
-    # create objective function
-    f_obj = lambda x, disc_measure: f(x, dataframe=df, label=label, protected_attributes=protected_attributes,
-                                      disc_measure=disc_measure)
-    disc_measures = [#nb_statistical_parity_sum_abs_difference,
-                     # nb_statistical_parity_max_abs_difference,
-                     nb_normalized_mutual_information]
-    functions = [lambda x: f_obj(x, disc_measure=disc_measure) for disc_measure in disc_measures]
-    for func, disc_measure in zip(functions, disc_measures):
-        func.__name__ = disc_measure.__name__
-
-    dims = len(df) # number of dimensions of x
-    n_runs = 1 # number of times to run each method
-    # create methods
-    methods = [Baseline.method_random,
-               # Baseline.method_original,
-               # SimulatedAnnealing.simulated_annealing_method,
-               #GeneticAlgorithm.genetic_algorithm_method,
-               MetricOptimizer.metric_optimizer_remover]
-
-    # create results dictionary
-    results = {}
-    for method in methods:
-        results[method.__name__] = {}
-        for func in functions:
-            results[method.__name__][func.__name__] = {}
-            results[method.__name__][func.__name__]['func_values'] = []
-            results[method.__name__][func.__name__]['elapsed_time'] = []
-
-    # run experiments and save to results
-    print('Running experiments...')
-    for method in methods:
-        for func in functions:
-            for i in range(n_runs):
-                print(method.__name__, func.__name__, i)
-                start_time = time.time()
-                results[method.__name__][func.__name__]['func_values'].append(method(f=func, d=dims)[1])
-                results[method.__name__][func.__name__]['elapsed_time'].append(time.time() - start_time)
-    print('Done.')
-
-    print(results)
-
-    print('Saving results...')
-    filename_date = datetime.datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
-    save_results(results, save_path=f"results_{filename_date}.csv")
-
-    print('Plotting results...')
-    plot_results(results, save_path=f"results_{filename_date}.pdf")
-
-
 if __name__ == "__main__":
     main()
