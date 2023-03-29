@@ -32,7 +32,7 @@ def load_data(dataset_str):
     -------
     df: pandas DataFrame
     label: str
-    protected_attribute: str
+    protected_attributes: list of str
     """
     if dataset_str == 'adult':
         data = pd.read_csv("https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.data", header=None,
