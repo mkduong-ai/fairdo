@@ -1,24 +1,22 @@
 import time
 import datetime
-import csv
 import os
 
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
 from sklearn.preprocessing import LabelEncoder
 
 # load metrics
-from fado.metrics import statistical_parity_absolute_difference, normalized_mutual_information
-from fado.metrics.nonbinary import nb_statistical_parity_sum_abs_difference, nb_statistical_parity_max_abs_difference, \
+from create_plots import plot_results
+from fado.metrics import statistical_parity_absolute_difference
+from fado.metrics.nonbinary import nb_statistical_parity_max_abs_difference, \
     nb_normalized_mutual_information
 
 # load fado library
 # from fado.preprocessing import MetricOptimizer, MetricOptRemover
 
 # load optimization methods
-from optimize import SimulatedAnnealing, GeneticAlgorithm, MetricOptimizer, Baseline
+from optimize import Baseline
 
 
 def load_data(dataset_str):
@@ -103,7 +101,6 @@ def convert_results_to_dataframe(results):
     """
     for i in results.keys():
         # convert each result to a dataframe
-        print(results[i])
         results[i] = pd.DataFrame.from_dict(results[i], orient='index')
 
         # Reset the index (method) to convert it into a column
@@ -116,84 +113,6 @@ def convert_results_to_dataframe(results):
     results_df = pd.concat(results_list, axis=0).reset_index()
     results_df = results_df.drop(columns=['index'])
     return results_df
-
-
-def plot_results_deprecated(results, save_path=None):
-    # Plot the mean and standard deviation of the results using Matplotlib
-    for method, method_results in results.items():
-        for func, results in method_results.items():
-            mean = np.mean(results['func_values'])
-            std = np.std(results['func_values'])
-            plt.scatter(f"{method} {func}", mean, label=f"{method} {func}")
-            plt.errorbar(f"{method} {func}", mean, yerr=std, fmt='o')
-            plt.xlabel('Method and Objective Function')
-            plt.ylabel('Discrimination')
-            plt.legend()
-    if save_path is not None:
-        plt.savefig(save_path, format='pdf')
-
-    plt.show()
-
-
-def plot_results(results_df,
-                 groups=None,
-                 disc_dict=None,
-                 save_path=None):
-    """
-    Plots the results
-
-    Parameters
-    ----------
-    results_df: pandas DataFrame
-    groups: list of strings
-        list of columns to group by
-    disc_dict: dict
-        dictionary of discrimination measures
-    save_path: str
-        path to save the plot
-
-    Returns
-    -------
-    None
-    """
-    if groups is None:
-        groups = ['Method']
-
-    # get the list of discrimination measures
-    disc_list = list(map(lambda x: x.__name__, disc_dict.values()))
-    disc_time_list = ['time_' + disc_measure_str for disc_measure_str in disc_list]
-
-    # reformat the dataframe
-    id_vars = list(set(results_df.columns) - set(disc_list))
-    df_plot = results_df.melt(id_vars=id_vars,
-                              value_vars=disc_list,
-                              var_name="Discrimination Measure",
-                              value_name="Value")
-    df_plot = df_plot.drop(columns=disc_time_list)
-
-    # rename the discrimination measures
-    rename_dict = dict(zip(disc_list, disc_dict.keys()))
-    df_plot['Discrimination Measure'] = df_plot['Discrimination Measure'].replace(rename_dict)
-
-    # plot the results
-    sns.set_style("darkgrid", {"grid.color": ".6", "grid.linestyle": ":"})
-    sns.color_palette("colorblind")
-    ax = sns.barplot(data=df_plot,
-                     x='Discrimination Measure',
-                     y='Value',
-                     hue='Method',
-                     errorbar='sd',
-                     capsize=.2,
-                     )
-    ax.legend(loc='best')
-    # Set the title of the plot
-    plt.title(results_df['data'][0])
-
-    if save_path is not None:
-        plt.savefig(save_path + '.pdf', format='pdf')
-
-    # Show the plot
-    plt.show()
 
 
 def run_experiment(data_str, disc_dict, methods):
@@ -288,11 +207,12 @@ def main():
                }
 
     # create save path
-    save_path = f'results/nonbinary/{data_str}.csv'
-    if not os.path.exists(f'results/nonbinary/{data_str}'):
-        os.makedirs(f'results/nonbinary/{data_str}')
+    save_path = f'results/nonbinary/{data_str}'
+    if not os.path.exists(save_path):
+        os.makedirs(save_path)
     filename_date = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
-    save_path = f'results/nonbinary/{data_str}/{filename_date}'
+    filename_date = 'results'
+    save_path = f'{save_path}/{filename_date}'
 
     # run experiment
     results = run_experiments(data_str=data_str,
@@ -307,9 +227,9 @@ def main():
     results_df.to_csv(save_path + '.csv', index_label='index')
 
     # plot results
-    plot_results(results_df=results_df,
-                 disc_dict=disc_dict,
-                 save_path=save_path)
+    # plot_results(results_df=results_df,
+    #              disc_dict=disc_dict,
+    #              save_path=save_path)
 
 
 if __name__ == "__main__":
