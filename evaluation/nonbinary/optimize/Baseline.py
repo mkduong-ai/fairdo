@@ -16,7 +16,7 @@ def method_original(f, d):
     return np.ones(d), f(np.ones(d))
 
 
-def method_random(f, d, pop_size=50, num_generations=100):
+def method_random(f, d, pop_size=50, num_generations=1):
     """
 
     Parameters

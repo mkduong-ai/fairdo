@@ -48,7 +48,7 @@ def load_data(dataset_str):
         protected_attributes = ['race']
         cols_to_labelencode = protected_attributes.copy()
         cols_to_labelencode.append(label)
-        data[cols_to_labelencode] =\
+        data[cols_to_labelencode] = \
             data[cols_to_labelencode].apply(LabelEncoder().fit_transform)
         # one-hot encoding categorical columns
         categorical_cols = list(data.select_dtypes(include='object'))
@@ -103,6 +103,7 @@ def convert_results_to_dataframe(results):
     """
     for i in results.keys():
         # convert each result to a dataframe
+        print(results[i])
         results[i] = pd.DataFrame.from_dict(results[i], orient='index')
 
         # Reset the index (method) to convert it into a column
@@ -136,6 +137,7 @@ def plot_results_deprecated(results, save_path=None):
 
 def plot_results(results_df,
                  groups=None,
+                 disc_dict=None,
                  save_path=None):
     """
     Plots the results
@@ -145,6 +147,8 @@ def plot_results(results_df,
     results_df: pandas DataFrame
     groups: list of strings
         list of columns to group by
+    disc_dict: dict
+        dictionary of discrimination measures
     save_path: str
         path to save the plot
 
@@ -153,45 +157,54 @@ def plot_results(results_df,
     None
     """
     if groups is None:
-        groups = ['Method', 'Objective Function']
+        groups = ['Method']
 
-    # aggregate the results
-    discs_mean = results_df.groupby(groups).mean()
-    discs_std = results_df.groupby(groups).std()
+    # get the list of discrimination measures
+    disc_list = list(map(lambda x: x.__name__, disc_dict.values()))
+    disc_time_list = ['time_' + disc_measure_str for disc_measure_str in disc_list]
 
-    # Plot the mean and standard deviation of the results using Matplotlib
-    plt.figure(figsize=(10, 8))
+    # reformat the dataframe
+    id_vars = list(set(results_df.columns) - set(disc_list))
+    df_plot = results_df.melt(id_vars=id_vars,
+                              value_vars=disc_list,
+                              var_name="Discrimination Measure",
+                              value_name="Value")
+    df_plot = df_plot.drop(columns=disc_time_list)
 
-    # Create the error bar plot using Matplotlib and Seaborn
-    sns.set(style="whitegrid")
-    ax = sns.errorbar(x=discs_mean.index, y=discs_mean['values'], yerr=discs_std['values'], fmt='o', capsize=5)
+    # rename the discrimination measures
+    rename_dict = dict(zip(disc_list, disc_dict.keys()))
+    df_plot['Discrimination Measure'] = df_plot['Discrimination Measure'].replace(rename_dict)
 
-    # Set the x and y axis labels
-    ax.set_xlabel('Group', fontsize=14)
-    ax.set_ylabel('Value', fontsize=14)
-
+    # plot the results
+    sns.set_style("darkgrid", {"grid.color": ".6", "grid.linestyle": ":"})
+    sns.color_palette("colorblind")
+    ax = sns.barplot(data=df_plot,
+                     x='Discrimination Measure',
+                     y='Value',
+                     hue='Method',
+                     errorbar='sd',
+                     capsize=.2,
+                     )
+    ax.legend(loc='best')
     # Set the title of the plot
-    ax.set_title('Error Bar Plot', fontsize=16)
+    plt.title(results_df['data'][0])
 
-    # Set the legend
-    plt.legend(['Values'], fontsize=12)
+    if save_path is not None:
+        plt.savefig(save_path + '.pdf', format='pdf')
 
     # Show the plot
     plt.show()
 
-    if save_path is not None:
-        plt.savefig(save_path, format='pdf')
 
-
-def run_experiment(data_str, disc_measures, methods):
+def run_experiment(data_str, disc_dict, methods):
     """
     Runs the experiment
     Parameters
     ----------
     data_str: str
         name of the dataset
-    disc_measures: list of callables
-        list of discrimination measures
+    disc_dict: dict
+        dictionary of discrimination measures
     methods: dict
         dictionary of methods
 
@@ -205,6 +218,7 @@ def run_experiment(data_str, disc_measures, methods):
     print('Successfully loaded data.')
 
     # create objective function
+    disc_measures = list(disc_dict.values())
     f_obj = lambda x, disc_measure: f(x, dataframe=df, label=label, protected_attributes=protected_attributes,
                                       disc_measure=disc_measure)
     functions = [lambda x: f_obj(x, disc_measure=disc_measure) for disc_measure in disc_measures]
@@ -221,24 +235,25 @@ def run_experiment(data_str, disc_measures, methods):
             start_time = time.time()
             results[method_name][func.__name__] = method(f=func, d=df.shape[0])[1]
             end_time = time.time()
-            results[method_name]['time'] = end_time - start_time
-            # information about the data
-            results[method_name]['data'] = data_str
-            results[method_name]['label'] = label
-            results[method_name]['protected_attributes'] = protected_attributes
+            results[method_name]['time' + f'_{func.__name__}'] = end_time - start_time
+
+        # information about the data
+        results[method_name]['data'] = data_str
+        results[method_name]['label'] = label
+        results[method_name]['protected_attributes'] = protected_attributes
 
     return results
 
 
-def run_experiments(data_str, disc_measures, methods, n_runs=10):
+def run_experiments(data_str, disc_dict, methods, n_runs=10):
     """
     Runs the experiments for n_runs times
     Parameters
     ----------
     data_str: str
         name of the dataset
-    disc_measures: list
-        list of discrimination measures
+    disc_dict: dict
+        dictionary of discrimination measures
     methods: dict
         dictionary of methods
     n_runs: int
@@ -251,8 +266,8 @@ def run_experiments(data_str, disc_measures, methods, n_runs=10):
     """
     results = {}
     for i in range(n_runs):
-        print(f'Run {i+1} of {n_runs}')
-        results[i] = run_experiment(data_str, disc_measures, methods)
+        print(f'Run {i + 1} of {n_runs}')
+        results[i] = run_experiment(data_str=data_str, disc_dict=disc_dict, methods=methods)
     return results
 
 
@@ -260,17 +275,16 @@ def main():
     data_str = 'adult'
     n_runs = 2
     # create objective functions
-    disc_measures = [# statistical_parity_absolute_difference,
-                     # normalized_mutual_information,
-                     # nb_statistical_parity_sum_abs_difference,
-                     # nb_statistical_parity_max_abs_difference,
-                     nb_normalized_mutual_information]
+    disc_dict = {  # 'Absolute Statistical Disparity': statistical_parity_absolute_difference,
+        # 'Absolute Statistical Disparity Sum (non-binary)': nb_statistical_parity_sum_abs_difference,
+        'Abs Statistical Disparity Max (non-binary)': nb_statistical_parity_max_abs_difference,
+        'NMI': nb_normalized_mutual_information}
     # create methods
     methods = {'Baseline (Original)': Baseline.method_original,
                'Baseline (Random)': Baseline.method_random,
-               #'Simulated Annealing': SimulatedAnnealing.simulated_annealing_method,
-               #'Genetic Algorithm': GeneticAlgorithm.genetic_algorithm_method,
-               #'Metric Optimizer': MetricOptimizer.metric_optimizer_remover}
+               # 'Simulated Annealing': SimulatedAnnealing.simulated_annealing_method,
+               # 'Genetic Algorithm': GeneticAlgorithm.genetic_algorithm_method,
+               # 'Metric Optimizer': MetricOptimizer.metric_optimizer_remover}
                }
 
     # create save path
@@ -278,11 +292,11 @@ def main():
     if not os.path.exists(f'results/nonbinary/{data_str}'):
         os.makedirs(f'results/nonbinary/{data_str}')
     filename_date = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
-    save_path = f'results/nonbinary/{data_str}/{filename_date}.csv'
+    save_path = f'results/nonbinary/{data_str}/{filename_date}'
 
     # run experiment
     results = run_experiments(data_str=data_str,
-                              disc_measures=disc_measures,
+                              disc_dict=disc_dict,
                               methods=methods,
                               n_runs=n_runs)
 
@@ -290,10 +304,12 @@ def main():
     results_df = convert_results_to_dataframe(results)
 
     # save results
-    results_df.to_csv(save_path, index_label='index')
+    results_df.to_csv(save_path + '.csv', index_label='index')
 
     # plot results
-    plot_results(results_df, save_path=save_path)
+    plot_results(results_df=results_df,
+                 disc_dict=disc_dict,
+                 save_path=save_path)
 
 
 if __name__ == "__main__":
