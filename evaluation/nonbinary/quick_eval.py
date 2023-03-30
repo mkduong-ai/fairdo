@@ -53,6 +53,8 @@ def load_data(dataset_str):
         data = pd.get_dummies(data, columns=categorical_cols)
 
         return data, label, protected_attributes
+    elif dataset_str == 'compas':
+        pass
 
 
 def f(binary_vector, dataframe, label, protected_attributes, disc_measure=statistical_parity_absolute_difference):
@@ -80,9 +82,9 @@ def f(binary_vector, dataframe, label, protected_attributes, disc_measure=statis
     mask = np.array(binary_vector) == 1
     x, y, z = x[mask], y[mask], z[mask]
 
-    # Note: This does not handle multiple protected attributes
+    # We handle multiple protected attributes by not flattening the z array
     y = y.to_numpy().flatten()
-    z = z.to_numpy().flatten()
+    z = z.to_numpy()#.flatten()
     return disc_measure(x=x, y=y, z=z)
 
 
