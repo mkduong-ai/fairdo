@@ -54,7 +54,24 @@ def load_data(dataset_str):
 
         return data, label, protected_attributes
     elif dataset_str == 'compas':
-        pass
+        use_cols = ['race', 'priors_count', 'age_cat', 'c_charge_degree', 'two_year_recid']
+        data = pd.read_csv("https://raw.githubusercontent.com/propublica/compas-analysis/master/compas-scores-two-years.csv",
+                           usecols=use_cols)
+        print('Data downloaded.')
+        # drop rows with missing values
+        data = data.dropna(axis=0, how='any')
+        # label encoding protected_attribute and label
+        label = 'two_year_recid'
+        protected_attributes = ['race']
+        cols_to_labelencode = protected_attributes.copy()
+        cols_to_labelencode.append(label)
+        data[cols_to_labelencode] = \
+            data[cols_to_labelencode].apply(LabelEncoder().fit_transform)
+        # one-hot encoding categorical columns
+        categorical_cols = list(data.select_dtypes(include='object'))
+        data = pd.get_dummies(data, columns=categorical_cols)
+
+        return data, label, protected_attributes
 
 
 def f(binary_vector, dataframe, label, protected_attributes, disc_measure=statistical_parity_absolute_difference):
