@@ -18,6 +18,9 @@ def nb_statistical_parity_sum_abs_difference(y: np.array, z: np.array, positive_
     -------
 
     """
+    if z.ndim > 1:
+        raise ValueError("z must be a 1D array")
+
     # invert positive label if required
     if positive_label == 0:
         y = 1 - y
@@ -52,6 +55,9 @@ def nb_statistical_parity_max_abs_difference(y: np.array, z: np.array, positive_
     -------
 
     """
+    if z.ndim > 1:
+        raise ValueError("z must be a 1D array")
+
     # invert positive label if required
     if positive_label == 0:
         y = 1 - y
