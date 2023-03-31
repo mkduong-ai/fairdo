@@ -213,8 +213,8 @@ def main():
     data_str = 'adult'
     n_runs = 2
     # create objective functions
-    disc_dict = {  # 'Absolute Statistical Disparity': statistical_parity_absolute_difference,
-        # 'Absolute Statistical Disparity Sum (non-binary)': nb_statistical_parity_sum_abs_difference,
+    disc_dict = {
+        # 'Abs Statistical Disparity Sum (non-binary)': nb_statistical_parity_sum_abs_difference,
         'Abs Statistical Disparity Max (non-binary)': nb_statistical_parity_max_abs_difference,
         'NMI': nb_normalized_mutual_information}
     # create methods
