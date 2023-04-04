@@ -2,13 +2,14 @@ import time
 import datetime
 import os
 
-import numpy as np
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 
+# generate synthetic datapoints
+from sdv.tabular import GaussianCopula
+
 # load metrics
-from create_plots import plot_results
-from fado.metrics import statistical_parity_absolute_difference
+from evaluation.nonbinary.objectives import f_remove, f_add
 from fado.metrics.nonbinary import nb_statistical_parity_max_abs_difference, \
     nb_normalized_mutual_information
 
@@ -74,37 +75,6 @@ def load_data(dataset_str):
         return data, label, protected_attributes
 
 
-def f(binary_vector, dataframe, label, protected_attributes, disc_measure=statistical_parity_absolute_difference):
-    """
-
-    Parameters
-    ----------
-    binary_vector: np.array
-    dataframe: pandas DataFrame
-    label: str
-    protected_attributes: list of strings
-    disc_measure: callable
-        takes in x, y, z and return a numeric value
-
-    Returns
-    -------
-    numeric
-    """
-    y = dataframe[label]
-    z = dataframe[protected_attributes]
-    cols_to_drop = protected_attributes + [label]
-    x = dataframe.drop(columns=cols_to_drop)
-
-    # only keep the columns that are selected by the heuristic
-    mask = np.array(binary_vector) == 1
-    x, y, z = x[mask], y[mask], z[mask]
-
-    # We handle multiple protected attributes by not flattening the z array
-    y = y.to_numpy().flatten()
-    z = z.to_numpy()#.flatten()
-    return disc_measure(x=x, y=y, z=z)
-
-
 def convert_results_to_dataframe(results):
     """
     Converts the results to a pandas dataframe
@@ -152,8 +122,43 @@ def run_experiment(data_str, disc_dict, methods):
         results['method']['objective/time/func_values']
     """
     # settings
+    # TODO: add test data?
     df, label, protected_attributes = load_data(data_str)
+    no_synthetic_data = df.shape[0]
     print('Successfully loaded data.')
+
+    # create task
+    objective_str = 'remove'
+    if objective_str in ['remove', 'synthetic', 'remove_and_synthetic']:
+        if objective_str == 'synthetic':
+            # create synthetic data
+            gc = GaussianCopula()
+            gc.fit(df)
+            df_syn = gc.sample(no_synthetic_data)
+            df = df_syn
+        if objective_str == 'remove_and_synthetic':
+            # create synthetic data
+            gc = GaussianCopula()
+            gc.fit(df)
+            df_syn = gc.sample(no_synthetic_data)
+            df = pd.concat([df, df_syn], axis=0)
+
+        # create objective function
+        f = f_remove
+        dims = df.shape[0]
+    elif objective_str == 'add':
+        # create synthetic data
+        gc = GaussianCopula()
+        gc.fit(df)
+        df_syn = gc.sample(no_synthetic_data)
+
+        # create objective function
+        f = lambda binary_vector, dataframe, label, protected_attributes, disc_measure:\
+            f_add(binary_vector, dataframe=dataframe, label=label, protected_attributes=protected_attributes,
+                  disc_measure=disc_measure, synthetic_dataframe=df_syn)
+        dims = df_syn.shape[0]
+    else:
+        raise ValueError(f'Objective {objective_str} not supported.')
 
     # create objective function
     disc_measures = list(disc_dict.values())
@@ -171,7 +176,7 @@ def run_experiment(data_str, disc_dict, methods):
         for func in functions:
             print(f'Optimizing {func.__name__}...')
             start_time = time.time()
-            results[method_name][func.__name__] = method(f=func, d=df.shape[0])[1]
+            results[method_name][func.__name__] = method(f=func, d=dims)[1]
             end_time = time.time()
             results[method_name]['time' + f'_{func.__name__}'] = end_time - start_time
 
