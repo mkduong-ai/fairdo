@@ -101,14 +101,10 @@ def uniform_crossover(parents, offspring_size, p=0.5):
     # perform crossover on the parents to generate new offspring
     offspring = np.empty(offspring_size)
     for k in range(offspring_size[0]):
-        # parent selection
-        # switch between the two parents randomly at each gene to create the offspring
-        parent1_idx = k % parents.shape[0]
-        parent2_idx = (k + 1) % parents.shape[0]
         # create a mask with the same shape as a gene
         mask = np.random.uniform(size=offspring_size[1]) < p
         # assign genes to the offspring based on the mask
-        offspring[k] = np.where(mask, parents[parent1_idx], parents[parent2_idx])
+        offspring[k] = np.where(mask, parents[0], parents[1])
     return offspring
 
 
