@@ -52,7 +52,7 @@ def select_parents(population, fitness, num_parents=2):
 
 def crossover(parents, offspring_size):
     """
-    Perform the crossover operation on the parents to create the offspring
+    Perform the crossover operation with One-point crossover on the parents to create the offspring
 
     Parameters
     ----------
