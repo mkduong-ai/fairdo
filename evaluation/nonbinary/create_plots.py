@@ -2,7 +2,10 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-from matplotlib import pyplot as plt
+import matplotlib
+# Type 1/TrueType fonts are supported natively by most platforms
+matplotlib.rcParams['pdf.fonttype'] = 42
+matplotlib.rcParams['ps.fonttype'] = 42
 
 from fado.metrics.nonbinary import nb_statistical_parity_max_abs_difference, \
     nb_normalized_mutual_information

@@ -45,6 +45,8 @@ def load_data(dataset_str):
         # label encoding protected_attribute and label
         label = 'income'
         protected_attributes = ['race']
+        print(data[protected_attributes].iloc[:, 0].unique())
+        print(data[protected_attributes].iloc[:, 0].value_counts())
         cols_to_labelencode = protected_attributes.copy()
         cols_to_labelencode.append(label)
         data[cols_to_labelencode] = \
@@ -64,6 +66,8 @@ def load_data(dataset_str):
         # label encoding protected_attribute and label
         label = 'two_year_recid'
         protected_attributes = ['race']
+        print(data[protected_attributes].iloc[:, 0].unique())
+        print(data[protected_attributes].iloc[:, 0].value_counts())
         cols_to_labelencode = protected_attributes.copy()
         cols_to_labelencode.append(label)
         data[cols_to_labelencode] = \
