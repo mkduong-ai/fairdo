@@ -299,7 +299,7 @@ def genetic_algorithm_method(f, d,
     fitness: float
         The fitness of the best solution found by the algorithm
     """
-    return genetic_algorithm(f=f, d=d, pop_size=50, num_generations=500,
+    return genetic_algorithm(f=f, d=d, pop_size=50, num_generations=100,
                              select_parents=select_parents,
                              crossover=crossover,
                              mutate=mutate, )
@@ -331,7 +331,7 @@ def genetic_algorithm_uniform_method(f, d,
     fitness: float
         The fitness of the best solution found by the algorithm
     """
-    return genetic_algorithm(f=f, d=d, pop_size=50, num_generations=500,
+    return genetic_algorithm(f=f, d=d, pop_size=50, num_generations=100,
                              select_parents=select_parents,
                              crossover=crossover,
                              mutate=mutate, )
