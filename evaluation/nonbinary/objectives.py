@@ -7,7 +7,9 @@ from sdv.tabular import GaussianCopula
 from fado.metrics import statistical_parity_absolute_difference
 
 
-def f_remove(binary_vector, dataframe, label, protected_attributes, disc_measure=statistical_parity_absolute_difference):
+def f_remove(binary_vector, dataframe, label, protected_attributes,
+             disc_measure=statistical_parity_absolute_difference,
+             **kwargs):
     """
     Determine which data points can be removed from the training set to prevent discrimination.
     This can be easily applied for any dataset where discrimination prevention happens before
@@ -37,7 +39,9 @@ def f_remove(binary_vector, dataframe, label, protected_attributes, disc_measure
 
     # We handle multiple protected attributes by not flattening the z array
     y = y.to_numpy().flatten()
-    z = z.to_numpy()#.flatten()
+    z = z.to_numpy()
+    if len(protected_attributes) == 1:
+        z = z.flatten()
     return disc_measure(x=x, y=y, z=z)
 
 
@@ -77,5 +81,7 @@ def f_add(binary_vector, dataframe, synthetic_dataframe, label, protected_attrib
 
     # We handle multiple protected attributes by not flattening the z array
     y = y.to_numpy().flatten()
-    z = z.to_numpy()#.flatten()
+    z = z.to_numpy()
+    if len(protected_attributes) == 1:
+        z = z.flatten()
     return disc_measure(x=x, y=y, z=z)
