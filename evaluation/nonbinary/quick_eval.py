@@ -128,7 +128,7 @@ def run_experiment(data_str, disc_dict, methods):
     # settings
     # TODO: add test data?
     df, label, protected_attributes = load_data(data_str)
-    no_synthetic_data = df.shape[0]
+    num_synthetic_data = df.shape[0]
     print('Successfully loaded data.')
 
     # create task
@@ -138,13 +138,13 @@ def run_experiment(data_str, disc_dict, methods):
             # create synthetic data
             gc = GaussianCopula()
             gc.fit(df)
-            df_syn = gc.sample(no_synthetic_data)
+            df_syn = gc.sample(num_synthetic_data)
             df = df_syn
         if objective_str == 'remove_and_synthetic':
             # create synthetic data
             gc = GaussianCopula()
             gc.fit(df)
-            df_syn = gc.sample(no_synthetic_data)
+            df_syn = gc.sample(num_synthetic_data)
             df = pd.concat([df, df_syn], axis=0)
 
         # create objective function
@@ -154,7 +154,7 @@ def run_experiment(data_str, disc_dict, methods):
         # create synthetic data
         gc = GaussianCopula()
         gc.fit(df)
-        df_syn = gc.sample(no_synthetic_data)
+        df_syn = gc.sample(num_synthetic_data)
 
         # create objective function
         f = lambda binary_vector, dataframe, label, protected_attributes, disc_measure:\
