@@ -157,7 +157,10 @@ def mutate(offspring, mutation_rate=0.05):
     return offspring
 
 
-def genetic_algorithm_constraint(f, d, n, pop_size, num_generations):
+def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
+                                 select_parents=select_parents,
+                                 crossover=crossover,
+                                 mutate=mutate,):
     """
     Here is an example of a research paper that uses the genetic algorithm to solve
     optimization problems with constraints:
@@ -191,6 +194,12 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations):
         population size (number of individuals)
     num_generations: int
         number of generations
+    select_parents: callable
+        function to select the parents from the population
+    crossover: callable
+        function to perform the crossover operation
+    mutate: callable
+        function to perform the mutation operation
     Returns
     -------
     population: np.array of size (d,)
@@ -200,8 +209,10 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations):
     """
     # generate the initial population
     population = generate_population(pop_size, d)
+    best_population = population
     # evaluate the function for each vector in the population
     fitness = evaluate_population(f, n, population, penalty_function=penalty_normalized)
+    best_fitness = fitness
     # perform the genetic algorithm for the specified number of generations
     for generation in range(num_generations):
         # select the parents
@@ -216,39 +227,35 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations):
         # create the new population (allow the parents to be part of the next generation)
         population = np.concatenate((parents, offspring))
         fitness = np.concatenate((fitness, offspring_fitness))
-        # select the best individuals to keep for the next generation
+        # select the best individuals to keep for the next generation (elitism)
         idx = np.argsort(fitness)[:pop_size]
         population = population[idx]
         fitness = fitness[idx]
     return population[0], fitness[0]
 
 
-def genetic_algorithm(f, d, pop_size, num_generations):
+def genetic_algorithm(f, d, pop_size, num_generations,
+                      select_parents=select_parents,
+                      crossover=crossover,
+                      mutate=mutate,):
     """
 
-    Parameters
-    ----------
-    f
-    d
-    pop_size
-    num_generations
-
-    Returns
-    -------
-
-    """
-    return genetic_algorithm_constraint(f=f, d=d, n=0, pop_size=pop_size, num_generations=num_generations)
-
-
-def genetic_algorithm_method(f, d):
-    """
-    Genetic Algorithm method
     Parameters
     ----------
     f: function
         function to optimize
     d: int
         number of dimensions
+    pop_size: int
+        population size (number of individuals)
+    num_generations: int
+        number of generations
+    select_parents: callable
+        function to select the parents from the population
+    crossover: callable
+        function to perform the crossover operation
+    mutate: callable
+        function to perform the mutation operation
 
     Returns
     -------
@@ -257,4 +264,39 @@ def genetic_algorithm_method(f, d):
     fitness: float
         The fitness of the best solution found by the algorithm
     """
-    return genetic_algorithm(f=f, d=d, pop_size=50, num_generations=100)
+    return genetic_algorithm_constraint(f=f, d=d, n=0, pop_size=pop_size, num_generations=num_generations,
+                                        select_parents=select_parents,
+                                        crossover=crossover,
+                                        mutate=mutate,)
+
+
+def genetic_algorithm_method(f, d,
+                             select_parents=select_parents,
+                             crossover=crossover,
+                             mutate=mutate,):
+    """
+    Genetic Algorithm method
+    Parameters
+    ----------
+    f: function
+        function to optimize
+    d: int
+        number of dimensions
+    select_parents: callable
+        function to select the parents from the population
+    crossover: callable
+        function to perform the crossover operation
+    mutate: callable
+        function to perform the mutation operation
+
+    Returns
+    -------
+    population: np.array of size (d,)
+        The best solution found by the algorithm
+    fitness: float
+        The fitness of the best solution found by the algorithm
+    """
+    return genetic_algorithm(f=f, d=d, pop_size=50, num_generations=100,
+                             select_parents=select_parents,
+                             crossover=crossover,
+                             mutate=mutate,)
