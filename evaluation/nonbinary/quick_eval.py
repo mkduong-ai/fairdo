@@ -8,8 +8,10 @@ from sklearn.preprocessing import LabelEncoder
 # generate synthetic datapoints
 from sdv.tabular import GaussianCopula
 
+# load non-binary evaluation
+from objectives import f_remove, f_add
+
 # load metrics
-from evaluation.nonbinary.objectives import f_remove, f_add
 from fado.metrics.nonbinary import nb_statistical_parity_max_abs_difference, \
     nb_normalized_mutual_information
 
@@ -17,7 +19,7 @@ from fado.metrics.nonbinary import nb_statistical_parity_max_abs_difference, \
 # from fado.preprocessing import MetricOptimizer, MetricOptRemover
 
 # load optimization methods
-from optimize import Baseline
+from optimize import Baseline, SimulatedAnnealing, GeneticAlgorithm
 
 
 def load_data(dataset_str):
@@ -228,9 +230,10 @@ def main():
         'NMI': nb_normalized_mutual_information}
     # create methods
     methods = {'Baseline (Original)': Baseline.method_original,
-               'Baseline (Random)': Baseline.method_random,
-               # 'Simulated Annealing': SimulatedAnnealing.simulated_annealing_method,
-               # 'Genetic Algorithm': GeneticAlgorithm.genetic_algorithm_method,
+               'Random Heuristic': Baseline.method_random,
+               'Simulated Annealing': SimulatedAnnealing.simulated_annealing_method,
+               'GA (1-Point Crossover)': GeneticAlgorithm.genetic_algorithm_method,
+               'GA (Uniform Crossover)': GeneticAlgorithm.genetic_algorithm_uniform_method,
                # 'Metric Optimizer': MetricOptimizer.metric_optimizer_remover}
                }
 
@@ -239,7 +242,7 @@ def main():
     if not os.path.exists(save_path):
         os.makedirs(save_path)
     filename_date = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
-    filename_date = 'results'
+    # filename_date = 'results'
     save_path = f'{save_path}/{filename_date}'
 
     # run experiment

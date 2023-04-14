@@ -136,9 +136,9 @@ def kpoint_crossover(parents, offspring_size, k=2):
         parent1_idx = i % parents.shape[0]
         parent2_idx = (i + 1) % parents.shape[0]
         # calculate the crossover points
-        crossover_points = sorted(np.random.choice(range(1, offspring_size[1]), k-1, replace=False))
+        crossover_points = sorted(np.random.choice(range(1, offspring_size[1]), k - 1, replace=False))
         # alternate between parents in each segment
-        segments = np.array_split(range(offspring_size[1]), len(crossover_points)+1)
+        segments = np.array_split(range(offspring_size[1]), len(crossover_points) + 1)
         for j in range(len(segments)):
             if j % 2 == 0:
                 offspring[i, segments[j]] = parents[parent1_idx, segments[j]]
@@ -163,7 +163,7 @@ def mutate(offspring, mutation_rate=0.05):
 def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
                                  select_parents=select_parents,
                                  crossover=crossover,
-                                 mutate=mutate,):
+                                 mutate=mutate, ):
     """
     Here is an example of a research paper that uses the genetic algorithm to solve
     optimization problems with constraints:
@@ -240,7 +240,7 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
 def genetic_algorithm(f, d, pop_size, num_generations,
                       select_parents=select_parents,
                       crossover=crossover,
-                      mutate=mutate,):
+                      mutate=mutate, ):
     """
 
     Parameters
@@ -270,13 +270,13 @@ def genetic_algorithm(f, d, pop_size, num_generations,
     return genetic_algorithm_constraint(f=f, d=d, n=0, pop_size=pop_size, num_generations=num_generations,
                                         select_parents=select_parents,
                                         crossover=crossover,
-                                        mutate=mutate,)
+                                        mutate=mutate, )
 
 
 def genetic_algorithm_method(f, d,
                              select_parents=select_parents,
                              crossover=crossover,
-                             mutate=mutate,):
+                             mutate=mutate, ):
     """
     Genetic Algorithm method
     Parameters
@@ -299,7 +299,39 @@ def genetic_algorithm_method(f, d,
     fitness: float
         The fitness of the best solution found by the algorithm
     """
-    return genetic_algorithm(f=f, d=d, pop_size=50, num_generations=100,
+    return genetic_algorithm(f=f, d=d, pop_size=50, num_generations=10,
                              select_parents=select_parents,
                              crossover=crossover,
-                             mutate=mutate,)
+                             mutate=mutate, )
+
+
+def genetic_algorithm_uniform_method(f, d,
+                                     select_parents=select_parents,
+                                     crossover=uniform_crossover,
+                                     mutate=mutate, ):
+    """
+    Genetic Algorithm method
+    Parameters
+    ----------
+    f: function
+        function to optimize
+    d: int
+        number of dimensions
+    select_parents: callable
+        function to select the parents from the population
+    crossover: callable
+        function to perform the crossover operation
+    mutate: callable
+        function to perform the mutation operation
+
+    Returns
+    -------
+    population: np.array of size (d,)
+        The best solution found by the algorithm
+    fitness: float
+        The fitness of the best solution found by the algorithm
+    """
+    return genetic_algorithm(f=f, d=d, pop_size=50, num_generations=10,
+                             select_parents=select_parents,
+                             crossover=crossover,
+                             mutate=mutate, )
