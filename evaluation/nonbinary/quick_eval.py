@@ -222,11 +222,11 @@ def run_experiments(data_str, disc_dict, methods, n_runs=10):
 
 def main():
     data_str = 'adult'
-    n_runs = 2
+    n_runs = 10
     # create objective functions
     disc_dict = {
         # 'Abs Statistical Disparity Sum (non-binary)': nb_statistical_parity_sum_abs_difference,
-        'Abs Statistical Disparity Max (non-binary)': nb_statistical_parity_max_abs_difference,
+        'Maximal Statistical Disparity': nb_statistical_parity_max_abs_difference,
         'NMI': nb_normalized_mutual_information}
     # create methods
     methods = {'Baseline (Original)': Baseline.method_original,

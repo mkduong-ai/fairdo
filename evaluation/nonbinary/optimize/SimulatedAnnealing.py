@@ -128,4 +128,4 @@ def simulated_annealing_method(f, d):
     current_fitness: float
         The fitness of the best solution found by the algorithm
     """
-    return simulated_annealing(f, d=d, T_max=1, T_min=1e-6, cooling_rate=0.95, max_iter=100)
+    return simulated_annealing(f, d=d, T_max=1, T_min=1e-6, cooling_rate=0.95, max_iter=25000)

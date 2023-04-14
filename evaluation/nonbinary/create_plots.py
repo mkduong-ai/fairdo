@@ -93,7 +93,7 @@ def main():
     data_str = 'adult'
     disc_dict = {  # 'Absolute Statistical Disparity': statistical_parity_absolute_difference,
         # 'Absolute Statistical Disparity Sum (non-binary)': nb_statistical_parity_sum_abs_difference,
-        'Abs Statistical Disparity Max (non-binary)': nb_statistical_parity_max_abs_difference,
+        'Maximal Statistical Disparity': nb_statistical_parity_max_abs_difference,
         'NMI': nb_normalized_mutual_information}
 
     # load the results
