@@ -102,6 +102,9 @@ def uniform_crossover(parents, offspring_size, p=0.5):
     offspring = np.empty(offspring_size)
     for k in range(offspring_size[0]):
         # create a mask with the same shape as a gene
+        if p is None:
+            # if p is not specified, randomly choose a probability for each gene
+            p = np.random.uniform()
         mask = np.random.uniform(size=offspring_size[1]) < p
         # assign genes to the offspring based on the mask
         offspring[k] = np.where(mask, parents[0], parents[1])

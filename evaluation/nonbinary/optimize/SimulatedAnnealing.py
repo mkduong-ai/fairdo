@@ -52,6 +52,8 @@ def simulated_annealing_constraint(f, d, n, T_max, T_min, cooling_rate, max_iter
     # Initialize the current solution randomly
     current_solution = np.random.randint(2, size=d)
     current_fitness = f(current_solution)
+    best_solution = current_solution.copy()
+    best_fitness = current_fitness
     temperature = T_max
     iteration = 0
     # Repeat until the temperature reach the minimum
@@ -70,9 +72,12 @@ def simulated_annealing_constraint(f, d, n, T_max, T_min, cooling_rate, max_iter
             # Acceptance probability already includes the delta < 0. Only checked for clarity.
             current_solution = new_solution
             current_fitness = new_fitness
+            if current_fitness < best_fitness:
+                best_solution = current_solution.copy()
+                best_fitness = current_fitness
         temperature *= cooling_rate  # decrease the temperature
         iteration += 1
-    return current_solution, current_fitness
+    return best_solution, best_fitness
 
 
 def simulated_annealing(f, d, T_max, T_min, cooling_rate, max_iter=1000):
