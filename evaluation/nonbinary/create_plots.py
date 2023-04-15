@@ -48,14 +48,32 @@ def plot_results(results_df,
                               var_name="Discrimination Measure",
                               value_name="Value")
     df_plot = df_plot.drop(columns=disc_time_list)
+
+    # rename the discrimination measures
+    rename_dict = dict(zip(disc_list, disc_dict.keys()))
+    print(rename_dict)
+    df_plot['Discrimination Measure'] = df_plot['Discrimination Measure'].replace(rename_dict)
+
     print('test')
     print(df_plot)
     print(df_plot.columns)
     print(len(df_plot.columns))
 
-    # rename the discrimination measures
-    rename_dict = dict(zip(disc_list, disc_dict.keys()))
-    df_plot['Discrimination Measure'] = df_plot['Discrimination Measure'].replace(rename_dict)
+    print('df_plot')
+    grouped = df_plot.groupby('Discrimination Measure')['Value'].agg(['mean', 'std'])
+
+    # rename column headers
+    print(grouped)
+    print('------------------')
+    print('results_df: Max Statistical Disparity')
+    grouped = results_df.groupby('Method')['nb_statistical_parity_max_abs_difference'].agg(['mean', 'std'])
+    print(grouped)
+
+    print('------------------')
+    print('results_df: NMI')
+    grouped = results_df.groupby('Method')['nb_normalized_mutual_information'].agg(['mean', 'std'])
+
+    print(grouped)
 
     # plot the results
     figure(figsize=(6, 4), dpi=80)
@@ -85,7 +103,7 @@ def plot_results(results_df,
 def settings(data_str='compas', objective_str='remove_synthetic'):
     disc_dict = {  # 'Absolute Statistical Disparity': statistical_parity_absolute_difference,
         # 'Absolute Statistical Disparity Sum (non-binary)': nb_statistical_parity_sum_abs_difference,
-        'Maximal Statistical Disparity': nb_statistical_parity_max_abs_difference,
+        #'Maximal Statistical Disparity': nb_statistical_parity_max_abs_difference,
         'NMI': nb_normalized_mutual_information}
 
     # load the results

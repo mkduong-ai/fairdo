@@ -194,6 +194,7 @@ def run_experiment(data_str, disc_dict, methods,
         raise ValueError(f'Objective {objective_str} not supported.')
 
     # create objective function
+    # TODO: Error here. Fix it!
     disc_measures = list(disc_dict.values())
     f_obj = lambda x, disc_measure: f(x, dataframe=df, label=label, protected_attributes=protected_attributes,
                                       disc_measure=disc_measure)
