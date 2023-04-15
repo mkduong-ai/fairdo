@@ -22,6 +22,26 @@ from fado.metrics.nonbinary import nb_statistical_parity_max_abs_difference, \
 from optimize import Baseline, SimulatedAnnealing, GeneticAlgorithm
 
 
+def downcast(data):
+    """
+    Downcast float and integer columns to save memory.
+    Parameters
+    ----------
+    data: pandas DataFrame
+
+    Returns
+    -------
+    data: pandas DataFrame
+    """
+    fcols = data.select_dtypes('float').columns
+    icols = data.select_dtypes('integer').columns
+
+    data[fcols] = data[fcols].apply(pd.to_numeric, downcast='float')
+    data[icols] = data[icols].apply(pd.to_numeric, downcast='integer')
+
+    return data
+
+
 def load_data(dataset_str):
     """
 
@@ -56,12 +76,15 @@ def load_data(dataset_str):
         # one-hot encoding categorical columns
         categorical_cols = list(data.select_dtypes(include='object'))
         data = pd.get_dummies(data, columns=categorical_cols)
+        # downcast
+        data = downcast(data)
 
         return data, label, protected_attributes
     elif dataset_str == 'compas':
         use_cols = ['race', 'priors_count', 'age_cat', 'c_charge_degree', 'two_year_recid']
-        data = pd.read_csv("https://raw.githubusercontent.com/propublica/compas-analysis/master/compas-scores-two-years.csv",
-                           usecols=use_cols)
+        data = pd.read_csv(
+            "https://raw.githubusercontent.com/propublica/compas-analysis/master/compas-scores-two-years.csv",
+            usecols=use_cols)
         print('Data downloaded.')
         # drop rows with missing values
         data = data.dropna(axis=0, how='any')
@@ -77,6 +100,8 @@ def load_data(dataset_str):
         # one-hot encoding categorical columns
         categorical_cols = list(data.select_dtypes(include='object'))
         data = pd.get_dummies(data, columns=categorical_cols)
+        # downcast
+        data = downcast(data)
 
         return data, label, protected_attributes
 
@@ -161,7 +186,7 @@ def run_experiment(data_str, disc_dict, methods,
         df_syn = gc.sample(num_synthetic_data)
 
         # create objective function
-        f = lambda binary_vector, dataframe, label, protected_attributes, disc_measure:\
+        f = lambda binary_vector, dataframe, label, protected_attributes, disc_measure: \
             f_add(binary_vector, dataframe=dataframe, label=label, protected_attributes=protected_attributes,
                   disc_measure=disc_measure, synthetic_dataframe=df_syn)
         dims = df_syn.shape[0]
@@ -226,9 +251,9 @@ def run_experiments(data_str, disc_dict, methods, n_runs=10,
     return results
 
 
-def main():
-    objective_str = 'remove'
-    data_str = 'compas'
+def settings(data_str):
+    objective_str = 'remove_and_synthetic'
+    # data_str = 'compas'
     n_runs = 10
     # create objective functions
     disc_dict = {
@@ -269,6 +294,14 @@ def main():
     # plot_results(results_df=results_df,
     #              disc_dict=disc_dict,
     #              save_path=save_path)
+
+
+def main():
+    data_strs = ['adult', 'compas']
+    for data_str in data_strs:
+        print('------------------------------------')
+        print(f'Running experiments for {data_str}...')
+        settings(data_str=data_str)
 
 
 if __name__ == "__main__":
