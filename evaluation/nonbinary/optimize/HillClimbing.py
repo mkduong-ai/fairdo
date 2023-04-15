@@ -1,24 +1,27 @@
 import numpy as np
 
-'''
-In this implementation, the initial solution is randomly generated, and the function repeatedly generates a new random
-neighbor solution and decides whether to accept it based on its fitness.
-The algorithm stops when no better solutions can be found by generating new neighbors.
-It's important to note that the results of this algorithm may vary depending on the specific function
-you're trying to minimize, as well as the initial state of the algorithm.
-Also, note that the algorithm may get stuck in local minima, in this case, it can be improved by using techniques such
-as simulated annealing which allows for "jumping out" of local minima with a certain probability,
-or by using a technique called random restart, where the algorithm is run multiple times with different random initial
-solutions to increase the chances of finding the global optimum.
-'''
-
 
 def f(x):
     # replace this with your own blackbox function
     return sum(x)
 
 
-def hill_climbing(d):
+def hill_climbing(f, d):
+    """
+    An initial solution is randomly generated, and the function repeatedly generates a new random
+    neighbor solution and decides whether to accept it based on its fitness.
+    The algorithm stops when no better solutions can be found by generating new neighbors.
+
+    Parameters
+    ----------
+    f: callable
+        The function to be minimized
+    d: int
+        dimension of the binary vector
+    Returns
+    -------
+    current_solution: np.array
+    """
     # Initialize the current solution randomly
     current_solution = np.random.randint(2, size=d)
     current_fitness = f(current_solution)
@@ -41,17 +44,27 @@ def hill_climbing(d):
     return current_solution, current_fitness
 
 
-'''
-In this example, I've added a constraint to the Hill Climbing algorithm that the sum of x has to be equal to a
-user-given number n. This is done by checking the sum of the new solution after it's generated, if it doesn't meet the
-constraint, the algorithm will continue to generate a new solution.
+def hill_climbing_constraint(f, d, n=0):
+    """
+    An initial solution is randomly generated, and the function repeatedly generates a new random
+    neighbor solution and decides whether to accept it based on its fitness.
+    The algorithm stops when no better solutions can be found by generating new neighbors.
+    Here a constraint is added to the problem, that the number of 1s in the binary vector should be equal to n.
+    If a neighbor solution does not satisfy the constraint, it is discarded.
 
-It's important to note that the results of this algorithm may vary depending on the specific function
-you're trying to minimize and the specific parameter values you choose.
-'''
+    Parameters
+    ----------
+    f: callable
+        The function to be minimized
+    d:  int
+        dimension of the binary vector
+    n: int
+        constraint on the number of 1s in the binary vector
 
-
-def hill_climbing_constraint(d, n):
+    Returns
+    -------
+    current_solution: np.array
+    """
     # Initialize the current solution randomly
     current_solution = np.random.randint(2, size=d)
     current_fitness = f(current_solution)
@@ -76,18 +89,30 @@ def hill_climbing_constraint(d, n):
     return current_solution, current_fitness
 
 
-'''
-In this example, the Hill Climbing algorithm is run multiple times with different random initial solutions,
-this is the random restarts technique. This increases the chances of finding the global optimum and also deals with the
-exploration-exploitation trade-off. The algorithm stops when no better solutions can be found.
-The best solution found among all restarts is returned.
+def hill_climbing_constraint_random_restart(f, d, n, num_restarts):
+    """
+    An initial solution is randomly generated, and the function repeatedly generates a new random
+    neighbor solution and decides whether to accept it based on its fitness.
+    The algorithm stops when no better solutions can be found by generating new neighbors.
+    Here a constraint is added to the problem, that the number of 1s in the binary vector should be equal to n.
+    If a neighbor solution does not satisfy the constraint, it is discarded.
+    The algorithm is restarted with a new random initial solution num_restarts times to escape local minima.
 
-It's important to note that the number of restarts and the initial temperature should be chosen based on the specific
-problem at hand, as well as the desired trade-offs between exploration and exploitation.
-'''
+    Parameters
+    ----------
+    f: callable
+        The function to be minimized
+    d:  int
+        dimension of the binary vector
+    n: int
+        constraint on the number of 1s in the binary vector
+    num_restarts: int
+        number of times the algorithm is restarted with a new random initial solution
 
-
-def hill_climbing_constraint_random_restart(d, n, num_restarts):
+    Returns
+    -------
+    best_solution: np.array
+    """
     best_solution = None
     best_fitness = float('inf')
     for i in range(num_restarts):
