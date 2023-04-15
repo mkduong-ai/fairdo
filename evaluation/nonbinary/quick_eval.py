@@ -110,7 +110,8 @@ def convert_results_to_dataframe(results):
     return results_df
 
 
-def run_experiment(data_str, disc_dict, methods):
+def run_experiment(data_str, disc_dict, methods,
+                   objective_str='remove'):
     """
     Runs the experiment
     Parameters
@@ -121,6 +122,8 @@ def run_experiment(data_str, disc_dict, methods):
         dictionary of discrimination measures
     methods: dict
         dictionary of methods
+    objective_str: str
+        objective function
 
     Returns
     -------
@@ -134,7 +137,6 @@ def run_experiment(data_str, disc_dict, methods):
     print('Successfully loaded data.')
 
     # create task
-    objective_str = 'remove'
     if objective_str in ['remove', 'synthetic', 'remove_and_synthetic']:
         if objective_str == 'synthetic':
             # create synthetic data
@@ -194,7 +196,8 @@ def run_experiment(data_str, disc_dict, methods):
     return results
 
 
-def run_experiments(data_str, disc_dict, methods, n_runs=10):
+def run_experiments(data_str, disc_dict, methods, n_runs=10,
+                    objective_str='remove'):
     """
     Runs the experiments for n_runs times
     Parameters
@@ -207,6 +210,8 @@ def run_experiments(data_str, disc_dict, methods, n_runs=10):
         dictionary of methods
     n_runs: int
         number of runs
+    objective_str: str
+        objective function
 
     Returns
     -------
@@ -216,11 +221,13 @@ def run_experiments(data_str, disc_dict, methods, n_runs=10):
     results = {}
     for i in range(n_runs):
         print(f'Run {i + 1} of {n_runs}')
-        results[i] = run_experiment(data_str=data_str, disc_dict=disc_dict, methods=methods)
+        results[i] = run_experiment(data_str=data_str, disc_dict=disc_dict, methods=methods,
+                                    objective_str=objective_str)
     return results
 
 
 def main():
+    objective_str = 'remove'
     data_str = 'compas'
     n_runs = 10
     # create objective functions
@@ -249,7 +256,8 @@ def main():
     results = run_experiments(data_str=data_str,
                               disc_dict=disc_dict,
                               methods=methods,
-                              n_runs=n_runs)
+                              n_runs=n_runs,
+                              objective_str=objective_str)
 
     # convert results to proper dataframe
     results_df = convert_results_to_dataframe(results)
