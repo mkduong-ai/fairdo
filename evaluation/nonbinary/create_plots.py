@@ -81,7 +81,7 @@ def plot_results(results_df,
 def settings(data_str='compas', objective_str='remove_synthetic'):
     disc_dict = {  # 'Absolute Statistical Disparity': statistical_parity_absolute_difference,
         # 'Absolute Statistical Disparity Sum (non-binary)': nb_statistical_parity_sum_abs_difference,
-        #'Maximal Statistical Disparity': nb_statistical_parity_max_abs_difference,
+        'Maximal Statistical Disparity': nb_statistical_parity_max_abs_difference,
         'NMI': nb_normalized_mutual_information}
 
     # load the results
@@ -96,8 +96,8 @@ def settings(data_str='compas', objective_str='remove_synthetic'):
 
 
 def main():
-    data_strs = ['adult', 'compas']
-    objective_str = ['remove_synthetic', 'add', 'remove']
+    data_strs = ['adult']#, 'compas']
+    objective_str = ['remove_synthetic']#, 'add', 'remove']
     for data_str in data_strs:
         for obj_str in objective_str:
             settings(data_str=data_str, objective_str=obj_str)

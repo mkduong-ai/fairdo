@@ -13,8 +13,12 @@ from sdv.tabular import GaussianCopula
 from objectives import f_remove, f_add
 
 # load metrics
-from fado.metrics.nonbinary import nb_statistical_parity_max_abs_difference, \
+from fado.metrics.nonbinary import nb_statistical_parity_sum_abs_difference,\
+    nb_statistical_parity_max_abs_difference, \
     nb_normalized_mutual_information
+
+# load fake metrics that serve other purposes
+from measures import count_size, count_groups, sanity_check
 
 # load fado library
 # from fado.preprocessing import MetricOptimizer, MetricOptRemover
@@ -198,25 +202,10 @@ def run_experiment(data_str, disc_dict, methods,
     disc_measures = list(disc_dict.values())
     f_obj = lambda x, disc_measure: f(x, dataframe=df, label=label, protected_attributes=protected_attributes,
                                       disc_measure=disc_measure)
-    # TODO: Error here. Fix it! This loop doesnt work
     functions = [lambda x, disc_measure=disc_measure: f_obj(x, disc_measure=disc_measure)
                  for disc_measure in disc_measures]
-    functions2 = [print(disc_measure) for disc_measure in disc_measures]
-    print(functions2)
-    print(functions)
     for func, disc_measure in zip(functions, disc_measures):
         func.__name__ = disc_measure.__name__
-
-    # TODO: Test this
-    print('-' * 50)
-    print('functions list test')
-    print(f'{functions[0].__name__}: {functions[0](np.ones(dims))}')
-    print(f'{functions[1].__name__}: {functions[1](np.ones(dims))}')
-    print('-' * 50)
-    print(f'F_obj test')
-    print(f'{disc_measures[0].__name__}: {f_obj(np.ones(dims), disc_measure=disc_measures[0])}')
-    print(f'{disc_measures[1].__name__}: {f_obj(np.ones(dims), disc_measure=disc_measures[1])}')
-    print('-' * 50)
 
     # run experiments
     results = {}
@@ -268,15 +257,18 @@ def run_experiments(data_str, disc_dict, methods, n_runs=10,
     return results
 
 
-def settings(data_str):
-    objective_str = 'add'
+def settings(data_str, objective_str):
+    # objective_str = 'add'
     # data_str = 'compas'
-    n_runs = 1
+    n_runs = 15
     # create objective functions
     disc_dict = {
-        # 'Abs Statistical Disparity Sum (non-binary)': nb_statistical_parity_sum_abs_difference,
+        'Statistical Disparity Sum': nb_statistical_parity_sum_abs_difference,
         'Maximal Statistical Disparity': nb_statistical_parity_max_abs_difference,
-        'NMI': nb_normalized_mutual_information}
+        'NMI': nb_normalized_mutual_information,
+        'Size': count_size,
+        'Distinct Groups': count_groups,
+        'Sanity Check': sanity_check}
     # create methods
     methods = {'Baseline (Original)': Baseline.method_original,
                'Random Heuristic': Baseline.method_random,
@@ -292,7 +284,8 @@ def settings(data_str):
         os.makedirs(save_path)
     filename_date = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
     # filename_date = 'results'
-    save_path = f'{save_path}/{filename_date}'
+    #save_path = f'{save_path}/{filename_date}'
+    save_path = f'{save_path}/{data_str}_{objective_str}'
 
     # run experiment
     results = run_experiments(data_str=data_str,
@@ -305,7 +298,7 @@ def settings(data_str):
     results_df = convert_results_to_dataframe(results)
 
     # save results
-    results_df.to_csv(save_path + '_test.csv', index_label='index')
+    results_df.to_csv(save_path + '.csv', index_label='index')
 
     # plot results
     # plot_results(results_df=results_df,
@@ -314,11 +307,15 @@ def settings(data_str):
 
 
 def main():
-    data_strs = ['adult']#, 'compas']
+    obj_strs = ['remove', 'add', 'remove_and_synthetic']
+    data_strs = ['adult', 'compas']
     for data_str in data_strs:
         print('------------------------------------')
         print(f'Running experiments for {data_str}...')
-        settings(data_str=data_str)
+        for obj_str in obj_strs:
+            print('------------------------------------')
+            print(f'Running experiments for {obj_str}...')
+            settings(data_str=data_str, objective_str=obj_str)
 
 
 if __name__ == "__main__":
