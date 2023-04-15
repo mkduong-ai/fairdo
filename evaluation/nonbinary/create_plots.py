@@ -15,7 +15,8 @@ from fado.metrics.nonbinary import nb_statistical_parity_max_abs_difference, \
 def plot_results(results_df,
                  groups=None,
                  disc_dict=None,
-                 save_path=None):
+                 save_path=None,
+                 show_plot=True):
     """
     Plots the results
 
@@ -77,12 +78,11 @@ def plot_results(results_df,
         plt.savefig(save_path + '.pdf', format='pdf',  bbox_inches='tight', pad_inches=0)
 
     # Show the plot
-    plt.show()
+    if show_plot:
+        plt.show()
 
 
-def main():
-    data_str = 'compas'
-    objective_str = 'remove_synthetic'
+def settings(data_str='compas', objective_str='remove_synthetic'):
     disc_dict = {  # 'Absolute Statistical Disparity': statistical_parity_absolute_difference,
         # 'Absolute Statistical Disparity Sum (non-binary)': nb_statistical_parity_sum_abs_difference,
         'Maximal Statistical Disparity': nb_statistical_parity_max_abs_difference,
@@ -95,7 +95,16 @@ def main():
     # plot the results
     plot_results(results,
                  disc_dict=disc_dict,
-                 save_path=f'{save_path}/{data_str}_{objective_str}')
+                 save_path=f'{save_path}/{data_str}_{objective_str}',
+                 show_plot=False)
+
+
+def main():
+    data_strs = ['adult', 'compas']
+    objective_str = ['remove_synthetic', 'add', 'remove']
+    for data_str in data_strs:
+        for obj_str in objective_str:
+            settings(data_str=data_str, objective_str=obj_str)
 
 
 if __name__ == "__main__":
