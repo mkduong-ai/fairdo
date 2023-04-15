@@ -51,30 +51,7 @@ def plot_results(results_df,
 
     # rename the discrimination measures
     rename_dict = dict(zip(disc_list, disc_dict.keys()))
-    print(rename_dict)
     df_plot['Discrimination Measure'] = df_plot['Discrimination Measure'].replace(rename_dict)
-
-    # TODO: remove this test
-    print('test')
-    print(df_plot)
-    print(df_plot.columns)
-    print(len(df_plot.columns))
-
-    print('df_plot')
-    grouped = df_plot.groupby('Discrimination Measure')['Value'].agg(['mean', 'std'])
-
-    # rename column headers
-    print(grouped)
-    print('------------------')
-    print('results_df: Max Statistical Disparity')
-    grouped = results_df.groupby('Method')['nb_statistical_parity_max_abs_difference'].agg(['mean', 'std'])
-    print(grouped)
-
-    print('------------------')
-    print('results_df: NMI')
-    grouped = results_df.groupby('Method')['nb_normalized_mutual_information'].agg(['mean', 'std'])
-
-    print(grouped)
 
     # plot the results
     figure(figsize=(6, 4), dpi=80)
