@@ -1,8 +1,9 @@
 import numpy as np
 import pandas as pd
+import matplotlib
+from matplotlib.pyplot import figure
 import matplotlib.pyplot as plt
 import seaborn as sns
-import matplotlib
 # Type 1/TrueType fonts are supported natively by most platforms
 matplotlib.rcParams['pdf.fonttype'] = 42
 matplotlib.rcParams['ps.fonttype'] = 42
@@ -46,12 +47,17 @@ def plot_results(results_df,
                               var_name="Discrimination Measure",
                               value_name="Value")
     df_plot = df_plot.drop(columns=disc_time_list)
+    print('test')
+    print(df_plot)
+    print(df_plot.columns)
+    print(len(df_plot.columns))
 
     # rename the discrimination measures
     rename_dict = dict(zip(disc_list, disc_dict.keys()))
     df_plot['Discrimination Measure'] = df_plot['Discrimination Measure'].replace(rename_dict)
 
     # plot the results
+    figure(figsize=(6, 4), dpi=80)
     sns.set_style("darkgrid", {"grid.color": ".6", "grid.linestyle": ":"})
     ax = sns.barplot(data=df_plot,
                      x='Discrimination Measure',
@@ -61,36 +67,22 @@ def plot_results(results_df,
                      capsize=.2,
                      palette='deep',
                      )
-    ax.legend(loc='best')
+    # ax.legend(loc='best')
+    sns.move_legend(ax, "lower center", bbox_to_anchor=(.5, 1), ncol=3, title=None, frameon=False,
+                    fontsize=8)
     # Set the title of the plot
-    plt.title(results_df['data'][0].capitalize() + ' Dataset')
+    # plt.title(results_df['data'][0].capitalize() + ' Dataset')
 
     if save_path is not None:
-        plt.savefig(save_path + '.pdf', format='pdf')
+        plt.savefig(save_path + '.pdf', format='pdf',  bbox_inches='tight', pad_inches=0)
 
     # Show the plot
     plt.show()
 
 
-def plot_results_deprecated(results, save_path=None):
-    # Plot the mean and standard deviation of the results using Matplotlib
-    for method, method_results in results.items():
-        for func, results in method_results.items():
-            mean = np.mean(results['func_values'])
-            std = np.std(results['func_values'])
-            plt.scatter(f"{method} {func}", mean, label=f"{method} {func}")
-            plt.errorbar(f"{method} {func}", mean, yerr=std, fmt='o')
-            plt.xlabel('Method and Objective Function')
-            plt.ylabel('Discrimination')
-            plt.legend()
-    if save_path is not None:
-        plt.savefig(save_path, format='pdf')
-
-    plt.show()
-
-
 def main():
-    data_str = 'adult'
+    data_str = 'compas'
+    objective_str = 'remove_synthetic'
     disc_dict = {  # 'Absolute Statistical Disparity': statistical_parity_absolute_difference,
         # 'Absolute Statistical Disparity Sum (non-binary)': nb_statistical_parity_sum_abs_difference,
         'Maximal Statistical Disparity': nb_statistical_parity_max_abs_difference,
@@ -98,12 +90,12 @@ def main():
 
     # load the results
     save_path = f'results/nonbinary/{data_str}'
-    results = pd.read_csv(save_path+'/results.csv')
+    results = pd.read_csv(f'{save_path}/{objective_str}.csv')
 
     # plot the results
     plot_results(results,
                  disc_dict=disc_dict,
-                 save_path=f'{save_path}/results')
+                 save_path=f'{save_path}/{data_str}_{objective_str}')
 
 
 if __name__ == "__main__":
