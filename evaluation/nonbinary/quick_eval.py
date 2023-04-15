@@ -252,7 +252,7 @@ def run_experiments(data_str, disc_dict, methods, n_runs=10,
 
 
 def settings(data_str):
-    objective_str = 'remove_and_synthetic'
+    objective_str = 'add'
     # data_str = 'compas'
     n_runs = 10
     # create objective functions
