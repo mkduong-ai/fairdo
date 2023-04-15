@@ -54,6 +54,7 @@ def plot_results(results_df,
     print(rename_dict)
     df_plot['Discrimination Measure'] = df_plot['Discrimination Measure'].replace(rename_dict)
 
+    # TODO: remove this test
     print('test')
     print(df_plot)
     print(df_plot.columns)

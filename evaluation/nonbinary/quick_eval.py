@@ -2,6 +2,7 @@ import time
 import datetime
 import os
 
+import numpy as np
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 
@@ -194,13 +195,28 @@ def run_experiment(data_str, disc_dict, methods,
         raise ValueError(f'Objective {objective_str} not supported.')
 
     # create objective function
-    # TODO: Error here. Fix it!
     disc_measures = list(disc_dict.values())
     f_obj = lambda x, disc_measure: f(x, dataframe=df, label=label, protected_attributes=protected_attributes,
                                       disc_measure=disc_measure)
-    functions = [lambda x: f_obj(x, disc_measure=disc_measure) for disc_measure in disc_measures]
+    # TODO: Error here. Fix it! This loop doesnt work
+    functions = [lambda x, disc_measure=disc_measure: f_obj(x, disc_measure=disc_measure)
+                 for disc_measure in disc_measures]
+    functions2 = [print(disc_measure) for disc_measure in disc_measures]
+    print(functions2)
+    print(functions)
     for func, disc_measure in zip(functions, disc_measures):
         func.__name__ = disc_measure.__name__
+
+    # TODO: Test this
+    print('-' * 50)
+    print('functions list test')
+    print(f'{functions[0].__name__}: {functions[0](np.ones(dims))}')
+    print(f'{functions[1].__name__}: {functions[1](np.ones(dims))}')
+    print('-' * 50)
+    print(f'F_obj test')
+    print(f'{disc_measures[0].__name__}: {f_obj(np.ones(dims), disc_measure=disc_measures[0])}')
+    print(f'{disc_measures[1].__name__}: {f_obj(np.ones(dims), disc_measure=disc_measures[1])}')
+    print('-' * 50)
 
     # run experiments
     results = {}
@@ -255,7 +271,7 @@ def run_experiments(data_str, disc_dict, methods, n_runs=10,
 def settings(data_str):
     objective_str = 'add'
     # data_str = 'compas'
-    n_runs = 10
+    n_runs = 1
     # create objective functions
     disc_dict = {
         # 'Abs Statistical Disparity Sum (non-binary)': nb_statistical_parity_sum_abs_difference,
@@ -289,7 +305,7 @@ def settings(data_str):
     results_df = convert_results_to_dataframe(results)
 
     # save results
-    results_df.to_csv(save_path + '.csv', index_label='index')
+    results_df.to_csv(save_path + '_test.csv', index_label='index')
 
     # plot results
     # plot_results(results_df=results_df,
@@ -298,7 +314,7 @@ def settings(data_str):
 
 
 def main():
-    data_strs = ['adult', 'compas']
+    data_strs = ['adult']#, 'compas']
     for data_str in data_strs:
         print('------------------------------------')
         print(f'Running experiments for {data_str}...')
