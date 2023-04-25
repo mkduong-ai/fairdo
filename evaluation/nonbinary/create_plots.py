@@ -9,7 +9,7 @@ matplotlib.rcParams['pdf.fonttype'] = 42
 matplotlib.rcParams['ps.fonttype'] = 42
 
 from fado.metrics.nonbinary import nb_statistical_parity_max_abs_difference, \
-    nb_normalized_mutual_information
+    nb_normalized_mutual_information, nb_statistical_parity_sum_abs_difference
 
 
 def plot_results(results_df,
@@ -80,26 +80,27 @@ def plot_results(results_df,
 
 def settings(data_str='compas', objective_str='remove_synthetic'):
     disc_dict = {  # 'Absolute Statistical Disparity': statistical_parity_absolute_difference,
-        # 'Absolute Statistical Disparity Sum (non-binary)': nb_statistical_parity_sum_abs_difference,
+        'Sum Statistical Disparity': nb_statistical_parity_sum_abs_difference,
         'Maximal Statistical Disparity': nb_statistical_parity_max_abs_difference,
         'NMI': nb_normalized_mutual_information}
 
     # load the results
-    save_path = f'evaluation/results/nonbinary/{data_str}'
-    results = pd.read_csv(f'{save_path}/{objective_str}.csv')
+    save_path = f'evaluation/results/nonbinary/{data_str}/{data_str}_{objective_str}'
+    results = pd.read_csv(f'{save_path}.csv')
 
     # plot the results
     plot_results(results,
                  disc_dict=disc_dict,
-                 save_path=f'{save_path}/{data_str}_{objective_str}',
+                 save_path=save_path,
                  show_plot=False)
 
 
 def main():
-    data_strs = ['adult']#, 'compas']
-    objective_str = ['remove_synthetic']#, 'add', 'remove']
+    obj_strs = ['remove', 'add', 'remove_and_synthetic']
+    obj_strs = ['remove_and_synthetic']
+    data_strs = ['adult', 'compas']
     for data_str in data_strs:
-        for obj_str in objective_str:
+        for obj_str in obj_strs:
             settings(data_str=data_str, objective_str=obj_str)
 
 
