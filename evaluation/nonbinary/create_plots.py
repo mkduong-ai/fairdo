@@ -85,7 +85,7 @@ def settings(data_str='compas', objective_str='remove_synthetic'):
         'NMI': nb_normalized_mutual_information}
 
     # load the results
-    save_path = f'results/nonbinary/{data_str}'
+    save_path = f'evaluation/results/nonbinary/{data_str}'
     results = pd.read_csv(f'{save_path}/{objective_str}.csv')
 
     # plot the results

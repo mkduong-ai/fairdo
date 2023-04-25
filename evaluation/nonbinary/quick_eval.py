@@ -279,7 +279,7 @@ def settings(data_str, objective_str):
                }
 
     # create save path
-    save_path = f'results/nonbinary/{data_str}'
+    save_path = f'evaluation/results/nonbinary/{data_str}'
     if not os.path.exists(save_path):
         os.makedirs(save_path)
     filename_date = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
