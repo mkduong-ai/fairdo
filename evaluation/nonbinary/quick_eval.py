@@ -300,11 +300,6 @@ def settings(data_str, objective_str):
     # save results
     results_df.to_csv(save_path + '.csv', index_label='index')
 
-    # plot results
-    # plot_results(results_df=results_df,
-    #              disc_dict=disc_dict,
-    #              save_path=save_path)
-
 
 def main():
     obj_strs = ['remove', 'add', 'remove_and_synthetic']
