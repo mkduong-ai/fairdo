@@ -2,6 +2,76 @@ import numpy as np
 import warnings
 
 
+def generate_pairs(lst):
+    """
+    Generate all possible pairs of elements in a list without repetitions
+
+    Parameters
+    ----------
+    lst: list or np.array
+        list of elements
+
+    Returns
+    -------
+    list of pairs
+    """
+    pairs = []
+    for i in range(len(lst)):
+        for j in range(i + 1, len(lst)):
+            pairs.append((lst[i], lst[j]))
+
+    return pairs
+
+
+def statistical_parity_absolute_difference_multi(y: np.array, z: np.array,
+                                                 positive_label=1,
+                                                 agg_attribute=np.sum,
+                                                 agg_group=np.sum,
+                                                 **kwargs) -> float:
+    """
+    Difference in statistical parity for multiple non-binary protected attributes
+
+    Parameters
+    ----------
+    y: flattened binary array of shape (n_samples,)
+        can be the prediction or the truth label
+    z: (n_samples, n_protected_attributes)
+        protected attribute
+    positive_label: int
+    agg_attribute: callable
+        aggregation function for the attribute
+    agg_group: callable
+        aggregation function for the group
+
+    Returns
+    -------
+
+    """
+    # invert privileged and positive label if required
+    if positive_label == 0:
+        y = 1 - y
+
+    y = y.astype(int)
+    z = z.astype(int)
+
+    # get unique values for each attribute
+    groups = [np.unique(z[:, i]) for i in range(z.shape[1])]
+    # get statistical parity for each attribute
+    attributes_disparity = []
+    for k, zk in enumerate(groups):
+        # generate all possible pairs of values for the attribute
+        pairs = generate_pairs(zk)
+        group_disparity = []
+        for i, j in pairs:
+            # get statistical parity for each pair
+            parity_i = np.sum(y & z[:, k] == i) / np.sum(z[:, k] == i)
+            parity_j = np.sum(y & z[:, k] == j) / np.sum(z[:, k] == j)
+            group_disparity.append(np.abs(parity_i - parity_j))
+        attributes_disparity.append(agg_group(group_disparity))
+
+    return agg_attribute(attributes_disparity)
+
+
 def statistical_parity_difference(y: np.array, z: np.array,
                                   positive_label=1, privileged_group=1, **kwargs) -> float:
     """
