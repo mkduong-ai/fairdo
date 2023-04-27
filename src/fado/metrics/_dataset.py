@@ -1,32 +1,13 @@
 import numpy as np
 import warnings
 
-
-def generate_pairs(lst):
-    """
-    Generate all possible pairs of elements in a list without repetitions
-
-    Parameters
-    ----------
-    lst: list or np.array
-        list of elements
-
-    Returns
-    -------
-    list of pairs
-    """
-    pairs = []
-    for i in range(len(lst)):
-        for j in range(i + 1, len(lst)):
-            pairs.append((lst[i], lst[j]))
-
-    return pairs
+from ._helper import generate_pairs
 
 
 def statistical_parity_absolute_difference_multi(y: np.array, z: np.array,
-                                                 positive_label=1,
                                                  agg_attribute=np.sum,
                                                  agg_group=np.sum,
+                                                 positive_label=1,
                                                  **kwargs) -> float:
     """
     Difference in statistical parity for multiple non-binary protected attributes
@@ -37,16 +18,19 @@ def statistical_parity_absolute_difference_multi(y: np.array, z: np.array,
         can be the prediction or the truth label
     z: (n_samples, n_protected_attributes)
         protected attribute
-    positive_label: int
     agg_attribute: callable
         aggregation function for the attribute
     agg_group: callable
         aggregation function for the group
+    positive_label: int
 
     Returns
     -------
 
     """
+    # check input
+    if len(z.shape) != 2:
+        raise ValueError('z must be a 2D array')
     # invert privileged and positive label if required
     if positive_label == 0:
         y = 1 - y

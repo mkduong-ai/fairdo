@@ -4,6 +4,8 @@ from sklearn.metrics import mutual_info_score, normalized_mutual_info_score
 
 import warnings
 
+from ._helper import generate_pairs
+
 
 def pearsonr(y: np.array, z: np.array, **kwargs) -> float:
     """
@@ -79,14 +81,6 @@ def normalized_mutual_information(y: np.array, z: np.array, **kwargs) -> float:
         return normalized_mutual_info_score(y, z)
 
 
-def separation():
-    pass
-    
-
-def sufficiency():
-    pass
-
-
 def rdc(y: np.array, z: np.array, f=np.sin, k=20, s=1 / 6., n=1, **kwargs):
     """
     Implements the Randomized Dependence Coefficient
@@ -111,7 +105,8 @@ def rdc(y: np.array, z: np.array, f=np.sin, k=20, s=1 / 6., n=1, **kwargs):
         for i in range(n):
             try:
                 values.append(rdc(y, z, f, k, s, 1))
-            except np.linalg.linalg.LinAlgError: pass
+            except np.linalg.linalg.LinAlgError:
+                pass
         return np.median(values)
 
     if len(y.shape) == 1: y = y.reshape((-1, 1))
@@ -127,8 +122,8 @@ def rdc(y: np.array, z: np.array, f=np.sin, k=20, s=1 / 6., n=1, **kwargs):
     Y = np.column_stack([cy, O])
 
     # Random linear projections
-    Rx = (s/X.shape[1])*np.random.randn(X.shape[1], k)
-    Ry = (s/Y.shape[1])*np.random.randn(Y.shape[1], k)
+    Rx = (s / X.shape[1]) * np.random.randn(X.shape[1], k)
+    Ry = (s / Y.shape[1]) * np.random.randn(Y.shape[1], k)
     X = np.dot(X, Rx)
     Y = np.dot(Y, Ry)
 
@@ -150,9 +145,9 @@ def rdc(y: np.array, z: np.array, f=np.sin, k=20, s=1 / 6., n=1, **kwargs):
 
         # Compute canonical correlations
         Cxx = C[:k, :k]
-        Cyy = C[k0:k0+k, k0:k0+k]
-        Cxy = C[:k, k0:k0+k]
-        Cyx = C[k0:k0+k, :k]
+        Cyy = C[k0:k0 + k, k0:k0 + k]
+        Cxy = C[:k, k0:k0 + k]
+        Cyx = C[k0:k0 + k, :k]
 
         eigs = np.linalg.eigvals(np.dot(np.dot(np.linalg.pinv(Cxx), Cxy),
                                         np.dot(np.linalg.pinv(Cyy), Cyx)))
@@ -172,3 +167,69 @@ def rdc(y: np.array, z: np.array, f=np.sin, k=20, s=1 / 6., n=1, **kwargs):
             k = (ub + lb) // 2
 
     return np.sqrt(np.max(eigs))
+
+
+def dependency_multi(y: np.array, z: np.array,
+                     dependency_function=normalized_mutual_info_score,
+                     agg=np.max,
+                     positive_label=1,
+                     **kwargs) -> float:
+    """
+    Difference in normalized mutual information for multiple non-binary protected attributes
+
+    Parameters
+    ----------
+    y: flattened binary array of shape (n_samples,)
+        can be the prediction or the truth label
+    z: (n_samples, n_protected_attributes)
+        protected attribute
+    dependency_function: callable
+    agg: callable
+        aggregation function for the attribute
+    positive_label: int
+
+    Returns
+    -------
+
+    """
+    # check input
+    if len(z.shape) != 2:
+        raise ValueError('z must be a 2D array')
+    # invert privileged and positive label if required
+    if positive_label == 0:
+        y = 1 - y
+
+    y = y.astype(int)
+    z = z.astype(int)
+
+    # get normalized mutual information for each attribute
+    scores = []
+    for i in range(z.shape[1]):
+        scores.append(dependency_function(y, z[:, i]))
+
+    return agg(scores)
+
+
+def normalized_mutual_information_multi(y: np.array, z: np.array,
+                                        agg=np.max,
+                                        positive_label=1,
+                                        **kwargs):
+    """
+    Difference in normalized mutual information for multiple non-binary protected attributes
+
+    Parameters
+    ----------
+    y: flattened binary array of shape (n_samples,)
+    z: (n_samples, n_protected_attributes)
+    agg: callable
+        aggregation function for the attribute
+    positive_label: int
+    kwargs: keyworded arguments
+
+    Returns
+    -------
+    float
+    """
+    dependency_multi(y, z,
+                     dependency_function=normalized_mutual_info_score,
+                     agg=agg, positive_label=positive_label)
