@@ -7,6 +7,7 @@ import seaborn as sns
 # Type 1/TrueType fonts are supported natively by most platforms
 matplotlib.rcParams['pdf.fonttype'] = 42
 matplotlib.rcParams['ps.fonttype'] = 42
+sns.set(font_scale=0.8)
 
 from fado.metrics.nonbinary import nb_statistical_parity_max_abs_difference, \
     nb_normalized_mutual_information, nb_statistical_parity_sum_abs_difference
@@ -57,7 +58,7 @@ def plot_results(results_df,
     df_plot['Discrimination Measure'] = df_plot['Discrimination Measure'].replace(rename_dict)
 
     # plot the results
-    figure(figsize=(6, 4), dpi=80)
+    figure(figsize=(6, 2), dpi=80)
     sns.set_style("darkgrid", {"grid.color": ".6", "grid.linestyle": ":"})
     ax = sns.barplot(data=df_plot,
                      x='Discrimination Measure',
@@ -140,7 +141,7 @@ def plot_time(results_df,
     df_plot['Discrimination Measure'] = df_plot['Discrimination Measure'].replace(rename_dict)
 
     # plot the results
-    figure(figsize=(6, 4), dpi=80)
+    figure(figsize=(6, 2), dpi=80)
     sns.set_style("darkgrid", {"grid.color": ".6", "grid.linestyle": ":"})
     ax = sns.barplot(data=df_plot,
                      x='Discrimination Measure',

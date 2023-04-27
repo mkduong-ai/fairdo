@@ -65,7 +65,7 @@ cd evaluation
 pip install -r requirements.txt
 ```
 
-Create results
+### Evaluate MetricOptimizer
 ```bash
 cd evaluation
 python run_evaluation.py
@@ -81,3 +81,15 @@ The plots are stored in the same directory as their corresponding .csv file.
 
 To modify or change several settings (datasets, metrics, #runs) in the evaluation,
 change the file ``evaluation/settings.py``.
+
+### Evaluate Heuristics for Non-Binary Protected Attribute Fairness
+
+To evaluate the heuristics for non-binary protected attribute fairness, run the following command:
+```bash
+python evaluation/nonbinary/quick_eval.py
+```
+
+After, results are exported, plots can be created by running:
+```bash
+python evaluation/nonbinary/create_plots.py
+```
