@@ -58,7 +58,8 @@ def plot_results(results_df,
     df_plot['Discrimination Measure'] = df_plot['Discrimination Measure'].replace(rename_dict)
 
     # plot the results
-    figure(figsize=(6, 2), dpi=80)
+    figure(figsize=(6, 3.5), dpi=80)
+    sns.set(font_scale=1)
     sns.set_style("darkgrid", {"grid.color": ".6", "grid.linestyle": ":"})
     ax = sns.barplot(data=df_plot,
                      x='Discrimination Measure',
@@ -69,18 +70,35 @@ def plot_results(results_df,
                      palette='deep',
                      )
     ax.set_yscale('log')
-    # ax.legend(loc='best')
-    sns.move_legend(ax, "lower center", bbox_to_anchor=(.5, 1), ncol=3, title=None, frameon=False,
-                    fontsize=8)
     # Set the title of the plot
     # plt.title(results_df['data'][0].capitalize() + ' Dataset')
-
-    if save_path is not None:
-        plt.savefig(save_path + '.pdf', format='pdf',  bbox_inches='tight', pad_inches=0)
+    #ax.legend([], [], frameon=False)
 
     # Show the plot
     if show_plot:
         plt.show()
+
+    # save plot
+    if save_path is not None:
+        plt.savefig(save_path + '.pdf', format='pdf',  bbox_inches='tight', pad_inches=0)
+        plt.close()
+
+    # save legend
+    fig_leg = plt.figure(figsize=(5, 0.1))
+    ax_leg = fig_leg.add_subplot(111)
+    ax_leg.legend(*ax.get_legend_handles_labels(), loc='center',
+                  ncol=5, frameon=False, fontsize=12.5)
+    ax_leg.xaxis.set_visible(False)
+    ax_leg.yaxis.set_visible(False)
+    ax_leg.set_frame_on(False)
+    # sns.move_legend(ax_leg, "lower center", bbox_to_anchor=(.43, 1), ncol=2, title=None, frameon=False,
+    #                   fontsize=12.5)
+
+    if save_path is not None:
+        plt.savefig(''.join(save_path.split(sep='_')[:1]) + '_legend' + '.pdf',
+                    format='pdf', bbox_inches='tight', pad_inches=0)
+        plt.close()
+
 
 
 def settings(data_str='compas', objective_str='remove_synthetic'):
@@ -141,7 +159,7 @@ def plot_time(results_df,
     df_plot['Discrimination Measure'] = df_plot['Discrimination Measure'].replace(rename_dict)
 
     # plot the results
-    figure(figsize=(6, 2), dpi=80)
+    figure(figsize=(6, 3), dpi=80)
     sns.set_style("darkgrid", {"grid.color": ".6", "grid.linestyle": ":"})
     ax = sns.barplot(data=df_plot,
                      x='Discrimination Measure',
@@ -190,8 +208,8 @@ def main():
     data_strs = ['adult', 'compas']
     for data_str in data_strs:
         for obj_str in obj_strs:
-            #settings(data_str=data_str, objective_str=obj_str)
-            settings_time(data_str=data_str, objective_str=obj_str)
+            settings(data_str=data_str, objective_str=obj_str)
+            #settings_time(data_str=data_str, objective_str=obj_str)
 
 
 if __name__ == "__main__":
