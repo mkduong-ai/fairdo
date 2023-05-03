@@ -110,7 +110,10 @@ def simulated_annealing(f, d, T_max, T_min, cooling_rate, max_iter=1000):
     """
 
     # Initialize the current solution randomly
-    return simulated_annealing_constraint(f, d, 0, T_max, T_min, cooling_rate, max_iter)
+    return simulated_annealing_constraint(f=f, d=d, n=0,
+                                          T_max=T_max, T_min=T_min,
+                                          cooling_rate=cooling_rate,
+                                          max_iter=max_iter)
 
 
 def simulated_annealing_method(f, d):
