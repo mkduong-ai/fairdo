@@ -72,7 +72,9 @@ def plot_results(results_df,
     ax.set_yscale('log')
     # Set the title of the plot
     # plt.title(results_df['data'][0].capitalize() + ' Dataset')
-    #ax.legend([], [], frameon=False)
+    ax.legend([], [], frameon=False)
+    # sns.move_legend(ax_leg, "lower center", bbox_to_anchor=(.43, 1), ncol=2, title=None, frameon=False,
+    #                   fontsize=12.5)
 
     # Show the plot
     if show_plot:
@@ -91,14 +93,11 @@ def plot_results(results_df,
     ax_leg.xaxis.set_visible(False)
     ax_leg.yaxis.set_visible(False)
     ax_leg.set_frame_on(False)
-    # sns.move_legend(ax_leg, "lower center", bbox_to_anchor=(.43, 1), ncol=2, title=None, frameon=False,
-    #                   fontsize=12.5)
 
     if save_path is not None:
         plt.savefig(''.join(save_path.split(sep='_')[:1]) + '_legend' + '.pdf',
                     format='pdf', bbox_inches='tight', pad_inches=0)
         plt.close()
-
 
 
 def settings(data_str='compas', objective_str='remove_synthetic'):
