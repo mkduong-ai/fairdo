@@ -69,7 +69,7 @@ def plot_results(results_df,
                      capsize=.2,
                      palette='deep',
                      )
-    ax.set_yscale('log')
+    ax.set_yscale('log', base=10)
     # Set the title of the plot
     # plt.title(results_df['data'][0].capitalize() + ' Dataset')
     ax.legend([], [], frameon=False)
