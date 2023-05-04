@@ -7,7 +7,7 @@ x_axis_mapper = {'statistical_parity_absolute_difference': 'Statistical Parity A
                  'normalized_mutual_information': 'Normalized MI',
                  'consistency_score_objective': 'Consistency Obj',
                  'pearsonr': 'Pearson Correlation',
-                 'pearsonr_abs': 'Pearson Corr. Abs'}
+                 'pearsonr_abs': 'Pearson Corr. Abs',}
 
 
 def plot_all_datasets(frac):

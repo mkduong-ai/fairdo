@@ -67,15 +67,13 @@ pip install -r requirements.txt
 
 ### Evaluate MetricOptimizer
 ```bash
-cd evaluation
-python run_evaluation.py
+python evaluation/run_evaluation.py
 ```
 The results are saved under ``evaluation/results/...``.
 
 Create plots from results
 ```bash
-cd evaluation
-python create_plots.py
+python evaluation/create_plots.py
 ```
 The plots are stored in the same directory as their corresponding .csv file.
 

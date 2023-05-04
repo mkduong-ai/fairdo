@@ -37,9 +37,9 @@ def get_evaluation_config(config='comparison_preprocessors', frac=0.75, plot=Fal
               DecisionTreeClassifier()]
 
     if frac < 1:
-        filepath = f"results/MetricOptRemover"
+        filepath = f"evaluation/results/MetricOptRemover"
     else:
-        filepath = f"results/MetricOptGenerator"
+        filepath = f"evaluation/results/MetricOptGenerator"
 
     if config == 'comparison_preprocessors':
         dataset_pro_attributes = [('adult', 'sex'),

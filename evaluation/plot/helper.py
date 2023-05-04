@@ -5,6 +5,14 @@ import seaborn as sns
 
 sns.set_theme(style='darkgrid')
 
+rename_dict = {
+    'Pearson Corr. Abs': 'Pearson',
+    'Normalized MI': 'NMI',
+    'Disparate Impact Obj': 'DI',
+    'Statistical Parity Abs Diff': 'SDP',
+    'Consistency Obj': 'Consistency',
+}
+
 
 def plot_dataframe_aggregate(results_df: pd.DataFrame,
                              x_axis='Mutual Information', y_axis='F1 Score',
@@ -14,6 +22,7 @@ def plot_dataframe_aggregate(results_df: pd.DataFrame,
                              model=None,
                              filepath=None,
                              show=False,
+                             disable_ylabel=True,
                              save=True):
     """
     Plot results_df. Aggregate the results over the column given by 'groups'
@@ -61,6 +70,8 @@ def plot_dataframe_aggregate(results_df: pd.DataFrame,
     xerr = xerr_std
     yerr = yerr_std
 
+    # fontsize
+    sns.set(font_scale=1.4)
     # figsize
     plt.figure(figsize=(4, 2.5), dpi=80)
     for i in range(len(x_mean)):
@@ -70,24 +81,28 @@ def plot_dataframe_aggregate(results_df: pd.DataFrame,
             label = x_mean.index[i]
         plt.errorbar(x=x_mean.iloc[i], y=y_mean.iloc[i],
                      xerr=xerr.iloc[i], yerr=yerr.iloc[i],
-                     fmt='.', label=label, alpha=0.7)
+                     fmt='.', label=label, alpha=0.7,
+                     elinewidth=3, capsize=8, capthick=3, markersize=8)
 
     # title, legend, labels
     # plt.title(f"{dataset.upper()} Dataset")
-    plt.legend(loc='best', prop={'size': 8})
+    #plt.legend(loc='best', prop={'size': 12})
     #plt.xlabel(f"{protected_attribute.capitalize()} Discrimination ({x_axis})")
-    plt.xlabel(f"{dataset.capitalize()} ({x_axis})")
+    x_axis_label = rename_dict[x_axis] if x_axis in rename_dict else x_axis
+    plt.xlabel(f"{dataset.capitalize()} ({x_axis_label})")
     plt.ylabel(y_axis)
 
     # axes ranges
     ax = plt.gca()
-    if all(x_mean < 1):
-        ax.set_xlim([0, 1])
-        if all(x_mean < 0.5):
-            ax.set_xlim([0, 0.5])
+    # if all(x_mean < 1):
+    #     ax.set_xlim([0, 1])
+    #     if all(x_mean < 0.5):
+    #         ax.set_xlim([0, 0.5])
             #if all(x_mean < 0.1):
             #    ax.set_xlim([0, 0.1])
-    ax.set_ylim([0.4, 1])
+    #ax.set_ylim([0.5, 1])
+    if disable_ylabel:
+        ax.set_ylabel('')
 
     # filename
     disc_name = x_axis.replace(" ", "")
