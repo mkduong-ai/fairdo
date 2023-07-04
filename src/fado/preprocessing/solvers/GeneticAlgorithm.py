@@ -1,6 +1,6 @@
 import numpy as np
 
-from optimize.helper import penalty_normalized
+from helper import penalty_normalized
 
 
 def f(x):
