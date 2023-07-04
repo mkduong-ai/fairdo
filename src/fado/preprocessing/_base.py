@@ -39,8 +39,8 @@ class Preprocessing(metaclass=abc.ABCMeta):
         -------
         self
         """
-        self.check_valid_datatype()
         self.dataset = dataset.copy()
+        self.check_valid_datatype()
         return self
 
     def fit_transform(self, dataset):
