@@ -39,8 +39,8 @@ class Preprocessing(metaclass=abc.ABCMeta):
         -------
         self
         """
-        self.dataset = dataset.copy()
         self.check_valid_datatype()
+        self.dataset = dataset.copy()
         return self
 
     def fit_transform(self, dataset):
@@ -85,5 +85,3 @@ class Random(Preprocessing):
         self.transformed_data = self.dataset.sample(frac=self.frac, axis=0,
                                                     random_state=self.random_state)
         return self.transformed_data
-
-
