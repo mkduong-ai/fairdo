@@ -83,6 +83,9 @@ def f(binary_vector, dataframe, label, protected_attributes, disc_measure):
     -------
     numeric
     """
+    if type(protected_attributes) == str:
+        protected_attributes = [protected_attributes]
+
     y = dataframe[label]
     z = dataframe[protected_attributes]
     cols_to_drop = protected_attributes + [label]
