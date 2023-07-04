@@ -65,10 +65,6 @@ class OriginalData(Preprocessing):
         self.dataset = None
         self.transformed_data = None
 
-    def fit(self, dataset):
-        self.dataset = dataset.copy()
-        return self
-
     def transform(self):
         self.transformed_data = self.dataset
         return self.dataset
