@@ -3,7 +3,7 @@ import numpy as np
 from .geneticoperators.crossover import onepoint_crossover, uniform_crossover
 from .geneticoperators.mutation import mutate
 from .geneticoperators.selection import select_parents
-from .helper import penalty_normalized
+from .math.penalty import penalty_normalized
 
 
 def generate_population(pop_size, d):
