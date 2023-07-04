@@ -31,6 +31,8 @@ pip install -e.
 
 In the following example, we use the iris dataset. The protected attribute
 is the species and the label is the petal length. We binarize both features.
+The iris dataset is not biased nor a person-related dataset, but we use it as
+an example to show the functionality of the package.
 
 ```python
 # Imports
