@@ -1,4 +1,4 @@
-from . import Baseline
-from . import GeneticAlgorithm
-from . import SimulatedAnnealing
+from . import baseline
+from . import geneticalgorithm
+from . import simulatedannealing
 from . import helper
