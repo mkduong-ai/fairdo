@@ -93,3 +93,11 @@ After, results are exported, plots can be created by running:
 ```bash
 python evaluation/nonbinary/create_plots.py
 ```
+
+## Package Structure
+fado
+--metrics
+----nonbinary
+--preprocessing
+----solvers
+----math
