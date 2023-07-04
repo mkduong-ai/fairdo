@@ -3,6 +3,8 @@ import numpy as np
 
 def method_original(f, d):
     """
+    Returns a vector of ones and the fitness of that vector.
+    This essentially means that the original data is returned without removing any samples.
 
     Parameters
     ----------
@@ -18,6 +20,11 @@ def method_original(f, d):
 
 def method_random(f, d, pop_size=50, num_generations=100):
     """
+    Generate a random solution (binary vector) and evaluate it.
+    In to for-loop, generate a new solution and evaluate it.
+    If the new solution is better than the current solution,
+    replace the current solution with the new solution.
+    Repeat this process for pop_size * num_generations times.
 
     Parameters
     ----------
