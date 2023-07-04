@@ -5,10 +5,10 @@ measures discrimination on a dataset can be optimized on.
 The algorithms return a debiased dataset according
 to the given fairness notion.
 
-The resulting datasets do not come with qualitative compromises.
-Machine Learning estimators trained on debiased datasets
-perform similarly to the original datasets w.r.t. performance measures while
-notably reducing the discrimination.
+In our experiments, the debiased datasets do not come with significant
+qualitative compromises. Machine Learning estimators trained on our debiased datasets
+perform similarly to the original datasets w.r.t. performance measures (AUC, Accuracy)
+while notably reducing the discrimination.
 
 ## Installation
 
