@@ -13,12 +13,11 @@ def generate_population(pop_size, d):
 
 def evaluate_population(f, n, population, penalty_function=penalty_normalized):
     # evaluate the function for each vector in the population
-    fitness = np.apply_along_axis(f, 1, population)
+    fitness = np.apply_along_axis(f, axis=1, arr=population)
 
     if n > 0:
-        # add a penalty to the fitness of all individuals
-        for i in range(population.shape[0]):
-            fitness[i] += penalty_function(population[i], n)
+        # add a penalty to the fitness of all individuals that do not satisfy the size constraint
+        fitness += np.apply_along_axis(lambda x: penalty_function(x, n), axis=1, arr=population)
 
     return fitness
 

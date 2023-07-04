@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def method_original(f, d):
+def original_method(f, d):
     """
     Returns a vector of ones and the fitness of that vector.
     This essentially means that the original data is returned without removing any samples.
@@ -18,7 +18,7 @@ def method_original(f, d):
     return np.ones(d), f(np.ones(d))
 
 
-def method_random(f, d, pop_size=50, num_generations=100):
+def random_method(f, d, pop_size=50, num_generations=100):
     """
     Generate a random solution (binary vector) and evaluate it.
     In to for-loop, generate a new solution and evaluate it.

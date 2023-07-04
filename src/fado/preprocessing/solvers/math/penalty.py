@@ -31,7 +31,7 @@ def penalty_normalized(x, n):
     Parameters
     ----------
     x: numpy array
-        vector
+        binary vector
     n: int
         constraint
 
