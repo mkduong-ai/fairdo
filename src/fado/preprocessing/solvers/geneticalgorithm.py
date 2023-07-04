@@ -1,6 +1,6 @@
 import numpy as np
 
-from .geneticoperators.crossover import crossover, uniform_crossover
+from .geneticoperators.crossover import onepoint_crossover, uniform_crossover
 from .geneticoperators.mutation import mutate
 from .geneticoperators.selection import select_parents
 from .helper import penalty_normalized
@@ -25,7 +25,7 @@ def evaluate_population(f, n, population, penalty_function=penalty_normalized):
 
 def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
                                  select_parents=select_parents,
-                                 crossover=crossover,
+                                 crossover=onepoint_crossover,
                                  mutate=mutate, ):
     """
     Here is an example of a research paper that uses the genetic algorithm to solve
@@ -102,7 +102,7 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
 
 def genetic_algorithm(f, d, pop_size, num_generations,
                       select_parents=select_parents,
-                      crossover=crossover,
+                      crossover=onepoint_crossover,
                       mutate=mutate, ):
     """
 
@@ -138,7 +138,7 @@ def genetic_algorithm(f, d, pop_size, num_generations,
 
 def genetic_algorithm_method(f, d,
                              select_parents=select_parents,
-                             crossover=crossover,
+                             crossover=onepoint_crossover,
                              mutate=mutate, ):
     """
     Genetic Algorithm method

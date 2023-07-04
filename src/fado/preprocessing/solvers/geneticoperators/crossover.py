@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def crossover(parents, offspring_size):
+def onepoint_crossover(parents, offspring_size):
     """
     Perform the crossover operation with One-point crossover on the parents to create the offspring
 
@@ -16,20 +16,8 @@ def crossover(parents, offspring_size):
     -------
     offspring: numpy array
     """
-    # perform crossover on the parents to generate new offspring
-    offspring = np.empty(offspring_size)
-    for k in range(offspring_size[0]):
-        # the crossover point is a random index between 1 and d-1
-        crossover_point = np.random.randint(1, offspring_size[1] - 1)
-        # parent selection
-        # switch between the two parents randomly at each crossover point to create the offspring
-        parent1_idx = k % parents.shape[0]
-        parent2_idx = (k + 1) % parents.shape[0]
-        # offspring will have its first half of its genes taken from the first parent.
-        offspring[k, 0:crossover_point] = parents[parent1_idx, 0:crossover_point]
-        # second half from the second parent.
-        offspring[k, crossover_point:] = parents[parent2_idx, crossover_point:]
-    return offspring
+    # perform one-point crossover on the parents to generate new offspring
+    return kpoint_crossover(parents, offspring_size, k=1)
 
 
 def uniform_crossover(parents, offspring_size, p=0.5):
