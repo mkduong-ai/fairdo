@@ -1,6 +1,6 @@
 import numpy as np
 
-from .helper import penalty_normalized
+from .math.penalty import penalty_normalized
 
 
 def acceptance_probability(delta, temperature):
