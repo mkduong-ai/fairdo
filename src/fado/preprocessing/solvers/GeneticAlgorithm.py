@@ -1,6 +1,6 @@
 import numpy as np
 
-from helper import penalty_normalized
+from .helper import penalty_normalized
 
 
 def generate_population(pop_size, d):
