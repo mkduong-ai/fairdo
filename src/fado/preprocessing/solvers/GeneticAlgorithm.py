@@ -3,11 +3,6 @@ import numpy as np
 from helper import penalty_normalized
 
 
-def f(x):
-    # replace this with your own blackbox function
-    return sum(x)
-
-
 def generate_population(pop_size, d):
     # generate a population of binary vectors
     return np.random.randint(2, size=(pop_size, d))

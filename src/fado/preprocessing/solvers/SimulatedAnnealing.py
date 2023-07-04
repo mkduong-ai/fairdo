@@ -3,11 +3,6 @@ import numpy as np
 from helper import penalty_normalized
 
 
-def f(x):
-    # replace this with your own blackbox function
-    return sum(x)
-
-
 def acceptance_probability(delta, temperature):
     return np.exp(-delta / temperature)
 
