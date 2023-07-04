@@ -30,7 +30,7 @@ pip install -e.
 ## Example Usage
 
 In the following example, we use the iris dataset. The protected attribute
-is the species and the label is petal length. We binarize both features.
+is the species and the label is the petal length. We binarize both features.
 
 ```python
 # Imports
