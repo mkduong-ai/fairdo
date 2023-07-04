@@ -53,7 +53,7 @@ class Preprocessing(metaclass=abc.ABCMeta):
             except:
                 raise Exception('Type of dataset is unknown.')
 
-        # One Hot Encoding
+        # check if all columns are numeric (including boolean)
         is_number = np.vectorize(lambda x: np.issubdtype(x, np.number) or np.issubdtype(x, bool))
         if not np.all(is_number(self.dataset.dtypes)):
             raise Exception(f"All columns must be numeric. The datatypes of the columns are:\n{self.dataset.dtypes}")
