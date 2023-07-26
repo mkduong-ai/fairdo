@@ -1,6 +1,6 @@
 import numpy as np
 
-from .math.penalty import penalty_normalized
+from fado.utils.penalty import penalty_normalized
 
 
 def acceptance_probability(delta, temperature):
