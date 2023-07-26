@@ -24,7 +24,7 @@ from measures import count_size, count_groups, sanity_check
 # from fado.preprocessing import MetricOptimizer, MetricOptRemover
 
 # load optimization methods
-from optimize import Baseline, SimulatedAnnealing, GeneticAlgorithm
+from fado.preprocessing.optimize import Baseline, SimulatedAnnealing, GeneticAlgorithm
 
 
 def downcast(data):
