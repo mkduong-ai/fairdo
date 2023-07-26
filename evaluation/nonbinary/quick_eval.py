@@ -2,7 +2,6 @@ import time
 import datetime
 import os
 
-import numpy as np
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 
@@ -24,7 +23,7 @@ from measures import count_size, count_groups, sanity_check
 # from fado.preprocessing import MetricOptimizer, MetricOptRemover
 
 # load optimization methods
-from fado.preprocessing.optimize import Baseline, SimulatedAnnealing, GeneticAlgorithm
+from fado.optimize import Baseline, SimulatedAnnealing, GeneticAlgorithm
 
 
 def downcast(data):
