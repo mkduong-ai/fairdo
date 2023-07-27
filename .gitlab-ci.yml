@@ -5,6 +5,6 @@ default:
 
 mirror:
   script:
-    - git push --mirror "https://${GITHUB_TOKEN}@github.com/mkduong-ai/fado.git"
+    - git push "https://${GITHUB_TOKEN}@github.com/mkduong-ai/fado.git" main:main
   only:
     - main
