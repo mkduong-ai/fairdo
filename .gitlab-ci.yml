@@ -2,4 +2,4 @@ mirror:
   script:
     - git push --mirror "https://${GITHUB_TOKEN}@github.com/mkduong-ai/fado.git"
   only:
-    - master
+    - main
