@@ -1,8 +1,10 @@
-image: alpine/git
+default:
+  image: python:3.8
+  before_script:
+    - apt-get update && apt install git -y
 
 mirror:
   script:
-    - echo "GITHUB_TOKEN is ${GITHUB_TOKEN}"
     - git push --mirror "https://${GITHUB_TOKEN}@github.com/mkduong-ai/fado.git"
   only:
     - main
