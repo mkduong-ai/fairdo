@@ -2,6 +2,7 @@ image: alpine/git
 
 mirror:
   script:
+    - echo "GITHUB_TOKEN is ${GITHUB_TOKEN}"
     - git push --mirror "https://${GITHUB_TOKEN}@github.com/mkduong-ai/fado.git"
   only:
     - main
