@@ -1,7 +1,7 @@
 default:
   image: python:3.8
   before-script:
-    - apt-get update && apt install git-lfs
+    - apt-get update && apt install git-lfs -y
 
 mirror:
   script:
