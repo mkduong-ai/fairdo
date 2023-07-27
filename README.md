@@ -68,6 +68,8 @@ pip install -r requirements.txt
 
 ### Evaluate MetricOptimizer
 
+To evaluate the MetricOptimizer, run the following command:
+
 ```bash
 python evaluation/run_evaluation.py
 ```
@@ -84,7 +86,7 @@ change the file ``evaluation/settings.py``.
 
 ### Evaluate Heuristics for Non-Binary Protected Attribute Fairness
 
-To evaluate the heuristics for non-binary protected attribute fairness, run the following command:
+To evaluate the heuristics for non-binary protected attributes, run the following command:
 ```bash
 python evaluation/nonbinary/quick_eval.py
 ```
@@ -93,11 +95,3 @@ After, results are exported, plots can be created by running:
 ```bash
 python evaluation/nonbinary/create_plots.py
 ```
-
-## Package Structure
-fado
---metrics
-----nonbinary
---preprocessing
-----solvers
-----math
