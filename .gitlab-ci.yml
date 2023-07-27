@@ -5,6 +5,7 @@ default:
 
 mirror:
   script:
-    - git push "https://${GITHUB_TOKEN}@github.com/mkduong-ai/fado.git" main:main
+    - git lfs install
+    - git push https://${GITHUB_TOKEN}@github.com/mkduong-ai/fado.git main:main
   only:
     - main
