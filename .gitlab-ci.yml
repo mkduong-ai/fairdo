@@ -1,7 +1,5 @@
 default:
   image: python:3.8
-  before_script:
-    - apt-get update && apt install git -y
 
 mirror:
   script:
