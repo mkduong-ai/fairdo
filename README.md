@@ -1,9 +1,8 @@
 # Fairness-Agnostic Data Optimization
-**fado** is a Python package for optimizing datasets on fairness notions.
-The approaches are _fairness-agnostic_: Any fairness criterion that
-measures discrimination on a dataset can be optimized on.
-The algorithms return a debiased dataset according
-to the given fairness notion.
+**fado** is a Python package for optimizing datasets on fairness criteria.
+The approaches are _fairness-agnostic_, meaning it can optimize any fairness
+criterion that quantifies discrimination within a dataset.
+The algorithms return a biased-reduced dataset accordingly.
 
 In our experiments, the debiased datasets do not come with significant
 qualitative compromises. Machine Learning estimators trained on our debiased datasets
@@ -68,6 +67,9 @@ pip install -r requirements.txt
 ```
 
 ### Evaluate MetricOptimizer
+
+To evaluate the MetricOptimizer, run the following command:
+
 ```bash
 python evaluation/run_evaluation.py
 ```
@@ -84,7 +86,7 @@ change the file ``evaluation/settings.py``.
 
 ### Evaluate Heuristics for Non-Binary Protected Attribute Fairness
 
-To evaluate the heuristics for non-binary protected attribute fairness, run the following command:
+To evaluate the heuristics for non-binary protected attributes, run the following command:
 ```bash
 python evaluation/nonbinary/quick_eval.py
 ```
@@ -93,11 +95,3 @@ After, results are exported, plots can be created by running:
 ```bash
 python evaluation/nonbinary/create_plots.py
 ```
-
-## Package Structure
-fado
---metrics
-----nonbinary
---preprocessing
-----solvers
-----math

@@ -18,7 +18,7 @@ def evaluate_population(f, n, population, penalty_function=penalty_normalized):
     fitness = np.apply_along_axis(f, 1, population)
 
     if n > 0:
-        # add a penalty to the fitness of all individuals
+        # add a absolute_difference_penalty to the fitness of all individuals
         for i in range(population.shape[0]):
             fitness[i] += penalty_function(population[i], n)
 

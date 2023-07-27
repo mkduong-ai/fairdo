@@ -3,7 +3,7 @@ import numpy as np
 from .geneticoperators.crossover import onepoint_crossover, uniform_crossover
 from .geneticoperators.mutation import mutate
 from .geneticoperators.selection import select_parents
-from .math.penalty import penalty_normalized
+from fado.utils.penalty import relative_difference_penalty
 
 
 def generate_population(pop_size, d):
@@ -11,12 +11,12 @@ def generate_population(pop_size, d):
     return np.random.randint(2, size=(pop_size, d))
 
 
-def evaluate_population(f, n, population, penalty_function=penalty_normalized):
+def evaluate_population(f, n, population, penalty_function=relative_difference_penalty):
     # evaluate the function for each vector in the population
     fitness = np.apply_along_axis(f, axis=1, arr=population)
 
     if n > 0:
-        # add a penalty to the fitness of all individuals that do not satisfy the size constraint
+        # add a absolute_difference_penalty to the fitness of all individuals that do not satisfy the size constraint
         fitness += np.apply_along_axis(lambda x: penalty_function(x, n), axis=1, arr=population)
 
     return fitness

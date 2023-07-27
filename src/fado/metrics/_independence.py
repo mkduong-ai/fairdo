@@ -4,8 +4,6 @@ from sklearn.metrics import mutual_info_score, normalized_mutual_info_score
 
 import warnings
 
-from ._helper import generate_pairs
-
 
 def pearsonr(y: np.array, z: np.array, **kwargs) -> float:
     """

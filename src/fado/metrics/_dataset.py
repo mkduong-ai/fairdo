@@ -1,7 +1,7 @@
 import numpy as np
 import warnings
 
-from ._helper import generate_pairs
+from fado.utils.helper import generate_pairs
 
 
 def statistical_parity_absolute_difference_multi(y: np.array, z: np.array,

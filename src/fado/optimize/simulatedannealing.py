@@ -1,6 +1,6 @@
 import numpy as np
 
-from .math.penalty import penalty_normalized
+from fado.utils.penalty import relative_difference_penalty
 
 
 def acceptance_probability(delta, temperature):
@@ -8,7 +8,7 @@ def acceptance_probability(delta, temperature):
 
 
 def simulated_annealing_constraint(f, d, n, T_max, T_min, cooling_rate, max_iter=1000,
-                                   penalty=penalty_normalized):
+                                   penalty=relative_difference_penalty):
     """
 
     Parameters
