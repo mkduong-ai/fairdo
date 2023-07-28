@@ -10,23 +10,25 @@ def statistical_parity_absolute_difference_multi(y: np.array, z: np.array,
                                                  positive_label=1,
                                                  **kwargs) -> float:
     """
-    Difference in statistical parity for multiple non-binary protected attributes
+    Calculate the difference in statistical parity for multiple non-binary protected attributes.
 
     Parameters
     ----------
-    y: flattened binary array of shape (n_samples,)
-        can be the prediction or the truth label
-    z: (n_samples, n_protected_attributes)
-        protected attribute
-    agg_attribute: callable
-        aggregation function for the attribute
-    agg_group: callable
-        aggregation function for the group
-    positive_label: int
+    y : np.array
+        Flattened binary array of shape (n_samples,), can be the prediction or the truth label.
+    z : np.array
+        Array of shape (n_samples, n_protected_attributes) representing the protected attribute.
+    agg_attribute : callable, optional
+        Aggregation function for the attribute. Default is np.sum.
+    agg_group : callable, optional
+        Aggregation function for the group. Default is np.sum.
+    positive_label : int, optional
+        Label considered as positive. Default is 1.
 
     Returns
     -------
-
+    float
+        Aggregated attribute disparity.
     """
     # check input
     if len(z.shape) != 2:
@@ -59,20 +61,23 @@ def statistical_parity_absolute_difference_multi(y: np.array, z: np.array,
 def statistical_parity_difference(y: np.array, z: np.array,
                                   positive_label=1, privileged_group=1, **kwargs) -> float:
     """
-    Difference in statistical parity (Lee et al. 2022)
+    Calculate the difference in statistical parity according to Lee et al. (2022).
 
     Parameters
     ----------
-    y: flattened binary array
-        can be the prediction or the truth label
-    z: flattened binary array of shape y
-        protected attribute
-    positive_label: int
-    privileged_group: int
+    y : np.array
+        Flattened binary array, can be the prediction or the truth label.
+    z : np.array
+        Flattened binary array of shape y, represents the protected attribute.
+    positive_label : int, optional
+        Label considered as positive. Default is 1.
+    privileged_group : int, optional
+        Label considered as privileged. Default is 1.
 
     Returns
     -------
-
+    float
+        The difference in statistical parity between unprivileged and privileged groups.
     """
     # invert privileged and positive label if required
     if privileged_group == 0:
