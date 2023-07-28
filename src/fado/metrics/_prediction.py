@@ -4,21 +4,37 @@ import numpy as np
 def equal_opportunity_difference(y_true: np.array, y_pred: np.array, z: np.array,
                                  positive_label=1, privileged_group=1, **kwargs) -> float:
     """
-    Difference in Equality of Opportunity (Lee et al. 2022)
+    Compute the difference in Equality of Opportunity (Lee et al. 2022) between
+    the privileged group and the unprivileged group.
+
+    Equality of Opportunity (Hardt, Price, Srebro, 2016) is a fairness metric
+    that measures the difference in true positive rates between the privileged and unprivileged groups.
+    This function returns a float representing that difference.
+    A value of 0 indicates perfect fairness, positive values indicate bias
+    against the unprivileged group, while negative values indicate
+    bias against the privileged group.
 
     Parameters
     ----------
-
-    y_true: flattened binary array
-    y_pred: flattened binary array of shape y_true
-    z: flattened binary array of shape y_true
-        protected attribute
-    positive_label: int
-    privileged_group: int
+    y_true: numpy.array
+        The true binary labels as a flattened array.
+    y_pred: numpy.array
+        The predicted binary labels from the model.
+        Should be of the same shape as y_true.
+    z: numpy.array
+        The protected attribute as a binary array.
+        This array indicates the group (privileged or unprivileged) for each instance in the data.
+        Should be of the same shape as y_true.
+    positive_label: int, optional (default=1)
+        The label considered as positive in the dataset.
+    privileged_group: int, optional (default=1)
+        The label that denotes the privileged group.
+        If 0, the function will treat the unprivileged group as the privileged group.
 
     Returns
     -------
-
+    float
+        The difference in Equality of Opportunity between the privileged and unprivileged groups.
     """
     # invert privileged and positive label if required
     if privileged_group == 0:
@@ -37,26 +53,47 @@ def equal_opportunity_difference(y_true: np.array, y_pred: np.array, z: np.array
 
 
 def equal_opportunity_absolute_difference(*args, **kwargs):
+    """
+    Compute the absolute difference in Equality of Opportunity (Lee et al. 2022).
+    Original work: Equality of Opportunity (Hardt, Price, Srebro, 2016)
+
+    Parameters
+    ----------
+    *args : arguments
+        Variable length argument list to be passed to `equal_opportunity_difference` function.
+    **kwargs : keyword arguments
+        Arbitrary keyword arguments to be passed to `equal_opportunity_difference` function.
+
+    Returns
+    -------
+    float
+        The absolute difference in Equality of Opportunity between privileged and unprivileged groups.
+    """
     return np.abs(equal_opportunity_difference(*args, **kwargs))
 
 
 def predictive_equality_difference(y_true: np.array, y_pred: np.array, z: np.array,
                                    positive_label=1, privileged_group=1, **kwargs) -> float:
     """
-    Difference in Predictive Equality
+    Calculate the difference in Predictive Equality.
 
     Parameters
     ----------
-
-    y_true: flattened binary array
-    y_pred: flattened binary array of shape y_true
-    z: flattened binary array of shape y_true
-        protected attribute
-    positive_label: int
-    privileged_group: int
+    y_true : numpy.array
+        True binary labels as a flattened array.
+    y_pred : numpy.array
+        Predicted binary labels as a flattened array. Must have same shape as y_true.
+    z : numpy.array
+        Binary array denoting privileged (1) or unprivileged (0) group. Same shape as y_true.
+    positive_label : int, optional
+        Label considered as positive, default is 1.
+    privileged_group : int, optional
+        Label representing the privileged group, default is 1.
 
     Returns
     -------
+    float
+        The difference in Predictive Equality between privileged and unprivileged groups.
 
     """
     # invert privileged and positive label if required
@@ -76,27 +113,46 @@ def predictive_equality_difference(y_true: np.array, y_pred: np.array, z: np.arr
 
 
 def predictive_equality_absolute_difference(*args, **kwargs):
+    """
+    Compute the absolute difference in Predictive Equality.
+
+    Parameters
+    ----------
+    *args : arguments
+        Variable length argument list to be passed to `predictive_equality_difference` function.
+    **kwargs : keyword arguments
+        Arbitrary keyword arguments to be passed to `predictive_equality_difference` function.
+
+    Returns
+    -------
+    float
+        The absolute difference in Predictive Equality between privileged and unprivileged groups.
+    """
     return np.abs(predictive_equality_difference(*args, **kwargs))
 
 
 def average_odds_difference(y_true: np.array, y_pred: np.array, z: np.array,
                             positive_label=1, privileged_group=1, **kwargs) -> float:
     """
-    Difference in average odds (aif360)
+    Calculate the difference in Average Odds (aif360).
 
     Parameters
     ----------
-
-    y_true: flattened binary array
-    y_pred: flattened binary array of shape y_true
-    z: flattened binary array of shape y_true
-        protected attribute
-    positive_label: int
-    privileged_group: int
+    y_true : numpy.array
+        Flattened array of true binary labels.
+    y_pred : numpy.array
+        Flattened array of predicted binary labels. Must have same shape as y_true.
+    z : numpy.array
+        Binary array indicating privileged (1) or unprivileged (0) group. Same shape as y_true.
+    positive_label : int, optional
+        Label considered as positive, default is 1.
+    privileged_group : int, optional
+        Label denoting the privileged group, default is 1.
 
     Returns
     -------
-
+    float
+        The difference in Average Odds between privileged and unprivileged groups.
     """
     # invert privileged and positive label if required
     if privileged_group == 0:
@@ -114,21 +170,26 @@ def average_odds_difference(y_true: np.array, y_pred: np.array, z: np.array,
 def average_odds_error(y_true: np.array, y_pred: np.array, z: np.array,
                        positive_label=1, privileged_group=1, **kwargs) -> float:
     """
-    Average odds error
+    Compute the Average Odds Error.
+    Can be used as an objective function to minimize.
 
     Parameters
     ----------
-
-    y_true: flattened binary array
-    y_pred: flattened binary array of shape y_true
-    z: flattened binary array of shape y_true
-        protected attribute
-    positive_label: int
-    privileged_group: int
+    y_true : numpy.array
+        Flattened array of true binary labels.
+    y_pred : numpy.array
+        Flattened array of predicted binary labels. Must have same shape as y_true.
+    z : numpy.array
+        Binary array indicating privileged (1) or unprivileged (0) group. Same shape as y_true.
+    positive_label : int, optional
+        Label considered as positive, default is 1.
+    privileged_group : int, optional
+        Label denoting the privileged group, default is 1.
 
     Returns
     -------
-
+    float
+        The Average Odds Error between privileged and unprivileged groups.
     """
     # invert privileged and positive label if required
     if privileged_group == 0:
