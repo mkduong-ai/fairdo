@@ -1,3 +1,3 @@
-from ._base import *
-from ._metricoptimizer import *
-from ._solverwrapper import HeuristicWrapper
+from .base import *
+from .metricoptimizer import *
+from .solverwrapper import HeuristicWrapper
