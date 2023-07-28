@@ -1,5 +1,12 @@
+default:
+  image: python:3.8
+  before_script:
+    - apt-get update && apt install git-lfs -y
+
 mirror:
   script:
-    - git push --mirror "https://${GITHUB_TOKEN}@github.com/mkduong-ai/fado.git"
+    - git lfs install
+    - git checkout main
+    - git push https://${GITHUB_TOKEN}@github.com/mkduong-ai/fado.git main:main
   only:
-    - master
+    - main
