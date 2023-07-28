@@ -204,6 +204,12 @@ def rdc(y: np.array, z: np.array, f=np.sin, k=20, s=1 / 6., n=1, **kwargs):
 
     http://papers.nips.cc/paper/5138-the-randomized-dependence-coefficient.pdf
     Computes the Randomized Dependence Coefficient
+
+    According to the paper, the coefficient should be relatively insensitive to
+    the settings of the f, k, and s parameters.
+
+    Parameters
+    ----------
     y, z: numpy arrays 1-D or 2-D
          If 1-D, size (samples,)
          If 2-D, size (samples, variables)
@@ -213,8 +219,10 @@ def rdc(y: np.array, z: np.array, f=np.sin, k=20, s=1 / 6., n=1, **kwargs):
     n:   number of times to compute the RDC and
          return the median (for stability)
 
-    According to the paper, the coefficient should be relatively insensitive to
-    the settings of the f, k, and s parameters.
+    Returns
+    -------
+    float
+        The RDC between X and Y
     """
     if n > 1:
         values = []
