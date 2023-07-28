@@ -5,75 +5,193 @@ from sklearn.metrics import mutual_info_score, normalized_mutual_info_score
 import warnings
 
 
-def pearsonr(y: np.array, z: np.array, **kwargs) -> float:
+def dependency_multi(y: np.array, z: np.array,
+                     dependency_function=normalized_mutual_info_score,
+                     agg=np.max,
+                     positive_label=1,
+                     **kwargs) -> float:
     """
-    Calculates the Pearson correlation between two variables.
+    Compute a measure of dependency for multiple non-binary protected attributes.
+
+    This function calculates the dependency between `y` and each protected attribute in `z`
+    using the specified `dependency_function`, and then aggregates these dependency scores
+    using the specified `agg` function.
 
     Parameters
     ----------
-    y: np.array
-    z: np.array
-    kwargs: keyworded arguments
+    y : np.array
+        Flattened binary array of shape (n_samples,), can be a prediction or the truth label.
+    z : np.array
+        Array of shape (n_samples, n_protected_attributes), represents the protected attributes.
+    dependency_function : callable, optional
+        Function to compute the dependency between `y` and each protected attribute.
+        Default is normalized_mutual_info_score.
+    agg : callable, optional
+        Aggregation function to combine the dependency scores. Default is np.max.
+    positive_label : int, optional
+        Label considered as positive. Default is 1.
+    **kwargs
+        Additional keyword arguments. These are not currently used.
 
     Returns
     -------
     float
+        The aggregated dependency score.
+    """
+    # check input
+    if len(z.shape) != 2:
+        raise ValueError('z must be a 2D array')
+    # invert privileged and positive label if required
+    if positive_label == 0:
+        y = 1 - y
+
+    y = y.astype(int)
+    z = z.astype(int)
+
+    # get normalized mutual information for each attribute
+    scores = []
+    for i in range(z.shape[1]):
+        scores.append(dependency_function(y, z[:, i]))
+
+    return agg(scores)
+
+
+def normalized_mutual_information_multi(y: np.array, z: np.array,
+                                        agg=np.max,
+                                        positive_label=1,
+                                        **kwargs):
+    """
+    Compute the normalized mutual information for multiple non-binary protected attributes.
+
+    This function calculates the normalized mutual information between `y` and each
+    protected attribute in `z`, and then aggregates these scores using the specified `agg` function.
+
+    Parameters
+    ----------
+    y : np.array
+        Flattened binary array of shape (n_samples,), can be a prediction or the truth label.
+    z : np.array
+        Array of shape (n_samples, n_protected_attributes), represents the protected attributes.
+    agg : callable, optional
+        Aggregation function to combine the normalized mutual information scores. Default is np.max.
+    positive_label : int, optional
+        Label considered as positive. Default is 1.
+    **kwargs
+        Additional keyword arguments. These are not currently used.
+
+    Returns
+    -------
+    float
+        The aggregated normalized mutual information score.
+    """
+    dependency_multi(y, z,
+                     dependency_function=normalized_mutual_info_score,
+                     agg=agg, positive_label=positive_label)
+
+
+def pearsonr(y: np.array, z: np.array, **kwargs) -> float:
+    """
+    Calculate the Pearson correlation coefficient between two arrays.
+
+    The Pearson correlation coefficient measures the linear relationship between two variables.
+    The calculation of the Pearson correlation coefficient is not affected by scaling,
+    and it ranges from -1 to 1. A value of 1 implies a perfect positive correlation,
+    while a value of -1 implies a perfect negative correlation.
+
+    Parameters
+    ----------
+    y : np.array
+        Flattened array, can be a prediction or the truth label.
+    z : np.array
+        Flattened array of the same shape as y.
+    **kwargs
+        Additional keyword arguments. These are not currently used.
+
+    Returns
+    -------
+    float
+        The Pearson correlation coefficient between y and z.
     """
     return np.corrcoef(y.reshape(1, -1), z.reshape(1, -1))[0, 1]
 
 
 def pearsonr_abs(y: np.array, z: np.array, **kwargs) -> float:
     """
-    Calculates the Pearson correlation between two variables.
+    Calculate the absolute value of the Pearson correlation coefficient between two arrays.
+
+    The Pearson correlation coefficient measures the linear relationship between two datasets.
+    The calculation of the Pearson correlation coefficient is not affected by scaling,
+    and it ranges from -1 to 1. A value of 1 implies a perfect positive correlation,
+    while a value of -1 implies a perfect negative correlation. The absolute value is taken
+    to disregard the direction of the correlation.
 
     Parameters
     ----------
-    y: np.array
-    z: np.array
-    kwargs: keyworded arguments
+    y : np.array
+        Flattened array, can be a prediction or the truth label.
+    z : np.array
+        Flattened array of the same shape as y.
+    **kwargs
+        Additional keyword arguments. These are not currently used.
 
     Returns
     -------
     float
+        The absolute value of the Pearson correlation coefficient between y and z.
     """
-    return np.abs(np.corrcoef(y.reshape(1, -1), z.reshape(1, -1))[0, 1])
+    return np.abs(pearsonr(y, z))
 
 
 def mutual_information(y: np.array, z: np.array, bins=2, **kwargs) -> float:
     """
-    Measures whether two variables are independent by calculating their mutual information
+    Calculate the mutual information between two arrays.
+
+    Mutual information is a measure of the mutual dependence between two variables.
+    It quantifies the "amount of information" (in units such as bits) obtained
+    about one random variable, by observing the other random variable.
 
     Parameters
     ----------
-    y: np.array
-    z: np.array
-    bins: int
-    kwargs: keyworded arguments
+    y : np.array
+        Flattened array, can be a prediction or the truth label.
+    z : np.array
+        Flattened array of the same shape as y.
+    bins : int, optional
+        Number of bins for discretization. Default is 2.
+    **kwargs
+        Additional keyword arguments. These are not currently used.
 
     Returns
     -------
     float
+        The mutual information between y and z.
     """
-    # discrimination measurement
     mi = mutual_info_score(y, z)
     return mi
 
 
 def normalized_mutual_information(y: np.array, z: np.array, **kwargs) -> float:
     """
-    Returns the normalized mutual information between two variables.
+    Calculate the normalized mutual information between two arrays.
+
+    Normalized mutual information is a normalization of the Mutual Information (MI) score
+    to scale the results between 0 (no mutual information, independent variables) and 1
+    (perfect correlation). The function handles any warning by ignoring them.
 
     Parameters
     ----------
-    y: np.array
-    z: np.array
-    kwargs: keyworded arguments
+    y : np.array
+        Flattened array, can be a prediction or the truth label.
+    z : np.array
+        Flattened array of the same shape as y.
+    **kwargs
+        Additional keyword arguments. These are not currently used.
 
     Returns
     -------
     float
+        The normalized mutual information between y and z.
     """
-    # Normalizes mutual information to 0 (independence) and 1 (perfect correlation)
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         return normalized_mutual_info_score(y, z)
@@ -165,69 +283,3 @@ def rdc(y: np.array, z: np.array, f=np.sin, k=20, s=1 / 6., n=1, **kwargs):
             k = (ub + lb) // 2
 
     return np.sqrt(np.max(eigs))
-
-
-def dependency_multi(y: np.array, z: np.array,
-                     dependency_function=normalized_mutual_info_score,
-                     agg=np.max,
-                     positive_label=1,
-                     **kwargs) -> float:
-    """
-    Difference in normalized mutual information for multiple non-binary protected attributes
-
-    Parameters
-    ----------
-    y: flattened binary array of shape (n_samples,)
-        can be the prediction or the truth label
-    z: (n_samples, n_protected_attributes)
-        protected attribute
-    dependency_function: callable
-    agg: callable
-        aggregation function for the attribute
-    positive_label: int
-
-    Returns
-    -------
-
-    """
-    # check input
-    if len(z.shape) != 2:
-        raise ValueError('z must be a 2D array')
-    # invert privileged and positive label if required
-    if positive_label == 0:
-        y = 1 - y
-
-    y = y.astype(int)
-    z = z.astype(int)
-
-    # get normalized mutual information for each attribute
-    scores = []
-    for i in range(z.shape[1]):
-        scores.append(dependency_function(y, z[:, i]))
-
-    return agg(scores)
-
-
-def normalized_mutual_information_multi(y: np.array, z: np.array,
-                                        agg=np.max,
-                                        positive_label=1,
-                                        **kwargs):
-    """
-    Difference in normalized mutual information for multiple non-binary protected attributes
-
-    Parameters
-    ----------
-    y: flattened binary array of shape (n_samples,)
-    z: (n_samples, n_protected_attributes)
-    agg: callable
-        aggregation function for the attribute
-    positive_label: int
-    kwargs: keyworded arguments
-
-    Returns
-    -------
-    float
-    """
-    dependency_multi(y, z,
-                     dependency_function=normalized_mutual_info_score,
-                     agg=agg, positive_label=positive_label)

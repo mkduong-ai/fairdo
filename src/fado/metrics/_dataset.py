@@ -93,7 +93,7 @@ def statistical_parity_difference(y: np.array, z: np.array,
     return unpriv-priv
 
 
-def mean_difference(*args, **kwargs):
+def mean_difference(*args, **kwargs) -> float:
     """
     Alias for the statistical_parity_difference function.
 
@@ -116,7 +116,7 @@ def mean_difference(*args, **kwargs):
     return statistical_parity_difference(*args, **kwargs)
 
 
-def statistical_parity_absolute_difference(*args, **kwargs):
+def statistical_parity_absolute_difference(*args, **kwargs) -> float:
     """
     Calculate the absolute value of the statistical parity difference.
 
