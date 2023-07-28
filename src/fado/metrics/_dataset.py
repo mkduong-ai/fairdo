@@ -94,10 +94,48 @@ def statistical_parity_difference(y: np.array, z: np.array,
 
 
 def mean_difference(*args, **kwargs):
+    """
+    Alias for the statistical_parity_difference function.
+
+    Parameters
+    ----------
+    y : np.array
+        Flattened binary array, can be the prediction or the truth label.
+    z : np.array
+        Flattened binary array of shape y, represents the protected attribute.
+    positive_label : int, optional
+        Label considered as positive. Default is 1.
+    privileged_group : int, optional
+        Label considered as privileged. Default is 1.
+
+    Returns
+    -------
+    float
+        The difference in statistical parity between unprivileged and privileged groups.
+    """
     return statistical_parity_difference(*args, **kwargs)
 
 
 def statistical_parity_absolute_difference(*args, **kwargs):
+    """
+    Calculate the absolute value of the statistical parity difference.
+
+    Parameters
+    ----------
+    y : np.array
+        Flattened binary array, can be the prediction or the truth label.
+    z : np.array
+        Flattened binary array of shape y, represents the protected attribute.
+    positive_label : int, optional
+        Label considered as positive. Default is 1.
+    privileged_group : int, optional
+        Label considered as privileged. Default is 1.
+
+    Returns
+    -------
+    float
+        The absolute value of the statistical parity difference.
+    """
     return np.abs(statistical_parity_difference(*args, **kwargs))
 
 
