@@ -104,20 +104,29 @@ def statistical_parity_absolute_difference(*args, **kwargs):
 def disparate_impact_ratio(y: np.array, z: np.array,
                            positive_label=1, privileged_group=1, **kwargs) -> float:
     """
-    Disparate Impact: Higher score -> greater discrimination towards unprivileged group
+    Calculate the Disparate Impact ratio.
+
+    This function computes the ratio of probabilities of positive outcomes for
+    the unprivileged group to the privileged group. A value of 1 indicates
+    fairness, while a value < 1 indicates discrimination towards the
+    unprivileged group. A value of > 1 would indicate discrimination towards
+    the privileged group.
 
     Parameters
     ----------
-    y: flattened binary array
-        can be the prediction or the truth label
-    z: flattened binary array of shape y
-        protected attribute
-    positive_label: int
-    privileged_group: int
+    y : np.array
+        Flattened binary array, can be the prediction or the truth label.
+    z : np.array
+        Flattened binary array of shape y, represents the protected attribute.
+    positive_label : int, optional
+        Label considered as positive. Default is 1.
+    privileged_group : int, optional
+        Label considered as privileged. Default is 1.
 
     Returns
     -------
-
+    float
+        The Disparate Impact ratio.
     """
     # invert privileged and positive label if required
     if privileged_group == 0:
@@ -142,40 +151,57 @@ def disparate_impact_ratio(y: np.array, z: np.array,
 def disparate_impact_ratio_objective(y: np.array, z: np.array,
                                      positive_label=1, privileged_group=1, **kwargs) -> float:
     """
-    Disparate Impact: Higher score -> greater discrimination towards unprivileged group
+    Calculate the objective Disparate Impact ratio.
+
+    This function computes the absolute difference between 1 and the Disparate
+    Impact ratio. It can be used as an objective function to minimize
+    discrimination towards the unprivileged group (and the privileged group).
+    Lower values indicate less discrimination.
 
     Parameters
     ----------
-    y: flattened binary array
-        can be the prediction or the truth label
-    z: flattened binary array of shape y
-        protected attribute
-    positive_label: int
-    privileged_group: int
+    y : np.array
+        Flattened binary array, can be the prediction or the truth label.
+    z : np.array
+        Flattened binary array of shape y, represents the protected attribute.
+    positive_label : int, optional
+        Label considered as positive. Default is 1.
+    privileged_group : int, optional
+        Label considered as privileged. Default is 1.
 
     Returns
     -------
-
+    float
+        The objective Disparate Impact ratio.
     """
     return np.abs(1 - disparate_impact_ratio(y, z, positive_label, privileged_group, **kwargs))
 
 
-def disparate_impact_ratio_objective_difference(y: np.array, z: np.array,
-                                                positive_label=1, privileged_group=1, **kwargs) -> float:
+def disparate_impact_ratio_deviation(y: np.array, z: np.array,
+                                     positive_label=1, privileged_group=1, **kwargs) -> float:
     """
-    Disparate Impact: Higher score -> greater discrimination towards unprivileged group
+    Calculate the difference in objective Disparate Impact ratio.
+
+    This function computes the difference between 1 and the Disparate Impact
+    ratio. A value of 0 indicates fairness. A positive value indicates
+    discrimination towards the unprivileged group. A negative value indicates
+    discrimination towards the privileged group.
+
 
     Parameters
     ----------
-    y: flattened binary array
-        can be the prediction or the truth label
-    z: flattened binary array of shape y
-        protected attribute
-    positive_label: int
-    privileged_group: int
+    y : np.array
+        Flattened binary array, can be the prediction or the truth label.
+    z : np.array
+        Flattened binary array of shape y, represents the protected attribute.
+    positive_label : int, optional
+        Label considered as positive. Default is 1.
+    privileged_group : int, optional
+        Label considered as privileged. Default is 1.
 
     Returns
     -------
-
+    float
+        The difference in objective Disparate Impact ratio.
     """
     return 1 - disparate_impact_ratio(y, z, positive_label, privileged_group, **kwargs)
