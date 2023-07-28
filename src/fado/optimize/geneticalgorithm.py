@@ -65,7 +65,7 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
         function to perform the crossover operation
     mutate: callable
         function to perform the mutation operation
-    
+
     Returns
     -------
     population: np.array of size (d,)
