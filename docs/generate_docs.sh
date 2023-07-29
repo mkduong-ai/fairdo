@@ -5,7 +5,7 @@
 find . -name "*.rst" ! -name "index.rst" -type f -exec rm -f {} \;
 
 # Run sphinx-apidoc
-sphinx-apidoc -f -o . ../src/fado/
+sphinx-apidoc --module-first -f -o . ../src/fado/
 
 # Remove older builds if they exist
 if [ -d "_build" ]; then
