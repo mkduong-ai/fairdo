@@ -80,11 +80,11 @@ class HeuristicWrapper(Preprocessing):
             The dataset to be preprocessed.
         """
         self.dataset = dataset.copy()
-        self.func = lambda binary_vector: f_rem(binary_vector,
-                                                self.dataset,
-                                                self.label,
-                                                self.protected_attribute,
-                                                disc_measure=self.disc_measure)
+        self.func = lambda binary_vector: f_remove(binary_vector,
+                                                   self.dataset,
+                                                   self.label,
+                                                   self.protected_attribute,
+                                                   disc_measure=self.disc_measure)
         self.dims = len(self.dataset)
 
     def transform(self):
@@ -100,8 +100,8 @@ class HeuristicWrapper(Preprocessing):
         return self.dataset[mask]
 
 
-def f_rem(binary_vector, dataframe, label, protected_attributes,
-          disc_measure):
+def f_remove(binary_vector, dataframe, label, protected_attributes,
+             disc_measure):
     """
     Calculates a given discrimination measure on a dataframe for a set of selected columns.
     In other words, determine which data points can be removed from the training set to prevent discrimination.
