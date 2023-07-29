@@ -172,7 +172,10 @@ def f_add(binary_vector, dataframe, sample_dataframe, label, protected_attribute
     float
         The calculated discrimination measure.
     """
-    # mask on synthetic data
+    if isinstance(protected_attributes, str):
+        protected_attributes = [protected_attributes]
+
+    # mask on sample data
     mask = np.array(binary_vector) == 1
     sample_dataframe = sample_dataframe[mask]
 
