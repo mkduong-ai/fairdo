@@ -1,0 +1,454 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="fado.metrics package" href="fado.metrics.html" />
+
+    <!-- Generated with Sphinx 6.2.1 and Furo 2023.07.26 -->
+        <title>fado 0.0.8 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="#"><div class="brand">fado 0.0.8 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="#">
+  
+  
+  <span class="sidebar-brand-text">fado 0.0.8 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="fado.metrics.html">fado.metrics package</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of fado.metrics package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="fado.metrics.nonbinary.html">fado.metrics.nonbinary package</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="fado.optimize.html">fado.optimize package</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of fado.optimize package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="fado.optimize.geneticoperators.html">fado.optimize.geneticoperators package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="fado.preprocessing.html">fado.preprocessing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fado.utils.html">fado.utils package</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="welcome-to-fado-s-documentation">
+<h1>Welcome to fado’s documentation!<a class="headerlink" href="#welcome-to-fado-s-documentation" title="Permalink to this heading">#</a></h1>
+<p>Fairness-Agnostic Data Optimization (fado) is a Python package designed to
+optimize fairness in datasets. It provides robust, fairness-agnostic methods
+to preprocess data, ensuring machine learning models trained on these datasets
+deliver high performance while significantly reducing discrimination.</p>
+<section id="metrics">
+<h2>Metrics<a class="headerlink" href="#metrics" title="Permalink to this heading">#</a></h2>
+<p>The <cite>metrics</cite> module provides a set of functions for measuring fairness and discrimination in data.
+These metrics can be utilized to evaluate the fairness of a dataset before and after preprocessing.</p>
+</section>
+<section id="optimize">
+<h2>Optimize<a class="headerlink" href="#optimize" title="Permalink to this heading">#</a></h2>
+<p>The <cite>optimize</cite> module contains methods for optimizing fairness in data.
+These methods can adjust the features of data with the aim of reducing discrimination and improving fairness.</p>
+</section>
+<section id="pre-processing">
+<h2>Pre-processing<a class="headerlink" href="#pre-processing" title="Permalink to this heading">#</a></h2>
+<p>The <cite>preprocessing</cite> module is equipped with tools designed to prepare datasets for fairness optimization.
+Each method returns a pre-processed dataset that is optimized for fairness,
+ensuring that any subsequent analysis or machine learning model trained on this data will
+inherently be more fair and less discriminatory.</p>
+</section>
+<section id="utils">
+<h2>Utils<a class="headerlink" href="#utils" title="Permalink to this heading">#</a></h2>
+<p>The <cite>utils</cite> module offers a set of utility functions that are used by the other modules in the fado package.
+These include helper functions for performing mathematical operations, and other common tasks.</p>
+<p>Each of these modules plays a crucial role in the functionality of the fado package,
+working together to provide a comprehensive toolkit for fairness optimization in datasets.</p>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="fado.metrics.html">fado.metrics package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="fado.metrics.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fado.metrics.nonbinary.html">fado.metrics.nonbinary package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fado.metrics.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fado.metrics.html#module-fado.metrics.dataset">fado.metrics.dataset module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fado.metrics.html#fado.metrics.dataset.disparate_impact_ratio"><code class="docutils literal notranslate"><span class="pre">disparate_impact_ratio()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fado.metrics.html#fado.metrics.dataset.disparate_impact_ratio_deviation"><code class="docutils literal notranslate"><span class="pre">disparate_impact_ratio_deviation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fado.metrics.html#fado.metrics.dataset.disparate_impact_ratio_objective"><code class="docutils literal notranslate"><span class="pre">disparate_impact_ratio_objective()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fado.metrics.html#fado.metrics.dataset.mean_difference"><code class="docutils literal notranslate"><span class="pre">mean_difference()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fado.metrics.html#fado.metrics.dataset.statistical_parity_absolute_difference"><code class="docutils literal notranslate"><span class="pre">statistical_parity_absolute_difference()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fado.metrics.html#fado.metrics.dataset.statistical_parity_absolute_difference_multi"><code class="docutils literal notranslate"><span class="pre">statistical_parity_absolute_difference_multi()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fado.metrics.html#fado.metrics.dataset.statistical_parity_difference"><code class="docutils literal notranslate"><span class="pre">statistical_parity_difference()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fado.metrics.html#module-fado.metrics.independence">fado.metrics.independence module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fado.metrics.html#fado.metrics.independence.dependency_multi"><code class="docutils literal notranslate"><span class="pre">dependency_multi()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fado.metrics.html#fado.metrics.independence.mutual_information"><code class="docutils literal notranslate"><span class="pre">mutual_information()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fado.metrics.html#fado.metrics.independence.normalized_mutual_information"><code class="docutils literal notranslate"><span class="pre">normalized_mutual_information()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fado.metrics.html#fado.metrics.independence.normalized_mutual_information_multi"><code class="docutils literal notranslate"><span class="pre">normalized_mutual_information_multi()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fado.metrics.html#fado.metrics.independence.pearsonr"><code class="docutils literal notranslate"><span class="pre">pearsonr()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fado.metrics.html#fado.metrics.independence.pearsonr_abs"><code class="docutils literal notranslate"><span class="pre">pearsonr_abs()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fado.metrics.html#fado.metrics.independence.rdc"><code class="docutils literal notranslate"><span class="pre">rdc()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fado.metrics.html#module-fado.metrics.individual">fado.metrics.individual module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fado.metrics.html#fado.metrics.individual.consistency_score"><code class="docutils literal notranslate"><span class="pre">consistency_score()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fado.metrics.html#fado.metrics.individual.consistency_score_objective"><code class="docutils literal notranslate"><span class="pre">consistency_score_objective()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fado.metrics.html#module-fado.metrics.prediction">fado.metrics.prediction module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fado.metrics.html#fado.metrics.prediction.average_odds_difference"><code class="docutils literal notranslate"><span class="pre">average_odds_difference()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fado.metrics.html#fado.metrics.prediction.average_odds_error"><code class="docutils literal notranslate"><span class="pre">average_odds_error()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fado.metrics.html#fado.metrics.prediction.equal_opportunity_absolute_difference"><code class="docutils literal notranslate"><span class="pre">equal_opportunity_absolute_difference()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fado.metrics.html#fado.metrics.prediction.equal_opportunity_difference"><code class="docutils literal notranslate"><span class="pre">equal_opportunity_difference()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fado.metrics.html#fado.metrics.prediction.predictive_equality_absolute_difference"><code class="docutils literal notranslate"><span class="pre">predictive_equality_absolute_difference()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fado.metrics.html#fado.metrics.prediction.predictive_equality_difference"><code class="docutils literal notranslate"><span class="pre">predictive_equality_difference()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="fado.optimize.html">fado.optimize package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="fado.optimize.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fado.optimize.geneticoperators.html">fado.optimize.geneticoperators package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="fado.optimize.geneticoperators.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="fado.optimize.geneticoperators.html#module-fado.optimize.geneticoperators.crossover">fado.optimize.geneticoperators.crossover module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="fado.optimize.geneticoperators.html#module-fado.optimize.geneticoperators.mutation">fado.optimize.geneticoperators.mutation module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="fado.optimize.geneticoperators.html#module-fado.optimize.geneticoperators.selection">fado.optimize.geneticoperators.selection module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fado.optimize.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fado.optimize.html#module-fado.optimize.baseline">fado.optimize.baseline module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fado.optimize.html#fado.optimize.baseline.original_method"><code class="docutils literal notranslate"><span class="pre">original_method()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fado.optimize.html#fado.optimize.baseline.random_method"><code class="docutils literal notranslate"><span class="pre">random_method()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fado.optimize.html#module-fado.optimize.geneticalgorithm">fado.optimize.geneticalgorithm module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fado.optimize.html#fado.optimize.geneticalgorithm.evaluate_population"><code class="docutils literal notranslate"><span class="pre">evaluate_population()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fado.optimize.html#fado.optimize.geneticalgorithm.generate_population"><code class="docutils literal notranslate"><span class="pre">generate_population()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fado.optimize.html#fado.optimize.geneticalgorithm.genetic_algorithm"><code class="docutils literal notranslate"><span class="pre">genetic_algorithm()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fado.optimize.html#fado.optimize.geneticalgorithm.genetic_algorithm_constraint"><code class="docutils literal notranslate"><span class="pre">genetic_algorithm_constraint()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fado.optimize.html#fado.optimize.geneticalgorithm.genetic_algorithm_method"><code class="docutils literal notranslate"><span class="pre">genetic_algorithm_method()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fado.optimize.html#fado.optimize.geneticalgorithm.genetic_algorithm_uniform_method"><code class="docutils literal notranslate"><span class="pre">genetic_algorithm_uniform_method()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="fado.preprocessing.html">fado.preprocessing package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="fado.preprocessing.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fado.preprocessing.html#module-fado.preprocessing.base">fado.preprocessing.base module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fado.preprocessing.html#fado.preprocessing.base.OriginalData"><code class="docutils literal notranslate"><span class="pre">OriginalData</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="fado.preprocessing.html#fado.preprocessing.base.OriginalData.transform"><code class="docutils literal notranslate"><span class="pre">OriginalData.transform()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="fado.preprocessing.html#fado.preprocessing.base.Preprocessing"><code class="docutils literal notranslate"><span class="pre">Preprocessing</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="fado.preprocessing.html#fado.preprocessing.base.Preprocessing.check_valid_datatype"><code class="docutils literal notranslate"><span class="pre">Preprocessing.check_valid_datatype()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fado.preprocessing.html#fado.preprocessing.base.Preprocessing.fit"><code class="docutils literal notranslate"><span class="pre">Preprocessing.fit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fado.preprocessing.html#fado.preprocessing.base.Preprocessing.fit_transform"><code class="docutils literal notranslate"><span class="pre">Preprocessing.fit_transform()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fado.preprocessing.html#fado.preprocessing.base.Preprocessing.transform"><code class="docutils literal notranslate"><span class="pre">Preprocessing.transform()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="fado.preprocessing.html#fado.preprocessing.base.Random"><code class="docutils literal notranslate"><span class="pre">Random</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="fado.preprocessing.html#fado.preprocessing.base.Random.transform"><code class="docutils literal notranslate"><span class="pre">Random.transform()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fado.preprocessing.html#module-fado.preprocessing.metricoptimizer">fado.preprocessing.metricoptimizer module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fado.preprocessing.html#fado.preprocessing.metricoptimizer.MetricOptGenerator"><code class="docutils literal notranslate"><span class="pre">MetricOptGenerator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="fado.preprocessing.html#fado.preprocessing.metricoptimizer.MetricOptGenerator.fit"><code class="docutils literal notranslate"><span class="pre">MetricOptGenerator.fit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fado.preprocessing.html#fado.preprocessing.metricoptimizer.MetricOptGenerator.transform"><code class="docutils literal notranslate"><span class="pre">MetricOptGenerator.transform()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="fado.preprocessing.html#fado.preprocessing.metricoptimizer.MetricOptRemover"><code class="docutils literal notranslate"><span class="pre">MetricOptRemover</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="fado.preprocessing.html#fado.preprocessing.metricoptimizer.MetricOptRemover.transform"><code class="docutils literal notranslate"><span class="pre">MetricOptRemover.transform()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="fado.preprocessing.html#fado.preprocessing.metricoptimizer.MetricOptimizer"><code class="docutils literal notranslate"><span class="pre">MetricOptimizer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="fado.preprocessing.html#fado.preprocessing.metricoptimizer.MetricOptimizer.fit"><code class="docutils literal notranslate"><span class="pre">MetricOptimizer.fit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fado.preprocessing.html#fado.preprocessing.metricoptimizer.MetricOptimizer.init_preproc"><code class="docutils literal notranslate"><span class="pre">MetricOptimizer.init_preproc()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fado.preprocessing.html#fado.preprocessing.metricoptimizer.MetricOptimizer.transform"><code class="docutils literal notranslate"><span class="pre">MetricOptimizer.transform()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fado.preprocessing.html#module-fado.preprocessing.solverwrapper">fado.preprocessing.solverwrapper module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fado.preprocessing.html#fado.preprocessing.solverwrapper.HeuristicWrapper"><code class="docutils literal notranslate"><span class="pre">HeuristicWrapper</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="fado.preprocessing.html#fado.preprocessing.solverwrapper.HeuristicWrapper.heuristic"><code class="docutils literal notranslate"><span class="pre">HeuristicWrapper.heuristic</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fado.preprocessing.html#fado.preprocessing.solverwrapper.HeuristicWrapper.func"><code class="docutils literal notranslate"><span class="pre">HeuristicWrapper.func</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fado.preprocessing.html#fado.preprocessing.solverwrapper.HeuristicWrapper.dims"><code class="docutils literal notranslate"><span class="pre">HeuristicWrapper.dims</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fado.preprocessing.html#fado.preprocessing.solverwrapper.HeuristicWrapper.disc_measure"><code class="docutils literal notranslate"><span class="pre">HeuristicWrapper.disc_measure</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fado.preprocessing.html#fado.preprocessing.solverwrapper.HeuristicWrapper.dataset"><code class="docutils literal notranslate"><span class="pre">HeuristicWrapper.dataset</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fado.preprocessing.html#fado.preprocessing.solverwrapper.HeuristicWrapper.transform"><code class="docutils literal notranslate"><span class="pre">HeuristicWrapper.transform()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fado.preprocessing.html#fado.preprocessing.solverwrapper.HeuristicWrapper.fit"><code class="docutils literal notranslate"><span class="pre">HeuristicWrapper.fit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="fado.preprocessing.html#id0"><code class="docutils literal notranslate"><span class="pre">HeuristicWrapper.transform()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="fado.preprocessing.html#fado.preprocessing.solverwrapper.f_add"><code class="docutils literal notranslate"><span class="pre">f_add()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fado.preprocessing.html#fado.preprocessing.solverwrapper.f_remove"><code class="docutils literal notranslate"><span class="pre">f_remove()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="fado.utils.html">fado.utils package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="fado.utils.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fado.utils.html#module-fado.utils.helper">fado.utils.helper module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fado.utils.html#fado.utils.helper.generate_pairs"><code class="docutils literal notranslate"><span class="pre">generate_pairs()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fado.utils.html#module-fado.utils.penalty">fado.utils.penalty module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fado.utils.html#fado.utils.penalty.absolute_difference_penalty"><code class="docutils literal notranslate"><span class="pre">absolute_difference_penalty()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fado.utils.html#fado.utils.penalty.relative_difference_penalty"><code class="docutils literal notranslate"><span class="pre">relative_difference_penalty()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this heading">#</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="fado.metrics.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">fado.metrics package</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2023, Manh Khoi Duong
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Welcome to fado’s documentation!</a><ul>
+<li><a class="reference internal" href="#metrics">Metrics</a></li>
+<li><a class="reference internal" href="#optimize">Optimize</a></li>
+<li><a class="reference internal" href="#pre-processing">Pre-processing</a></li>
+<li><a class="reference internal" href="#utils">Utils</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/scripts/furo.js"></script>
+    </body>
+</html>

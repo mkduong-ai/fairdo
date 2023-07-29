@@ -1,0 +1,885 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="fado.metrics.nonbinary package" href="fado.metrics.nonbinary.html" /><link rel="prev" title="Welcome to fado’s documentation!" href="index.html" />
+
+    <!-- Generated with Sphinx 6.2.1 and Furo 2023.07.26 -->
+        <title>fado.metrics package - fado 0.0.8 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">fado 0.0.8 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  
+  
+  <span class="sidebar-brand-text">fado 0.0.8 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current has-children current-page"><a class="current reference internal" href="#">fado.metrics package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of fado.metrics package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="fado.metrics.nonbinary.html">fado.metrics.nonbinary package</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="fado.optimize.html">fado.optimize package</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of fado.optimize package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="fado.optimize.geneticoperators.html">fado.optimize.geneticoperators package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="fado.preprocessing.html">fado.preprocessing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fado.utils.html">fado.utils package</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="module-fado.metrics">
+<span id="fado-metrics-package"></span><h1>fado.metrics package<a class="headerlink" href="#module-fado.metrics" title="Permalink to this heading">#</a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading">#</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="fado.metrics.nonbinary.html">fado.metrics.nonbinary package</a></li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">#</a></h2>
+</section>
+<section id="module-fado.metrics.dataset">
+<span id="fado-metrics-dataset-module"></span><h2>fado.metrics.dataset module<a class="headerlink" href="#module-fado.metrics.dataset" title="Permalink to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="fado.metrics.dataset.disparate_impact_ratio">
+<span class="sig-prename descclassname"><span class="pre">fado.metrics.dataset.</span></span><span class="sig-name descname"><span class="pre">disparate_impact_ratio</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positive_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">privileged_group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/fado/metrics/dataset.html#disparate_impact_ratio"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fado.metrics.dataset.disparate_impact_ratio" title="Permalink to this definition">#</a></dt>
+<dd><p>Calculate the Disparate Impact ratio.</p>
+<p>This function computes the ratio of probabilities of positive outcomes for
+the unprivileged group to the privileged group. A value of 1 indicates
+fairness, while a value &lt; 1 indicates discrimination towards the
+unprivileged group. A value of &gt; 1 would indicate discrimination towards
+the privileged group.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y</strong> (<em>np.array</em>) – Flattened binary array, can be the prediction or the truth label.</p></li>
+<li><p><strong>z</strong> (<em>np.array</em>) – Flattened binary array of shape y, represents the protected attribute.</p></li>
+<li><p><strong>positive_label</strong> (<em>int</em><em>, </em><em>optional</em>) – Label considered as positive. Default is 1.</p></li>
+<li><p><strong>privileged_group</strong> (<em>int</em><em>, </em><em>optional</em>) – Label considered as privileged. Default is 1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The Disparate Impact ratio.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fado.metrics.dataset.disparate_impact_ratio_deviation">
+<span class="sig-prename descclassname"><span class="pre">fado.metrics.dataset.</span></span><span class="sig-name descname"><span class="pre">disparate_impact_ratio_deviation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positive_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">privileged_group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/fado/metrics/dataset.html#disparate_impact_ratio_deviation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fado.metrics.dataset.disparate_impact_ratio_deviation" title="Permalink to this definition">#</a></dt>
+<dd><p>Calculate the difference in objective Disparate Impact ratio.</p>
+<p>This function computes the difference between 1 and the Disparate Impact
+ratio. A value of 0 indicates fairness. A positive value indicates
+discrimination towards the unprivileged group. A negative value indicates
+discrimination towards the privileged group.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y</strong> (<em>np.array</em>) – Flattened binary array, can be the prediction or the truth label.</p></li>
+<li><p><strong>z</strong> (<em>np.array</em>) – Flattened binary array of shape y, represents the protected attribute.</p></li>
+<li><p><strong>positive_label</strong> (<em>int</em><em>, </em><em>optional</em>) – Label considered as positive. Default is 1.</p></li>
+<li><p><strong>privileged_group</strong> (<em>int</em><em>, </em><em>optional</em>) – Label considered as privileged. Default is 1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The difference in objective Disparate Impact ratio.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fado.metrics.dataset.disparate_impact_ratio_objective">
+<span class="sig-prename descclassname"><span class="pre">fado.metrics.dataset.</span></span><span class="sig-name descname"><span class="pre">disparate_impact_ratio_objective</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positive_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">privileged_group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/fado/metrics/dataset.html#disparate_impact_ratio_objective"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fado.metrics.dataset.disparate_impact_ratio_objective" title="Permalink to this definition">#</a></dt>
+<dd><p>Calculate the objective Disparate Impact ratio.</p>
+<p>This function computes the absolute difference between 1 and the Disparate
+Impact ratio. It can be used as an objective function to minimize
+discrimination towards the unprivileged group (and the privileged group).
+Lower values indicate less discrimination.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y</strong> (<em>np.array</em>) – Flattened binary array, can be the prediction or the truth label.</p></li>
+<li><p><strong>z</strong> (<em>np.array</em>) – Flattened binary array of shape y, represents the protected attribute.</p></li>
+<li><p><strong>positive_label</strong> (<em>int</em><em>, </em><em>optional</em>) – Label considered as positive. Default is 1.</p></li>
+<li><p><strong>privileged_group</strong> (<em>int</em><em>, </em><em>optional</em>) – Label considered as privileged. Default is 1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The objective Disparate Impact ratio.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fado.metrics.dataset.mean_difference">
+<span class="sig-prename descclassname"><span class="pre">fado.metrics.dataset.</span></span><span class="sig-name descname"><span class="pre">mean_difference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/fado/metrics/dataset.html#mean_difference"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fado.metrics.dataset.mean_difference" title="Permalink to this definition">#</a></dt>
+<dd><p>Alias for the statistical_parity_difference function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y</strong> (<em>np.array</em>) – Flattened binary array, can be the prediction or the truth label.</p></li>
+<li><p><strong>z</strong> (<em>np.array</em>) – Flattened binary array of shape y, represents the protected attribute.</p></li>
+<li><p><strong>positive_label</strong> (<em>int</em><em>, </em><em>optional</em>) – Label considered as positive. Default is 1.</p></li>
+<li><p><strong>privileged_group</strong> (<em>int</em><em>, </em><em>optional</em>) – Label considered as privileged. Default is 1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The difference in statistical parity between unprivileged and privileged groups.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fado.metrics.dataset.statistical_parity_absolute_difference">
+<span class="sig-prename descclassname"><span class="pre">fado.metrics.dataset.</span></span><span class="sig-name descname"><span class="pre">statistical_parity_absolute_difference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/fado/metrics/dataset.html#statistical_parity_absolute_difference"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fado.metrics.dataset.statistical_parity_absolute_difference" title="Permalink to this definition">#</a></dt>
+<dd><p>Calculate the absolute value of the statistical parity difference.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y</strong> (<em>np.array</em>) – Flattened binary array, can be the prediction or the truth label.</p></li>
+<li><p><strong>z</strong> (<em>np.array</em>) – Flattened binary array of shape y, represents the protected attribute.</p></li>
+<li><p><strong>positive_label</strong> (<em>int</em><em>, </em><em>optional</em>) – Label considered as positive. Default is 1.</p></li>
+<li><p><strong>privileged_group</strong> (<em>int</em><em>, </em><em>optional</em>) – Label considered as privileged. Default is 1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The absolute value of the statistical parity difference.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fado.metrics.dataset.statistical_parity_absolute_difference_multi">
+<span class="sig-prename descclassname"><span class="pre">fado.metrics.dataset.</span></span><span class="sig-name descname"><span class="pre">statistical_parity_absolute_difference_multi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y:</span> <span class="pre">~numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z:</span> <span class="pre">~numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agg_attribute=&lt;function</span> <span class="pre">sum&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agg_group=&lt;function</span> <span class="pre">sum&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positive_label=1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/fado/metrics/dataset.html#statistical_parity_absolute_difference_multi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fado.metrics.dataset.statistical_parity_absolute_difference_multi" title="Permalink to this definition">#</a></dt>
+<dd><p>Calculate the difference in statistical parity for multiple non-binary protected attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y</strong> (<em>np.array</em>) – Flattened binary array of shape (n_samples,), can be the prediction or the truth label.</p></li>
+<li><p><strong>z</strong> (<em>np.array</em>) – Array of shape (n_samples, n_protected_attributes) representing the protected attribute.</p></li>
+<li><p><strong>agg_attribute</strong> (<em>callable</em><em>, </em><em>optional</em>) – Aggregation function for the attribute. Default is np.sum.</p></li>
+<li><p><strong>agg_group</strong> (<em>callable</em><em>, </em><em>optional</em>) – Aggregation function for the group. Default is np.sum.</p></li>
+<li><p><strong>positive_label</strong> (<em>int</em><em>, </em><em>optional</em>) – Label considered as positive. Default is 1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Aggregated attribute disparity.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fado.metrics.dataset.statistical_parity_difference">
+<span class="sig-prename descclassname"><span class="pre">fado.metrics.dataset.</span></span><span class="sig-name descname"><span class="pre">statistical_parity_difference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positive_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">privileged_group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/fado/metrics/dataset.html#statistical_parity_difference"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fado.metrics.dataset.statistical_parity_difference" title="Permalink to this definition">#</a></dt>
+<dd><p>Calculate the difference in statistical parity according to [1].</p>
+<p>[1] A Maximal Correlation Framework for Fair Machine Learning (Lee et al. 2022) (<a class="reference external" href="https://arxiv.org/abs/2106.00051">https://arxiv.org/abs/2106.00051</a>)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y</strong> (<em>np.array</em>) – Flattened binary array, can be the prediction or the truth label.</p></li>
+<li><p><strong>z</strong> (<em>np.array</em>) – Flattened binary array of shape y, represents the protected attribute.</p></li>
+<li><p><strong>positive_label</strong> (<em>int</em><em>, </em><em>optional</em>) – Label considered as positive. Default is 1.</p></li>
+<li><p><strong>privileged_group</strong> (<em>int</em><em>, </em><em>optional</em>) – Label considered as privileged. Default is 1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The difference in statistical parity between unprivileged and privileged groups.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-fado.metrics.independence">
+<span id="fado-metrics-independence-module"></span><h2>fado.metrics.independence module<a class="headerlink" href="#module-fado.metrics.independence" title="Permalink to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="fado.metrics.independence.dependency_multi">
+<span class="sig-prename descclassname"><span class="pre">fado.metrics.independence.</span></span><span class="sig-name descname"><span class="pre">dependency_multi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y:</span> <span class="pre">~numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z:</span> <span class="pre">~numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dependency_function=&lt;function</span> <span class="pre">normalized_mutual_info_score&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agg=&lt;function</span> <span class="pre">amax&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positive_label=1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/fado/metrics/independence.html#dependency_multi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fado.metrics.independence.dependency_multi" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute a measure of dependency for multiple non-binary protected attributes.</p>
+<p>This function calculates the dependency between <cite>y</cite> and each protected attribute in <cite>z</cite>
+using the specified <cite>dependency_function</cite>, and then aggregates these dependency scores
+using the specified <cite>agg</cite> function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y</strong> (<em>np.array</em>) – Flattened binary array of shape (n_samples,), can be a prediction or the truth label.</p></li>
+<li><p><strong>z</strong> (<em>np.array</em>) – Array of shape (n_samples, n_protected_attributes), represents the protected attributes.</p></li>
+<li><p><strong>dependency_function</strong> (<em>callable</em><em>, </em><em>optional</em>) – Function to compute the dependency between <cite>y</cite> and each protected attribute.
+Default is normalized_mutual_info_score.</p></li>
+<li><p><strong>agg</strong> (<em>callable</em><em>, </em><em>optional</em>) – Aggregation function to combine the dependency scores. Default is np.max.</p></li>
+<li><p><strong>positive_label</strong> (<em>int</em><em>, </em><em>optional</em>) – Label considered as positive. Default is 1.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments. These are not currently used.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The aggregated dependency score.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fado.metrics.independence.mutual_information">
+<span class="sig-prename descclassname"><span class="pre">fado.metrics.independence.</span></span><span class="sig-name descname"><span class="pre">mutual_information</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/fado/metrics/independence.html#mutual_information"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fado.metrics.independence.mutual_information" title="Permalink to this definition">#</a></dt>
+<dd><p>Calculate the mutual information between two arrays.</p>
+<p>Mutual information is a measure of the mutual dependence between two variables.
+It quantifies the “amount of information” (in units such as bits) obtained
+about one random variable, by observing the other random variable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y</strong> (<em>np.array</em>) – Flattened array, can be a prediction or the truth label.</p></li>
+<li><p><strong>z</strong> (<em>np.array</em>) – Flattened array of the same shape as y.</p></li>
+<li><p><strong>bins</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of bins for discretization. Default is 2.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments. These are not currently used.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The mutual information between y and z.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fado.metrics.independence.normalized_mutual_information">
+<span class="sig-prename descclassname"><span class="pre">fado.metrics.independence.</span></span><span class="sig-name descname"><span class="pre">normalized_mutual_information</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/fado/metrics/independence.html#normalized_mutual_information"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fado.metrics.independence.normalized_mutual_information" title="Permalink to this definition">#</a></dt>
+<dd><p>Calculate the normalized mutual information between two arrays.</p>
+<p>Normalized mutual information is a normalization of the Mutual Information (MI) score
+to scale the results between 0 (no mutual information, independent variables) and 1
+(perfect correlation). The function handles any warning by ignoring them.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y</strong> (<em>np.array</em>) – Flattened array, can be a prediction or the truth label.</p></li>
+<li><p><strong>z</strong> (<em>np.array</em>) – Flattened array of the same shape as y.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments. These are not currently used.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The normalized mutual information between y and z.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fado.metrics.independence.normalized_mutual_information_multi">
+<span class="sig-prename descclassname"><span class="pre">fado.metrics.independence.</span></span><span class="sig-name descname"><span class="pre">normalized_mutual_information_multi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y:</span> <span class="pre">~numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z:</span> <span class="pre">~numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agg=&lt;function</span> <span class="pre">amax&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positive_label=1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fado/metrics/independence.html#normalized_mutual_information_multi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fado.metrics.independence.normalized_mutual_information_multi" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute the normalized mutual information for multiple non-binary protected attributes.</p>
+<p>This function calculates the normalized mutual information between <cite>y</cite> and each
+protected attribute in <cite>z</cite>, and then aggregates these scores using the specified <cite>agg</cite> function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y</strong> (<em>np.array</em>) – Flattened binary array of shape (n_samples,), can be a prediction or the truth label.</p></li>
+<li><p><strong>z</strong> (<em>np.array</em>) – Array of shape (n_samples, n_protected_attributes), represents the protected attributes.</p></li>
+<li><p><strong>agg</strong> (<em>callable</em><em>, </em><em>optional</em>) – Aggregation function to combine the normalized mutual information scores. Default is np.max.</p></li>
+<li><p><strong>positive_label</strong> (<em>int</em><em>, </em><em>optional</em>) – Label considered as positive. Default is 1.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments. These are not currently used.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The aggregated normalized mutual information score.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fado.metrics.independence.pearsonr">
+<span class="sig-prename descclassname"><span class="pre">fado.metrics.independence.</span></span><span class="sig-name descname"><span class="pre">pearsonr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/fado/metrics/independence.html#pearsonr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fado.metrics.independence.pearsonr" title="Permalink to this definition">#</a></dt>
+<dd><p>Calculate the Pearson correlation coefficient between two arrays.</p>
+<p>The Pearson correlation coefficient measures the linear relationship between two variables.
+The calculation of the Pearson correlation coefficient is not affected by scaling,
+and it ranges from -1 to 1. A value of 1 implies a perfect positive correlation,
+while a value of -1 implies a perfect negative correlation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y</strong> (<em>np.array</em>) – Flattened array, can be a prediction or the truth label.</p></li>
+<li><p><strong>z</strong> (<em>np.array</em>) – Flattened array of the same shape as y.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments. These are not currently used.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The Pearson correlation coefficient between y and z.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fado.metrics.independence.pearsonr_abs">
+<span class="sig-prename descclassname"><span class="pre">fado.metrics.independence.</span></span><span class="sig-name descname"><span class="pre">pearsonr_abs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/fado/metrics/independence.html#pearsonr_abs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fado.metrics.independence.pearsonr_abs" title="Permalink to this definition">#</a></dt>
+<dd><p>Calculate the absolute value of the Pearson correlation coefficient between two arrays.</p>
+<p>The Pearson correlation coefficient measures the linear relationship between two datasets.
+The calculation of the Pearson correlation coefficient is not affected by scaling,
+and it ranges from -1 to 1. A value of 1 implies a perfect positive correlation,
+while a value of -1 implies a perfect negative correlation. The absolute value is taken
+to disregard the direction of the correlation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y</strong> (<em>np.array</em>) – Flattened array, can be a prediction or the truth label.</p></li>
+<li><p><strong>z</strong> (<em>np.array</em>) – Flattened array of the same shape as y.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments. These are not currently used.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The absolute value of the Pearson correlation coefficient between y and z.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fado.metrics.independence.rdc">
+<span class="sig-prename descclassname"><span class="pre">fado.metrics.independence.</span></span><span class="sig-name descname"><span class="pre">rdc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y:</span> <span class="pre">~numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z:</span> <span class="pre">~numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f=&lt;ufunc</span> <span class="pre">'sin'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k=20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s=0.16666666666666666</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n=1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fado/metrics/independence.html#rdc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fado.metrics.independence.rdc" title="Permalink to this definition">#</a></dt>
+<dd><p>Implements the Randomized Dependence Coefficient
+David Lopez-Paz, Philipp Hennig, Bernhard Schoelkopf</p>
+<p><a class="reference external" href="http://papers.nips.cc/paper/5138-the-randomized-dependence-coefficient.pdf">http://papers.nips.cc/paper/5138-the-randomized-dependence-coefficient.pdf</a>
+Computes the Randomized Dependence Coefficient</p>
+<p>According to the paper, the coefficient should be relatively insensitive to
+the settings of the f, k, and s parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y</strong> (<em>numpy arrays 1-D</em><em> or </em><em>2-D</em>) – If 1-D, size (samples,)
+If 2-D, size (samples, variables)</p></li>
+<li><p><strong>z</strong> (<em>numpy arrays 1-D</em><em> or </em><em>2-D</em>) – If 1-D, size (samples,)
+If 2-D, size (samples, variables)</p></li>
+<li><p><strong>f</strong> (<em>function to use for random projection</em>) – </p></li>
+<li><p><strong>k</strong> (<em>number</em><em> of </em><em>random projections to use</em>) – </p></li>
+<li><p><strong>s</strong> (<em>scale parameter</em>) – </p></li>
+<li><p><strong>n</strong> (<em>number</em><em> of </em><em>times to compute the RDC and</em>) – return the median (for stability)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The RDC between X and Y</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-fado.metrics.individual">
+<span id="fado-metrics-individual-module"></span><h2>fado.metrics.individual module<a class="headerlink" href="#module-fado.metrics.individual" title="Permalink to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="fado.metrics.individual.consistency_score">
+<span class="sig-prename descclassname"><span class="pre">fado.metrics.individual.</span></span><span class="sig-name descname"><span class="pre">consistency_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_neighbors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/fado/metrics/individual.html#consistency_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fado.metrics.individual.consistency_score" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute the Consistency Score as defined in Learning Fair Representations (Zemel et al. 2013).</p>
+<p>This score measures the consistency of the output <cite>y</cite> with respect to nearest neighbors in <cite>x</cite>.
+A higher score indicates more fairness.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>np.array</em>) – Array representing the input data.</p></li>
+<li><p><strong>y</strong> (<em>np.array</em>) – Array of the same length as x, representing the output data.</p></li>
+<li><p><strong>n_neighbors</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of neighbors to consider. Default is 5.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments. These are not currently used.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The consistency score. Higher values indicate more fairness.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fado.metrics.individual.consistency_score_objective">
+<span class="sig-prename descclassname"><span class="pre">fado.metrics.individual.</span></span><span class="sig-name descname"><span class="pre">consistency_score_objective</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_neighbors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/fado/metrics/individual.html#consistency_score_objective"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fado.metrics.individual.consistency_score_objective" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute the inverse of the Consistency Score to use as an objective function.</p>
+<p>This function is intended to be minimized. Lower values indicate more individual fairness.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>np.array</em>) – Array representing the input data.</p></li>
+<li><p><strong>y</strong> (<em>np.array</em>) – Array of the same length as x, representing the output data.</p></li>
+<li><p><strong>n_neighbors</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of neighbors to consider. Default is 5.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments. These are not currently used.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The inverse of the consistency score. Lower values indicate more fairness.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-fado.metrics.prediction">
+<span id="fado-metrics-prediction-module"></span><h2>fado.metrics.prediction module<a class="headerlink" href="#module-fado.metrics.prediction" title="Permalink to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="fado.metrics.prediction.average_odds_difference">
+<span class="sig-prename descclassname"><span class="pre">fado.metrics.prediction.</span></span><span class="sig-name descname"><span class="pre">average_odds_difference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_true</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_pred</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positive_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">privileged_group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/fado/metrics/prediction.html#average_odds_difference"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fado.metrics.prediction.average_odds_difference" title="Permalink to this definition">#</a></dt>
+<dd><p>Calculate the difference in Average Odds between privileged and unprivileged groups.</p>
+<p>[1] Equality of Opportunity in Supervised Learning (Hardt, Price, Srebro, 2016) (<a class="reference external" href="https://arxiv.org/abs/1610.02413">https://arxiv.org/abs/1610.02413</a>)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y_true</strong> (<em>numpy.array</em>) – Flattened array of true binary labels.</p></li>
+<li><p><strong>y_pred</strong> (<em>numpy.array</em>) – Flattened array of predicted binary labels. Must have same shape as y_true.</p></li>
+<li><p><strong>z</strong> (<em>numpy.array</em>) – Binary array indicating privileged (1) or unprivileged (0) group. Same shape as y_true.</p></li>
+<li><p><strong>positive_label</strong> (<em>int</em><em>, </em><em>optional</em>) – Label considered as positive, default is 1.</p></li>
+<li><p><strong>privileged_group</strong> (<em>int</em><em>, </em><em>optional</em>) – Label denoting the privileged group, default is 1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The difference in Average Odds between privileged and unprivileged groups.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fado.metrics.prediction.average_odds_error">
+<span class="sig-prename descclassname"><span class="pre">fado.metrics.prediction.</span></span><span class="sig-name descname"><span class="pre">average_odds_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_true</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_pred</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positive_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">privileged_group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/fado/metrics/prediction.html#average_odds_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fado.metrics.prediction.average_odds_error" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute the Average Odds Error.
+Can be used as an objective function to minimize.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y_true</strong> (<em>numpy.array</em>) – Flattened array of true binary labels.</p></li>
+<li><p><strong>y_pred</strong> (<em>numpy.array</em>) – Flattened array of predicted binary labels. Must have same shape as y_true.</p></li>
+<li><p><strong>z</strong> (<em>numpy.array</em>) – Binary array indicating privileged (1) or unprivileged (0) group. Same shape as y_true.</p></li>
+<li><p><strong>positive_label</strong> (<em>int</em><em>, </em><em>optional</em>) – Label considered as positive, default is 1.</p></li>
+<li><p><strong>privileged_group</strong> (<em>int</em><em>, </em><em>optional</em>) – Label denoting the privileged group, default is 1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The Average Odds Error between privileged and unprivileged groups.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fado.metrics.prediction.equal_opportunity_absolute_difference">
+<span class="sig-prename descclassname"><span class="pre">fado.metrics.prediction.</span></span><span class="sig-name descname"><span class="pre">equal_opportunity_absolute_difference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fado/metrics/prediction.html#equal_opportunity_absolute_difference"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fado.metrics.prediction.equal_opportunity_absolute_difference" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute the absolute difference in Equality of Opportunity [1].</p>
+<p>[1] Equality of Opportunity (Hardt, Price, Srebro, 2016) (<a class="reference external" href="https://arxiv.org/abs/1610.02413">https://arxiv.org/abs/1610.02413</a>)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*args</strong> (<em>arguments</em>) – Variable length argument list to be passed to <cite>equal_opportunity_difference</cite> function.</p></li>
+<li><p><strong>**kwargs</strong> (<em>keyword arguments</em>) – Arbitrary keyword arguments to be passed to <cite>equal_opportunity_difference</cite> function.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The absolute difference in Equality of Opportunity between privileged and unprivileged groups.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fado.metrics.prediction.equal_opportunity_difference">
+<span class="sig-prename descclassname"><span class="pre">fado.metrics.prediction.</span></span><span class="sig-name descname"><span class="pre">equal_opportunity_difference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_true</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_pred</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positive_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">privileged_group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/fado/metrics/prediction.html#equal_opportunity_difference"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fado.metrics.prediction.equal_opportunity_difference" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute the difference in Equality of Opportunity [1] between
+the privileged group and the unprivileged group.</p>
+<p>Equality of Opportunity [1] is a fairness metric
+that measures the difference in true positive rates between the privileged and unprivileged groups.
+This function returns a float representing that difference.
+A value of 0 indicates perfect fairness, positive values indicate bias
+against the unprivileged group, while negative values indicate
+bias against the privileged group.</p>
+<p>[1] Equality of Opportunity (Hardt, Price, Srebro, 2016)](<a class="reference external" href="https://arxiv.org/abs/1610.02413">https://arxiv.org/abs/1610.02413</a>)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y_true</strong> (<em>numpy.array</em>) – The true binary labels as a flattened array.</p></li>
+<li><p><strong>y_pred</strong> (<em>numpy.array</em>) – The predicted binary labels from the model.
+Should be of the same shape as y_true.</p></li>
+<li><p><strong>z</strong> (<em>numpy.array</em>) – The protected attribute as a binary array.
+This array indicates the group (privileged or unprivileged) for each instance in the data.
+Should be of the same shape as y_true.</p></li>
+<li><p><strong>positive_label</strong> (<em>int</em><em>, </em><em>optional</em><em> (</em><em>default=1</em><em>)</em>) – The label considered as positive in the dataset.</p></li>
+<li><p><strong>privileged_group</strong> (<em>int</em><em>, </em><em>optional</em><em> (</em><em>default=1</em><em>)</em>) – The label that denotes the privileged group.
+If 0, the function will treat the unprivileged group as the privileged group.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The difference in Equality of Opportunity between the privileged and unprivileged groups.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fado.metrics.prediction.predictive_equality_absolute_difference">
+<span class="sig-prename descclassname"><span class="pre">fado.metrics.prediction.</span></span><span class="sig-name descname"><span class="pre">predictive_equality_absolute_difference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fado/metrics/prediction.html#predictive_equality_absolute_difference"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fado.metrics.prediction.predictive_equality_absolute_difference" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute the absolute difference in Predictive Equality.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*args</strong> (<em>arguments</em>) – Variable length argument list to be passed to <cite>predictive_equality_difference</cite> function.</p></li>
+<li><p><strong>**kwargs</strong> (<em>keyword arguments</em>) – Arbitrary keyword arguments to be passed to <cite>predictive_equality_difference</cite> function.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The absolute difference in Predictive Equality between privileged and unprivileged groups.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fado.metrics.prediction.predictive_equality_difference">
+<span class="sig-prename descclassname"><span class="pre">fado.metrics.prediction.</span></span><span class="sig-name descname"><span class="pre">predictive_equality_difference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_true</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_pred</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positive_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">privileged_group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/fado/metrics/prediction.html#predictive_equality_difference"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fado.metrics.prediction.predictive_equality_difference" title="Permalink to this definition">#</a></dt>
+<dd><p>Calculate the difference in Predictive Equality.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y_true</strong> (<em>numpy.array</em>) – True binary labels as a flattened array.</p></li>
+<li><p><strong>y_pred</strong> (<em>numpy.array</em>) – Predicted binary labels as a flattened array. Must have same shape as y_true.</p></li>
+<li><p><strong>z</strong> (<em>numpy.array</em>) – Binary array denoting privileged (1) or unprivileged (0) group. Same shape as y_true.</p></li>
+<li><p><strong>positive_label</strong> (<em>int</em><em>, </em><em>optional</em>) – Label considered as positive, default is 1.</p></li>
+<li><p><strong>privileged_group</strong> (<em>int</em><em>, </em><em>optional</em>) – Label representing the privileged group, default is 1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The difference in Predictive Equality between privileged and unprivileged groups.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="fado.metrics.nonbinary.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">fado.metrics.nonbinary package</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="index.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Home</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2023, Manh Khoi Duong
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">fado.metrics package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-fado.metrics.dataset">fado.metrics.dataset module</a><ul>
+<li><a class="reference internal" href="#fado.metrics.dataset.disparate_impact_ratio"><code class="docutils literal notranslate"><span class="pre">disparate_impact_ratio()</span></code></a></li>
+<li><a class="reference internal" href="#fado.metrics.dataset.disparate_impact_ratio_deviation"><code class="docutils literal notranslate"><span class="pre">disparate_impact_ratio_deviation()</span></code></a></li>
+<li><a class="reference internal" href="#fado.metrics.dataset.disparate_impact_ratio_objective"><code class="docutils literal notranslate"><span class="pre">disparate_impact_ratio_objective()</span></code></a></li>
+<li><a class="reference internal" href="#fado.metrics.dataset.mean_difference"><code class="docutils literal notranslate"><span class="pre">mean_difference()</span></code></a></li>
+<li><a class="reference internal" href="#fado.metrics.dataset.statistical_parity_absolute_difference"><code class="docutils literal notranslate"><span class="pre">statistical_parity_absolute_difference()</span></code></a></li>
+<li><a class="reference internal" href="#fado.metrics.dataset.statistical_parity_absolute_difference_multi"><code class="docutils literal notranslate"><span class="pre">statistical_parity_absolute_difference_multi()</span></code></a></li>
+<li><a class="reference internal" href="#fado.metrics.dataset.statistical_parity_difference"><code class="docutils literal notranslate"><span class="pre">statistical_parity_difference()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-fado.metrics.independence">fado.metrics.independence module</a><ul>
+<li><a class="reference internal" href="#fado.metrics.independence.dependency_multi"><code class="docutils literal notranslate"><span class="pre">dependency_multi()</span></code></a></li>
+<li><a class="reference internal" href="#fado.metrics.independence.mutual_information"><code class="docutils literal notranslate"><span class="pre">mutual_information()</span></code></a></li>
+<li><a class="reference internal" href="#fado.metrics.independence.normalized_mutual_information"><code class="docutils literal notranslate"><span class="pre">normalized_mutual_information()</span></code></a></li>
+<li><a class="reference internal" href="#fado.metrics.independence.normalized_mutual_information_multi"><code class="docutils literal notranslate"><span class="pre">normalized_mutual_information_multi()</span></code></a></li>
+<li><a class="reference internal" href="#fado.metrics.independence.pearsonr"><code class="docutils literal notranslate"><span class="pre">pearsonr()</span></code></a></li>
+<li><a class="reference internal" href="#fado.metrics.independence.pearsonr_abs"><code class="docutils literal notranslate"><span class="pre">pearsonr_abs()</span></code></a></li>
+<li><a class="reference internal" href="#fado.metrics.independence.rdc"><code class="docutils literal notranslate"><span class="pre">rdc()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-fado.metrics.individual">fado.metrics.individual module</a><ul>
+<li><a class="reference internal" href="#fado.metrics.individual.consistency_score"><code class="docutils literal notranslate"><span class="pre">consistency_score()</span></code></a></li>
+<li><a class="reference internal" href="#fado.metrics.individual.consistency_score_objective"><code class="docutils literal notranslate"><span class="pre">consistency_score_objective()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-fado.metrics.prediction">fado.metrics.prediction module</a><ul>
+<li><a class="reference internal" href="#fado.metrics.prediction.average_odds_difference"><code class="docutils literal notranslate"><span class="pre">average_odds_difference()</span></code></a></li>
+<li><a class="reference internal" href="#fado.metrics.prediction.average_odds_error"><code class="docutils literal notranslate"><span class="pre">average_odds_error()</span></code></a></li>
+<li><a class="reference internal" href="#fado.metrics.prediction.equal_opportunity_absolute_difference"><code class="docutils literal notranslate"><span class="pre">equal_opportunity_absolute_difference()</span></code></a></li>
+<li><a class="reference internal" href="#fado.metrics.prediction.equal_opportunity_difference"><code class="docutils literal notranslate"><span class="pre">equal_opportunity_difference()</span></code></a></li>
+<li><a class="reference internal" href="#fado.metrics.prediction.predictive_equality_absolute_difference"><code class="docutils literal notranslate"><span class="pre">predictive_equality_absolute_difference()</span></code></a></li>
+<li><a class="reference internal" href="#fado.metrics.prediction.predictive_equality_difference"><code class="docutils literal notranslate"><span class="pre">predictive_equality_difference()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/scripts/furo.js"></script>
+    </body>
+</html>
