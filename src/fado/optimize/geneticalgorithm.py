@@ -1,8 +1,8 @@
 import numpy as np
 
-from .geneticoperators.crossover import onepoint_crossover, uniform_crossover
-from .geneticoperators.mutation import mutate
-from .geneticoperators.selection import select_parents
+from fado.optimize.geneticoperators.crossover import onepoint_crossover, uniform_crossover
+from fado.optimize.geneticoperators.mutation import mutate
+from fado.optimize.geneticoperators.selection import select_parents
 from fado.utils.penalty import relative_difference_penalty
 
 

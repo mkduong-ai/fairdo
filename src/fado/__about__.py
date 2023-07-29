@@ -1,5 +1,5 @@
 __title__ = "fado"
-__version__ = "0.0.6"
+__version__ = "0.0.7"
 __author__ = "Manh Khoi Duong, Stefan Conrad"
 __email__ = "duong@hhu.de"
 __license__ = "MIT"

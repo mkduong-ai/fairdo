@@ -1,4 +1,4 @@
-from .base import Preprocessing
+from fado.preprocessing import Preprocessing
 from fado.metrics import statistical_parity_absolute_difference
 
 

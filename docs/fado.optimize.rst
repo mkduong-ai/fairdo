@@ -28,14 +28,6 @@ fado.optimize.geneticalgorithm module
    :undoc-members:
    :show-inheritance:
 
-fado.optimize.simulatedannealing module
----------------------------------------
-
-.. automodule:: fado.optimize.simulatedannealing
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Module contents
 ---------------
 
