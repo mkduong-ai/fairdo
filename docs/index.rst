@@ -24,7 +24,7 @@ The `optimize` module contains methods for optimizing fairness in data.
 These methods can adjust the features of data with the aim of reducing discrimination and improving fairness.
 
 Pre-processing
--------------
+--------------
 
 The `preprocessing` module is equipped with tools designed to prepare datasets for fairness optimization.
 Each method returns a pre-processed dataset that is optimized for fairness,
@@ -41,7 +41,7 @@ Each of these modules plays a crucial role in the functionality of the fado pack
 working together to provide a comprehensive toolkit for fairness optimization in datasets.
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 4
    :caption: Contents:
    
    fado.metrics

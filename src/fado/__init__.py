@@ -18,7 +18,7 @@ The `optimize` module contains methods for optimizing fairness in data.
 These methods can adjust the features of data with the aim of reducing discrimination and improving fairness.
 
 Pre-processing
--------------
+--------------
 
 The `preprocessing` module is equipped with tools designed to prepare datasets for fairness optimization.
 Each method returns a pre-processed dataset that is optimized for fairness,
