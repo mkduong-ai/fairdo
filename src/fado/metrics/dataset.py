@@ -61,7 +61,9 @@ def statistical_parity_absolute_difference_multi(y: np.array, z: np.array,
 def statistical_parity_difference(y: np.array, z: np.array,
                                   positive_label=1, privileged_group=1, **kwargs) -> float:
     """
-    Calculate the difference in statistical parity according to Lee et al. (2022).
+    Calculate the difference in statistical parity according to [1].
+
+    [1] A Maximal Correlation Framework for Fair Machine Learning (Lee et al. 2022) (https://arxiv.org/abs/2106.00051)
 
     Parameters
     ----------

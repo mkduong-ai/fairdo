@@ -4,15 +4,17 @@ import numpy as np
 def equal_opportunity_difference(y_true: np.array, y_pred: np.array, z: np.array,
                                  positive_label=1, privileged_group=1, **kwargs) -> float:
     """
-    Compute the difference in Equality of Opportunity (Lee et al. 2022) between
+    Compute the difference in Equality of Opportunity [1] between
     the privileged group and the unprivileged group.
 
-    Equality of Opportunity (Hardt, Price, Srebro, 2016) is a fairness metric
+    Equality of Opportunity [1] is a fairness metric
     that measures the difference in true positive rates between the privileged and unprivileged groups.
     This function returns a float representing that difference.
     A value of 0 indicates perfect fairness, positive values indicate bias
     against the unprivileged group, while negative values indicate
     bias against the privileged group.
+
+    [1] Equality of Opportunity (Hardt, Price, Srebro, 2016)](https://arxiv.org/abs/1610.02413)
 
     Parameters
     ----------
@@ -54,8 +56,9 @@ def equal_opportunity_difference(y_true: np.array, y_pred: np.array, z: np.array
 
 def equal_opportunity_absolute_difference(*args, **kwargs):
     """
-    Compute the absolute difference in Equality of Opportunity (Lee et al. 2022).
-    Original work: Equality of Opportunity (Hardt, Price, Srebro, 2016)
+    Compute the absolute difference in Equality of Opportunity [1].
+
+    [1] Equality of Opportunity (Hardt, Price, Srebro, 2016) (https://arxiv.org/abs/1610.02413)
 
     Parameters
     ----------
@@ -134,7 +137,9 @@ def predictive_equality_absolute_difference(*args, **kwargs):
 def average_odds_difference(y_true: np.array, y_pred: np.array, z: np.array,
                             positive_label=1, privileged_group=1, **kwargs) -> float:
     """
-    Calculate the difference in Average Odds (aif360).
+    Calculate the difference in Average Odds between privileged and unprivileged groups.
+
+    [1] Equality of Opportunity in Supervised Learning (Hardt, Price, Srebro, 2016) (https://arxiv.org/abs/1610.02413)
 
     Parameters
     ----------
