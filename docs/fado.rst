@@ -1,6 +1,11 @@
 fado package
 ============
 
+.. automodule:: fado
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Subpackages
 -----------
 
@@ -11,11 +16,3 @@ Subpackages
    fado.optimize
    fado.preprocessing
    fado.utils
-
-Module contents
----------------
-
-.. automodule:: fado
-   :members:
-   :undoc-members:
-   :show-inheritance:

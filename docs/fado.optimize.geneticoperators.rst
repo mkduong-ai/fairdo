@@ -1,6 +1,11 @@
 fado.optimize.geneticoperators package
 ======================================
 
+.. automodule:: fado.optimize.geneticoperators
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Submodules
 ----------
 
@@ -24,14 +29,6 @@ fado.optimize.geneticoperators.selection module
 -----------------------------------------------
 
 .. automodule:: fado.optimize.geneticoperators.selection
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: fado.optimize.geneticoperators
    :members:
    :undoc-members:
    :show-inheritance:

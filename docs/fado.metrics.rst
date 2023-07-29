@@ -1,6 +1,11 @@
 fado.metrics package
 ====================
 
+.. automodule:: fado.metrics
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Subpackages
 -----------
 
@@ -40,14 +45,6 @@ fado.metrics.prediction module
 ------------------------------
 
 .. automodule:: fado.metrics.prediction
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: fado.metrics
    :members:
    :undoc-members:
    :show-inheritance:

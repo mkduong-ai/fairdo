@@ -1,6 +1,11 @@
 fado.utils package
 ==================
 
+.. automodule:: fado.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Submodules
 ----------
 
@@ -16,14 +21,6 @@ fado.utils.penalty module
 -------------------------
 
 .. automodule:: fado.utils.penalty
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: fado.utils
    :members:
    :undoc-members:
    :show-inheritance:

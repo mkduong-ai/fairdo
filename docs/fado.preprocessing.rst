@@ -1,6 +1,11 @@
 fado.preprocessing package
 ==========================
 
+.. automodule:: fado.preprocessing
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Submodules
 ----------
 
@@ -24,14 +29,6 @@ fado.preprocessing.solverwrapper module
 ---------------------------------------
 
 .. automodule:: fado.preprocessing.solverwrapper
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: fado.preprocessing
    :members:
    :undoc-members:
    :show-inheritance:

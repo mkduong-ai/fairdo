@@ -1,6 +1,11 @@
 fado.optimize package
 =====================
 
+.. automodule:: fado.optimize
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Subpackages
 -----------
 
@@ -24,14 +29,6 @@ fado.optimize.geneticalgorithm module
 -------------------------------------
 
 .. automodule:: fado.optimize.geneticalgorithm
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: fado.optimize
    :members:
    :undoc-members:
    :show-inheritance:
