@@ -4,7 +4,7 @@ Optimize Module
 
 The Optimize module provides methods for optimizing fairness in datasets.
 **The solvers are used with Preprocessors** to optimize the fairness of a dataset.
-All solvers take an objective function :math:f, number of dimensions of the problem :math:d,
+All solvers take an objective function :math:`f`, number of dimensions of the problem :math:`d`,
 and specific hyperparameters as parameters.
 
 Wrapping it as a pre-processing method, all solvers return a binary mask that can be used to filter the dataset.
