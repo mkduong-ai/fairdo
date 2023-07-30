@@ -23,8 +23,8 @@ and the data :math:`x`.
 and :math:`y` can be the true label or a prediction.
 
 4. `prediction`: This submodule provides metrics to evaluate the fairness of predictions made by a
-machine learning model. This submodule requires the true label :math:`y_{\text{true}}`,
-the predicted label :math:`y_{\text{pred}}`.
+machine learning model. This submodule requires the true label :math:`y_{true}`,
+the predicted label :math:`y_{pred}`.
 
 Each submodule provides a different perspective on fairness, and together they provide a comprehensive toolkit
 for measuring fairness in datasets.

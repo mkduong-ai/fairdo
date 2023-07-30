@@ -2,7 +2,7 @@
 Penalty Functions for Constrained Optimization
 ==============================================
 
-This module provides penalty functions specifically designed for fairness optimization.
+This module provides penalty functions specifically designed for fairness optimization with constraints.
 The constraint in this context is that the number of data points after pre-processing should match a specified value.
 A practical penalty function is ``relative_shortfall_penalty``, which is designed to handle situations
 where the number of data points is less than this specified value, and in such cases,
