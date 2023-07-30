@@ -1,9 +1,3 @@
-from fado import metrics
-from fado import optimize
-from fado import preprocessing
-from fado import utils
-from fado.__about__ import *
-
 """
 Metrics
 -------
@@ -34,3 +28,9 @@ These include helper functions for performing mathematical operations, and other
 Each of these modules plays a crucial role in the functionality of the fado package,
 working together to provide a comprehensive toolkit for fairness optimization in datasets.
 """
+
+from fado import metrics
+from fado import optimize
+from fado import preprocessing
+from fado import utils
+from fado.__about__ import *
