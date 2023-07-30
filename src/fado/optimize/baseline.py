@@ -8,36 +8,41 @@ def original_method(f, d):
 
     Parameters
     ----------
-    f: callable
-    d: int
+    f : callable
+        A function that calculates the fitness of a vector.
+    d : int
+        The dimension of the vector.
 
     Returns
     -------
-
+    np.array, float
+        A vector of ones and the fitness value of that vector.
     """
     return np.ones(d), f(np.ones(d))
 
 
 def random_method(f, d, pop_size=50, num_generations=100):
     """
-    Generate a random solution (binary vector) and evaluate it.
-    In to for-loop, generate a new solution and evaluate it.
-    If the new solution is better than the current solution,
-    replace the current solution with the new solution.
-    Repeat this process for pop_size * num_generations times.
+    This function generates a random binary vector and evaluates its performance.
+    In a for-loop, it generates a new binary vector and evaluates its performance.
+    If the new binary vector performs better than the current one, the current vector is replaced with the new one.
+    This process is repeated for a total of ``pop_size * num_generations`` times.
 
     Parameters
     ----------
-    f: callable
-    d: int
-    pop_size: int
-        population size
-    num_generations: int
-        number of generations
+    f : callable
+        A function that calculates the fitness of a vector.
+    d : int
+        The dimension of the vector.
+    pop_size : int
+        The size of the population.
+    num_generations : int
+        The number of generations.
 
     Returns
     -------
-
+    np.array, float
+        The final solution vector and its fitness value.
     """
     current_solution = np.random.randint(0, 2, size=d)
     current_fitness = f(current_solution)
