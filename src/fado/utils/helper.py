@@ -12,6 +12,7 @@ def generate_pairs(lst):
 
     Returns
     -------
-    list of pairs
+    list
+        list of pairs of elements
     """
     return list(combinations(lst, 2))
