@@ -62,9 +62,9 @@ def equal_opportunity_absolute_difference(*args, **kwargs):
 
     Parameters
     ----------
-    *args : arguments
+    *args: arguments
         Variable length argument list to be passed to `equal_opportunity_difference` function.
-    **kwargs : keyword arguments
+    **kwargs: keyword arguments
         Arbitrary keyword arguments to be passed to `equal_opportunity_difference` function.
 
     Returns
@@ -82,15 +82,15 @@ def predictive_equality_difference(y_true: np.array, y_pred: np.array, z: np.arr
 
     Parameters
     ----------
-    y_true : numpy.array
+    y_true: numpy.array
         True binary labels as a flattened array.
-    y_pred : numpy.array
+    y_pred: numpy.array
         Predicted binary labels as a flattened array. Must have same shape as y_true.
-    z : numpy.array
+    z: numpy.array
         Binary array denoting privileged (1) or unprivileged (0) group. Same shape as y_true.
-    positive_label : int, optional
+    positive_label: int, optional
         Label considered as positive, default is 1.
-    privileged_group : int, optional
+    privileged_group: int, optional
         Label representing the privileged group, default is 1.
 
     Returns
@@ -121,9 +121,9 @@ def predictive_equality_absolute_difference(*args, **kwargs):
 
     Parameters
     ----------
-    *args : arguments
+    *args: arguments
         Variable length argument list to be passed to `predictive_equality_difference` function.
-    **kwargs : keyword arguments
+    **kwargs: keyword arguments
         Arbitrary keyword arguments to be passed to `predictive_equality_difference` function.
 
     Returns
@@ -143,15 +143,15 @@ def average_odds_difference(y_true: np.array, y_pred: np.array, z: np.array,
 
     Parameters
     ----------
-    y_true : numpy.array
+    y_true: numpy.array
         Flattened array of true binary labels.
-    y_pred : numpy.array
+    y_pred: numpy.array
         Flattened array of predicted binary labels. Must have same shape as y_true.
-    z : numpy.array
+    z: numpy.array
         Binary array indicating privileged (1) or unprivileged (0) group. Same shape as y_true.
-    positive_label : int, optional
+    positive_label: int, optional
         Label considered as positive, default is 1.
-    privileged_group : int, optional
+    privileged_group: int, optional
         Label denoting the privileged group, default is 1.
 
     Returns
@@ -180,15 +180,15 @@ def average_odds_error(y_true: np.array, y_pred: np.array, z: np.array,
 
     Parameters
     ----------
-    y_true : numpy.array
+    y_true: numpy.array
         Flattened array of true binary labels.
-    y_pred : numpy.array
+    y_pred: numpy.array
         Flattened array of predicted binary labels. Must have same shape as y_true.
-    z : numpy.array
+    z: numpy.array
         Binary array indicating privileged (1) or unprivileged (0) group. Same shape as y_true.
-    positive_label : int, optional
+    positive_label: int, optional
         Label considered as positive, default is 1.
-    privileged_group : int, optional
+    privileged_group: int, optional
         Label denoting the privileged group, default is 1.
 
     Returns

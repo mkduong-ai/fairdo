@@ -14,15 +14,15 @@ def statistical_parity_absolute_difference_multi(y: np.array, z: np.array,
 
     Parameters
     ----------
-    y : np.array
+    y: np.array
         Flattened binary array of shape (n_samples,), can be the prediction or the truth label.
-    z : np.array
+    z: np.array
         Array of shape (n_samples, n_protected_attributes) representing the protected attribute.
-    agg_attribute : callable, optional
+    agg_attribute: callable, optional
         Aggregation function for the attribute. Default is np.sum.
-    agg_group : callable, optional
+    agg_group: callable, optional
         Aggregation function for the group. Default is np.sum.
-    positive_label : int, optional
+    positive_label: int, optional
         Label considered as positive. Default is 1.
 
     Returns
@@ -67,13 +67,13 @@ def statistical_parity_difference(y: np.array, z: np.array,
 
     Parameters
     ----------
-    y : np.array
+    y: np.array
         Flattened binary array, can be the prediction or the truth label.
-    z : np.array
+    z: np.array
         Flattened binary array of shape y, represents the protected attribute.
-    positive_label : int, optional
+    positive_label: int, optional
         Label considered as positive. Default is 1.
-    privileged_group : int, optional
+    privileged_group: int, optional
         Label considered as privileged. Default is 1.
 
     Returns
@@ -101,13 +101,13 @@ def mean_difference(*args, **kwargs) -> float:
 
     Parameters
     ----------
-    y : np.array
+    y: np.array
         Flattened binary array, can be the prediction or the truth label.
-    z : np.array
+    z: np.array
         Flattened binary array of shape y, represents the protected attribute.
-    positive_label : int, optional
+    positive_label: int, optional
         Label considered as positive. Default is 1.
-    privileged_group : int, optional
+    privileged_group: int, optional
         Label considered as privileged. Default is 1.
 
     Returns
@@ -124,13 +124,13 @@ def statistical_parity_absolute_difference(*args, **kwargs) -> float:
 
     Parameters
     ----------
-    y : np.array
+    y: np.array
         Flattened binary array, can be the prediction or the truth label.
-    z : np.array
+    z: np.array
         Flattened binary array of shape y, represents the protected attribute.
-    positive_label : int, optional
+    positive_label: int, optional
         Label considered as positive. Default is 1.
-    privileged_group : int, optional
+    privileged_group: int, optional
         Label considered as privileged. Default is 1.
 
     Returns
@@ -154,13 +154,13 @@ def disparate_impact_ratio(y: np.array, z: np.array,
 
     Parameters
     ----------
-    y : np.array
+    y: np.array
         Flattened binary array, can be the prediction or the truth label.
-    z : np.array
+    z: np.array
         Flattened binary array of shape y, represents the protected attribute.
-    positive_label : int, optional
+    positive_label: int, optional
         Label considered as positive. Default is 1.
-    privileged_group : int, optional
+    privileged_group: int, optional
         Label considered as privileged. Default is 1.
 
     Returns
@@ -200,13 +200,13 @@ def disparate_impact_ratio_objective(y: np.array, z: np.array,
 
     Parameters
     ----------
-    y : np.array
+    y: np.array
         Flattened binary array, can be the prediction or the truth label.
-    z : np.array
+    z: np.array
         Flattened binary array of shape y, represents the protected attribute.
-    positive_label : int, optional
+    positive_label: int, optional
         Label considered as positive. Default is 1.
-    privileged_group : int, optional
+    privileged_group: int, optional
         Label considered as privileged. Default is 1.
 
     Returns
@@ -230,13 +230,13 @@ def disparate_impact_ratio_deviation(y: np.array, z: np.array,
 
     Parameters
     ----------
-    y : np.array
+    y: np.array
         Flattened binary array, can be the prediction or the truth label.
-    z : np.array
+    z: np.array
         Flattened binary array of shape y, represents the protected attribute.
-    positive_label : int, optional
+    positive_label: int, optional
         Label considered as positive. Default is 1.
-    privileged_group : int, optional
+    privileged_group: int, optional
         Label considered as privileged. Default is 1.
 
     Returns

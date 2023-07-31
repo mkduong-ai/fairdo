@@ -11,19 +11,19 @@ def consistency_score(x: np.array, y: np.array, n_neighbors=5, **kwargs) -> floa
 
     Parameters
     ----------
-    x : np.array
+    x: np.array
         Array representing the input data.
-    y : np.array
+    y: np.array
         Array of the same length as x, representing the output data.
-    n_neighbors : int, optional
+    n_neighbors: int, optional
         Number of neighbors to consider. Default is 5.
     **kwargs
         Additional keyword arguments. These are not currently used.
 
     Returns
     -------
-        float
-            The consistency score. Higher values indicate more fairness.
+    float
+        The consistency score. Higher values indicate more fairness.
     """
 
     # fit the KNN model
@@ -48,11 +48,11 @@ def consistency_score_objective(x: np.array, y: np.array, n_neighbors=5, **kwarg
 
     Parameters
     ----------
-    x : np.array
+    x: np.array
         Array representing the input data.
-    y : np.array
+    y: np.array
         Array of the same length as x, representing the output data.
-    n_neighbors : int, optional
+    n_neighbors: int, optional
         Number of neighbors to consider. Default is 5.
     **kwargs
         Additional keyword arguments. These are not currently used.

@@ -19,16 +19,16 @@ def dependency_multi(y: np.array, z: np.array,
 
     Parameters
     ----------
-    y : np.array
+    y: np.array
         Flattened binary array of shape (n_samples,), can be a prediction or the truth label.
-    z : np.array
+    z: np.array
         Array of shape (n_samples, n_protected_attributes), represents the protected attributes.
-    dependency_function : callable, optional
+    dependency_function: callable, optional
         Function to compute the dependency between `y` and each protected attribute.
         Default is normalized_mutual_info_score.
-    agg : callable, optional
+    agg: callable, optional
         Aggregation function to combine the dependency scores. Default is np.max.
-    positive_label : int, optional
+    positive_label: int, optional
         Label considered as positive. Default is 1.
     **kwargs
         Additional keyword arguments. These are not currently used.
@@ -68,13 +68,13 @@ def normalized_mutual_information_multi(y: np.array, z: np.array,
 
     Parameters
     ----------
-    y : np.array
+    y: np.array
         Flattened binary array of shape (n_samples,), can be a prediction or the truth label.
-    z : np.array
+    z: np.array
         Array of shape (n_samples, n_protected_attributes), represents the protected attributes.
-    agg : callable, optional
+    agg: callable, optional
         Aggregation function to combine the normalized mutual information scores. Default is np.max.
-    positive_label : int, optional
+    positive_label: int, optional
         Label considered as positive. Default is 1.
     **kwargs
         Additional keyword arguments. These are not currently used.
@@ -100,9 +100,9 @@ def pearsonr(y: np.array, z: np.array, **kwargs) -> float:
 
     Parameters
     ----------
-    y : np.array
+    y: np.array
         Flattened array, can be a prediction or the truth label.
-    z : np.array
+    z: np.array
         Flattened array of the same shape as y.
     **kwargs
         Additional keyword arguments. These are not currently used.
@@ -127,9 +127,9 @@ def pearsonr_abs(y: np.array, z: np.array, **kwargs) -> float:
 
     Parameters
     ----------
-    y : np.array
+    y: np.array
         Flattened array, can be a prediction or the truth label.
-    z : np.array
+    z: np.array
         Flattened array of the same shape as y.
     **kwargs
         Additional keyword arguments. These are not currently used.
@@ -152,11 +152,11 @@ def mutual_information(y: np.array, z: np.array, bins=2, **kwargs) -> float:
 
     Parameters
     ----------
-    y : np.array
+    y: np.array
         Flattened array, can be a prediction or the truth label.
-    z : np.array
+    z: np.array
         Flattened array of the same shape as y.
-    bins : int, optional
+    bins: int, optional
         Number of bins for discretization. Default is 2.
     **kwargs
         Additional keyword arguments. These are not currently used.
@@ -180,9 +180,9 @@ def normalized_mutual_information(y: np.array, z: np.array, **kwargs) -> float:
 
     Parameters
     ----------
-    y : np.array
+    y: np.array
         Flattened array, can be a prediction or the truth label.
-    z : np.array
+    z: np.array
         Flattened array of the same shape as y.
     **kwargs
         Additional keyword arguments. These are not currently used.

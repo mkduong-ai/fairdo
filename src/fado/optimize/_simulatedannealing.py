@@ -4,21 +4,37 @@ from fado.utils.penalty import relative_difference_penalty
 
 
 def acceptance_probability(delta, temperature):
+    """
+    Calculates the acceptance probability for a new solution in the simulated annealing algorithm.
+
+    Parameters
+    ----------
+    delta: float
+        The difference in fitness between the current solution and the new solution.
+    temperature: float
+        The current temperature in the simulated annealing algorithm.
+
+    Returns
+    -------
+    float
+        The acceptance probability for the new solution.
+    """
     return np.exp(-delta / temperature)
 
 
 def simulated_annealing_constraint(f, d, n, T_max, T_min, cooling_rate, max_iter=1000,
                                    penalty=relative_difference_penalty):
     """
+    Performs the simulated annealing optimization algorithm with a constraint on the number of 1s in the binary vector.
 
     Parameters
     ----------
     f: callable
-        The function to be minimized
+        The function to be minimized.
     d: int
-        dimension of the binary vector
+        The dimension of the binary vector.
     n: int
-        constraint on the number of 1s in the binary vector
+        The constraint on the number of 1s in the binary vector.
     T_max: float
         The initial temperature, which should be set high enough to allow the algorithm to
         escape local optima and explore the search space.
@@ -27,10 +43,10 @@ def simulated_annealing_constraint(f, d, n, T_max, T_min, cooling_rate, max_iter
         converged to a local minimum.
     cooling_rate: float
         The temperature decay rate, which should be set between 0 and 1. A value of 0.9 is often used.
-    max_iter: int
+    max_iter: int, optional
         The maximum number of iterations to perform. This is used to prevent the algorithm from running
         indefinitely if it fails to converge.
-    penalty: callable
+    penalty: callable, optional
         The penalty function that penalizes the fitness of a solution if it does not satisfy the constraint
         Parameters: solution (np.array), n (int)
         Returns: float
@@ -76,13 +92,14 @@ def simulated_annealing_constraint(f, d, n, T_max, T_min, cooling_rate, max_iter
 
 def simulated_annealing(f, d, T_max, T_min, cooling_rate, max_iter=1000):
     """
+     Performs the simulated annealing optimization algorithm.
 
     Parameters
     ----------
     f: callable
-        The function to be minimized
+        The function to be minimized.
     d: int
-        dimension of the binary vector
+        The dimension of the binary vector
     T_max: float
         The initial temperature, which should be set high enough to allow the algorithm to
         escape local optima and explore the search space.
@@ -112,6 +129,8 @@ def simulated_annealing(f, d, T_max, T_min, cooling_rate, max_iter=1000):
 
 def simulated_annealing_method(f, d):
     """
+    Simulated annealing method with default parameters.
+
     Parameters
     ----------
     f: callable
