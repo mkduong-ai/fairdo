@@ -8,16 +8,17 @@ def select_parents(population, fitness, num_parents=2):
 
     Parameters
     ----------
-    population: numpy array
+    population: ndarray, shape (n, d)
         population of individuals
-    fitness: numpy array
+    fitness: ndarray, shape (n,)
         fitness of each individual
     num_parents: int
         number of parents to select
 
     Returns
     -------
-    parents: numpy array
+    parents: ndarray, shape (num_parents, d)
+    fitness: ndarray, shape (num_parents,)
     """
     # select the best individuals from the population to be parents
     idx = np.argsort(fitness)
