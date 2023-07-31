@@ -7,12 +7,45 @@ from fado.utils.penalty import relative_difference_penalty
 
 
 def generate_population(pop_size, d):
-    # generate a population of binary vectors
+    """
+    Generate a population of binary vectors.
+
+    Parameters
+    ----------
+    pop_size: int
+        The size of the population to generate.
+    d: int
+        The dimension of the binary vectors.
+
+    Returns
+    -------
+    population: ndarray, shape (pop_size, d)
+        The generated population of binary vectors.
+    """
     return np.random.randint(2, size=(pop_size, d))
 
 
 def evaluate_population(f, n, population, penalty_function=relative_difference_penalty):
-    # evaluate the function for each vector in the population
+    """
+    Calculates the fitness of each individual in a population. The fitness is the value of the fitness function
+    plus a penalty for individuals that do not satisfy the size constraint.
+
+    Parameters
+    ----------
+    f: callable
+        The fitness function to evaluate.
+    n: int
+        The constraint value.
+    population: ndarray
+        The population of vectors to evaluate.
+    penalty_function: callable, optional
+        The penalty function to apply to individuals that do not satisfy the size constraint.
+
+    Returns
+    -------
+    fitness: ndarray, shape (pop_size,)
+        The fitness values of the population.
+    """
     fitness = np.apply_along_axis(f, axis=1, arr=population)
 
     if n > 0:
@@ -27,51 +60,33 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
                                  crossover=onepoint_crossover,
                                  mutate=mutate, ):
     """
-    Here is an example of a research paper that uses the genetic algorithm to solve
-    optimization problems with constraints:
-
-    @article{Deb2002,
-      title={A fast and elitist multiobjective genetic algorithm: NSGA-II},
-      author={Deb, Kalyanmoy and Pratap, Amrit and Agarwal, Sameer and Meyarivan, T},
-      journal={IEEE Transactions on Evolutionary Computation},
-      volume={6},
-      number={2},
-      pages={182--197},
-      year={2002},
-      publisher={IEEE}
-    }
-
-    This paper describes an efficient multi-objective genetic algorithm called NSGA-II that can handle constraints by
-    applying a penalty function approach.
-
-    To use this for your problem, add the constraint to your fitness function and apply
-    a penalty function to the solutions that do not satisfy the constraint.
+    Perform a genetic algorithm with constraints.
 
     Parameters
     ----------
     f: callable
-        function to minimize
+        The fitness function to minimize.
     d: int
-        number of dimensions
+        The number of dimensions.
     n: int
-        constraint value (sum of 1-entries in the vector must equal n)
+        The constraint value.
     pop_size: int
-        population size (number of individuals)
+        The size of the population.
     num_generations: int
-        number of generations
+        The number of generations.
     select_parents: callable
-        function to select the parents from the population
+        The function to select the parents from the population.
     crossover: callable
-        function to perform the crossover operation
+        The function to perform the crossover operation.
     mutate: callable
-        function to perform the mutation operation
+        The function to perform the mutation operation.
 
     Returns
     -------
-    population: np.array of size (d,)
-        The best solution found by the algorithm
-    fitness: float
-        The fitness of the best solution found by the algorithm
+    best_solution : ndarray, shape (d,)
+        The best solution found by the algorithm.
+    best_fitness : float
+        The fitness of the best solution found by the algorithm.
     """
     # generate the initial population
     population = generate_population(pop_size, d)
@@ -105,30 +120,31 @@ def genetic_algorithm(f, d, pop_size, num_generations,
                       crossover=onepoint_crossover,
                       mutate=mutate, ):
     """
+    Perform a genetic algorithm.
 
     Parameters
     ----------
-    f: function
-        function to optimize
+    f: callable
+        The fitness function to optimize.
     d: int
-        number of dimensions
+        The number of dimensions.
     pop_size: int
-        population size (number of individuals)
+        The size of the population.
     num_generations: int
-        number of generations
+        The number of generations.
     select_parents: callable
-        function to select the parents from the population
+        The function to select the parents from the population.
     crossover: callable
-        function to perform the crossover operation
+        The function to perform the crossover operation.
     mutate: callable
-        function to perform the mutation operation
+        The function to perform the mutation operation.
 
     Returns
     -------
-    population: np.array of size (d,)
-        The best solution found by the algorithm
-    fitness: float
-        The fitness of the best solution found by the algorithm
+    best_solution: ndarray
+        The best solution found by the algorithm.
+    best_fitness: float
+        The fitness of the best solution found by the algorithm.
     """
     return genetic_algorithm_constraint(f=f, d=d, n=0, pop_size=pop_size, num_generations=num_generations,
                                         select_parents=select_parents,
@@ -142,25 +158,27 @@ def genetic_algorithm_method(f, d,
                              mutate=mutate, ):
     """
     Genetic Algorithm method
-    Parameters
+
+   Parameters
     ----------
-    f: function
-        function to optimize
+    f: callable
+        The fitness function to optimize.
     d: int
-        number of dimensions
+        The number of dimensions.
     select_parents: callable
-        function to select the parents from the population
+        The function to select the parents from the population.
     crossover: callable
-        function to perform the crossover operation
+        The function to perform the crossover operation.
+        Default: onepoint_crossover
     mutate: callable
-        function to perform the mutation operation
+        The function to perform the mutation operation.
 
     Returns
     -------
-    population: np.array of size (d,)
-        The best solution found by the algorithm
-    fitness: float
-        The fitness of the best solution found by the algorithm
+    best_solution: ndarray, shape (d,)
+        The best solution found by the algorithm.
+    best_fitness: float
+        The fitness of the best solution found by the algorithm.
     """
     return genetic_algorithm(f=f, d=d, pop_size=50, num_generations=100,
                              select_parents=select_parents,
@@ -174,25 +192,27 @@ def genetic_algorithm_uniform_method(f, d,
                                      mutate=mutate, ):
     """
     Genetic Algorithm method
-    Parameters
+
+   Parameters
     ----------
-    f: function
-        function to optimize
+    f: callable
+        The fitness function to optimize.
     d: int
-        number of dimensions
+        The number of dimensions.
     select_parents: callable
-        function to select the parents from the population
+        The function to select the parents from the population.
     crossover: callable
-        function to perform the crossover operation
+        The function to perform the crossover operation.
+        Default: uniform_crossover
     mutate: callable
-        function to perform the mutation operation
+        The function to perform the mutation operation.
 
     Returns
     -------
-    population: np.array of size (d,)
-        The best solution found by the algorithm
-    fitness: float
-        The fitness of the best solution found by the algorithm
+    best_solution: ndarray, shape (d,)
+        The best solution found by the algorithm.
+    best_fitness: float
+        The fitness of the best solution found by the algorithm.
     """
     return genetic_algorithm(f=f, d=d, pop_size=50, num_generations=100,
                              select_parents=select_parents,

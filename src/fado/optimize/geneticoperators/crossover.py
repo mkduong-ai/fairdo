@@ -3,7 +3,7 @@ import numpy as np
 
 def onepoint_crossover(parents, offspring_size):
     """
-    Perform the crossover operation with One-point crossover on the parents to create the offspring
+    Perform the crossover operation with One-point crossover on the parents to create the offspring.
 
     Parameters
     ----------
@@ -14,7 +14,7 @@ def onepoint_crossover(parents, offspring_size):
 
     Returns
     -------
-    offspring: numpy array
+    offspring: ndarray, shape (offspring_size, d)
     """
     # perform one-point crossover on the parents to generate new offspring
     return kpoint_crossover(parents, offspring_size, k=1)
@@ -22,7 +22,7 @@ def onepoint_crossover(parents, offspring_size):
 
 def uniform_crossover(parents, offspring_size, p=0.5):
     """
-    Perform the crossover operation with Uniform crossover on the parents to create the offspring
+    Perform the crossover operation with Uniform crossover on the parents to create the offspring.
 
     Parameters
     ----------
@@ -35,7 +35,7 @@ def uniform_crossover(parents, offspring_size, p=0.5):
 
     Returns
     -------
-    offspring: numpy array
+    offspring: ndarray, shape (offspring_size, d)
     """
     # perform crossover on the parents to generate new offspring
     offspring = np.empty(offspring_size)
@@ -52,7 +52,7 @@ def uniform_crossover(parents, offspring_size, p=0.5):
 
 def kpoint_crossover(parents, offspring_size, k=2):
     """
-    Perform the crossover operation with K-point crossover on the parents to create the offspring
+    Perform the crossover operation with K-point crossover on the parents to create the offspring.
 
     Parameters
     ----------
@@ -65,7 +65,7 @@ def kpoint_crossover(parents, offspring_size, k=2):
 
     Returns
     -------
-    offspring: numpy array
+    offspring: ndarray, shape (offspring_size, d)
     """
     # perform crossover on the parents to generate new offspring
     offspring = np.empty(offspring_size)
