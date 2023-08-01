@@ -159,7 +159,7 @@ def genetic_algorithm_method(f, d,
     """
     Genetic Algorithm method
 
-   Parameters
+    Parameters
     ----------
     f: callable
         The fitness function to optimize.
@@ -193,7 +193,7 @@ def genetic_algorithm_uniform_method(f, d,
     """
     Genetic Algorithm method
 
-   Parameters
+    Parameters
     ----------
     f: callable
         The fitness function to optimize.
