@@ -192,8 +192,9 @@ def run_experiment(data_str, disc_dict, methods,
 
         # create objective function
         f = lambda binary_vector, dataframe, label, protected_attributes, disc_measure: \
-            f_add(binary_vector, dataframe=dataframe, label=label, protected_attributes=protected_attributes,
-                  disc_measure=disc_measure, synthetic_dataframe=df_syn)
+            f_add(binary_vector, dataframe=dataframe, sample_dataframe=df_syn,
+                  label=label, protected_attributes=protected_attributes,
+                  disc_measure=disc_measure)
         dims = df_syn.shape[0]
     else:
         raise ValueError(f'Objective {objective_str} not supported.')
@@ -260,7 +261,7 @@ def run_experiments(data_str, disc_dict, methods, n_runs=10,
 def settings(data_str, objective_str):
     # objective_str = 'add'
     # data_str = 'compas'
-    n_runs = 15
+    n_runs = 1
     # create objective functions
     disc_dict = {
         'Statistical Disparity Sum': nb_statistical_parity_sum_abs_difference,
@@ -270,15 +271,15 @@ def settings(data_str, objective_str):
         'Distinct Groups': count_groups,
         'Sanity Check': sanity_check}
     # create methods
-    methods = {'Baseline (Original)': baseline.original_method,
-               'Random Heuristic': baseline.random_method,
+    methods = {#'Baseline (Original)': baseline.original_method,
+               #'Random Heuristic': baseline.random_method,
                'GA (1-Point Crossover)': ga.genetic_algorithm_method,
-               'GA (Uniform Crossover)': ga.genetic_algorithm_uniform_method,
+               #'GA (Uniform Crossover)': ga.genetic_algorithm_uniform_method,
                # 'Metric Optimizer': MetricOptimizer.metric_optimizer_remover}
                }
 
     # create save path
-    save_path = f'evaluation/results/nonbinary/{data_str}'
+    save_path = f'evaluation/results/nonbinary/test/{data_str}'
     if not os.path.exists(save_path):
         os.makedirs(save_path)
     filename_date = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")

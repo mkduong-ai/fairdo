@@ -124,7 +124,8 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
     """
     # negate the fitness function if we are minimizing
     if not maximize:
-        f = lambda x: -f(x)
+        f_orig = f
+        f = lambda x: -f_orig(x)
 
     # generate the initial population
     population = generate_population(pop_size, d)
@@ -226,7 +227,7 @@ def genetic_algorithm_method(f, d,
     best_fitness: float
         The fitness of the best solution found by the algorithm.
     """
-    return genetic_algorithm(f=f, d=d, pop_size=50, num_generations=100,
+    return genetic_algorithm(f=f, d=d, pop_size=50, num_generations=10,
                              select_parents=select_parents,
                              crossover=crossover,
                              mutate=mutate, )
