@@ -69,14 +69,18 @@ def tournament_selection(population, fitness, num_parents=2, tournament_size=3):
     -------
     parents: ndarray, shape (num_parents, d)
         Selected parents.
+    fitness: ndarray, shape (num_parents,)
+        Fitness of the selected parents.
     """
     parents = np.empty((num_parents, population.shape[1]))
+    parents_fitness = np.empty(num_parents)
     for i in range(num_parents):
         tournament_indices = np.random.randint(0, len(population), size=tournament_size)
         tournament_fitnesses = fitness[tournament_indices]
         winner_index = tournament_indices[np.argmax(tournament_fitnesses)]
         parents[i, :] = population[winner_index, :]
-    return parents
+        parents_fitness[i] = fitness[winner_index]
+    return parents, parents_fitness
 
 
 def stochastic_universal_sampling(population, fitness, num_parents):
@@ -96,6 +100,8 @@ def stochastic_universal_sampling(population, fitness, num_parents):
     -------
     parents: ndarray, shape (num_parents, d)
         The selected parents.
+    fitness: ndarray, shape (num_parents,)
+        The fitness of the selected parents.
     """
     # Normalize the fitness values
     fitness_sum = np.sum(fitness)
@@ -109,7 +115,7 @@ def stochastic_universal_sampling(population, fitness, num_parents):
 
     # Initialize the parents
     parents = np.empty((num_parents, population.shape[1]))
-
+    parents_fitness = np.empty(num_parents)
     # Perform the SUS
     for i in range(num_parents):
         pointer = start + i * distance
@@ -118,9 +124,10 @@ def stochastic_universal_sampling(population, fitness, num_parents):
             sum_fitness += normalized_fitness[j]
             if sum_fitness >= pointer:
                 parents[i] = population[j]
+                parents_fitness[i] = fitness[j]
                 break
 
-    return parents
+    return parents, parents_fitness
 
 
 def roulette_wheel_selection(population, fitness, num_parents=2):
@@ -142,11 +149,13 @@ def roulette_wheel_selection(population, fitness, num_parents=2):
     -------
     parents: ndarray, shape (num_parents, d)
         Selected parents.
+    fitness: ndarray, shape (num_parents,)
+        Fitness of the selected parents.
     """
     fitness_sum = np.sum(fitness)
     selection_probs = fitness / fitness_sum
     parents_idx = np.random.choice(np.arange(len(population)), size=num_parents, p=selection_probs)
-    return population[parents_idx]
+    return population[parents_idx], fitness[parents_idx]
 
 
 def rank_selection(population, fitness, num_parents=2):
