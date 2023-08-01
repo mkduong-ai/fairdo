@@ -43,9 +43,9 @@ def elitist_selection(population, fitness, num_parents=2):
     """
     # select the best individuals from the population to be parents
     idx = np.argsort(fitness)
-    parents = population[idx[:num_parents]]
-    fitness = fitness[idx[:num_parents]]
-    return parents, fitness
+    parents = population[idx[-num_parents:]]
+    parents_fitness = fitness[idx[-num_parents:]]
+    return parents, parents_fitness
 
 
 def tournament_selection(population, fitness, num_parents=2, tournament_size=3):
