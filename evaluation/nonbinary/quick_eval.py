@@ -1,6 +1,10 @@
 import time
 import datetime
 import os
+# loading data
+import requests
+import zipfile
+import io
 
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
@@ -66,10 +70,12 @@ def load_data(dataset_str):
                                   "occupation", "relationship", "race", "sex", "capital-gain", "capital-loss",
                                   "hours-per-week", "native-country", "income"])
         print('Data downloaded.')
-        # drop columns
+
+        # Drop columns
         cols_to_drop = ['fnlwgt', 'workclass', 'education', 'occupation', 'native-country']
         data = data.drop(columns=cols_to_drop)
-        # label encoding protected_attribute and label
+
+        # Label encoding protected_attribute and label
         label = 'income'
         protected_attributes = ['race']
         print(data[protected_attributes].iloc[:, 0].unique())
@@ -78,11 +84,16 @@ def load_data(dataset_str):
         cols_to_labelencode.append(label)
         data[cols_to_labelencode] = \
             data[cols_to_labelencode].apply(LabelEncoder().fit_transform)
-        # one-hot encoding categorical columns
+
+        # Encode categorical variables as one-hot
         categorical_cols = list(data.select_dtypes(include='object'))
         data = pd.get_dummies(data, columns=categorical_cols)
-        # downcast
+
+        # Downcast
         data = downcast(data)
+
+        # print the shape of the data
+        print(data.shape)
 
         return data, label, protected_attributes
     elif dataset_str == 'compas':
@@ -91,9 +102,11 @@ def load_data(dataset_str):
             "https://raw.githubusercontent.com/propublica/compas-analysis/master/compas-scores-two-years.csv",
             usecols=use_cols)
         print('Data downloaded.')
-        # drop rows with missing values
+
+        # Drop rows with missing values
         data = data.dropna(axis=0, how='any')
-        # label encoding protected_attribute and label
+
+        # Label encoding protected_attribute and label
         label = 'two_year_recid'
         protected_attributes = ['race']
         print(data[protected_attributes].iloc[:, 0].unique())
@@ -102,11 +115,60 @@ def load_data(dataset_str):
         cols_to_labelencode.append(label)
         data[cols_to_labelencode] = \
             data[cols_to_labelencode].apply(LabelEncoder().fit_transform)
-        # one-hot encoding categorical columns
+
+        # Encode categorical variables as one-hot
         categorical_cols = list(data.select_dtypes(include='object'))
         data = pd.get_dummies(data, columns=categorical_cols)
-        # downcast
+
+        # Downcast
         data = downcast(data)
+
+        # print the shape of the data
+        print(data.shape)
+
+        return data, label, protected_attributes
+    elif dataset_str == 'german':
+        # Loading German Credit dataset
+        data = pd.read_csv("http://archive.ics.uci.edu/ml/machine-learning-databases/statlog/german/german.data",
+                           header=None, delim_whitespace=True)
+        print('Data downloaded.')
+        # Preprocessing steps for German Credit dataset
+        # ...
+        pass
+        # Define label and protected attributes for German Credit dataset
+        label = 'credit_risk'
+        protected_attributes = ['age', 'gender']
+        raise NotImplementedError
+    elif dataset_str == 'bank':
+        # Loading Bank Marketing dataset
+        r = requests.get("http://archive.ics.uci.edu/ml/machine-learning-databases/00222/bank-additional.zip")
+        z = zipfile.ZipFile(io.BytesIO(r.content))
+        z.extractall()
+        data = pd.read_csv(z.open('bank-additional/bank-additional-full.csv'), delimiter=';')
+        print('Data downloaded.')
+
+        # Drop rows with missing values
+        data = data.dropna(axis=0, how='any')
+
+        # Label encoding protected_attribute and label
+        label = 'y'
+        protected_attributes = ['job']
+        print(data[protected_attributes].iloc[:, 0].unique())
+        print(data[protected_attributes].iloc[:, 0].value_counts())
+        cols_to_labelencode = protected_attributes.copy()
+        cols_to_labelencode.append(label)
+        data[cols_to_labelencode] = \
+            data[cols_to_labelencode].apply(LabelEncoder().fit_transform)
+
+        # Encode categorical variables as one-hot
+        categorical_cols = list(data.select_dtypes(include='object').columns)
+        data = pd.get_dummies(data, columns=categorical_cols)
+
+        # Downcast
+        data = downcast(data)
+
+        # print the shape of the data
+        print(data.shape)
 
         return data, label, protected_attributes
 
