@@ -1,3 +1,18 @@
+"""
+Crossover Methods
+=================
+
+This module implements various crossover methods used in genetic algorithms.
+Crossover is a genetic operator to combine two individuals to produce offspring.
+
+Each function in this module takes a pair of parents and produces a user-given amount of
+offsprings by combining the genes of the parents.
+The way in which the genes (individuals' features) are combined depends on the specific crossover method.
+
+These crossover methods are based on the works of the following references:
+
+Goldberg, D. E. (1989). Genetic Algorithms in Search, Optimization, and Machine Learning. Addison-Wesley.
+"""
 import numpy as np
 
 

@@ -1,3 +1,33 @@
+"""
+Genetic Algorithm
+=================
+
+This module implements the Genetic Algorithm for combinatorial optimization problems.
+It reflects the process of natural selection where the fittest individuals are selected for
+reproduction to produce the offspring of the next generation.
+
+The main functions in this module are `genetic_algorithm_constraint` and `genetic_algorithm`,
+which perform the Genetic Algorithm on a given fitness function to be maximized.
+These functions take as input the fitness `f`, the dimensionality `d` of `f`,
+the population size `pop_size`, and number of generation `num_generations`.
+The algorithm iteratively applies selection, crossover, and mutation operations to
+evolve the population over a number of generations.
+
+The `select_parents`, `crossover`, and `mutate` functions can be passed to `genetic_algorithm_constraint` or
+`genetic_algorithm` to customize the selection, crossover, and mutation operations.
+These functions are defined in the :mod:`geneticoperators.crossover`, :mod:`geneticoperators.mutation`, and
+:mod:`geneticoperators.selection` modules respectively.
+
+This implementation of the Genetic Algorithm is based on the works of the following references:
+
+Goldberg, D. E. (1989). Genetic Algorithms in Search, Optimization, and Machine Learning. Addison-Wesley.
+
+Holland, J. H. (1975). Adaptation in Natural and Artificial Systems. University of Michigan Press.
+
+Deb, K., Pratap, A., Agarwal, S., & Meyarivan, T. (2002).
+A fast and elitist multiobjective genetic algorithm: NSGA-II. IEEE Transactions on Evolutionary Computation.
+"""
+
 import numpy as np
 
 from fado.optimize.geneticoperators.crossover import onepoint_crossover, uniform_crossover
