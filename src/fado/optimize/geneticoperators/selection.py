@@ -6,7 +6,7 @@ This module implements various selection methods used in genetic algorithms.
 These methods are used to select the individuals from the current generation that will be used to produce the offspring
 for the next generation.
 Each function in this module takes a population of individuals and their fitness values as input,
-and returns a subset of the population to be used as parents for the next generation.
+and returns a subset of the population to be used as parents for the next generation and the parents' fitness.
 The number of parents to select can be specified by the user.
 
 These selection methods are based on the works of the following references:

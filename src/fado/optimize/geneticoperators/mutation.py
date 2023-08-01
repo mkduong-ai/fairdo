@@ -1,3 +1,19 @@
+"""
+Mutation Methods
+================
+
+This module implements various mutation methods used in genetic algorithms.
+These methods are used to introduce diversity in the population by randomly altering the genes of the individuals.
+Each function in this module takes a population of individuals as input and returns a mutated population.
+The rate of mutation can be specified by the user.
+
+These mutation methods are based on the works of the following references:
+
+Goldberg, D. E. (1989). Genetic Algorithms in Search, Optimization, and Machine Learning. Addison-Wesley.
+
+Bäck, T. (1993). Optimal Mutation Rates in Genetic Search.
+Proceedings of the 5th International Conference on Genetic Algorithms.
+"""
 import numpy as np
 
 
