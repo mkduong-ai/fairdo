@@ -20,6 +20,7 @@ import numpy as np
 def mutate(offspring, mutation_rate=0.05):
     """
     Mutates the given offspring by flipping a percentage of random bits for each offspring.
+    A fixed amount of bits is flipped for each offspring.
 
     Parameters
     ----------
