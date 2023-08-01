@@ -1,3 +1,25 @@
+"""
+Selection Methods
+=================
+
+This module implements various selection methods used in genetic algorithms.
+These methods are used to select the individuals from the current generation that will be used to produce the offspring
+for the next generation.
+Each function in this module takes a population of individuals and their fitness values as input,
+and returns a subset of the population to be used as parents for the next generation.
+The number of parents to select can be specified by the user.
+
+These selection methods are based on the works of the following references:
+
+Goldberg, D. E. (1989). Genetic Algorithms in Search, Optimization, and Machine Learning. Addison-Wesley.
+
+Baker, J. E. (1985). Adaptive selection methods for genetic algorithms.
+Proceedings of an International Conference on Genetic Algorithms and their Applications.
+
+Whitley, D. (1989). The GENITOR algorithm and selection pressure: Why rank-based allocation of
+reproductive trials is best. Proceedings of the Third International Conference on Genetic Algorithms.
+"""
+
 import numpy as np
 
 
@@ -24,32 +46,6 @@ def elitist_selection(population, fitness, num_parents=2):
     parents = population[idx[:num_parents]]
     fitness = fitness[idx[:num_parents]]
     return parents, fitness
-
-
-def roulette_wheel_selection(population, fitness, num_parents=2):
-    """
-    Select parents using Roulette Wheel Selection. The probability of selecting an individual is proportional to its
-    fitness. The higher the fitness, the higher the chance of being selected.
-    This function assumes that the fitness is non-negative.
-
-    Parameters
-    ----------
-    population: ndarray, shape (n, d)
-        Population of individuals.
-    fitness: ndarray, shape (n,)
-        Fitness of each individual.
-    num_parents: int
-        Number of parents to select.
-
-    Returns
-    -------
-    parents: ndarray, shape (num_parents, d)
-        Selected parents.
-    """
-    fitness_sum = np.sum(fitness)
-    selection_probs = fitness / fitness_sum
-    parents_idx = np.random.choice(np.arange(len(population)), size=num_parents, p=selection_probs)
-    return population[parents_idx]
 
 
 def tournament_selection(population, fitness, num_parents=2, tournament_size=3):
@@ -81,3 +77,110 @@ def tournament_selection(population, fitness, num_parents=2, tournament_size=3):
         winner_index = tournament_indices[np.argmax(tournament_fitnesses)]
         parents[i, :] = population[winner_index, :]
     return parents
+
+
+def stochastic_universal_sampling(population, fitness, num_parents):
+    """
+    This function selects parents from the population using the Stochastic Universal Sampling (SUS) method.
+
+    Parameters
+    ----------
+    population: ndarray, shape (n, d)
+        The population of individuals.
+    fitness: ndarray, shape (n,)
+        The fitness of each individual in the population.
+    num_parents: int
+        The number of parents to select.
+
+    Returns
+    -------
+    parents: ndarray, shape (num_parents, d)
+        The selected parents.
+    """
+    # Normalize the fitness values
+    fitness_sum = np.sum(fitness)
+    normalized_fitness = fitness / fitness_sum
+
+    # Calculate the distance between the pointers
+    distance = 1.0 / num_parents
+
+    # Initialize the start of the pointers
+    start = np.random.uniform(0, distance)
+
+    # Initialize the parents
+    parents = np.empty((num_parents, population.shape[1]))
+
+    # Perform the SUS
+    for i in range(num_parents):
+        pointer = start + i * distance
+        sum_fitness = 0
+        for j in range(len(normalized_fitness)):
+            sum_fitness += normalized_fitness[j]
+            if sum_fitness >= pointer:
+                parents[i] = population[j]
+                break
+
+    return parents
+
+
+def roulette_wheel_selection(population, fitness, num_parents=2):
+    """
+    Select parents using Roulette Wheel Selection. The probability of selecting an individual is proportional to its
+    fitness. The higher the fitness, the higher the chance of being selected.
+    This function assumes that the fitness is non-negative.
+
+    Parameters
+    ----------
+    population: ndarray, shape (n, d)
+        Population of individuals.
+    fitness: ndarray, shape (n,)
+        Fitness of each individual.
+    num_parents: int
+        Number of parents to select.
+
+    Returns
+    -------
+    parents: ndarray, shape (num_parents, d)
+        Selected parents.
+    """
+    fitness_sum = np.sum(fitness)
+    selection_probs = fitness / fitness_sum
+    parents_idx = np.random.choice(np.arange(len(population)), size=num_parents, p=selection_probs)
+    return population[parents_idx]
+
+
+def rank_selection(population, fitness, num_parents=2):
+    """
+    This function selects parents from the population based on their rank.
+    The rank is determined by the fitness of the individual.
+
+    Parameters
+    ----------
+    population: ndarray, shape (n, d)
+        The population of individuals.
+    fitness: ndarray, shape (n,)
+        The fitness of each individual.
+    num_parents: int
+        The number of parents to select.
+
+    Returns
+    -------
+    parents: ndarray, shape (num_parents, d)
+        The selected parents.
+    fitness: ndarray, shape (num_parents,)
+        The fitness of the selected parents.
+    """
+    # Rank individuals based on fitness
+    ranks = np.argsort(np.argsort(fitness))
+
+    # Calculate selection probabilities based on rank
+    total_ranks = np.sum(ranks)
+    selection_probabilities = ranks / total_ranks
+
+    # Select parents based on selection probabilities
+    parent_indices = np.random.choice(np.arange(len(population)), size=num_parents, p=selection_probabilities)
+
+    parents = population[parent_indices]
+    fitness = fitness[parent_indices]
+
+    return parents, fitness
