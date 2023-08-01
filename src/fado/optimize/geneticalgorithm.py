@@ -89,7 +89,7 @@ def evaluate_population(f, n, population, penalty_function=relative_difference_p
 def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
                                  select_parents=elitist_selection,
                                  crossover=onepoint_crossover,
-                                 mutate=mutate, ):
+                                 mutate=mutate, maximize=False):
     """
     Perform a genetic algorithm with constraints. The constraint is that the sum of the binary vector must be equal
     to n. The fitness function is the value of the fitness function plus a penalty for individuals that do not satisfy
@@ -113,6 +113,7 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
         The function to perform the crossover operation.
     mutate: callable
         The function to perform the mutation operation.
+    maximize: bool, optional
 
     Returns
     -------
@@ -121,6 +122,10 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
     best_fitness : float
         The fitness of the best solution found by the algorithm.
     """
+    # negate the fitness function if we are minimizing
+    if not maximize:
+        f = lambda x: -f(x)
+
     # generate the initial population
     population = generate_population(pop_size, d)
     best_population = population
