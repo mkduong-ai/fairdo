@@ -56,7 +56,7 @@ def evaluate_population(f, n, population, penalty_function=relative_difference_p
 
 
 def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
-                                 elitist_selection,
+                                 select_parents=elitist_selection,
                                  crossover=onepoint_crossover,
                                  mutate=mutate, ):
     """
@@ -92,7 +92,7 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
     population = generate_population(pop_size, d)
     best_population = population
     # evaluate the function for each vector in the population
-    fitness = evaluate_population(f, n, population, penalty_function=penalty_normalized)
+    fitness = evaluate_population(f, n, population, penalty_function=relative_difference_penalty)
     best_fitness = fitness
     # perform the genetic algorithm for the specified number of generations
     for generation in range(num_generations):
@@ -104,7 +104,7 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
         # mutate the offspring
         offspring = mutate(offspring, mutation_rate=0.05)
         # evaluate the function for the new offspring
-        offspring_fitness = evaluate_population(f, n, offspring, penalty_function=penalty_normalized)
+        offspring_fitness = evaluate_population(f, n, offspring, penalty_function=relative_difference_penalty)
         # create the new population (allow the parents to be part of the next generation)
         population = np.concatenate((parents, offspring))
         fitness = np.concatenate((fitness, offspring_fitness))
@@ -116,7 +116,7 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
 
 
 def genetic_algorithm(f, d, pop_size, num_generations,
-                      elitist_selection,
+                      select_parents=elitist_selection,
                       crossover=onepoint_crossover,
                       mutate=mutate, ):
     """
@@ -153,7 +153,7 @@ def genetic_algorithm(f, d, pop_size, num_generations,
 
 
 def genetic_algorithm_method(f, d,
-                             elitist_selection,
+                             select_parents=elitist_selection,
                              crossover=onepoint_crossover,
                              mutate=mutate, ):
     """
@@ -187,7 +187,7 @@ def genetic_algorithm_method(f, d,
 
 
 def genetic_algorithm_uniform_method(f, d,
-                                     elitist_selection,
+                                     select_parents=elitist_selection,
                                      crossover=uniform_crossover,
                                      mutate=mutate, ):
     """
