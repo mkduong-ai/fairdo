@@ -9,7 +9,7 @@ from sklearn.preprocessing import LabelEncoder
 from sdv.tabular import GaussianCopula
 
 # load non-binary evaluation
-from objectives import f_remove, f_add
+from fado.preprocessing.solverwrapper import f_remove, f_add
 
 # load metrics
 from fado.metrics.nonbinary import nb_statistical_parity_sum_abs_difference,\
@@ -23,7 +23,8 @@ from measures import count_size, count_groups, sanity_check
 # from fado.preprocessing import MetricOptimizer, MetricOptRemover
 
 # load optimization methods
-from fado.optimize import Baseline, SimulatedAnnealing, GeneticAlgorithm
+import fado.optimize.geneticalgorithm as ga
+import fado.optimize.baseline as baseline
 
 
 def downcast(data):
@@ -269,11 +270,10 @@ def settings(data_str, objective_str):
         'Distinct Groups': count_groups,
         'Sanity Check': sanity_check}
     # create methods
-    methods = {'Baseline (Original)': Baseline.method_original,
-               'Random Heuristic': Baseline.method_random,
-               'Simulated Annealing': SimulatedAnnealing.simulated_annealing_method,
-               'GA (1-Point Crossover)': GeneticAlgorithm.genetic_algorithm_method,
-               'GA (Uniform Crossover)': GeneticAlgorithm.genetic_algorithm_uniform_method,
+    methods = {'Baseline (Original)': baseline.original_method,
+               'Random Heuristic': baseline.random_method,
+               'GA (1-Point Crossover)': ga.genetic_algorithm_method,
+               'GA (Uniform Crossover)': ga.genetic_algorithm_uniform_method,
                # 'Metric Optimizer': MetricOptimizer.metric_optimizer_remover}
                }
 
