@@ -102,6 +102,16 @@ def stochastic_universal_sampling(population, fitness, num_parents):
         The selected parents.
     fitness: ndarray, shape (num_parents,)
         The fitness of the selected parents.
+
+    Notes
+    -----
+    This function assumes that the fitness is non-negative.
+
+    References
+    ----------
+    This function is based on the work of Baker (1987) in the following paper:
+    Baker, J. E. (1987). "Reducing Bias and Inefficiency in the Selection Algorithm".
+    Proceedings of the Second International Conference on Genetic Algorithms and Their Application.
     """
     # Normalize the fitness values
     fitness_sum = np.sum(fitness)
@@ -151,6 +161,10 @@ def roulette_wheel_selection(population, fitness, num_parents=2):
         Selected parents.
     fitness: ndarray, shape (num_parents,)
         Fitness of the selected parents.
+
+    Notes
+    -----
+    This function assumes that the fitness is non-negative.
     """
     fitness_sum = np.sum(fitness)
     selection_probs = fitness / fitness_sum
