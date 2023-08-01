@@ -6,7 +6,7 @@
 Welcome to fado's documentation!
 ================================
 
-Fairness-Agnostic Data Optimization (fado) is a Python package designed to
+**Fairness-Agnostic Data Optimization (fado)** is a Python package designed to
 optimize fairness in datasets. It provides robust, fairness-agnostic methods
 to preprocess data, ensuring machine learning models trained on these datasets
 deliver high performance while significantly reducing discrimination.
