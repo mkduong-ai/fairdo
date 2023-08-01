@@ -8,7 +8,8 @@ from fado.utils.penalty import relative_difference_penalty
 
 def generate_population(pop_size, d):
     """
-    Generate a population of binary vectors.
+    Generate a population of binary vectors. Each vector has a length of d.
+    The values of the vectors are either 0 or 1. The population is generated randomly.
 
     Parameters
     ----------
@@ -60,7 +61,9 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
                                  crossover=onepoint_crossover,
                                  mutate=mutate, ):
     """
-    Perform a genetic algorithm with constraints.
+    Perform a genetic algorithm with constraints. The constraint is that the sum of the binary vector must be equal
+    to n. The fitness function is the value of the fitness function plus a penalty for individuals that do not satisfy
+    the size constraint.
 
     Parameters
     ----------
@@ -120,7 +123,14 @@ def genetic_algorithm(f, d, pop_size, num_generations,
                       crossover=onepoint_crossover,
                       mutate=mutate, ):
     """
-    Perform a genetic algorithm.
+    Perform a genetic algorithm. The genetic algorithm is used to maximize the given fitness function.
+    It consists of the following steps which are repeated for a specified number of generations:
+
+    1. Generate an initial population of binary vectors.
+    2. Evaluate the fitness of each vector in the population.
+    3. Select the best individuals to be parents. (Selection)
+    4. Create offspring by performing crossover on the parents. (Crossover)
+    5. Mutate the offspring. (Mutation)
 
     Parameters
     ----------
@@ -157,7 +167,8 @@ def genetic_algorithm_method(f, d,
                              crossover=onepoint_crossover,
                              mutate=mutate, ):
     """
-    Genetic Algorithm method
+    Genetic Algorithm method. The genetic algorithm is used to maximize the given fitness function.
+    This comes with pre-defined settings for the population size and the number of generations.
 
     Parameters
     ----------
@@ -191,7 +202,8 @@ def genetic_algorithm_uniform_method(f, d,
                                      crossover=uniform_crossover,
                                      mutate=mutate, ):
     """
-    Genetic Algorithm method
+    Genetic Algorithm method. The genetic algorithm is used to maximize the given fitness function.
+    This comes with pre-defined settings for the population size and the number of generations.
 
     Parameters
     ----------
