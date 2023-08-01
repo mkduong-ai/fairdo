@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def select_parents(population, fitness, num_parents=2):
+def elitist_selection(population, fitness, num_parents=2):
     """
     This function selects the fittest parents from the population.
 

@@ -27,7 +27,7 @@ def evaluate_population(f, n, population, penalty_function=penalty_normalized):
 
 def select_parents(population, fitness, num_parents=2):
     """
-    In this example, the select_parents function is used to select the parents for the next generation.
+    In this example, the elitist_selection function is used to select the parents for the next generation.
     This function selects the fittest parents from the population.
 
     Parameters

@@ -2,7 +2,7 @@ import numpy as np
 
 from fado.optimize.geneticoperators.crossover import onepoint_crossover, uniform_crossover
 from fado.optimize.geneticoperators.mutation import mutate
-from fado.optimize.geneticoperators.selection import select_parents
+from fado.optimize.geneticoperators.selection import elitist_selection
 from fado.utils.penalty import relative_difference_penalty
 
 
@@ -56,7 +56,7 @@ def evaluate_population(f, n, population, penalty_function=relative_difference_p
 
 
 def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
-                                 select_parents=select_parents,
+                                 elitist_selection,
                                  crossover=onepoint_crossover,
                                  mutate=mutate, ):
     """
@@ -116,7 +116,7 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
 
 
 def genetic_algorithm(f, d, pop_size, num_generations,
-                      select_parents=select_parents,
+                      elitist_selection,
                       crossover=onepoint_crossover,
                       mutate=mutate, ):
     """
@@ -153,7 +153,7 @@ def genetic_algorithm(f, d, pop_size, num_generations,
 
 
 def genetic_algorithm_method(f, d,
-                             select_parents=select_parents,
+                             elitist_selection,
                              crossover=onepoint_crossover,
                              mutate=mutate, ):
     """
@@ -187,7 +187,7 @@ def genetic_algorithm_method(f, d,
 
 
 def genetic_algorithm_uniform_method(f, d,
-                                     select_parents=select_parents,
+                                     elitist_selection,
                                      crossover=uniform_crossover,
                                      mutate=mutate, ):
     """
