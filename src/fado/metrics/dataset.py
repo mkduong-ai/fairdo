@@ -4,11 +4,11 @@ import warnings
 from fado.utils.helper import generate_pairs
 
 
-def statistical_parity_absolute_difference_multi(y: np.array, z: np.array,
-                                                 agg_attribute=np.sum,
-                                                 agg_group=np.sum,
-                                                 positive_label=1,
-                                                 **kwargs) -> float:
+def statistical_parity_abs_diff_multi(y: np.array, z: np.array,
+                                      agg_attribute=np.sum,
+                                      agg_group=np.sum,
+                                      positive_label=1,
+                                      **kwargs) -> float:
     """
     Calculate the absolute difference in statistical parity for multiple non-binary protected attributes.
 
@@ -53,6 +53,87 @@ def statistical_parity_absolute_difference_multi(y: np.array, z: np.array,
         attributes_disparity.append(agg_group(group_disparity))
 
     return agg_attribute(attributes_disparity)
+
+
+def statistical_parity_abs_diff(y: np.array, z: np.array, agg_group=np.sum, **kwargs) -> float:
+    """
+    Calculate the absolute value of the statistical parity difference between all groups inside a protected attribute.
+    The protected attribute can be binary or non-binary.
+    Returned value is aggregated with `agg_group`.
+
+    Parameters
+    ----------
+    y: np.array
+        Flattened binary array, can be the prediction or the truth label.
+    z: np.array
+        Flattened array of shape y, represents the protected attribute.
+        Can represent non-binary protected attribute.
+    agg_group: callable, optional
+        Aggregation function for the group. Default is np.sum.
+    positive_label: int, optional
+        Label considered as positive. Default is 1.
+    privileged_group: int, optional
+        Label considered as privileged. Default is 1.
+
+    Returns
+    -------
+    float
+        The absolute value of the statistical parity difference.
+    """
+    if z.ndim > 1:
+        raise ValueError("z must be a 1D array")
+    return statistical_parity_abs_diff_multi(y=y, z=z, agg_group=agg_group, **kwargs)
+
+
+def statistical_parity_abs_diff_mean(y: np.array, z: np.array,
+                                     **kwargs) -> float:
+    """
+    Calculate the sum of statistical parity absolute differences between all groups and return
+    the average score.
+
+    Parameters
+    ----------
+    y: np.array
+        Flattened binary array, can be the prediction or the truth label.
+    z: np.array
+        Flattened array of shape y, represents the protected attribute.
+        Can represent non-binary protected attribute.
+    positive_label: int, optional
+        Label considered as positive. Default is 1.
+    privileged_group: int, optional
+        Label considered as privileged. Default is 1.
+
+    Returns
+    -------
+    float
+        Average of the absolute value of the statistical parity differences between all groups.
+    """
+    statistical_parity_abs_diff(y=y, z=z, agg_group=np.mean, **kwargs)
+
+
+def statistical_parity_abs_diff_max(y: np.array, z: np.array,
+                                    **kwargs) -> float:
+    """
+    Calculate the maximum of statistical parity absolute differences between all groups in a protected attribute.
+
+    Parameters
+    ----------
+    y: np.array
+        Flattened binary array, can be the prediction or the truth label.
+    z: np.array
+        Flattened array of shape y, represents the protected attribute.
+        Can represent non-binary protected attribute.
+    positive_label: int, optional
+        Label considered as positive. Default is 1.
+    privileged_group: int, optional
+        Label considered as privileged. Default is 1.
+
+    Returns
+    -------
+    float
+        Average of the absolute value of the statistical parity differences between all groups.
+    """
+    statistical_parity_abs_diff(y=y, z=z, agg_group=np.max, **kwargs)
 
 
 def statistical_parity_difference(y: np.array, z: np.array,
@@ -116,30 +197,6 @@ def mean_difference(*args, **kwargs) -> float:
         The difference in statistical parity between unprivileged and privileged groups.
     """
     return statistical_parity_difference(*args, **kwargs)
-
-
-def statistical_parity_absolute_difference(*args, **kwargs) -> float:
-    """
-    Calculate the absolute value of the statistical parity difference.
-
-    Parameters
-    ----------
-    y: np.array
-        Flattened binary array, can be the prediction or the truth label.
-    z: np.array
-        Flattened array of shape y, represents the protected attribute.
-        Can represent non-binary protected attribute.
-    positive_label: int, optional
-        Label considered as positive. Default is 1.
-    privileged_group: int, optional
-        Label considered as privileged. Default is 1.
-
-    Returns
-    -------
-    float
-        The absolute value of the statistical parity difference.
-    """
-    return statistical_parity_absolute_difference_multi(*args, **kwargs)
 
 
 def disparate_impact_ratio(y: np.array, z: np.array,

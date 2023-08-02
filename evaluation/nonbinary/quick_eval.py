@@ -16,9 +16,9 @@ from sdv.tabular import GaussianCopula
 from fado.preprocessing.solverwrapper import f_remove, f_add
 
 # load metrics
-from fado.metrics.nonbinary import nb_statistical_parity_sum_abs_difference,\
-    nb_statistical_parity_max_abs_difference, \
-    nb_normalized_mutual_information
+from fado.metrics import statistical_parity_abs_diff, statistical_parity_abs_diff_max, \
+    statistical_parity_abs_diff_mean
+from fado.metrics.nonbinary import nb_normalized_mutual_information
 
 # load fake metrics that serve other purposes
 from measures import count_size, count_groups, sanity_check
@@ -326,8 +326,8 @@ def settings(data_str, objective_str):
     n_runs = 1
     # create objective functions
     disc_dict = {
-        'Statistical Disparity Sum': nb_statistical_parity_sum_abs_difference,
-        'Maximal Statistical Disparity': nb_statistical_parity_max_abs_difference,
+        'Statistical Disparity Sum': statistical_parity_abs_diff,
+        'Maximal Statistical Disparity': statistical_parity_abs_diff_max,
         'NMI': nb_normalized_mutual_information,
         'Size': count_size,
         'Distinct Groups': count_groups,

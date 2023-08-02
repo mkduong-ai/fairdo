@@ -10,9 +10,9 @@ from sklearn.metrics import roc_auc_score, balanced_accuracy_score, f1_score, ac
 
 ## fairness metrics
 from fado.metrics import pearsonr, pearsonr_abs, mutual_information, normalized_mutual_information,\
-    rdc, statistical_parity_absolute_difference, \
-    equal_opportunity_absolute_difference, disparate_impact_ratio, disparate_impact_ratio_objective,\
-    predictive_equality_absolute_difference, average_odds_error, average_odds_difference,\
+    rdc, statistical_parity_abs_diff, \
+    equal_opportunity_abs_diff, disparate_impact_ratio, disparate_impact_ratio_objective,\
+    predictive_equality_abs_diff, average_odds_error, average_odds_difference,\
     consistency_score, consistency_score_objective
 
 
@@ -103,7 +103,7 @@ def evaluate_ml_models(results: dict, models_trained: dict, X_test, y_test, z_te
 
             # parity based measures
             results[key_model][key_preproc]['Statistical Parity Abs Diff'] = \
-                statistical_parity_absolute_difference(y_pred_argmax, z_test)
+                statistical_parity_abs_diff(y_pred_argmax, z_test)
 
             results[key_model][key_preproc]['Disparate Impact'] = \
                 disparate_impact_ratio(y_pred_argmax, z_test)
@@ -113,10 +113,10 @@ def evaluate_ml_models(results: dict, models_trained: dict, X_test, y_test, z_te
 
             # prediction
             results[key_model][key_preproc]['Equal Opportunity Abs Diff'] = \
-                equal_opportunity_absolute_difference(y_test, y_pred_argmax, z_test)
+                equal_opportunity_abs_diff(y_test, y_pred_argmax, z_test)
 
             results[key_model][key_preproc]['Predictive Equality Abs Diff'] = \
-                predictive_equality_absolute_difference(y_test, y_pred_argmax, z_test)
+                predictive_equality_abs_diff(y_test, y_pred_argmax, z_test)
 
             results[key_model][key_preproc]['Average Odds Diff'] = \
                 average_odds_difference(y_test, y_pred_argmax, z_test)

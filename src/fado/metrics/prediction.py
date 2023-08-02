@@ -54,7 +54,7 @@ def equal_opportunity_difference(y_true: np.array, y_pred: np.array, z: np.array
     return priv_eo - unpriv_eo
 
 
-def equal_opportunity_absolute_difference(*args, **kwargs):
+def equal_opportunity_abs_diff(*args, **kwargs):
     """
     Compute the absolute difference in Equality of Opportunity [1].
 
@@ -115,7 +115,7 @@ def predictive_equality_difference(y_true: np.array, y_pred: np.array, z: np.arr
     return priv_eo - unpriv_eo
 
 
-def predictive_equality_absolute_difference(*args, **kwargs):
+def predictive_equality_abs_diff(*args, **kwargs):
     """
     Compute the absolute difference in Predictive Equality.
 
@@ -203,8 +203,8 @@ def average_odds_error(y_true: np.array, y_pred: np.array, z: np.array,
         y_true = 1 - y_true
         y_pred = 1 - y_pred
 
-    eod = equal_opportunity_absolute_difference(y_true, y_pred, z, positive_label, privileged_group)
-    ped = predictive_equality_absolute_difference(y_true, y_pred, z, positive_label, privileged_group)
+    eod = equal_opportunity_abs_diff(y_true, y_pred, z, positive_label, privileged_group)
+    ped = predictive_equality_abs_diff(y_true, y_pred, z, positive_label, privileged_group)
 
     return (eod + ped)/2
 

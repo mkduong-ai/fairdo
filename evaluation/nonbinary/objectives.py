@@ -4,11 +4,11 @@ import pandas as pd
 # generate synthetic datapoints
 from sdv.tabular import GaussianCopula
 
-from fado.metrics import statistical_parity_absolute_difference
+from fado.metrics import statistical_parity_abs_diff
 
 
 def f_remove(binary_vector, dataframe, label, protected_attributes,
-             disc_measure=statistical_parity_absolute_difference,
+             disc_measure=statistical_parity_abs_diff,
              **kwargs):
     """
     Determine which data points can be removed from the training set to prevent discrimination.
@@ -46,7 +46,7 @@ def f_remove(binary_vector, dataframe, label, protected_attributes,
 
 
 def f_add(binary_vector, dataframe, synthetic_dataframe, label, protected_attributes,
-          disc_measure=statistical_parity_absolute_difference):
+          disc_measure=statistical_parity_abs_diff):
     """
     Generated (synthetic) data points are added to the original data to promote fairness.
     The question here is: Which of the generated data points should be added to the

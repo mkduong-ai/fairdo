@@ -1,5 +1,5 @@
 from fado.preprocessing import Preprocessing
-from fado.metrics import statistical_parity_absolute_difference
+from fado.metrics import statistical_parity_abs_diff
 
 # third party
 import numpy as np
@@ -18,7 +18,7 @@ class MetricOptimizer(Preprocessing):
                  frac=0.75, m=5, eps=0,
                  additions=None,
                  deletions=None,
-                 fairness_metric=statistical_parity_absolute_difference,
+                 fairness_metric=statistical_parity_abs_diff,
                  data_generator='GaussianCopula',
                  data_generator_params=None, random_state=None):
         super().__init__(frac=frac, protected_attribute=protected_attribute, label=label)
@@ -69,7 +69,7 @@ class MetricOptRemover(Preprocessing):
     def __init__(self, protected_attribute, label,
                  frac=0.75, m=5, eps=0,
                  deletions=None,
-                 fairness_metric=statistical_parity_absolute_difference, random_state=None):
+                 fairness_metric=statistical_parity_abs_diff, random_state=None):
         """
 
         Parameters
@@ -157,7 +157,7 @@ class MetricOptGenerator(Preprocessing):
     def __init__(self, protected_attribute, label,
                  frac=1.25, m=5, eps=0,
                  additions=None,
-                 fairness_metric=statistical_parity_absolute_difference,
+                 fairness_metric=statistical_parity_abs_diff,
                  data_generator='GaussianCopula', random_state=None):
         """
 
