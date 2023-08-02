@@ -1,7 +1,9 @@
 # Standard library imports
 import datetime
+import itertools
 import os
 import time
+from functools import partial
 
 # Related third-party imports
 from sklearn.preprocessing import LabelEncoder
@@ -171,7 +173,7 @@ def run_experiments(data_str, disc_dict, methods, n_runs=10,
     return results
 
 
-def create_save_path(data_str, objective_str):
+def create_save_path(data_str, objective_str, prefix='test'):
     """
     Creates the save path for the experiment results.
 
@@ -181,7 +183,8 @@ def create_save_path(data_str, objective_str):
         Name of the dataset.
     objective_str: str
         Objective function.
-
+    prefix: str
+        Prefix for the save path.
     Returns
     -------
     save_path: str
@@ -189,7 +192,7 @@ def create_save_path(data_str, objective_str):
     """
 
     # create save path
-    save_path = f'evaluation/results/nonbinary/test/{data_str}'
+    save_path = f'evaluation/results/nonbinary/{prefix}/{data_str}'
     if not os.path.exists(save_path):
         os.makedirs(save_path)
     filename_date = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
@@ -257,8 +260,8 @@ def setup_experiment(data_str, objective_str, n_runs):
         'Statistical Disparity Sum': statistical_parity_abs_diff,
         # 'Maximal Statistical Disparity': statistical_parity_abs_diff_max,
         # 'NMI': normalized_mutual_information,
-        #'Size': count_size,
-        #'Distinct Groups': count_groups,
+        # 'Size': count_size,
+        # 'Distinct Groups': count_groups,
         'Sanity Check': sanity_check}
 
     # create methods
@@ -271,6 +274,65 @@ def setup_experiment(data_str, objective_str, n_runs):
 
     # create save path
     save_path = create_save_path(data_str, objective_str)
+
+    return save_path, disc_dict, methods
+
+
+def setup_experiment_hyperparameter(data_str, objective_str, n_runs):
+    """
+    Sets up the experiment.
+
+    Parameters
+    ----------
+    data_str: str
+        Name of the dataset.
+    objective_str: str
+        Objective function.
+    n_runs: int
+        Number of runs.
+
+    Returns
+    -------
+    save_path: str
+        The save path for the experiment results.
+    disc_dict: dict
+        Dictionary of discrimination measures.
+    methods: dict
+        Dictionary of methods.
+    """
+
+    # create objective functions
+    disc_dict = {
+        'Statistical Disparity Sum': statistical_parity_abs_diff,
+        # 'Maximal Statistical Disparity': statistical_parity_abs_diff_max,
+        # 'NMI': normalized_mutual_information,
+        # 'Size': count_size,
+        # 'Distinct Groups': count_groups,
+        'Sanity Check': sanity_check}
+
+    # create hyperparameters
+    hyperparams = {'pop_size': [50, 100, 200],
+                   'num_generations': [10, 20, 50, 100],
+                   #'select_parents': [elitist_selection, roulette_wheel_selection],
+                   #'crossover': [onepoint_crossover, kpoint_crossover, uniform_crossover],
+                   #'mutate': [bit_flip_mutation, swap_mutation]
+                   }
+
+    # create methods
+    methods = {}
+
+    # Use itertools.product to generate all combinations of hyperparameters
+    for combination in itertools.product(*hyperparams.values()):
+        # Create a dictionary of the current combination of hyperparameters
+        params = dict(zip(hyperparams.keys(), combination))
+        # Create the method name
+        name = 'GA (' + ', '.join(f'{k}={v.__name__ if callable(v) else v}' for k, v in params.items()) + ')'
+
+        # Create the method and add it to the methods dictionary
+        methods[name] = genetic_algorithm_method_hyperparam(**params)
+
+    # create save path
+    save_path = create_save_path(data_str, objective_str, prefix='hyperparameter')
 
     return save_path, disc_dict, methods
 
@@ -290,20 +352,20 @@ def run_and_save_experiment(data_str, objective_str, n_runs=10):
     """
 
     # setup the experiment
-    save_path, disc_dict, methods = setup_experiment(data_str, objective_str, n_runs)
+    save_path, disc_dict, methods = setup_experiment_hyperparameter(data_str, objective_str, n_runs)
 
     # run experiment
-    results = run_experiments(data_str=data_str,
-                              disc_dict=disc_dict,
-                              methods=methods,
-                              n_runs=n_runs,
-                              objective_str=objective_str)
-
-    # convert results to proper dataframe
-    results_df = convert_results_to_dataframe(results)
-
-    # save results
-    results_df.to_csv(save_path + '.csv', index_label='index')
+    # results = run_experiments(data_str=data_str,
+    #                           disc_dict=disc_dict,
+    #                           methods=methods,
+    #                           n_runs=n_runs,
+    #                           objective_str=objective_str)
+    #
+    # # convert results to proper dataframe
+    # results_df = convert_results_to_dataframe(results)
+    #
+    # # save results
+    # results_df.to_csv(save_path + '.csv', index_label='index')
 
 
 def main():
