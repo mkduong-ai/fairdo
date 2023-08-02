@@ -319,10 +319,56 @@ def run_experiments(data_str, disc_dict, methods, n_runs=10,
     return results
 
 
-def settings(data_str, objective_str):
-    # objective_str = 'add'
-    # data_str = 'compas'
-    n_runs = 1
+def create_save_path(data_str, objective_str):
+    """
+    Creates the save path for the experiment results.
+
+    Parameters
+    ----------
+    data_str: str
+        Name of the dataset.
+    objective_str: str
+        Objective function.
+
+    Returns
+    -------
+    save_path: str
+        The save path for the experiment results.
+    """
+
+    # create save path
+    save_path = f'evaluation/results/nonbinary/test/{data_str}'
+    if not os.path.exists(save_path):
+        os.makedirs(save_path)
+    filename_date = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+    save_path = f'{save_path}/{data_str}_{objective_str}'
+
+    return save_path
+
+
+def setup_experiment(data_str, objective_str, n_runs):
+    """
+    Sets up the experiment.
+
+    Parameters
+    ----------
+    data_str: str
+        Name of the dataset.
+    objective_str: str
+        Objective function.
+    n_runs: int
+        Number of runs.
+
+    Returns
+    -------
+    save_path: str
+        The save path for the experiment results.
+    disc_dict: dict
+        Dictionary of discrimination measures.
+    methods: dict
+        Dictionary of methods.
+    """
+
     # create objective functions
     disc_dict = {
         'Statistical Disparity Sum': statistical_parity_abs_diff,
@@ -331,22 +377,36 @@ def settings(data_str, objective_str):
         'Size': count_size,
         'Distinct Groups': count_groups,
         'Sanity Check': sanity_check}
+
     # create methods
-    methods = {#'Baseline (Original)': baseline.original_method,
-               #'Random Heuristic': baseline.random_method,
+    methods = {'Baseline (Original)': baseline.original_method,
+               'Random Heuristic': baseline.random_method,
                'GA (1-Point Crossover)': ga.genetic_algorithm_method,
-               #'GA (Uniform Crossover)': ga.genetic_algorithm_uniform_method,
-               # 'Metric Optimizer': MetricOptimizer.metric_optimizer_remover}
+               #'GA (Uniform Crossover)': genetic_algorithm_method_wrapper('uniform')
                }
 
     # create save path
-    save_path = f'evaluation/results/nonbinary/test/{data_str}'
-    if not os.path.exists(save_path):
-        os.makedirs(save_path)
-    filename_date = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
-    # filename_date = 'results'
-    #save_path = f'{save_path}/{filename_date}'
-    save_path = f'{save_path}/{data_str}_{objective_str}'
+    save_path = create_save_path(data_str, objective_str)
+
+    return save_path, disc_dict, methods
+
+
+def run_and_save_experiment(data_str, objective_str, n_runs=10):
+    """
+    Runs the experiment and saves the results.
+
+    Parameters
+    ----------
+    data_str: str
+        Name of the dataset.
+    objective_str: str
+        Objective function.
+    n_runs: int
+        Number of runs.
+    """
+
+    # setup the experiment
+    save_path, disc_dict, methods = setup_experiment(data_str, objective_str, n_runs)
 
     # run experiment
     results = run_experiments(data_str=data_str,
@@ -365,13 +425,14 @@ def settings(data_str, objective_str):
 def main():
     obj_strs = ['remove', 'add', 'remove_and_synthetic']
     data_strs = ['adult', 'compas']
+    n_runs = 1
     for data_str in data_strs:
         print('------------------------------------')
         print(f'Running experiments for {data_str}...')
         for obj_str in obj_strs:
             print('------------------------------------')
             print(f'Running experiments for {obj_str}...')
-            settings(data_str=data_str, objective_str=obj_str)
+            run_and_save_experiment(data_str=data_str, objective_str=obj_str, n_runs=n_runs)
 
 
 if __name__ == "__main__":
