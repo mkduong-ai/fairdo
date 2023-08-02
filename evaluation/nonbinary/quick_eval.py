@@ -1,175 +1,27 @@
-import time
+# Standard library imports
 import datetime
 import os
-# loading data
-import requests
-import zipfile
-import io
+import time
 
-import pandas as pd
+# Related third-party imports
 from sklearn.preprocessing import LabelEncoder
-
-# generate synthetic datapoints
 from sdv.tabular import GaussianCopula
+import pandas as pd
 
-# load non-binary evaluation
-from fado.preprocessing.solverwrapper import f_remove, f_add
-
-# load metrics
-from fado.metrics import statistical_parity_abs_diff, statistical_parity_abs_diff_max, \
-    statistical_parity_abs_diff_mean, normalized_mutual_information
-
-# load fake metrics that serve other purposes
-from measures import count_size, count_groups, sanity_check
-
-# load fado library
+# fado imports
+from fado.utils.dataset import load_data
+from fado.metrics import (normalized_mutual_information,
+                          statistical_parity_abs_diff,
+                          statistical_parity_abs_diff_max,
+                          statistical_parity_abs_diff_mean)
+from fado.preprocessing.solverwrapper import f_add, f_remove
 # from fado.preprocessing import MetricOptimizer, MetricOptRemover
-
-# load optimization methods
-import fado.optimize.geneticalgorithm as ga
 import fado.optimize.baseline as baseline
+import fado.optimize.geneticalgorithm as ga
+from fado.optimize.geneticoperators import *
 
-
-def downcast(data):
-    """
-    Downcast float and integer columns to save memory.
-    Parameters
-    ----------
-    data: pandas DataFrame
-
-    Returns
-    -------
-    data: pandas DataFrame
-    """
-    fcols = data.select_dtypes('float').columns
-    icols = data.select_dtypes('integer').columns
-
-    data[fcols] = data[fcols].apply(pd.to_numeric, downcast='float')
-    data[icols] = data[icols].apply(pd.to_numeric, downcast='integer')
-
-    return data
-
-
-def load_data(dataset_str):
-    """
-
-    Parameters
-    ----------
-    dataset_str: str
-
-    Returns
-    -------
-    df: pandas DataFrame
-    label: str
-    protected_attributes: list of str
-    """
-    if dataset_str == 'adult':
-        data = pd.read_csv("https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.data", header=None,
-                           names=["age", "workclass", "fnlwgt", "education", "education-num", "marital-status",
-                                  "occupation", "relationship", "race", "sex", "capital-gain", "capital-loss",
-                                  "hours-per-week", "native-country", "income"])
-        print('Data downloaded.')
-
-        # Drop columns
-        cols_to_drop = ['fnlwgt', 'workclass', 'education', 'occupation', 'native-country']
-        data = data.drop(columns=cols_to_drop)
-
-        # Label encoding protected_attribute and label
-        label = 'income'
-        protected_attributes = ['race']
-        print(data[protected_attributes].iloc[:, 0].unique())
-        print(data[protected_attributes].iloc[:, 0].value_counts())
-        cols_to_labelencode = protected_attributes.copy()
-        cols_to_labelencode.append(label)
-        data[cols_to_labelencode] = \
-            data[cols_to_labelencode].apply(LabelEncoder().fit_transform)
-
-        # Encode categorical variables as one-hot
-        categorical_cols = list(data.select_dtypes(include='object'))
-        data = pd.get_dummies(data, columns=categorical_cols)
-
-        # Downcast
-        data = downcast(data)
-
-        # print the shape of the data
-        print(data.shape)
-
-        return data, label, protected_attributes
-    elif dataset_str == 'compas':
-        use_cols = ['race', 'priors_count', 'age_cat', 'c_charge_degree', 'two_year_recid']
-        data = pd.read_csv(
-            "https://raw.githubusercontent.com/propublica/compas-analysis/master/compas-scores-two-years.csv",
-            usecols=use_cols)
-        print('Data downloaded.')
-
-        # Drop rows with missing values
-        data = data.dropna(axis=0, how='any')
-
-        # Label encoding protected_attribute and label
-        label = 'two_year_recid'
-        protected_attributes = ['race']
-        print(data[protected_attributes].iloc[:, 0].unique())
-        print(data[protected_attributes].iloc[:, 0].value_counts())
-        cols_to_labelencode = protected_attributes.copy()
-        cols_to_labelencode.append(label)
-        data[cols_to_labelencode] = \
-            data[cols_to_labelencode].apply(LabelEncoder().fit_transform)
-
-        # Encode categorical variables as one-hot
-        categorical_cols = list(data.select_dtypes(include='object'))
-        data = pd.get_dummies(data, columns=categorical_cols)
-
-        # Downcast
-        data = downcast(data)
-
-        # print the shape of the data
-        print(data.shape)
-
-        return data, label, protected_attributes
-    elif dataset_str == 'german':
-        # Loading German Credit dataset
-        data = pd.read_csv("http://archive.ics.uci.edu/ml/machine-learning-databases/statlog/german/german.data",
-                           header=None, delim_whitespace=True)
-        print('Data downloaded.')
-        # Preprocessing steps for German Credit dataset
-        # ...
-        pass
-        # Define label and protected attributes for German Credit dataset
-        label = 'credit_risk'
-        protected_attributes = ['age', 'gender']
-        raise NotImplementedError
-    elif dataset_str == 'bank':
-        # Loading Bank Marketing dataset
-        r = requests.get("http://archive.ics.uci.edu/ml/machine-learning-databases/00222/bank-additional.zip")
-        z = zipfile.ZipFile(io.BytesIO(r.content))
-        z.extractall()
-        data = pd.read_csv(z.open('bank-additional/bank-additional-full.csv'), delimiter=';')
-        print('Data downloaded.')
-
-        # Drop rows with missing values
-        data = data.dropna(axis=0, how='any')
-
-        # Label encoding protected_attribute and label
-        label = 'y'
-        protected_attributes = ['job']
-        print(data[protected_attributes].iloc[:, 0].unique())
-        print(data[protected_attributes].iloc[:, 0].value_counts())
-        cols_to_labelencode = protected_attributes.copy()
-        cols_to_labelencode.append(label)
-        data[cols_to_labelencode] = \
-            data[cols_to_labelencode].apply(LabelEncoder().fit_transform)
-
-        # Encode categorical variables as one-hot
-        categorical_cols = list(data.select_dtypes(include='object').columns)
-        data = pd.get_dummies(data, columns=categorical_cols)
-
-        # Downcast
-        data = downcast(data)
-
-        # print the shape of the data
-        print(data.shape)
-
-        return data, label, protected_attributes
+# Local application/library specific imports
+from measures import count_groups, count_size, sanity_check
 
 
 def convert_results_to_dataframe(results):
@@ -346,6 +198,37 @@ def create_save_path(data_str, objective_str):
     return save_path
 
 
+def genetic_algorithm_method_hyperparam(f, d, pop_size=50, num_generations=100,
+                                        select_parents=elitist_selection,
+                                        crossover=uniform_crossover,
+                                        mutate=fractional_flip_mutation):
+    """
+    Wrapper for the genetic algorithm method for hyperparameter tuning.
+
+    Parameters
+    ----------
+    f
+    d
+    pop_size
+    num_generations
+    select_parents
+    crossover
+    mutate
+
+    Returns
+    -------
+
+    """
+
+    def method(f, d):
+        return ga.genetic_algorithm(f=f, d=d, pop_size=pop_size, num_generations=num_generations,
+                                    select_parents=select_parents,
+                                    crossover=crossover,
+                                    mutate=mutate)
+
+    return method
+
+
 def setup_experiment(data_str, objective_str, n_runs):
     """
     Sets up the experiment.
@@ -372,18 +255,18 @@ def setup_experiment(data_str, objective_str, n_runs):
     # create objective functions
     disc_dict = {
         'Statistical Disparity Sum': statistical_parity_abs_diff,
-        'Maximal Statistical Disparity': statistical_parity_abs_diff_max,
-        'NMI': normalized_mutual_information,
+        # 'Maximal Statistical Disparity': statistical_parity_abs_diff_max,
+        # 'NMI': normalized_mutual_information,
         'Size': count_size,
         'Distinct Groups': count_groups,
         'Sanity Check': sanity_check}
 
     # create methods
-    methods = {'Baseline (Original)': baseline.original_method,
-               'Random Heuristic': baseline.random_method,
-               'GA (1-Point Crossover)': ga.genetic_algorithm_method,
-               #'GA (Uniform Crossover)': genetic_algorithm_method_wrapper('uniform')
-               }
+    methods = {  # 'Baseline (Original)': baseline.original_method,
+        # 'Random Heuristic': baseline.random_method,
+        'GA (1-Point Crossover)': ga.genetic_algorithm_method,
+        # 'GA (Uniform Crossover)': genetic_algorithm_method_wrapper('uniform')
+    }
 
     # create save path
     save_path = create_save_path(data_str, objective_str)

@@ -31,7 +31,7 @@ A fast and elitist multiobjective genetic algorithm: NSGA-II. IEEE Transactions 
 import numpy as np
 
 from fado.optimize.geneticoperators.crossover import onepoint_crossover, uniform_crossover
-from fado.optimize.geneticoperators.mutation import mutate
+from fado.optimize.geneticoperators.mutation import fractional_flip_mutation
 from fado.optimize.geneticoperators.selection import elitist_selection
 from fado.utils.penalty import relative_difference_penalty
 
@@ -89,7 +89,7 @@ def evaluate_population(f, n, population, penalty_function=relative_difference_p
 def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
                                  select_parents=elitist_selection,
                                  crossover=onepoint_crossover,
-                                 mutate=mutate, maximize=False):
+                                 mutate=fractional_flip_mutation, maximize=False):
     """
     Perform a genetic algorithm with constraints. The constraint is that the sum of the binary vector must be equal
     to n. The fitness function is the value of the fitness function plus a penalty for individuals that do not satisfy
@@ -157,7 +157,7 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
 def genetic_algorithm(f, d, pop_size, num_generations,
                       select_parents=elitist_selection,
                       crossover=onepoint_crossover,
-                      mutate=mutate, ):
+                      mutate=fractional_flip_mutation, ):
     """
     Perform a genetic algorithm. The genetic algorithm is used to maximize the given fitness function.
     It consists of the following steps which are repeated for a specified number of generations:
@@ -201,7 +201,7 @@ def genetic_algorithm(f, d, pop_size, num_generations,
 def genetic_algorithm_method(f, d,
                              select_parents=elitist_selection,
                              crossover=onepoint_crossover,
-                             mutate=mutate, ):
+                             mutate=fractional_flip_mutation, ):
     """
     Genetic Algorithm method. The genetic algorithm is used to maximize the given fitness function.
     This comes with pre-defined settings for the population size and the number of generations.
@@ -236,7 +236,7 @@ def genetic_algorithm_method(f, d,
 def genetic_algorithm_uniform_method(f, d,
                                      select_parents=elitist_selection,
                                      crossover=uniform_crossover,
-                                     mutate=mutate, ):
+                                     mutate=fractional_flip_mutation, ):
     """
     Genetic Algorithm method. The genetic algorithm is used to maximize the given fitness function.
     This comes with pre-defined settings for the population size and the number of generations.
