@@ -55,10 +55,39 @@ def convert_results_to_dataframe(results):
     return results_df
 
 
+def create_save_path(data_str, objective_str, prefix='test'):
+    """
+    Creates the save path for the experiment results.
+
+    Parameters
+    ----------
+    data_str: str
+        Name of the dataset.
+    objective_str: str
+        Objective function.
+    prefix: str
+        Prefix for the save path.
+    Returns
+    -------
+    save_path: str
+        The save path for the experiment results.
+    """
+
+    # create save path
+    save_path = f'evaluation/results/nonbinary/{prefix}/{data_str}'
+    if not os.path.exists(save_path):
+        os.makedirs(save_path)
+    filename_date = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+    save_path = f'{save_path}/{data_str}_{objective_str}'
+
+    return save_path
+
+
 def run_experiment(data_str, disc_dict, methods,
                    objective_str='remove'):
     """
     Runs the experiment
+
     Parameters
     ----------
     data_str: str
@@ -147,6 +176,7 @@ def run_experiments(data_str, disc_dict, methods, n_runs=10,
                     objective_str='remove'):
     """
     Runs the experiments for n_runs times
+
     Parameters
     ----------
     data_str: str
@@ -171,34 +201,6 @@ def run_experiments(data_str, disc_dict, methods, n_runs=10,
         results[i] = run_experiment(data_str=data_str, disc_dict=disc_dict, methods=methods,
                                     objective_str=objective_str)
     return results
-
-
-def create_save_path(data_str, objective_str, prefix='test'):
-    """
-    Creates the save path for the experiment results.
-
-    Parameters
-    ----------
-    data_str: str
-        Name of the dataset.
-    objective_str: str
-        Objective function.
-    prefix: str
-        Prefix for the save path.
-    Returns
-    -------
-    save_path: str
-        The save path for the experiment results.
-    """
-
-    # create save path
-    save_path = f'evaluation/results/nonbinary/{prefix}/{data_str}'
-    if not os.path.exists(save_path):
-        os.makedirs(save_path)
-    filename_date = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
-    save_path = f'{save_path}/{data_str}_{objective_str}'
-
-    return save_path
 
 
 def genetic_algorithm_method_hyperparam(pop_size=50, num_generations=100,
