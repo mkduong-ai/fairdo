@@ -202,38 +202,6 @@ def run_experiments(data_str, disc_dict, methods, n_runs=10,
                                     objective_str=objective_str)
     return results
 
-
-def genetic_algorithm_method_hyperparam(pop_size=50, num_generations=100,
-                                        select_parents=elitist_selection,
-                                        crossover=uniform_crossover,
-                                        mutate=bit_flip_mutation):
-    """
-    Wrapper for the genetic algorithm method for hyperparameter tuning.
-
-    Parameters
-    ----------
-    f
-    d
-    pop_size
-    num_generations
-    select_parents
-    crossover
-    mutate
-
-    Returns
-    -------
-
-    """
-
-    def method(f, d):
-        return ga.genetic_algorithm(f=f, d=d, pop_size=pop_size, num_generations=num_generations,
-                                    select_parents=select_parents,
-                                    crossover=crossover,
-                                    mutate=mutate)
-
-    return method
-
-
 def setup_experiment(data_str, objective_str, n_runs):
     """
     Sets up the experiment.
@@ -329,9 +297,8 @@ def setup_experiment_hyperparameter(data_str, objective_str, n_runs):
         params = dict(zip(hyperparams.keys(), combination))
         # Create the method name
         name = 'GA (' + ', '.join(f'{k}={v.__name__ if callable(v) else v}' for k, v in params.items()) + ')'
-
         # Create the method and add it to the methods dictionary
-        methods[name] = genetic_algorithm_method_hyperparam(**params)
+        methods[name] = partial(ga.genetic_algorithm, **params)
 
     # create save path
     save_path = create_save_path(data_str, objective_str, prefix='hyperparameter')
