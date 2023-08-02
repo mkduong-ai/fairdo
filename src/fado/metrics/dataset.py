@@ -50,8 +50,8 @@ def statistical_parity_absolute_difference_multi(y: np.array, z: np.array,
         group_disparity = []
         for i, j in pairs:
             # get statistical parity for each pair
-            parity_i = np.sum(y & z[:, k] == i) / np.sum(z[:, k] == i)
-            parity_j = np.sum(y & z[:, k] == j) / np.sum(z[:, k] == j)
+            parity_i = np.sum(y & (z[:, k] == i)) / np.sum(z[:, k] == i)
+            parity_j = np.sum(y & (z[:, k] == j)) / np.sum(z[:, k] == j)
             group_disparity.append(np.abs(parity_i - parity_j))
         attributes_disparity.append(agg_group(group_disparity))
 
