@@ -89,62 +89,10 @@ def normalized_mutual_information_multi(y: np.array, z: np.array,
                      agg=agg, positive_label=positive_label)
 
 
-def pearsonr(y: np.array, z: np.array, **kwargs) -> float:
-    """
-    Calculate the Pearson correlation coefficient between two arrays.
-
-    The Pearson correlation coefficient measures the linear relationship between two variables.
-    The calculation of the Pearson correlation coefficient is not affected by scaling,
-    and it ranges from -1 to 1. A value of 1 implies a perfect positive correlation,
-    while a value of -1 implies a perfect negative correlation.
-
-    Parameters
-    ----------
-    y: np.array
-        Flattened array, can be a prediction or the truth label.
-    z: np.array
-        Flattened array of the same shape as y.
-    **kwargs
-        Additional keyword arguments. These are not currently used.
-
-    Returns
-    -------
-    float
-        The Pearson correlation coefficient between y and z.
-    """
-    return np.corrcoef(y.reshape(1, -1), z.reshape(1, -1))[0, 1]
-
-
-def pearsonr_abs(y: np.array, z: np.array, **kwargs) -> float:
-    """
-    Calculate the absolute value of the Pearson correlation coefficient between two arrays.
-
-    The Pearson correlation coefficient measures the linear relationship between two datasets.
-    The calculation of the Pearson correlation coefficient is not affected by scaling,
-    and it ranges from -1 to 1. A value of 1 implies a perfect positive correlation,
-    while a value of -1 implies a perfect negative correlation. The absolute value is taken
-    to disregard the direction of the correlation.
-
-    Parameters
-    ----------
-    y: np.array
-        Flattened array, can be a prediction or the truth label.
-    z: np.array
-        Flattened array of the same shape as y.
-    **kwargs
-        Additional keyword arguments. These are not currently used.
-
-    Returns
-    -------
-    float
-        The absolute value of the Pearson correlation coefficient between y and z.
-    """
-    return np.abs(pearsonr(y, z))
-
-
 def mutual_information(y: np.array, z: np.array, bins=2, **kwargs) -> float:
     """
     Calculate the mutual information between two arrays.
+    The protected attribute `z` can be binary or non-binary.
 
     Mutual information is a measure of the mutual dependence between two variables.
     It quantifies the "amount of information" (in units such as bits) obtained
@@ -173,6 +121,7 @@ def mutual_information(y: np.array, z: np.array, bins=2, **kwargs) -> float:
 def normalized_mutual_information(y: np.array, z: np.array, **kwargs) -> float:
     """
     Calculate the normalized mutual information between two arrays.
+    The protected attribute `z` can be binary or non-binary.
 
     Normalized mutual information is a normalization of the Mutual Information (MI) score
     to scale the results between 0 (no mutual information, independent variables) and 1
@@ -195,6 +144,62 @@ def normalized_mutual_information(y: np.array, z: np.array, **kwargs) -> float:
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         return normalized_mutual_info_score(y, z)
+
+
+def pearsonr(y: np.array, z: np.array, **kwargs) -> float:
+    """
+    Calculate the Pearson correlation coefficient between two arrays.
+    The protected attribute `z` can be binary or non-binary.
+
+    The Pearson correlation coefficient measures the linear relationship between two variables.
+    The calculation of the Pearson correlation coefficient is not affected by scaling,
+    and it ranges from -1 to 1. A value of 1 implies a perfect positive correlation,
+    while a value of -1 implies a perfect negative correlation.
+
+    Parameters
+    ----------
+    y: np.array
+        Flattened array, can be a prediction or the truth label.
+    z: np.array
+        Flattened array of the same shape as y.
+    **kwargs
+        Additional keyword arguments. These are not currently used.
+
+    Returns
+    -------
+    float
+        The Pearson correlation coefficient between y and z.
+    """
+    return np.corrcoef(y.reshape(1, -1), z.reshape(1, -1))[0, 1]
+
+
+def pearsonr_abs(y: np.array, z: np.array, **kwargs) -> float:
+    """
+    Calculate the absolute value of the Pearson correlation coefficient between two arrays.
+    The protected attribute `z` can be binary or non-binary.
+
+    The Pearson correlation coefficient measures the linear relationship between two datasets.
+    The calculation of the Pearson correlation coefficient is not affected by scaling,
+    and it ranges from -1 to 1. A value of 1 implies a perfect positive correlation,
+    while a value of -1 implies a perfect negative correlation. The absolute value is taken
+    to disregard the direction of the correlation. Any correlation is considered as dependency
+    and therefore unfairness.
+
+    Parameters
+    ----------
+    y: np.array
+        Flattened array, can be a prediction or the truth label.
+    z: np.array
+        Flattened array of the same shape as y.
+    **kwargs
+        Additional keyword arguments. These are not currently used.
+
+    Returns
+    -------
+    float
+        The absolute value of the Pearson correlation coefficient between y and z.
+    """
+    return np.abs(pearsonr(y, z))
 
 
 def rdc(y: np.array, z: np.array, f=np.sin, k=20, s=1 / 6., n=1, **kwargs):

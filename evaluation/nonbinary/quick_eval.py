@@ -17,8 +17,7 @@ from fado.preprocessing.solverwrapper import f_remove, f_add
 
 # load metrics
 from fado.metrics import statistical_parity_abs_diff, statistical_parity_abs_diff_max, \
-    statistical_parity_abs_diff_mean
-from fado.metrics.nonbinary import nb_normalized_mutual_information
+    statistical_parity_abs_diff_mean, normalized_mutual_information
 
 # load fake metrics that serve other purposes
 from measures import count_size, count_groups, sanity_check
@@ -328,7 +327,7 @@ def settings(data_str, objective_str):
     disc_dict = {
         'Statistical Disparity Sum': statistical_parity_abs_diff,
         'Maximal Statistical Disparity': statistical_parity_abs_diff_max,
-        'NMI': nb_normalized_mutual_information,
+        'NMI': normalized_mutual_information,
         'Size': count_size,
         'Distinct Groups': count_groups,
         'Sanity Check': sanity_check}

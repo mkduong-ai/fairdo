@@ -11,6 +11,7 @@ def statistical_parity_abs_diff_multi(y: np.array, z: np.array,
                                       **kwargs) -> float:
     """
     Calculate the absolute difference in statistical parity for multiple non-binary protected attributes.
+    Protected attributes `z[i]` can be binary or non-binary.
 
     Parameters
     ----------
@@ -58,7 +59,7 @@ def statistical_parity_abs_diff_multi(y: np.array, z: np.array,
 def statistical_parity_abs_diff(y: np.array, z: np.array, agg_group=np.sum, **kwargs) -> float:
     """
     Calculate the absolute value of the statistical parity difference between all groups inside a protected attribute.
-    The protected attribute can be binary or non-binary.
+    The protected attribute `z` can be binary or non-binary.
     Returned value is aggregated with `agg_group`.
 
     Parameters
@@ -88,8 +89,8 @@ def statistical_parity_abs_diff(y: np.array, z: np.array, agg_group=np.sum, **kw
 def statistical_parity_abs_diff_mean(y: np.array, z: np.array,
                                      **kwargs) -> float:
     """
-    Calculate the sum of statistical parity absolute differences between all groups and return
-    the average score.
+    Calculate the sum of statistical parity absolute differences between all groups and return the average score.
+    The protected attribute `z` can be binary or non-binary.
 
     Parameters
     ----------
@@ -115,6 +116,7 @@ def statistical_parity_abs_diff_max(y: np.array, z: np.array,
                                     **kwargs) -> float:
     """
     Calculate the maximum of statistical parity absolute differences between all groups in a protected attribute.
+    The protected attribute `z` can be binary or non-binary.
 
     Parameters
     ----------
@@ -140,6 +142,7 @@ def statistical_parity_difference(y: np.array, z: np.array,
                                   positive_label=1, privileged_group=1, **kwargs) -> float:
     """
     Calculate the difference in statistical parity according to [1].
+    The protected attribute `z` must be binary. Returned value can be negative.
 
     [1] A Maximal Correlation Framework for Fair Machine Learning (Lee et al. 2022) (https://arxiv.org/abs/2106.00051)
 
@@ -178,7 +181,7 @@ def statistical_parity_difference(y: np.array, z: np.array,
 
 def mean_difference(*args, **kwargs) -> float:
     """
-    Alias for the statistical_parity_difference function.
+    Alias for the `statistical_parity_difference` function.
 
     Parameters
     ----------
@@ -203,6 +206,7 @@ def disparate_impact_ratio(y: np.array, z: np.array,
                            positive_label=1, privileged_group=1, **kwargs) -> float:
     """
     Calculate the Disparate Impact ratio.
+    The protected attribute `z` must be binary.
 
     This function computes the ratio of probabilities of positive outcomes for
     the unprivileged group to the privileged group. A value of 1 indicates
@@ -250,6 +254,7 @@ def disparate_impact_ratio_objective(y: np.array, z: np.array,
                                      positive_label=1, privileged_group=1, **kwargs) -> float:
     """
     Calculate the objective Disparate Impact ratio.
+    The protected attribute `z` must be binary.
 
     This function computes the absolute difference between 1 and the Disparate
     Impact ratio. It can be used as an objective function to minimize
@@ -279,6 +284,7 @@ def disparate_impact_ratio_deviation(y: np.array, z: np.array,
                                      positive_label=1, privileged_group=1, **kwargs) -> float:
     """
     Calculate the difference in objective Disparate Impact ratio.
+    The protected attribute `z` must be binary.
 
     This function computes the difference between 1 and the Disparate Impact
     ratio. A value of 0 indicates fairness. A positive value indicates
