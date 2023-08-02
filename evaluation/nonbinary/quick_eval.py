@@ -198,10 +198,10 @@ def create_save_path(data_str, objective_str):
     return save_path
 
 
-def genetic_algorithm_method_hyperparam(f, d, pop_size=50, num_generations=100,
+def genetic_algorithm_method_hyperparam(pop_size=50, num_generations=100,
                                         select_parents=elitist_selection,
                                         crossover=uniform_crossover,
-                                        mutate=fractional_flip_mutation):
+                                        mutate=bit_flip_mutation):
     """
     Wrapper for the genetic algorithm method for hyperparameter tuning.
 
@@ -257,14 +257,15 @@ def setup_experiment(data_str, objective_str, n_runs):
         'Statistical Disparity Sum': statistical_parity_abs_diff,
         # 'Maximal Statistical Disparity': statistical_parity_abs_diff_max,
         # 'NMI': normalized_mutual_information,
-        'Size': count_size,
-        'Distinct Groups': count_groups,
+        #'Size': count_size,
+        #'Distinct Groups': count_groups,
         'Sanity Check': sanity_check}
 
     # create methods
     methods = {  # 'Baseline (Original)': baseline.original_method,
         # 'Random Heuristic': baseline.random_method,
-        'GA (1-Point Crossover)': ga.genetic_algorithm_method,
+        'GA (1-Point Crossover)': genetic_algorithm_method_hyperparam(num_generations=3),
+        'GA (1-Point Crossover)': genetic_algorithm_method_hyperparam(num_generations=10),
         # 'GA (Uniform Crossover)': genetic_algorithm_method_wrapper('uniform')
     }
 
