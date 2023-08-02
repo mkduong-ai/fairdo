@@ -264,8 +264,8 @@ def setup_experiment(data_str, objective_str, n_runs):
     # create methods
     methods = {  # 'Baseline (Original)': baseline.original_method,
         # 'Random Heuristic': baseline.random_method,
-        'GA (1-Point Crossover)': genetic_algorithm_method_hyperparam(num_generations=3),
-        'GA (1-Point Crossover)': genetic_algorithm_method_hyperparam(num_generations=10),
+        'GA (1-Point Crossover)': genetic_algorithm_method_hyperparam(crossover=onepoint_crossover, num_generations=3),
+        'GA (3-Point Crossover)': genetic_algorithm_method_hyperparam(crossover=kpoint_crossover, num_generations=3),
         # 'GA (Uniform Crossover)': genetic_algorithm_method_wrapper('uniform')
     }
 
