@@ -109,7 +109,7 @@ def statistical_parity_abs_diff_mean(y: np.array, z: np.array,
     float
         Average of the absolute value of the statistical parity differences between all groups.
     """
-    statistical_parity_abs_diff(y=y, z=z, agg_group=np.mean, **kwargs)
+    return statistical_parity_abs_diff(y=y, z=z, agg_group=np.mean, **kwargs)
 
 
 def statistical_parity_abs_diff_max(y: np.array, z: np.array,
@@ -135,7 +135,7 @@ def statistical_parity_abs_diff_max(y: np.array, z: np.array,
     float
         Average of the absolute value of the statistical parity differences between all groups.
     """
-    statistical_parity_abs_diff(y=y, z=z, agg_group=np.max, **kwargs)
+    return statistical_parity_abs_diff(y=y, z=z, agg_group=np.max, **kwargs)
 
 
 def statistical_parity_difference(y: np.array, z: np.array,
