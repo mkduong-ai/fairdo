@@ -31,8 +31,8 @@ def statistical_parity_absolute_difference_multi(y: np.array, z: np.array,
         Aggregated attribute disparity.
     """
     # check input
-    if len(z.shape) != 2:
-        raise ValueError('z must be a 2D array')
+    if len(z.shape) < 2:
+        z = z.reshape(-1, 1)
     # invert privileged and positive label if required
     if positive_label == 0:
         y = 1 - y
