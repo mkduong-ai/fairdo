@@ -1,7 +1,6 @@
 from fado.preprocessing import Preprocessing
 from fado.metrics import statistical_parity_absolute_difference
 
-
 # third party
 import numpy as np
 import pandas as pd
