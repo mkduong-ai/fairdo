@@ -10,7 +10,7 @@ def statistical_parity_absolute_difference_multi(y: np.array, z: np.array,
                                                  positive_label=1,
                                                  **kwargs) -> float:
     """
-    Calculate the difference in statistical parity for multiple non-binary protected attributes.
+    Calculate the absolute difference in statistical parity for multiple non-binary protected attributes.
 
     Parameters
     ----------
@@ -45,14 +45,11 @@ def statistical_parity_absolute_difference_multi(y: np.array, z: np.array,
     # get statistical parity for each attribute
     attributes_disparity = []
     for k, zk in enumerate(groups):
+        # calculate statistical parities for all groups in one pass
+        parities = {i: np.sum(y & (z[:, k] == i)) / np.sum(z[:, k] == i) for i in zk}
         # generate all possible pairs of values for the attribute
         pairs = generate_pairs(zk)
-        group_disparity = []
-        for i, j in pairs:
-            # get statistical parity for each pair
-            parity_i = np.sum(y & (z[:, k] == i)) / np.sum(z[:, k] == i)
-            parity_j = np.sum(y & (z[:, k] == j)) / np.sum(z[:, k] == j)
-            group_disparity.append(np.abs(parity_i - parity_j))
+        group_disparity = [np.abs(parities[i] - parities[j]) for i, j in pairs]
         attributes_disparity.append(agg_group(group_disparity))
 
     return agg_attribute(attributes_disparity)
@@ -81,6 +78,9 @@ def statistical_parity_difference(y: np.array, z: np.array,
     float
         The difference in statistical parity between unprivileged and privileged groups.
     """
+    if z.ndim > 1:
+        raise ValueError("z must be a 1D array")
+
     # invert privileged and positive label if required
     if privileged_group == 0:
         z = 1 - z
@@ -127,7 +127,8 @@ def statistical_parity_absolute_difference(*args, **kwargs) -> float:
     y: np.array
         Flattened binary array, can be the prediction or the truth label.
     z: np.array
-        Flattened binary array of shape y, represents the protected attribute.
+        Flattened array of shape y, represents the protected attribute.
+        Can represent non-binary protected attribute.
     positive_label: int, optional
         Label considered as positive. Default is 1.
     privileged_group: int, optional
@@ -138,7 +139,7 @@ def statistical_parity_absolute_difference(*args, **kwargs) -> float:
     float
         The absolute value of the statistical parity difference.
     """
-    return np.abs(statistical_parity_difference(*args, **kwargs))
+    return statistical_parity_absolute_difference_multi(*args, **kwargs)
 
 
 def disparate_impact_ratio(y: np.array, z: np.array,
