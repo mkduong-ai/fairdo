@@ -132,7 +132,7 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
     best_population = population
     # evaluate the function for each vector in the population
     fitness = evaluate_population(f, n, population, penalty_function=relative_difference_penalty)
-    best_fitness = fitness
+    best_fitness = np.max(fitness)
     # perform the genetic algorithm for the specified number of generations
     for generation in range(num_generations):
         # select the parents
@@ -141,17 +141,22 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
         offspring_size = (pop_size - parents.shape[0], d)
         offspring = crossover(parents, offspring_size)
         # mutate the offspring
-        offspring = mutate(offspring, mutation_rate=0.05)
+        offspring = mutate(offspring)
         # evaluate the function for the new offspring
         offspring_fitness = evaluate_population(f, n, offspring, penalty_function=relative_difference_penalty)
         # create the new population (allow the parents to be part of the next generation)
         population = np.concatenate((parents, offspring))
         fitness = np.concatenate((fitness, offspring_fitness))
-        # select the best individuals to keep for the next generation (elitism)
-        idx = np.argsort(fitness)[:pop_size]
-        population = population[idx]
-        fitness = fitness[idx]
-    return population[0], fitness[0]
+        # save the best solution found so far
+        best_idx = np.argmax(fitness)
+        if fitness[best_idx] > best_fitness:
+            best_fitness = fitness[best_idx]
+            best_population = population[best_idx]
+
+    if not maximize:
+        # negate the fitness back to its original form
+        best_fitness = -best_fitness
+    return best_population, best_fitness
 
 
 def genetic_algorithm(f, d, pop_size, num_generations,

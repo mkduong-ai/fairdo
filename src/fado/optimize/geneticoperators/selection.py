@@ -25,7 +25,7 @@ import numpy as np
 
 def elitist_selection(population, fitness, num_parents=2):
     """
-    This function selects the fittest parents from the population.
+    This function selects the fittest (max fitness) parents from the population.
 
     Parameters
     ----------
