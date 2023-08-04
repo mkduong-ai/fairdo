@@ -202,7 +202,8 @@ def run_experiments(data_str, disc_dict, methods, n_runs=10,
                                     objective_str=objective_str)
     return results
 
-def setup_experiment(data_str, objective_str, n_runs):
+
+def setup_experiment(data_str, objective_str):
     """
     Sets up the experiment.
 
@@ -212,8 +213,6 @@ def setup_experiment(data_str, objective_str, n_runs):
         Name of the dataset.
     objective_str: str
         Objective function.
-    n_runs: int
-        Number of runs.
 
     Returns
     -------
@@ -237,8 +236,10 @@ def setup_experiment(data_str, objective_str, n_runs):
     # create methods
     methods = {  # 'Baseline (Original)': baseline.original_method,
         # 'Random Heuristic': baseline.random_method,
-        'GA (1-Point Crossover)': genetic_algorithm_method_hyperparam(crossover=onepoint_crossover, num_generations=3),
-        'GA (3-Point Crossover)': genetic_algorithm_method_hyperparam(crossover=kpoint_crossover, num_generations=3),
+        'GA (1-Point Crossover)': partial(ga.genetic_algorithm,
+                                          crossover=onepoint_crossover, num_generations=3),
+        'GA (3-Point Crossover)': partial(ga.genetic_algorithm,
+                                          crossover=kpoint_crossover, num_generations=3),
         # 'GA (Uniform Crossover)': genetic_algorithm_method_wrapper('uniform')
     }
 
@@ -248,7 +249,7 @@ def setup_experiment(data_str, objective_str, n_runs):
     return save_path, disc_dict, methods
 
 
-def setup_experiment_hyperparameter(data_str, objective_str, n_runs):
+def setup_experiment_hyperparameter(data_str, objective_str):
     """
     Sets up the experiment.
 
@@ -258,8 +259,6 @@ def setup_experiment_hyperparameter(data_str, objective_str, n_runs):
         Name of the dataset.
     objective_str: str
         Objective function.
-    n_runs: int
-        Number of runs.
 
     Returns
     -------
@@ -321,20 +320,20 @@ def run_and_save_experiment(data_str, objective_str, n_runs=10):
     """
 
     # setup the experiment
-    save_path, disc_dict, methods = setup_experiment_hyperparameter(data_str, objective_str, n_runs)
+    save_path, disc_dict, methods = setup_experiment_hyperparameter(data_str, objective_str)
 
     # run experiment
-    # results = run_experiments(data_str=data_str,
-    #                           disc_dict=disc_dict,
-    #                           methods=methods,
-    #                           n_runs=n_runs,
-    #                           objective_str=objective_str)
-    #
-    # # convert results to proper dataframe
-    # results_df = convert_results_to_dataframe(results)
-    #
-    # # save results
-    # results_df.to_csv(save_path + '.csv', index_label='index')
+    results = run_experiments(data_str=data_str,
+                              disc_dict=disc_dict,
+                              methods=methods,
+                              n_runs=n_runs,
+                              objective_str=objective_str)
+
+    # convert results to proper dataframe
+    results_df = convert_results_to_dataframe(results)
+
+    # save results
+    results_df.to_csv(save_path + '.csv', index_label='index')
 
 
 def main():
