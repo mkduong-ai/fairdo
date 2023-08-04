@@ -95,6 +95,14 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
     to n. The fitness function is the value of the fitness function plus a penalty for individuals that do not satisfy
     the size constraint.
 
+    The genetic algorithm consists of the following steps which are repeated for a specified number of generations:
+
+    1. Generate an initial population of binary vectors.
+    2. Evaluate the fitness of each vector in the population.
+    3. Select the best individuals to be parents. (Selection)
+    4. Create offspring by performing crossover on the parents. (Crossover)
+    5. Mutate the offspring. (Mutation)
+
     Parameters
     ----------
     f: callable
@@ -172,7 +180,7 @@ def genetic_algorithm(f, d, pop_size, num_generations,
                       select_parents=elitist_selection,
                       crossover=onepoint_crossover,
                       mutate=fractional_flip_mutation, ):
-    """
+    r"""
     Perform a genetic algorithm. The genetic algorithm is used to maximize the given fitness function.
     It consists of the following steps which are repeated for a specified number of generations:
 
@@ -205,6 +213,14 @@ def genetic_algorithm(f, d, pop_size, num_generations,
         The best solution found by the algorithm.
     best_fitness: float
         The fitness of the best solution found by the algorithm.
+
+    Notes
+    -----
+    The genetic algorithm is used to maximize the given fitness function.
+    To avoid having to rewrite the selection, crossover, and mutation functions to work with minimization problems,
+    the fitness function is negated if we are minimizing.
+    The fitness function must map the binary vector to a positive value, i.e.,
+    :math:`f: \{0, 1\}^d \rightarrow \mathbb{R}^+`.
     """
     return genetic_algorithm_constraint(f=f, d=d, n=0, pop_size=pop_size, num_generations=num_generations,
                                         select_parents=select_parents,
