@@ -6,14 +6,6 @@ fado.metrics package
    :undoc-members:
    :show-inheritance:
 
-Subpackages
------------
-
-.. toctree::
-   :maxdepth: 4
-
-   fado.metrics.nonbinary
-
 Submodules
 ----------
 

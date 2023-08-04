@@ -9,6 +9,14 @@ fado.utils package
 Submodules
 ----------
 
+fado.utils.dataset module
+-------------------------
+
+.. automodule:: fado.utils.dataset
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 fado.utils.helper module
 ------------------------
 
