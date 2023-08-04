@@ -106,9 +106,9 @@ def plot_results(results_df,
 
 def settings(data_str='compas', objective_str='remove_synthetic'):
     disc_dict = {  # 'Absolute Statistical Disparity': statistical_parity_absolute_difference,
-        'Sum SDP': nb_statistical_parity_sum_abs_difference,
-        'Maximal SDP': nb_statistical_parity_max_abs_difference,
-        'NMI': nb_normalized_mutual_information}
+        'Sum SDP': statistical_parity_abs_diff,
+        'Maximal SDP': statistical_parity_abs_diff_max,
+        'NMI': normalized_mutual_information}
 
     # load the results
     save_path = f'evaluation/results/nonbinary/{data_str}/{data_str}_{objective_str}'
