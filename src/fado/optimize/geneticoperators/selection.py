@@ -105,7 +105,8 @@ def stochastic_universal_sampling(population, fitness, num_parents=2):
 
     Notes
     -----
-    This function assumes that the fitness is non-negative.
+    This function normally assumes that the fitness is non-negative.
+    However, if the fitness is negative, then the fitness values are shifted to be non-negative.
 
     References
     ----------
@@ -113,6 +114,9 @@ def stochastic_universal_sampling(population, fitness, num_parents=2):
     Baker, J. E. (1987). "Reducing Bias and Inefficiency in the Selection Algorithm".
     Proceedings of the Second International Conference on Genetic Algorithms and Their Application.
     """
+    # Check if the fitness is non-negative
+    if np.any(fitness < 0):
+        fitness = fitness - np.min(fitness)
     # Normalize the fitness values
     fitness_sum = np.sum(fitness)
     normalized_fitness = fitness / fitness_sum
@@ -164,7 +168,8 @@ def roulette_wheel_selection(population, fitness, num_parents=2):
 
     Notes
     -----
-    This function assumes that the fitness is non-negative.
+    This function normally assumes that the fitness is non-negative.
+    However, if the fitness is negative, then the fitness values are shifted to be non-negative.
 
     References
     ----------
@@ -172,6 +177,9 @@ def roulette_wheel_selection(population, fitness, num_parents=2):
     Holland, J. H. (1975). Adaptation in natural and artificial systems: An introductory analysis with applications
     to biology, control, and artificial intelligence. The Michigan Press.
     """
+    # Check if the fitness is non-negative
+    if np.any(fitness < 0):
+        fitness = fitness - np.min(fitness)
     fitness_sum = np.sum(fitness)
     selection_probs = fitness / fitness_sum
     parents_idx = np.random.choice(np.arange(len(population)), size=num_parents, p=selection_probs)
