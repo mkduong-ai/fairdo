@@ -73,56 +73,11 @@ def plot_results(results_df,
 
     # Draw the heatmap
     plt.figure(figsize=(10, 8))
-    sns.heatmap(pivot, annot=True, fmt=".2f", cmap="YlGnBu")
+    sns.heatmap(pivot, annot=True, fmt=".2f", cmap="magma",
+                vmin=pivot.min().min(),
+                vmax=pivot.max().max())
     plt.title("Heatmap of Statistical Parity Absolute Difference")
     plt.show()
-
-    # rename the discrimination measures
-    # rename_dict = dict(zip(disc_list, disc_dict.keys()))
-    # df_plot['Discrimination Measure'] = df_plot['Discrimination Measure'].replace(rename_dict)
-    #
-    # # plot the results
-    # figure(figsize=(6, 3.5), dpi=80)
-    # sns.set(font_scale=1)
-    # sns.set_style("darkgrid", {"grid.color": ".6", "grid.linestyle": ":"})
-    # ax = sns.barplot(data=df_plot,
-    #                  x='Discrimination Measure',
-    #                  y='Value',
-    #                  hue='Method',
-    #                  errorbar='sd',
-    #                  capsize=.2,
-    #                  palette='deep',
-    #                  )
-    # ax.set_yscale('log', base=10)
-    # # Set the title of the plot
-    # # plt.title(results_df['data'][0].capitalize() + ' Dataset')
-    # ax.legend([], [], frameon=False)
-    # ax.set_ylabel('')
-    # ax.set_xlabel('')
-    # # sns.move_legend(ax_leg, "lower center", bbox_to_anchor=(.43, 1), ncol=2, title=None, frameon=False,
-    # #                   fontsize=12.5)
-    #
-    # # Show the plot
-    # if show_plot:
-    #     plt.show()
-    #
-    # # save plot
-    # if save_path is not None:
-    #     plt.savefig(save_path + '.pdf', format='pdf',  bbox_inches='tight', pad_inches=0)
-    #     plt.close()
-    #
-    # # save legend
-    # fig_leg = plt.figure(figsize=(5, 0.1))
-    # ax_leg = fig_leg.add_subplot(111)
-    # ax_leg.legend(*ax.get_legend_handles_labels(), loc='center',
-    #               ncol=5, frameon=True, fontsize=12.5)
-    # ax_leg.xaxis.set_visible(False)
-    # ax_leg.yaxis.set_visible(False)
-    #
-    # if save_path is not None:
-    #     plt.savefig(''.join(save_path.split(sep='_')[:1]) + '_legend' + '.pdf',
-    #                 format='pdf', bbox_inches='tight', pad_inches=0)
-    #     plt.close()
 
 
 def settings(data_str='compas', objective_str='remove_synthetic'):
