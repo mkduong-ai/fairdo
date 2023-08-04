@@ -282,9 +282,9 @@ def setup_experiment_hyperparameter(data_str, objective_str):
     # create hyperparameters
     hyperparams = {'pop_size': [50, 100, 200],
                    'num_generations': [10, 20, 50, 100],
-                   #'select_parents': [elitist_selection, roulette_wheel_selection],
+                   #'selection': [elitist_selection, roulette_wheel_selection],
                    #'crossover': [onepoint_crossover, kpoint_crossover, uniform_crossover],
-                   #'mutate': [bit_flip_mutation, swap_mutation]
+                   #'mutation': [bit_flip_mutation, swap_mutation]
                    }
 
     # create methods

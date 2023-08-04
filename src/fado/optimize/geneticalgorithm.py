@@ -87,9 +87,9 @@ def evaluate_population(f, n, population, penalty_function=relative_difference_p
 
 
 def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
-                                 select_parents=elitist_selection,
+                                 selection=elitist_selection,
                                  crossover=onepoint_crossover,
-                                 mutate=fractional_flip_mutation, maximize=False):
+                                 mutation=fractional_flip_mutation, maximize=False):
     r"""
     Perform a genetic algorithm with constraints. The constraint is that the sum of the binary vector must be equal
     to n. The fitness function is the value of the fitness function plus a penalty for individuals that do not satisfy
@@ -115,11 +115,11 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
         The size of the population.
     num_generations: int
         The number of generations.
-    select_parents: callable
+    selection: callable
         The function to select the parents from the population.
     crossover: callable
         The function to perform the crossover operation.
-    mutate: callable
+    mutation: callable
         The function to perform the mutation operation.
     maximize: bool, optional
 
@@ -153,12 +153,12 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
     # perform the genetic algorithm for the specified number of generations
     for generation in range(num_generations):
         # select the parents
-        parents, fitness = select_parents(population, fitness)
+        parents, fitness = selection(population, fitness)
         # create the offspring
         offspring_size = (pop_size - parents.shape[0], d)
         offspring = crossover(parents, offspring_size)
         # mutate the offspring
-        offspring = mutate(offspring)
+        offspring = mutation(offspring)
         # evaluate the function for the new offspring
         offspring_fitness = evaluate_population(f, n, offspring, penalty_function=relative_difference_penalty)
         # create the new population (allow the parents to be part of the next generation)
@@ -177,9 +177,9 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
 
 
 def genetic_algorithm(f, d, pop_size, num_generations,
-                      select_parents=elitist_selection,
+                      selection=elitist_selection,
                       crossover=onepoint_crossover,
-                      mutate=fractional_flip_mutation, ):
+                      mutation=fractional_flip_mutation, ):
     r"""
     Perform a genetic algorithm. The genetic algorithm is used to maximize the given fitness function.
     It consists of the following steps which are repeated for a specified number of generations:
@@ -200,11 +200,11 @@ def genetic_algorithm(f, d, pop_size, num_generations,
         The size of the population.
     num_generations: int
         The number of generations.
-    select_parents: callable
+    selection: callable
         The function to select the parents from the population.
     crossover: callable
         The function to perform the crossover operation.
-    mutate: callable
+    mutation: callable
         The function to perform the mutation operation.
 
     Returns
@@ -223,6 +223,6 @@ def genetic_algorithm(f, d, pop_size, num_generations,
     :math:`f: \{0, 1\}^d \rightarrow \mathbb{R}^+`.
     """
     return genetic_algorithm_constraint(f=f, d=d, n=0, pop_size=pop_size, num_generations=num_generations,
-                                        select_parents=select_parents,
+                                        selection=selection,
                                         crossover=crossover,
-                                        mutate=mutate, )
+                                        mutation=mutation, )
