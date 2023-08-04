@@ -83,7 +83,7 @@ def tournament_selection(population, fitness, num_parents=2, tournament_size=3):
     return parents, parents_fitness
 
 
-def stochastic_universal_sampling(population, fitness, num_parents):
+def stochastic_universal_sampling(population, fitness, num_parents=2):
     """
     This function selects parents from the population using the Stochastic Universal Sampling (SUS) method.
 
@@ -165,6 +165,12 @@ def roulette_wheel_selection(population, fitness, num_parents=2):
     Notes
     -----
     This function assumes that the fitness is non-negative.
+
+    References
+    ----------
+    This function is based on the work:
+    Holland, J. H. (1975). Adaptation in natural and artificial systems: An introductory analysis with applications
+    to biology, control, and artificial intelligence. The Michigan Press.
     """
     fitness_sum = np.sum(fitness)
     selection_probs = fitness / fitness_sum
@@ -176,6 +182,8 @@ def rank_selection(population, fitness, num_parents=2):
     """
     This function selects parents from the population based on their rank.
     The rank is determined by the fitness of the individual.
+    The higher the fitness, the higher the rank.
+    The probability of selecting an individual is proportional to its rank.
 
     Parameters
     ----------

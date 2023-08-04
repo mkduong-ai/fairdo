@@ -6,7 +6,7 @@ This module implements the Genetic Algorithm for combinatorial optimization prob
 It reflects the process of natural selection where the fittest individuals are selected for
 reproduction to produce the offspring of the next generation.
 
-The main functions in this module are `genetic_algorithm_constraint` and `genetic_algorithm`,
+The main functions in this module are **genetic_algorithm_constraint** and **genetic_algorithm**,
 which perform the Genetic Algorithm on a given fitness function to be maximized.
 These functions take as input the fitness `f`, the dimensionality `d` of `f`,
 the population size `pop_size`, and number of generation `num_generations`.
@@ -38,7 +38,7 @@ from fado.utils.penalty import relative_difference_penalty
 
 def generate_population(pop_size, d):
     """
-    Generate a population of binary vectors. Each vector has a length of d.
+    Generate a random population of binary vectors. Each vector has a length of d.
     The values of the vectors are either 0 or 1. The population is generated randomly.
 
     Parameters
@@ -90,7 +90,7 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
                                  select_parents=elitist_selection,
                                  crossover=onepoint_crossover,
                                  mutate=fractional_flip_mutation, maximize=False):
-    """
+    r"""
     Perform a genetic algorithm with constraints. The constraint is that the sum of the binary vector must be equal
     to n. The fitness function is the value of the fitness function plus a penalty for individuals that do not satisfy
     the size constraint.
@@ -121,6 +121,14 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
         The best solution found by the algorithm.
     best_fitness : float
         The fitness of the best solution found by the algorithm.
+
+    Notes
+    -----
+    The genetic algorithm is used to maximize the given fitness function.
+    To avoid having to rewrite the selection, crossover, and mutation functions to work with minimization problems,
+    the fitness function is negated if we are minimizing.
+    The fitness function must map the binary vector to a positive value, i.e.,
+    :math:`f: \{0, 1\}^d \rightarrow \mathbb{R}^+`.
     """
     # negate the fitness function if we are minimizing
     if not maximize:
@@ -129,14 +137,15 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
 
     # generate the initial population
     population = generate_population(pop_size, d)
-    best_population = population
     # evaluate the function for each vector in the population
     fitness = evaluate_population(f, n, population, penalty_function=relative_difference_penalty)
-    best_fitness = np.max(fitness)
+    best_idx = np.argmax(fitness)
+    best_fitness = fitness[best_idx]
+    best_population = population[best_idx]
     # perform the genetic algorithm for the specified number of generations
     for generation in range(num_generations):
         # select the parents
-        parents, fitness = select_parents(population, fitness, num_parents=2)
+        parents, fitness = select_parents(population, fitness)
         # create the offspring
         offspring_size = (pop_size - parents.shape[0], d)
         offspring = crossover(parents, offspring_size)
@@ -148,10 +157,10 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
         population = np.concatenate((parents, offspring))
         fitness = np.concatenate((fitness, offspring_fitness))
         # save the best solution found so far
-        best_idx = np.argmax(fitness)
-        if fitness[best_idx] > best_fitness:
-            best_fitness = fitness[best_idx]
-            best_population = population[best_idx]
+        best_idx = np.argmax(offspring_fitness)
+        if offspring_fitness[best_idx] > best_fitness:
+            best_fitness = offspring_fitness[best_idx]
+            best_population = offspring[best_idx]
 
     if not maximize:
         # negate the fitness back to its original form
