@@ -41,6 +41,9 @@ def plot_results(results_df,
     -------
     None
     """
+    # Filter out rows where the 'Method' column starts with 'GA'
+    results_df = results_df[results_df['Method'].str.startswith('GA')]
+
     if groups is None:
         groups = ['Method']
 
@@ -56,62 +59,81 @@ def plot_results(results_df,
                               value_name="Value")
     df_plot = df_plot.drop(columns=disc_time_list)
 
+    # Extract the population size and number of generations from the 'Method' column
+    results_df['pop_size'] = results_df['Method'].str.extract(r'(pop_size=)(\d+)')[1].astype(int)
+    results_df['num_generations'] = results_df['Method'].str.extract(r'(num_generations=)(\d+)')[1].astype(int)
+
+    # Create a pivot table with 'pop_size' and 'num_generations' as the index and columns, respectively,
+    # and 'statistical_parity_abs_diff' as the values
+    pivot = results_df.pivot_table(values='statistical_parity_abs_diff', index='pop_size', columns='num_generations')
+
+    # Create a pivot table with 'pop_size' and 'num_generations' as the index and columns, respectively,
+    # and 'statistical_parity_abs_diff' as the values
+    pivot = results_df.pivot_table(values='statistical_parity_abs_diff', index='pop_size', columns='num_generations')
+
+    # Draw the heatmap
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(pivot, annot=True, fmt=".2f", cmap="YlGnBu")
+    plt.title("Heatmap of Statistical Parity Absolute Difference")
+    plt.show()
+
     # rename the discrimination measures
-    rename_dict = dict(zip(disc_list, disc_dict.keys()))
-    df_plot['Discrimination Measure'] = df_plot['Discrimination Measure'].replace(rename_dict)
-
-    # plot the results
-    figure(figsize=(6, 3.5), dpi=80)
-    sns.set(font_scale=1)
-    sns.set_style("darkgrid", {"grid.color": ".6", "grid.linestyle": ":"})
-    ax = sns.barplot(data=df_plot,
-                     x='Discrimination Measure',
-                     y='Value',
-                     hue='Method',
-                     errorbar='sd',
-                     capsize=.2,
-                     palette='deep',
-                     )
-    ax.set_yscale('log', base=10)
-    # Set the title of the plot
-    # plt.title(results_df['data'][0].capitalize() + ' Dataset')
-    ax.legend([], [], frameon=False)
-    ax.set_ylabel('')
-    ax.set_xlabel('')
-    # sns.move_legend(ax_leg, "lower center", bbox_to_anchor=(.43, 1), ncol=2, title=None, frameon=False,
-    #                   fontsize=12.5)
-
-    # Show the plot
-    if show_plot:
-        plt.show()
-
-    # save plot
-    if save_path is not None:
-        plt.savefig(save_path + '.pdf', format='pdf',  bbox_inches='tight', pad_inches=0)
-        plt.close()
-
-    # save legend
-    fig_leg = plt.figure(figsize=(5, 0.1))
-    ax_leg = fig_leg.add_subplot(111)
-    ax_leg.legend(*ax.get_legend_handles_labels(), loc='center',
-                  ncol=5, frameon=True, fontsize=12.5)
-    ax_leg.xaxis.set_visible(False)
-    ax_leg.yaxis.set_visible(False)
-
-    if save_path is not None:
-        plt.savefig(''.join(save_path.split(sep='_')[:1]) + '_legend' + '.pdf',
-                    format='pdf', bbox_inches='tight', pad_inches=0)
-        plt.close()
+    # rename_dict = dict(zip(disc_list, disc_dict.keys()))
+    # df_plot['Discrimination Measure'] = df_plot['Discrimination Measure'].replace(rename_dict)
+    #
+    # # plot the results
+    # figure(figsize=(6, 3.5), dpi=80)
+    # sns.set(font_scale=1)
+    # sns.set_style("darkgrid", {"grid.color": ".6", "grid.linestyle": ":"})
+    # ax = sns.barplot(data=df_plot,
+    #                  x='Discrimination Measure',
+    #                  y='Value',
+    #                  hue='Method',
+    #                  errorbar='sd',
+    #                  capsize=.2,
+    #                  palette='deep',
+    #                  )
+    # ax.set_yscale('log', base=10)
+    # # Set the title of the plot
+    # # plt.title(results_df['data'][0].capitalize() + ' Dataset')
+    # ax.legend([], [], frameon=False)
+    # ax.set_ylabel('')
+    # ax.set_xlabel('')
+    # # sns.move_legend(ax_leg, "lower center", bbox_to_anchor=(.43, 1), ncol=2, title=None, frameon=False,
+    # #                   fontsize=12.5)
+    #
+    # # Show the plot
+    # if show_plot:
+    #     plt.show()
+    #
+    # # save plot
+    # if save_path is not None:
+    #     plt.savefig(save_path + '.pdf', format='pdf',  bbox_inches='tight', pad_inches=0)
+    #     plt.close()
+    #
+    # # save legend
+    # fig_leg = plt.figure(figsize=(5, 0.1))
+    # ax_leg = fig_leg.add_subplot(111)
+    # ax_leg.legend(*ax.get_legend_handles_labels(), loc='center',
+    #               ncol=5, frameon=True, fontsize=12.5)
+    # ax_leg.xaxis.set_visible(False)
+    # ax_leg.yaxis.set_visible(False)
+    #
+    # if save_path is not None:
+    #     plt.savefig(''.join(save_path.split(sep='_')[:1]) + '_legend' + '.pdf',
+    #                 format='pdf', bbox_inches='tight', pad_inches=0)
+    #     plt.close()
 
 
 def settings(data_str='compas', objective_str='remove_synthetic'):
     disc_dict = {  # 'Absolute Statistical Disparity': statistical_parity_absolute_difference,
         'Sum SDP': statistical_parity_abs_diff,
-        'Maximal SDP': statistical_parity_abs_diff_max,
-        'NMI': normalized_mutual_information}
+        #'Maximal SDP': statistical_parity_abs_diff_max,
+        #'NMI': normalized_mutual_information
+    }
 
     # load the results
-    save_path = f'evaluation/results/nonbinary/{data_str}/{data_str}_{objective_str}'
+    save_path = f'evaluation/results/nonbinary/hyperparameter/{data_str}/{data_str}_{objective_str}'
     results = pd.read_csv(f'{save_path}.csv')
 
     # plot the results
@@ -124,6 +146,9 @@ def settings(data_str='compas', objective_str='remove_synthetic'):
 def main():
     obj_strs = ['remove', 'add', 'remove_and_synthetic']
     data_strs = ['adult', 'compas']
+    # Experiments
+    obj_strs = ['remove']
+    data_strs = ['compas']
     for data_str in data_strs:
         for obj_str in obj_strs:
             settings(data_str=data_str, objective_str=obj_str)
