@@ -1,10 +1,16 @@
 import time
 import numpy as np
 import multiprocessing as mp
+from functools import partial
 
 # Define a simple fitness function and penalty function
-def f(x):
-    return np.sum(x)
+def f(x, y=10):
+    return np.sum(x)-y
+
+h = partial(f, y=10)
+g = partial(h, y=22)
+#f = lambda x: np.sum(x)
+    
 def penalty_function(individual, n):
     return abs(sum(individual) - n)
 
@@ -34,11 +40,11 @@ def evaluate_population_pool(f, n, population, penalty_function=penalty_function
 # Benchmark the three approaches
 def benchmark(f, n, population, penalty_function):
     start = time.time()
-    evaluate_population(f, n, population, penalty_function)
+    evaluate_population(g, n, population, penalty_function)
     print("Time Single CPU: ", time.time() - start)
     
     start = time.time()
-    evaluate_population_pool(f, n, population, penalty_function)
+    evaluate_population_pool(g, n, population, penalty_function)
     print("Time with pool: ", time.time() - start)
     
     #start = time.time()
@@ -46,6 +52,6 @@ def benchmark(f, n, population, penalty_function):
     #print("Time with processes: ", time.time() - start)
 
 # Run the benchmark
-population = np.random.uniform(-10, 10, size=(20,20000))
+population = np.random.uniform(-10, 10, size=(500, 7000))
 n = 10
 benchmark(f, n, population, penalty_function)

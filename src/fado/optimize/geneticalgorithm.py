@@ -28,7 +28,7 @@ Deb, K., Pratap, A., Agarwal, S., & Meyarivan, T. (2002).
 A fast and elitist multiobjective genetic algorithm: NSGA-II. IEEE Transactions on Evolutionary Computation.
 """
 
-import multiprocessing as mp
+import pathos.multiprocessing as mp
 import numpy as np
 
 from fado.optimize.geneticoperators.crossover import onepoint_crossover, uniform_crossover
@@ -132,7 +132,8 @@ def evaluate_population(f, n, population, penalty_function=relative_difference_p
         The fitness values of the population.
     """
     try:
-        if mp.cpu_count() > 1 and np.prod(population.shape) > 5 * (10 ** 5):
+        # use multiprocessing to speed up the evaluation if the population is large enough
+        if mp.cpu_count() > 1 and np.prod(population.shape) > 7 * (10 ** 5):
             # use multiprocessing to speed up the evaluation
             with mp.Pool() as pool:
                 fitness = pool.map(evaluate_individual, [(f, n, individual, penalty_function)

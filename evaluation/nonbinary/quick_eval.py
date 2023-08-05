@@ -142,13 +142,6 @@ def run_experiment(data_str, disc_dict, methods,
 
     # create objective function
     disc_measures = list(disc_dict.values())
-    # f_obj = lambda x, disc_measure: f(x, dataframe=df, label=label, protected_attributes=protected_attributes,
-    #                                   disc_measure=disc_measure)
-    # f_obj = partial(f, dataframe=df,
-    #                label=label, protected_attributes=protected_attributes)
-    # functions = [lambda x, disc_measure=disc_measure: f_obj(x, disc_measure=disc_measure)
-    #              for disc_measure in disc_measures]
-    # functions = [partial(f_obj, disc_measure=disc_measure) for disc_measure in disc_measures]
     functions = [partial(f, dataframe=df, label=label, protected_attributes=protected_attributes,
                          disc_measure=disc_measure) for disc_measure in disc_measures]
     for func, disc_measure in zip(functions, disc_measures):
@@ -162,7 +155,6 @@ def run_experiment(data_str, disc_dict, methods,
         for func in functions:
             print(f'Optimizing {func.__name__}...')
             start_time = time.time()
-            print(func)
             results[method_name][func.__name__] = method(f=func, d=dims)[1]
             end_time = time.time()
             results[method_name]['time' + f'_{func.__name__}'] = end_time - start_time
@@ -342,7 +334,7 @@ def run_and_save_experiment(data_str, objective_str, n_runs=10):
 
 def main():
     obj_strs = ['remove', 'add', 'remove_and_synthetic']
-    data_strs = ['adult', 'compas']
+    data_strs = ['adult', 'compas', 'bank']
     # Experiments
     obj_strs = ['remove']
     data_strs = ['compas']
