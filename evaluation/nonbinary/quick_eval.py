@@ -277,11 +277,12 @@ def setup_experiment_hyperparameter(data_str, objective_str):
         # 'NMI': normalized_mutual_information,
         # 'Size': count_size,
         # 'Distinct Groups': count_groups,
-        'Sanity Check': sanity_check}
+        # 'Sanity Check': sanity_check
+    }
 
     # create hyperparameters
-    hyperparams = {'pop_size': [50, 100, 200],
-                   'num_generations': [10, 20, 50, 100],
+    hyperparams = {'pop_size': [500],
+                   'num_generations': [50]#, 100, 200, 500],
                    #'selection': [elitist_selection, roulette_wheel_selection],
                    #'crossover': [onepoint_crossover, kpoint_crossover, uniform_crossover],
                    #'mutation': [bit_flip_mutation, swap_mutation]

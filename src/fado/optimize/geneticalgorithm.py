@@ -28,6 +28,7 @@ Deb, K., Pratap, A., Agarwal, S., & Meyarivan, T. (2002).
 A fast and elitist multiobjective genetic algorithm: NSGA-II. IEEE Transactions on Evolutionary Computation.
 """
 
+import multiprocessing as mp
 import numpy as np
 
 from fado.optimize.geneticoperators.crossover import onepoint_crossover, uniform_crossover
@@ -56,6 +57,59 @@ def generate_population(pop_size, d):
     return np.random.randint(2, size=(pop_size, d))
 
 
+def evaluate_individual(args):
+    """
+    Calculates the fitness of an individual. The fitness is the value of the fitness function
+    plus a penalty for individuals that do not satisfy the size constraint.
+
+    Parameters
+    ----------
+    args: tuple
+        The arguments to pass to the function. The arguments are (f, n, individual, penalty_function).
+
+    Returns
+    -------
+    fitness: float
+        The fitness of the individual.
+    """
+    f, n, individual, penalty_function = args
+    fitness = f(individual)
+    if n > 0:
+        fitness += penalty_function(individual, n)
+    return fitness
+
+
+def evaluate_population_single_cpu(f, n, population, penalty_function=relative_difference_penalty):
+    """
+    Calculates the fitness of each individual in a population. The fitness is the value of the fitness function
+    plus a penalty for individuals that do not satisfy the size constraint.
+
+    Parameters
+    ----------
+    f: callable
+        The fitness function to evaluate.
+    n: int
+        The constraint value.
+    population: ndarray, shape (pop_size, d)
+        The population of vectors to evaluate.
+    penalty_function: callable, optional
+        The penalty function to apply to individuals that do not satisfy the size constraint.
+
+    Returns
+    -------
+    fitness: ndarray, shape (pop_size,)
+        The fitness values of the population.
+    """
+    # fallback to single process execution if multiprocessing fails
+    fitness = np.apply_along_axis(f, axis=1, arr=population)
+    if n > 0:
+        # add absolute_difference_penalty to the fitness of all individuals
+        # that do not satisfy the size constraint
+        fitness += np.apply_along_axis(lambda x: penalty_function(x, n), axis=1, arr=population)
+
+    return fitness
+
+
 def evaluate_population(f, n, population, penalty_function=relative_difference_penalty):
     """
     Calculates the fitness of each individual in a population. The fitness is the value of the fitness function
@@ -67,7 +121,7 @@ def evaluate_population(f, n, population, penalty_function=relative_difference_p
         The fitness function to evaluate.
     n: int
         The constraint value.
-    population: ndarray
+    population: ndarray, shape (pop_size, d)
         The population of vectors to evaluate.
     penalty_function: callable, optional
         The penalty function to apply to individuals that do not satisfy the size constraint.
@@ -77,13 +131,20 @@ def evaluate_population(f, n, population, penalty_function=relative_difference_p
     fitness: ndarray, shape (pop_size,)
         The fitness values of the population.
     """
-    fitness = np.apply_along_axis(f, axis=1, arr=population)
+    try:
+        if mp.cpu_count() > 1 and np.prod(population.shape) > 5 * (10 ** 5):
+            # use multiprocessing to speed up the evaluation
+            with mp.Pool() as pool:
+                fitness = pool.map(evaluate_individual, [(f, n, individual, penalty_function)
+                                                         for individual in population])
 
-    if n > 0:
-        # add a absolute_difference_penalty to the fitness of all individuals that do not satisfy the size constraint
-        fitness += np.apply_along_axis(lambda x: penalty_function(x, n), axis=1, arr=population)
+            return np.array(fitness)
+        else:
+            return evaluate_population_single_cpu(f, n, population, penalty_function)
+    except Exception as e:
+        print(f"Multiprocessing pool failed with error: {e}")
 
-    return fitness
+    return evaluate_population_single_cpu(f, n, population, penalty_function)
 
 
 def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
