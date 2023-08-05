@@ -151,7 +151,10 @@ def evaluate_population(f, n, population, penalty_function=relative_difference_p
 def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
                                  selection=elitist_selection,
                                  crossover=onepoint_crossover,
-                                 mutation=fractional_flip_mutation, maximize=False):
+                                 mutation=fractional_flip_mutation,
+                                 maximize=False,
+                                 tol=1e-6,
+                                 patience=50):
     r"""
     Perform a genetic algorithm with constraints. The constraint is that the sum of the binary vector must be equal
     to n. The fitness function is the value of the fitness function plus a penalty for individuals that do not satisfy
@@ -184,6 +187,12 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
     mutation: callable
         The function to perform the mutation operation.
     maximize: bool, optional
+        Whether to maximize or minimize the fitness function.
+    tol: float, optional
+        The tolerance for early stopping. If the best solution found is within tol of the previous best solution,
+        then the algorithm stops.
+    patience: int, optional
+        The number of generations to wait before early stopping.
 
     Returns
     -------
@@ -212,6 +221,7 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
     best_idx = np.argmax(fitness)
     best_fitness = fitness[best_idx]
     best_population = population[best_idx]
+    no_improvement_streak = 0
     # perform the genetic algorithm for the specified number of generations
     for generation in range(num_generations):
         # select the parents
@@ -228,9 +238,16 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
         fitness = np.concatenate((fitness, offspring_fitness))
         # save the best solution found so far
         best_idx = np.argmax(offspring_fitness)
-        if offspring_fitness[best_idx] > best_fitness:
+        if offspring_fitness[best_idx] > best_fitness + tol:
             best_fitness = offspring_fitness[best_idx]
             best_population = offspring[best_idx]
+            no_improvement_streak = 0
+        else:
+            # early stopping if the best solution is found
+            no_improvement_streak += 1
+            if no_improvement_streak >= patience:
+                print(f"Stopping after {generation} generations due to lack of improvement.")
+                break
 
     if not maximize:
         # negate the fitness back to its original form
@@ -241,7 +258,10 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
 def genetic_algorithm(f, d, pop_size, num_generations,
                       selection=elitist_selection,
                       crossover=onepoint_crossover,
-                      mutation=fractional_flip_mutation, ):
+                      mutation=fractional_flip_mutation,
+                      maximize=False,
+                      tol=1e-6,
+                      patience=50):
     r"""
     Perform a genetic algorithm. The genetic algorithm is used to maximize the given fitness function.
     It consists of the following steps which are repeated for a specified number of generations:
@@ -268,6 +288,13 @@ def genetic_algorithm(f, d, pop_size, num_generations,
         The function to perform the crossover operation.
     mutation: callable
         The function to perform the mutation operation.
+    maximize: bool, optional
+        Whether to maximize or minimize the fitness function.
+    tol: float, optional
+        The tolerance for early stopping. If the best solution found is within tol of the previous best solution,
+        then the algorithm stops.
+    patience: int, optional
+        The number of generations to wait before early stopping.
 
     Returns
     -------
@@ -287,4 +314,7 @@ def genetic_algorithm(f, d, pop_size, num_generations,
     return genetic_algorithm_constraint(f=f, d=d, n=0, pop_size=pop_size, num_generations=num_generations,
                                         selection=selection,
                                         crossover=crossover,
-                                        mutation=mutation, )
+                                        mutation=mutation,
+                                        maximize=maximize,
+                                        tol=tol,
+                                        patience=patience)
