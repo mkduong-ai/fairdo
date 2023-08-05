@@ -276,8 +276,8 @@ def setup_experiment_hyperparameter(data_str, objective_str):
     }
 
     # create hyperparameters
-    hyperparams = {'pop_size': [500],
-                   'num_generations': [50]  # , 100, 200, 500],
+    hyperparams = {'pop_size': [50, 100, 200, 500],
+                   'num_generations': [50, 100, 200, 500],
                    # 'selection': [elitist_selection, roulette_wheel_selection],
                    # 'crossover': [onepoint_crossover, kpoint_crossover, uniform_crossover],
                    # 'mutation': [bit_flip_mutation, swap_mutation]
@@ -336,10 +336,10 @@ def main():
     obj_strs = ['remove', 'add', 'remove_and_synthetic']
     data_strs = ['adult', 'compas', 'bank']
     # Experiments
-    obj_strs = ['remove']
-    data_strs = ['compas']
+    #obj_strs = ['remove']
+    #data_strs = ['compas']
 
-    n_runs = 1
+    n_runs = 15
     for data_str in data_strs:
         print('------------------------------------')
         print(f'Running experiments for {data_str}...')
