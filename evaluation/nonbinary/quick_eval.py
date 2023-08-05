@@ -135,20 +135,22 @@ def run_experiment(data_str, disc_dict, methods,
         df_syn = gc.sample(num_synthetic_data)
 
         # create objective function
-        f = lambda binary_vector, dataframe, label, protected_attributes, disc_measure: \
-            f_add(binary_vector, dataframe=dataframe, sample_dataframe=df_syn,
-                  label=label, protected_attributes=protected_attributes,
-                  disc_measure=disc_measure)
+        f = partial(f_add, sample_dataframe=df_syn)
         dims = df_syn.shape[0]
     else:
         raise ValueError(f'Objective {objective_str} not supported.')
 
     # create objective function
     disc_measures = list(disc_dict.values())
-    f_obj = lambda x, disc_measure: f(x, dataframe=df, label=label, protected_attributes=protected_attributes,
-                                      disc_measure=disc_measure)
-    functions = [lambda x, disc_measure=disc_measure: f_obj(x, disc_measure=disc_measure)
-                 for disc_measure in disc_measures]
+    # f_obj = lambda x, disc_measure: f(x, dataframe=df, label=label, protected_attributes=protected_attributes,
+    #                                   disc_measure=disc_measure)
+    # f_obj = partial(f, dataframe=df,
+    #                label=label, protected_attributes=protected_attributes)
+    # functions = [lambda x, disc_measure=disc_measure: f_obj(x, disc_measure=disc_measure)
+    #              for disc_measure in disc_measures]
+    # functions = [partial(f_obj, disc_measure=disc_measure) for disc_measure in disc_measures]
+    functions = [partial(f, dataframe=df, label=label, protected_attributes=protected_attributes,
+                         disc_measure=disc_measure) for disc_measure in disc_measures]
     for func, disc_measure in zip(functions, disc_measures):
         func.__name__ = disc_measure.__name__
 
@@ -160,6 +162,7 @@ def run_experiment(data_str, disc_dict, methods,
         for func in functions:
             print(f'Optimizing {func.__name__}...')
             start_time = time.time()
+            print(func)
             results[method_name][func.__name__] = method(f=func, d=dims)[1]
             end_time = time.time()
             results[method_name]['time' + f'_{func.__name__}'] = end_time - start_time
@@ -282,10 +285,10 @@ def setup_experiment_hyperparameter(data_str, objective_str):
 
     # create hyperparameters
     hyperparams = {'pop_size': [500],
-                   'num_generations': [50]#, 100, 200, 500],
-                   #'selection': [elitist_selection, roulette_wheel_selection],
-                   #'crossover': [onepoint_crossover, kpoint_crossover, uniform_crossover],
-                   #'mutation': [bit_flip_mutation, swap_mutation]
+                   'num_generations': [50]  # , 100, 200, 500],
+                   # 'selection': [elitist_selection, roulette_wheel_selection],
+                   # 'crossover': [onepoint_crossover, kpoint_crossover, uniform_crossover],
+                   # 'mutation': [bit_flip_mutation, swap_mutation]
                    }
 
     # create methods
