@@ -336,7 +336,10 @@ def run_and_save_experiment(data_str, objective_str, n_runs=10):
 
 def main():
     obj_strs = ['remove', 'add', 'remove_and_synthetic']
-    data_strs = ['adult', 'compas', 'bank']
+    data_strs = [
+        #'adult',
+        #'compas',
+        'bank']
     # Experiments
     #obj_strs = ['remove']
     #data_strs = ['compas']
