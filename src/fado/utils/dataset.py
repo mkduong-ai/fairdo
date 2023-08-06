@@ -108,8 +108,9 @@ def load_data(dataset_str):
         # Loading Bank Marketing dataset
         r = get("http://archive.ics.uci.edu/ml/machine-learning-databases/00222/bank-additional.zip")
         z = zipfile.ZipFile(io.BytesIO(r.content))
-        z.extractall()
-        data = pd.read_csv(z.open('bank-additional/bank-additional-full.csv'), delimiter=';')
+        with z.open('bank-additional/bank-additional-full.csv') as csv_file:
+            data = pd.read_csv(csv_file, delimiter=';')
+
         print('Data downloaded.')
 
         # Drop rows with missing values
