@@ -171,7 +171,8 @@ def run_experiment(data_str, disc_dict, methods,
 def run_experiments(data_str, disc_dict, methods, n_runs=10,
                     objective_str='remove'):
     """
-    Runs the experiments for n_runs times
+    Runs the experiments for n_runs times and returns the results.
+    Uses only one core.
 
     Parameters
     ----------
@@ -196,6 +197,46 @@ def run_experiments(data_str, disc_dict, methods, n_runs=10,
         print(f'Run {i + 1} of {n_runs}')
         results[i] = run_experiment(data_str=data_str, disc_dict=disc_dict, methods=methods,
                                     objective_str=objective_str)
+    return results
+
+
+def run_single_experiment(args):
+    i, data_str, disc_dict, methods, objective_str = args
+    print(f'Run {i + 1}')
+    result = run_experiment(data_str=data_str,
+                            disc_dict=disc_dict,
+                            methods=methods,
+                            objective_str=objective_str)
+    return i, result
+
+
+def run_all_experiments(data_str, disc_dict, methods, n_runs=10,
+                        objective_str='remove'):
+    """
+    Runs all experiments in parallel using pathos multiprocessing.
+
+    Parameters
+    ----------
+    data_str: str
+        name of the dataset
+    disc_dict: dict
+        dictionary of discrimination measures
+    methods: dict
+        dictionary of methods
+    n_runs: int
+        number of runs
+    objective_str: str
+        objective function
+
+    Returns
+    -------
+    results: dict
+        results['run']['method']['objective/time/func_values']
+    """
+    with mp.Pool() as pool:
+        results = dict(pool.map(run_single_experiment,
+                                [(i, data_str, disc_dict, methods, objective_str)
+                                 for i in range(n_runs)]))
     return results
 
 
@@ -321,11 +362,11 @@ def run_and_save_experiment(data_str, objective_str, n_runs=10):
     save_path, disc_dict, methods = setup_experiment_hyperparameter(data_str, objective_str)
 
     # run experiment
-    results = run_experiments(data_str=data_str,
-                              disc_dict=disc_dict,
-                              methods=methods,
-                              n_runs=n_runs,
-                              objective_str=objective_str)
+    results = run_all_experiments(data_str=data_str,
+                                  disc_dict=disc_dict,
+                                  methods=methods,
+                                  n_runs=n_runs,
+                                  objective_str=objective_str)
 
     # convert results to proper dataframe
     results_df = convert_results_to_dataframe(results)
@@ -337,12 +378,12 @@ def run_and_save_experiment(data_str, objective_str, n_runs=10):
 def main():
     obj_strs = ['remove', 'add', 'remove_and_synthetic']
     data_strs = [
-        #'adult',
-        #'compas',
+        # 'adult',
+        # 'compas',
         'bank']
     # Experiments
-    #obj_strs = ['remove']
-    #data_strs = ['compas']
+    # obj_strs = ['remove']
+    # data_strs = ['compas']
 
     n_runs = 15
     for data_str in data_strs:

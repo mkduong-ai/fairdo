@@ -110,7 +110,6 @@ def load_data(dataset_str):
         z = zipfile.ZipFile(io.BytesIO(r.content))
         with z.open('bank-additional/bank-additional-full.csv') as csv_file:
             data = pd.read_csv(csv_file, delimiter=';')
-
         print('Data downloaded.')
 
         # Drop rows with missing values
