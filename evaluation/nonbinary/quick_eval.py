@@ -9,6 +9,7 @@ from functools import partial
 from sklearn.preprocessing import LabelEncoder
 from sdv.tabular import GaussianCopula
 import pandas as pd
+import pathos.multiprocessing as mp
 
 # fado imports
 from fado.utils.dataset import load_data
