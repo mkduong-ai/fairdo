@@ -226,7 +226,8 @@ def setup_experiment(data_str, objective_str):
         # 'NMI': normalized_mutual_information,
         # 'Size': count_size,
         # 'Distinct Groups': count_groups,
-        'Sanity Check': sanity_check}
+        # 'Sanity Check': sanity_check
+    }
 
     # create methods
     methods = {  # 'Baseline (Original)': baseline.original_method,
@@ -271,7 +272,7 @@ def setup_experiment_hyperparameter(data_str, objective_str):
         # 'Maximal Statistical Disparity': statistical_parity_abs_diff_max,
         # 'NMI': normalized_mutual_information,
         # 'Size': count_size,
-        # 'Distinct Groups': count_groups,
+        'Distinct Groups': count_groups,
         # 'Sanity Check': sanity_check
     }
 
