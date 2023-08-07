@@ -76,14 +76,15 @@ def plot_results(results_df,
                     fmt="", cmap="magma",
                     vmin=pivot_mean.min().min(),
                     vmax=pivot_mean.max().max(),
-                    ax=ax)
+                    ax=ax,
+                    annot_kws={"size": 8})
         ax.set_xlabel('Number of Generations')
         ax.set_ylabel('Population Size')
         plt.title(key_disc_measure)
 
         # save plot
         if save_path is not None:
-            plt.savefig(save_path + ('_time_' if time else '') + f'{key_disc_measure.replace(" ", "")}' + '.pdf',
+            plt.savefig(save_path + ('_time_' if time else '_') + f'{key_disc_measure.replace(" ", "")}' + '.pdf',
                         format='pdf', bbox_inches='tight', pad_inches=0)
             plt.close()
 
@@ -92,7 +93,8 @@ def plot_results(results_df,
             plt.show()
 
 
-def settings(data_str='compas', objective_str='remove_synthetic'):
+def settings(data_str='compas', objective_str='remove_synthetic',
+             time=False):
     disc_dict = {
         'Sum SDP': statistical_parity_abs_diff,
         # 'Maximal SDP': statistical_parity_abs_diff_max,
@@ -107,7 +109,7 @@ def settings(data_str='compas', objective_str='remove_synthetic'):
     plot_results(results,
                  disc_dict=disc_dict,
                  save_path=save_path,
-                 time=True,
+                 time=time,
                  show_plot=False)
 
 
@@ -120,7 +122,8 @@ def main():
     for data_str in data_strs:
         for obj_str in obj_strs:
             settings(data_str=data_str,
-                     objective_str=obj_str)
+                     objective_str=obj_str,
+                     time=True)
             # settings_time(data_str=data_str, objective_str=obj_str)
 
 
