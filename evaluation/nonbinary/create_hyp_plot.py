@@ -23,7 +23,7 @@ def plot_results(results_df,
                  groups=None,
                  disc_dict=None,
                  save_path=None,
-                 show_plot=True):
+                 show_plot=False):
     """
     Plots the results
 
@@ -36,6 +36,8 @@ def plot_results(results_df,
         dictionary of discrimination measures
     save_path: str
         path to save the plot
+    show_plot: bool
+        whether to show the plot
 
     Returns
     -------
@@ -44,47 +46,51 @@ def plot_results(results_df,
     # Filter out rows where the 'Method' column starts with 'GA'
     results_df = results_df[results_df['Method'].str.startswith('GA')]
 
-    if groups is None:
-        groups = ['Method']
-
-    # get the list of discrimination measures
-    disc_list = list(map(lambda x: x.__name__, disc_dict.values()))
-    disc_time_list = ['time_' + disc_measure_str for disc_measure_str in disc_list]
-
-    # reformat the dataframe
-    id_vars = list(set(results_df.columns) - set(disc_list))
-    df_plot = results_df.melt(id_vars=id_vars,
-                              value_vars=disc_list,
-                              var_name="Discrimination Measure",
-                              value_name="Value")
-    df_plot = df_plot.drop(columns=disc_time_list)
-
     # Extract the population size and number of generations from the 'Method' column
     results_df['pop_size'] = results_df['Method'].str.extract(r'(pop_size=)(\d+)')[1].astype(int)
     results_df['num_generations'] = results_df['Method'].str.extract(r'(num_generations=)(\d+)')[1].astype(int)
 
-    # Create a pivot table with 'pop_size' and 'num_generations' as the index and columns, respectively,
-    # and 'statistical_parity_abs_diff' as the values
-    pivot = results_df.pivot_table(values='statistical_parity_abs_diff', index='pop_size', columns='num_generations')
+    # Go through each discrimination measure
+    for key_disc_measure, disc_measure_str in disc_dict.items():
+        # Create a pivot table with 'pop_size' and 'num_generations' as the index and columns, respectively,
+        # and 'statistical_parity_abs_diff' as the values
+        pivot_mean = results_df.pivot_table(values=disc_measure_str.__name__, index='pop_size',
+                                            columns='num_generations', aggfunc=np.mean)
 
-    # Create a pivot table with 'pop_size' and 'num_generations' as the index and columns, respectively,
-    # and 'statistical_parity_abs_diff' as the values
-    pivot = results_df.pivot_table(values='statistical_parity_abs_diff', index='pop_size', columns='num_generations')
+        # Create a pivot table for standard deviation
+        pivot_std = results_df.pivot_table(values=disc_measure_str.__name__, index='pop_size',
+                                           columns='num_generations', aggfunc=np.std)
 
-    # Draw the heatmap
-    plt.figure(figsize=(10, 8))
-    sns.heatmap(pivot, annot=True, fmt=".2f", cmap="magma",
-                vmin=pivot.min().min(),
-                vmax=pivot.max().max())
-    plt.title("Heatmap of Statistical Parity Absolute Difference")
-    plt.show()
+        # Create annotation matrix with mean and standard deviation
+        annotations = pivot_mean.round(2).astype(str) + ' ± ' + pivot_std.round(2).astype(str)
+
+        # Draw the heatmap
+        fig, ax = plt.subplots(figsize=(6, 3.5), dpi=80)
+        sns.heatmap(pivot_mean,
+                    annot=annotations,
+                    fmt="", cmap="magma",
+                    vmin=pivot_mean.min().min(),
+                    vmax=pivot_mean.max().max(),
+                    ax=ax)
+        ax.set_xlabel('Number of Generations')
+        ax.set_ylabel('Population Size')
+        plt.title(key_disc_measure)
+
+        # save plot
+        if save_path is not None:
+            plt.savefig(save_path + f'_{key_disc_measure.replace(" ", "")}' + '.pdf', format='pdf', bbox_inches='tight', pad_inches=0)
+            plt.close()
+
+        # show plot
+        if show_plot:
+            plt.show()
 
 
 def settings(data_str='compas', objective_str='remove_synthetic'):
-    disc_dict = {  # 'Absolute Statistical Disparity': statistical_parity_absolute_difference,
+    disc_dict = {
         'Sum SDP': statistical_parity_abs_diff,
-        #'Maximal SDP': statistical_parity_abs_diff_max,
-        #'NMI': normalized_mutual_information
+        # 'Maximal SDP': statistical_parity_abs_diff_max,
+        # 'NMI': normalized_mutual_information
     }
 
     # load the results
@@ -102,12 +108,12 @@ def main():
     obj_strs = ['remove', 'add', 'remove_and_synthetic']
     data_strs = ['adult', 'compas']
     # Experiments
-    obj_strs = ['remove']
-    data_strs = ['compas']
+    # obj_strs = ['remove']
+    # data_strs = ['compas']
     for data_str in data_strs:
         for obj_str in obj_strs:
             settings(data_str=data_str, objective_str=obj_str)
-            #settings_time(data_str=data_str, objective_str=obj_str)
+            # settings_time(data_str=data_str, objective_str=obj_str)
 
 
 if __name__ == "__main__":

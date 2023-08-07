@@ -36,6 +36,8 @@ def plot_results(results_df,
         dictionary of discrimination measures
     save_path: str
         path to save the plot
+    show_plot: bool
+        whether to show the plot
 
     Returns
     -------
@@ -81,27 +83,27 @@ def plot_results(results_df,
     # sns.move_legend(ax_leg, "lower center", bbox_to_anchor=(.43, 1), ncol=2, title=None, frameon=False,
     #                   fontsize=12.5)
 
-    # Show the plot
-    if show_plot:
-        plt.show()
-
     # save plot
     if save_path is not None:
         plt.savefig(save_path + '.pdf', format='pdf',  bbox_inches='tight', pad_inches=0)
         plt.close()
 
-    # save legend
-    fig_leg = plt.figure(figsize=(5, 0.1))
-    ax_leg = fig_leg.add_subplot(111)
-    ax_leg.legend(*ax.get_legend_handles_labels(), loc='center',
-                  ncol=5, frameon=True, fontsize=12.5)
-    ax_leg.xaxis.set_visible(False)
-    ax_leg.yaxis.set_visible(False)
+    # Show the plot
+    if show_plot:
+        plt.show()
 
-    if save_path is not None:
-        plt.savefig(''.join(save_path.split(sep='_')[:1]) + '_legend' + '.pdf',
-                    format='pdf', bbox_inches='tight', pad_inches=0)
-        plt.close()
+    # save legend
+    # fig_leg = plt.figure(figsize=(5, 0.1))
+    # ax_leg = fig_leg.add_subplot(111)
+    # ax_leg.legend(*ax.get_legend_handles_labels(), loc='center',
+    #               ncol=5, frameon=True, fontsize=12.5)
+    # ax_leg.xaxis.set_visible(False)
+    # ax_leg.yaxis.set_visible(False)
+    #
+    # if save_path is not None:
+    #     plt.savefig(''.join(save_path.split(sep='_')[:1]) + '_legend' + '.pdf',
+    #                 format='pdf', bbox_inches='tight', pad_inches=0)
+    #     plt.close()
 
 
 def settings(data_str='compas', objective_str='remove_synthetic'):
@@ -188,12 +190,13 @@ def plot_time(results_df,
 
 
 def settings_time(data_str='compas', objective_str='remove_synthetic'):
-    disc_dict = {  # 'Absolute Statistical Disparity': statistical_parity_absolute_difference,
-        'Sum SDP': nb_statistical_parity_sum_abs_difference,
-        'Maximal SDP': nb_statistical_parity_max_abs_difference,
-        'NMI': nb_normalized_mutual_information,}
+    disc_dict = {
+        'Sum SDP': statistical_parity_abs_diff,
+        'Maximal SDP': statistical_parity_abs_diff_max,
+        'NMI': normalized_mutual_information
         #'Size': count_size,
-        #'Groups': count_groups}
+        #'Groups': count_groups
+        }
 
     # load the results
     save_path = f'evaluation/results/nonbinary/{data_str}/{data_str}_{objective_str}'
