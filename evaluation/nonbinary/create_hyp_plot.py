@@ -23,6 +23,7 @@ def plot_results(results_df,
                  groups=None,
                  disc_dict=None,
                  save_path=None,
+                 time=False,
                  show_plot=False):
     """
     Plots the results
@@ -36,6 +37,8 @@ def plot_results(results_df,
         dictionary of discrimination measures
     save_path: str
         path to save the plot
+    time: bool
+        whether to plot the time
     show_plot: bool
         whether to show the plot
 
@@ -54,11 +57,13 @@ def plot_results(results_df,
     for key_disc_measure, disc_measure_str in disc_dict.items():
         # Create a pivot table with 'pop_size' and 'num_generations' as the index and columns, respectively,
         # and 'statistical_parity_abs_diff' as the values
-        pivot_mean = results_df.pivot_table(values=disc_measure_str.__name__, index='pop_size',
+        pivot_mean = results_df.pivot_table(values=('time_' if time else '') + disc_measure_str.__name__,
+                                            index='pop_size',
                                             columns='num_generations', aggfunc=np.mean)
 
         # Create a pivot table for standard deviation
-        pivot_std = results_df.pivot_table(values=disc_measure_str.__name__, index='pop_size',
+        pivot_std = results_df.pivot_table(values=('time_' if time else '') + disc_measure_str.__name__,
+                                           index='pop_size',
                                            columns='num_generations', aggfunc=np.std)
 
         # Create annotation matrix with mean and standard deviation
@@ -78,7 +83,8 @@ def plot_results(results_df,
 
         # save plot
         if save_path is not None:
-            plt.savefig(save_path + f'_{key_disc_measure.replace(" ", "")}' + '.pdf', format='pdf', bbox_inches='tight', pad_inches=0)
+            plt.savefig(save_path + ('_time_' if time else '') + f'{key_disc_measure.replace(" ", "")}' + '.pdf',
+                        format='pdf', bbox_inches='tight', pad_inches=0)
             plt.close()
 
         # show plot
@@ -101,6 +107,7 @@ def settings(data_str='compas', objective_str='remove_synthetic'):
     plot_results(results,
                  disc_dict=disc_dict,
                  save_path=save_path,
+                 time=True,
                  show_plot=False)
 
 
@@ -112,7 +119,8 @@ def main():
     # data_strs = ['compas']
     for data_str in data_strs:
         for obj_str in obj_strs:
-            settings(data_str=data_str, objective_str=obj_str)
+            settings(data_str=data_str,
+                     objective_str=obj_str)
             # settings_time(data_str=data_str, objective_str=obj_str)
 
 
