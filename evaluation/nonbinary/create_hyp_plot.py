@@ -70,7 +70,7 @@ def plot_results(results_df,
         annotations = pivot_mean.round(2).astype(str) + ' ± ' + pivot_std.round(2).astype(str)
 
         # Draw the heatmap
-        fig, ax = plt.subplots(figsize=(6, 3.5), dpi=80)
+        fig, ax = plt.subplots(figsize=(6, 3), dpi=80)
         sns.heatmap(pivot_mean,
                     annot=annotations,
                     fmt="", cmap="magma",
@@ -123,7 +123,7 @@ def main():
         for obj_str in obj_strs:
             settings(data_str=data_str,
                      objective_str=obj_str,
-                     time=True)
+                     time=False)
             # settings_time(data_str=data_str, objective_str=obj_str)
 
 
