@@ -90,7 +90,7 @@ def kpoint_crossover(parents, offspring_size, k=2):
         parent1_idx = i % parents.shape[0]
         parent2_idx = (i + 1) % parents.shape[0]
         # calculate the crossover points
-        crossover_points = sorted(np.random.choice(range(1, offspring_size[1]), k - 1, replace=False))
+        crossover_points = sorted(np.random.choice(range(1, offspring_size[1]), k, replace=False))
         # alternate between parents in each segment
         segments = np.array_split(range(offspring_size[1]), len(crossover_points) + 1)
         for j in range(len(segments)):
