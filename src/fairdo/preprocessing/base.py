@@ -5,10 +5,13 @@ import pandas as pd
 
 
 class Preprocessing(metaclass=abc.ABCMeta):
-
+    """
+    Base class for all preprocessing methods.
+    """
     def __init__(self, protected_attribute, label,
                  frac=0.8):
         """
+        Base class for all preprocessing methods.
 
         Parameters
         ----------
@@ -30,10 +33,11 @@ class Preprocessing(metaclass=abc.ABCMeta):
 
     def fit(self, dataset):
         """
+        Copies the dataset to the class and checks if the dataset is valid, i.e., all columns are numeric.
 
         Parameters
         ----------
-        dataset: DataFrame
+        dataset: pd.DataFrame
 
         Returns
         -------
@@ -44,6 +48,17 @@ class Preprocessing(metaclass=abc.ABCMeta):
         return self
 
     def fit_transform(self, dataset):
+        """
+        Fit the model to the dataset and transform the dataset.
+
+        Parameters
+        ----------
+        dataset: pd.DataFrame
+
+        Returns
+        -------
+        self
+        """
         return self.fit(dataset).transform()
 
     def check_valid_datatype(self):
@@ -60,18 +75,30 @@ class Preprocessing(metaclass=abc.ABCMeta):
 
 
 class OriginalData(Preprocessing):
-
+    """
+    This class is used to return the original dataset.
+    """
     def __init__(self, **kwargs):
         self.dataset = None
         self.transformed_data = None
 
     def transform(self):
+        """
+        Returns the original dataset.
+
+        Returns
+        -------
+        pd.DataFrame
+        """
         self.transformed_data = self.dataset
         return self.dataset
 
 
 class Random(Preprocessing):
-
+    """
+    This class is used to return a random subset of the dataset.
+    The size of the subset is determined by the frac parameter.
+    """
     def __init__(self, frac=0.8,
                  protected_attribute=None, label=None, random_state=None):
         super().__init__(frac=frac, protected_attribute=protected_attribute, label=label)

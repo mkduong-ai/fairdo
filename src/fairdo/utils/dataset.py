@@ -10,7 +10,8 @@ from requests import get
 
 def downcast(data):
     """
-    Downcast float and integer columns to save memory.
+    Downcast float and integer columns of the given data to save memory.
+
     Parameters
     ----------
     data: pandas DataFrame
@@ -30,11 +31,16 @@ def downcast(data):
 
 def load_data(dataset_str):
     """
+    Load the dataset and preprocess it. The preprocessing steps include:
+    - Dropping rows with missing values
+    - Label encode protected attributes and label
+    - One-hot encode all other categorical variables
+    - Downcast float and integer columns to save memory
 
     Parameters
     ----------
     dataset_str: str
-
+        Name of the dataset to load and preprocess  (e.g., 'adult', 'compas', 'bank', 'german').
     Returns
     -------
     df: pandas DataFrame

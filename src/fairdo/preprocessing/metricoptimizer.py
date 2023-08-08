@@ -11,9 +11,8 @@ from sdv.tabular import GaussianCopula
 
 class MetricOptimizer(Preprocessing):
     """
-    Deletes samples which worsen the discrimination in the dataset
+    Deletes samples or adds generated samples to decrease the discrimination/bias in the given dataset.
     """
-
     def __init__(self, protected_attribute, label,
                  frac=0.75, m=5, eps=0,
                  additions=None,
@@ -79,7 +78,7 @@ class MetricOptRemover(Preprocessing):
         label: str
             String of column that represents the prediction label
         frac: float
-            A multiplicative of the given dataset's size
+            A fraction/factor of the given dataset's size
         m: int
             Number of candidates
         eps: float
@@ -206,7 +205,7 @@ class MetricOptGenerator(Preprocessing):
 
         Parameters
         ----------
-        dataset: DataFrame
+        dataset: pd.DataFrame
 
         Returns
         -------
