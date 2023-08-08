@@ -44,7 +44,7 @@ class Preprocessing(metaclass=abc.ABCMeta):
         self
         """
         self.dataset = dataset.copy()
-        self.check_valid_datatype()
+        self._check_valid_datatype()
         return self
 
     def fit_transform(self, dataset):
@@ -61,7 +61,7 @@ class Preprocessing(metaclass=abc.ABCMeta):
         """
         return self.fit(dataset).transform()
 
-    def check_valid_datatype(self):
+    def _check_valid_datatype(self):
         if not isinstance(self.dataset, pd.DataFrame):
             try:
                 self.dataset = self.dataset.convert_to_dataframe()[0]
@@ -89,6 +89,7 @@ class OriginalData(Preprocessing):
         Returns
         -------
         pd.DataFrame
+            The original dataset.
         """
         self.transformed_data = self.dataset
         return self.dataset
@@ -97,7 +98,7 @@ class OriginalData(Preprocessing):
 class Random(Preprocessing):
     """
     This class is used to return a random subset of the dataset.
-    The size of the subset is determined by the frac parameter.
+    The size of the subset is determined by the `frac` parameter.
     """
     def __init__(self, frac=0.8,
                  protected_attribute=None, label=None, random_state=None):
@@ -106,6 +107,14 @@ class Random(Preprocessing):
         np.random.seed(self.random_state)
 
     def transform(self):
+        """
+        Returns a random subset of the dataset.
+
+        Returns
+        -------
+        pd.DataFrame
+            The random subset of the dataset.
+        """
         if self.dataset is None:
             raise Exception('Model not fitted.')
 

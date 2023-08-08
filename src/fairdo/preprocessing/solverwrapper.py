@@ -28,14 +28,6 @@ class HeuristicWrapper(Preprocessing):
         (y), and protected attributes (z) and returns a numeric value.
     dataset: pd.DataFrame
         The dataset to be preprocessed. It is defined within the `fit` method.
-
-    Methods
-    -------
-    fit(dataset: pd.DataFrame):
-        Defines the discrimination measure function and the number of dimensions based on the
-        input dataset.
-    transform() -> pd.DataFrame:
-        Applies the heuristic method to the dataset and returns a preprocessed version of it.
     """
 
     def __init__(self,
@@ -165,7 +157,7 @@ def f_add(binary_vector, dataframe, sample_dataframe, label, protected_attribute
     """
     Additional sample data points are added to the original data to promote fairness.
     The sample data can be synthetic data.
-    The question here is: Which of the data points from the sample should be added to the
+    The question here is: Which of the data points from the sample set should be added to the
     original data to prevent discrimination?
 
     Parameters
