@@ -401,7 +401,7 @@ def main():
     # obj_strs = ['remove']
     # data_strs = ['compas']
 
-    n_runs = 10
+    n_runs = 15
     for data_str in data_strs:
         print('------------------------------------')
         print(f'Running experiments for {data_str}...')
