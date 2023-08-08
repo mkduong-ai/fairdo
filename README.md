@@ -35,11 +35,11 @@ an example to show the functionality of the package.
 
 ```python
 # Imports
-from fado.preprocessing import MetricOptimizer
+from fairdo.preprocessing import MetricOptimizer
 from sklearn.preprocessing import LabelEncoder
 import pandas as pd
 
-# Loading a sample database and encoding for appropiate usage
+# Loading a sample database and encoding for appropriate usage
 iris = pd.read_csv('https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv')
 le = LabelEncoder()
 iris_transform = iris.apply(le.fit_transform)
