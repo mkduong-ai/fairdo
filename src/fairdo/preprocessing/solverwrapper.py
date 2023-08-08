@@ -69,7 +69,7 @@ class HeuristicWrapper(Preprocessing):
         self.dataset = None
         super().__init__(protected_attribute=protected_attribute, label=label)
 
-    def fit(self, dataset):
+    def fit(self, dataset, sample_dataset=None, approach='remove'):
         """
         Defines the discrimination measure function and the number of dimensions based on the
         input dataset.
@@ -78,13 +78,26 @@ class HeuristicWrapper(Preprocessing):
         ----------
         dataset: pd.DataFrame
             The dataset to be preprocessed.
+        sample_dataset: pd.DataFrame, optional
+            The sample dataset to be used for the 'add' approach. It is required only if the
+            'add' approach is used.
+        approach: str
+            The approach to be used for the heuristic method. It can be either 'remove' or 'add'.
         """
         self.dataset = dataset.copy()
-        self.func = lambda binary_vector: f_remove(binary_vector,
-                                                   self.dataset,
-                                                   self.label,
-                                                   self.protected_attribute,
-                                                   disc_measure=self.disc_measure)
+        if approach == 'remove':
+            self.func = lambda binary_vector: f_remove(binary_vector=binary_vector,
+                                                       dataframe=self.dataset,
+                                                       label=self.label,
+                                                       protected_attributes=self.protected_attribute,
+                                                       disc_measure=self.disc_measure)
+        elif approach == 'add':
+            self.func = lambda binary_vector: f_add(binary_vector=binary_vector,
+                                                    dataframe=self.dataset,
+                                                    sample_dataframe=sample_dataset,
+                                                    label=self.label,
+                                                    protected_attributes=self.protected_attribute,
+                                                    disc_measure=self.disc_measure)
         self.dims = len(self.dataset)
 
     def transform(self):
