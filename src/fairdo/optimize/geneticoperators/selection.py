@@ -161,6 +161,9 @@ def stochastic_universal_sampling(population, fitness, num_parents=2):
     Baker, J. E. (1987). "Reducing Bias and Inefficiency in the Selection Algorithm".
     Proceedings of the Second International Conference on Genetic Algorithms and Their Application.
     """
+    # Check if the population is a 2D array
+    if len(population.shape) != 2:
+        population = population.reshape(-1, 1)
     # Check if the fitness is non-negative
     if np.any(fitness < 0):
         fitness = fitness - np.min(fitness)
