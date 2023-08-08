@@ -7,6 +7,6 @@ mirror:
   script:
     - git lfs install
     - git checkout main
-    - git push https://${GITHUB_TOKEN}@github.com/mkduong-ai/fairdo.git main:main
+    - git push --force https://${GITHUB_TOKEN}@github.com/mkduong-ai/fairdo.git main:main
   only:
     - main
