@@ -36,22 +36,18 @@ an example to show the functionality of the package.
 ```python
 # Imports
 from fairdo.preprocessing import MetricOptimizer
-from sklearn.preprocessing import LabelEncoder
-import pandas as pd
+from fairdo.utils.dataset import load_data
 
 # Loading a sample database and encoding for appropriate usage
-iris = pd.read_csv('https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv')
-le = LabelEncoder()
-iris_transform = iris.apply(le.fit_transform)
-iris_transform['species'] = iris_transform['species'] == 0
-iris_transform['petal_length'] = iris_transform['petal_length'] > 9
+# data is a pandas dataframe
+data, label, protected_attributes = load_data('compas')
 
-# Initialize
+# Initialize MetricOptimizer
 preproc = MetricOptimizer(frac=0.75,
-                          protected_attribute='species',
-                          label='petal_length')
+                          protected_attribute=protected_attributes[0],
+                          label='label')
                           
-iris_fair = preproc.fit_transform(iris_transform)
+data_fair = preproc.fit_transform(data)
 ```
 
 More ``jupyter notebooks`` examples can be viewed in ``tutorials/``.
