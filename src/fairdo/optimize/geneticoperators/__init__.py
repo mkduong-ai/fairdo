@@ -15,7 +15,7 @@ Example
 >>> # Specify your mutation function with some preset parameters
 >>> my_mutation_function = partial(fractional_flip_mutation, mutation_rate=0.10)
 >>> # Define f, d, n, pop_size, num_generations...
->>> f = lambda x: x[0] + x[1]
+>>> f = lambda x: 1 if x[0] == 1 and x[1] == 1 else 0
 >>> d = 2
 >>> n = 0 # no constraints
 >>> pop_size = 100

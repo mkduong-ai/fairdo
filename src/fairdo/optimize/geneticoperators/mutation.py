@@ -48,7 +48,7 @@ def fractional_flip_mutation(offspring, mutation_rate=0.05):
 def bit_flip_mutation(offspring, mutation_rate=0.05):
     """
     Mutates the given offspring by flipping each bit with a certain probability.
-    Some offspring may not be mutated at all, and some may be mutated more than once.
+    Some offspring may not be mutated at all, and some may be mutated more than expected.
 
     Parameters
     ----------
