@@ -227,8 +227,8 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
         # select the parents
         parents, fitness = selection(population, fitness)
         # create the offspring
-        offspring_size = (pop_size - parents.shape[0], d)
-        offspring = crossover(parents, offspring_size)
+        num_offspring = pop_size - parents.shape[0]
+        offspring = crossover(parents, num_offspring)
         # mutate the offspring
         offspring = mutation(offspring)
         # evaluate the function for the new offspring
