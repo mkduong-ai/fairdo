@@ -268,12 +268,13 @@ def setup_experiment(data_str, objective_str):
         'NMI': normalized_mutual_information,
         # 'Size': count_size,
         # 'Distinct Groups': count_groups,
-        # 'Sanity Check': sanity_check
+        'Sanity Check': sanity_check
     }
 
     # create methods
-    methods = {  # 'Baseline (Original)': baseline.original_method,
-        # 'Random Heuristic': baseline.random_method,
+    methods = {
+        'Baseline (Original)': baseline.original_method,
+        'Random Heuristic': baseline.random_method,
         'GA (Elitist)': partial(ga.genetic_algorithm,
                                 selection=elitist_selection,
                                 crossover=uniform_crossover,
@@ -292,7 +293,7 @@ def setup_experiment(data_str, objective_str):
     }
 
     # create save path
-    save_path = create_save_path(data_str, objective_str)
+    save_path = create_save_path(data_str, objective_str, prefix='final')
 
     return save_path, disc_dict, methods
 
@@ -370,7 +371,7 @@ def run_and_save_experiment(data_str, objective_str, n_runs=10):
     """
 
     # setup the experiment
-    save_path, disc_dict, methods = setup_experiment_hyperparameter(data_str, objective_str)
+    save_path, disc_dict, methods = setup_experiment(data_str, objective_str)
 
     # run experiment
     results = run_all_experiments(data_str=data_str,
