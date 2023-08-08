@@ -83,6 +83,48 @@ def tournament_selection(population, fitness, num_parents=2, tournament_size=3):
     return parents, parents_fitness
 
 
+def roulette_wheel_selection(population, fitness, num_parents=2):
+    """
+    Select parents using Roulette Wheel Selection. The probability of selecting an individual is proportional to its
+    fitness. The higher the fitness, the higher the chance of being selected.
+    This function assumes that the fitness is non-negative.
+
+    Parameters
+    ----------
+    population: ndarray, shape (n, d)
+        Population of individuals.
+    fitness: ndarray, shape (n,)
+        Fitness of each individual.
+    num_parents: int
+        Number of parents to select.
+
+    Returns
+    -------
+    parents: ndarray, shape (num_parents, d)
+        Selected parents.
+    fitness: ndarray, shape (num_parents,)
+        Fitness of the selected parents.
+
+    Notes
+    -----
+    This function normally assumes that the fitness is non-negative.
+    However, if the fitness is negative, then the fitness values are shifted to be non-negative.
+
+    References
+    ----------
+    This function is based on the work:
+    Holland, J. H. (1975). Adaptation in natural and artificial systems: An introductory analysis with applications
+    to biology, control, and artificial intelligence. The Michigan Press.
+    """
+    # Check if the fitness is non-negative
+    if np.any(fitness < 0):
+        fitness = fitness - np.min(fitness)
+    fitness_sum = np.sum(fitness)
+    selection_probs = fitness / fitness_sum
+    parents_idx = np.random.choice(np.arange(len(population)), size=num_parents, p=selection_probs)
+    return population[parents_idx], fitness[parents_idx]
+
+
 def stochastic_universal_sampling(population, fitness, num_parents=2):
     """
     This function selects parents from the population using the Stochastic Universal Sampling (SUS) method.
@@ -142,48 +184,6 @@ def stochastic_universal_sampling(population, fitness, num_parents=2):
                 break
 
     return parents, parents_fitness
-
-
-def roulette_wheel_selection(population, fitness, num_parents=2):
-    """
-    Select parents using Roulette Wheel Selection. The probability of selecting an individual is proportional to its
-    fitness. The higher the fitness, the higher the chance of being selected.
-    This function assumes that the fitness is non-negative.
-
-    Parameters
-    ----------
-    population: ndarray, shape (n, d)
-        Population of individuals.
-    fitness: ndarray, shape (n,)
-        Fitness of each individual.
-    num_parents: int
-        Number of parents to select.
-
-    Returns
-    -------
-    parents: ndarray, shape (num_parents, d)
-        Selected parents.
-    fitness: ndarray, shape (num_parents,)
-        Fitness of the selected parents.
-
-    Notes
-    -----
-    This function normally assumes that the fitness is non-negative.
-    However, if the fitness is negative, then the fitness values are shifted to be non-negative.
-
-    References
-    ----------
-    This function is based on the work:
-    Holland, J. H. (1975). Adaptation in natural and artificial systems: An introductory analysis with applications
-    to biology, control, and artificial intelligence. The Michigan Press.
-    """
-    # Check if the fitness is non-negative
-    if np.any(fitness < 0):
-        fitness = fitness - np.min(fitness)
-    fitness_sum = np.sum(fitness)
-    selection_probs = fitness / fitness_sum
-    parents_idx = np.random.choice(np.arange(len(population)), size=num_parents, p=selection_probs)
-    return population[parents_idx], fitness[parents_idx]
 
 
 def rank_selection(population, fitness, num_parents=2):
