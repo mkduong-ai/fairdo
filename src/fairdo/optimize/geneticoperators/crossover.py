@@ -53,12 +53,9 @@ def uniform_crossover(parents, num_offspring, p=0.5):
     offspring: ndarray, shape (num_offspring, d)
     """
     # perform crossover on the parents to generate new offspring
-    offspring = np.empty(num_offspring)
+    offspring = np.empty((num_offspring, parents.shape[1]))
     for k in range(num_offspring):
         # create a mask with the same shape as a gene
-        if p is None:
-            # if p is not specified, randomly choose a probability for each gene
-            p = np.random.uniform()
         mask = np.random.uniform(size=parents.shape[1]) < p
         # assign genes to the offspring based on the mask
         offspring[k] = np.where(mask, parents[0], parents[1])
@@ -82,20 +79,21 @@ def kpoint_crossover(parents, num_offspring, k=2):
     -------
     offspring: ndarray, shape (num_offspring, d)
     """
-    # perform crossover on the parents to generate new offspring
-    offspring = np.empty(num_offspring)
+    d = parents.shape[1]
+    offspring = np.empty((num_offspring, d))
+
     for i in range(num_offspring):
-        # parent selection
-        # switch between the two parents randomly at each crossover point to create the offspring
         parent1_idx = i % parents.shape[0]
         parent2_idx = (i + 1) % parents.shape[0]
-        # calculate the crossover points
-        crossover_points = sorted(np.random.choice(range(1, parents.shape[1]), k, replace=False))
-        # alternate between parents in each segment
-        segments = np.array_split(range(parents.shape[1]), crossover_points)
-        for j in range(len(segments)):
-            if j % 2 == 0:
-                offspring[i, segments[j]] = parents[parent1_idx, segments[j]]
-            else:
-                offspring[i, segments[j]] = parents[parent2_idx, segments[j]]
+
+        # Calculate crossover points
+        crossover_points = np.sort(np.random.choice(d - 1, k, replace=False)) + 1
+        crossover_points = np.concatenate(([0], crossover_points, [d]))
+
+        for j in range(len(crossover_points) - 1):
+            start, end = crossover_points[j], crossover_points[j + 1]
+            # Choose parent based on j (even or odd)
+            parent_idx = parent1_idx if j % 2 == 0 else parent2_idx
+            offspring[i, start:end] = parents[parent_idx, start:end]
+
     return offspring
