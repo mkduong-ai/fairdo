@@ -92,6 +92,9 @@ class HeuristicWrapper(Preprocessing):
                                                        protected_attributes=self.protected_attribute,
                                                        disc_measure=self.disc_measure)
         elif approach == 'add':
+            if sample_dataset is None:
+                raise ValueError('Sample dataset is required for the \'add\' approach.')
+
             self.func = lambda binary_vector: f_add(binary_vector=binary_vector,
                                                     dataframe=self.dataset,
                                                     sample_dataframe=sample_dataset,
