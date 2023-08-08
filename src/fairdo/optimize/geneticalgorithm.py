@@ -33,7 +33,7 @@ import numpy as np
 
 from fairdo.optimize.geneticoperators.crossover import onepoint_crossover, uniform_crossover
 from fairdo.optimize.geneticoperators.mutation import fractional_flip_mutation
-from fairdo.optimize.geneticoperators.selection import elitist_selection
+from fairdo.optimize.geneticoperators.selection import elitist_selection, tournament_selection
 from fairdo.utils.penalty import relative_difference_penalty
 
 
@@ -144,13 +144,13 @@ def evaluate_population(f, n, population, penalty_function=relative_difference_p
             return evaluate_population_single_cpu(f, n, population, penalty_function)
     except Exception as e:
         print(f"Multiprocessing pool failed with error: {e}")
-
-    return evaluate_population_single_cpu(f, n, population, penalty_function)
+        print("Falling back to single process execution")
+        return evaluate_population_single_cpu(f, n, population, penalty_function)
 
 
 def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
-                                 selection=elitist_selection,
-                                 crossover=onepoint_crossover,
+                                 selection=tournament_selection,
+                                 crossover=uniform_crossover,
                                  mutation=fractional_flip_mutation,
                                  maximize=False,
                                  tol=1e-6,
@@ -256,8 +256,8 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
 
 
 def genetic_algorithm(f, d, pop_size, num_generations,
-                      selection=elitist_selection,
-                      crossover=onepoint_crossover,
+                      selection=tournament_selection,
+                      crossover=uniform_crossover,
                       mutation=fractional_flip_mutation,
                       maximize=False,
                       tol=1e-6,
