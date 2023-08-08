@@ -1,5 +1,5 @@
 # Fairness-Agnostic Data Optimization
-**fado** is a Python package for optimizing datasets on fairness criteria.
+**FairDo** is a Python package for optimizing datasets on fairness criteria.
 The approaches are _fairness-agnostic_, meaning it can optimize any fairness
 criterion that quantifies discrimination within a dataset.
 The algorithms return a biased-reduced dataset accordingly.

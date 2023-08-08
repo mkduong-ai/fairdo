@@ -3,12 +3,12 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to fado's documentation!
+Welcome to FairDo's documentation!
 ================================
 
-**Fairness-Agnostic Data Optimization (fado)** is a Python package designed to
+**Fairness-Agnostic Data Optimization (FairDo)** is a Python package designed to
 optimize fairness in datasets. It provides robust, fairness-agnostic methods
-to preprocess data, ensuring machine learning models trained on these datasets
+to pre-process data, ensuring machine learning models trained on these datasets
 deliver high performance while significantly reducing discrimination.
 
 Metrics
