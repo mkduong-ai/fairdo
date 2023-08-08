@@ -1,6 +1,6 @@
 import numpy as np
 
-from fado.utils.penalty import relative_difference_penalty
+from fairdo.utils.penalty import relative_difference_penalty
 
 
 def acceptance_probability(delta, temperature):

@@ -22,5 +22,5 @@ non-continuous, or discontinuous fitness functions. (Note that fitness functions
 are equivalent to objective functions.)
 """
 
-from fado.optimize.baseline import *
-from fado.optimize.geneticalgorithm import *
+from fairdo.optimize.baseline import *
+from fairdo.optimize.geneticalgorithm import *

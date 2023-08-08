@@ -31,10 +31,10 @@ A fast and elitist multiobjective genetic algorithm: NSGA-II. IEEE Transactions 
 import pathos.multiprocessing as mp
 import numpy as np
 
-from fado.optimize.geneticoperators.crossover import onepoint_crossover, uniform_crossover
-from fado.optimize.geneticoperators.mutation import fractional_flip_mutation
-from fado.optimize.geneticoperators.selection import elitist_selection
-from fado.utils.penalty import relative_difference_penalty
+from fairdo.optimize.geneticoperators.crossover import onepoint_crossover, uniform_crossover
+from fairdo.optimize.geneticoperators.mutation import fractional_flip_mutation
+from fairdo.optimize.geneticoperators.selection import elitist_selection
+from fairdo.utils.penalty import relative_difference_penalty
 
 
 def generate_population(pop_size, d):

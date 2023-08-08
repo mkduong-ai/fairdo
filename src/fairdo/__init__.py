@@ -29,8 +29,8 @@ Each of these modules plays a crucial role in the functionality of the fado pack
 working together to provide a comprehensive toolkit for fairness optimization in datasets.
 """
 
-from fado import metrics
-from fado import optimize
-from fado import preprocessing
-from fado import utils
-from fado.__about__ import *
+from fairdo import metrics
+from fairdo import optimize
+from fairdo import preprocessing
+from fairdo import utils
+from fairdo.__about__ import *

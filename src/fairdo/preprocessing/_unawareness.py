@@ -1,4 +1,4 @@
-from fado.preprocessing.base import Preprocessing
+from fairdo.preprocessing.base import Preprocessing
 
 # third party
 import numpy as np

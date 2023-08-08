@@ -30,7 +30,7 @@ Each submodule provides a different perspective on fairness, and together they p
 for measuring fairness in datasets.
 """
 
-from fado.metrics.dataset import *
-from fado.metrics.independence import *
-from fado.metrics.individual import *
-from fado.metrics.prediction import *
+from fairdo.metrics.dataset import *
+from fairdo.metrics.independence import *
+from fairdo.metrics.individual import *
+from fairdo.metrics.prediction import *

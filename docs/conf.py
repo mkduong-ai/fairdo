@@ -5,13 +5,13 @@
 
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../src/fado/'))
+sys.path.insert(0, os.path.abspath('../src/fairdo/'))
 
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'fado'
+project = 'fairdo'
 copyright = '2023, Manh Khoi Duong'
 author = 'Manh Khoi Duong'
 release = '0.1.0'

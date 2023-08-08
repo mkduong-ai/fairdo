@@ -44,10 +44,10 @@ working together to provide a comprehensive toolkit for fairness optimization in
    :maxdepth: 4
    :caption: Contents:
    
-   fado.metrics
-   fado.optimize
-   fado.preprocessing
-   fado.utils
+   fairdo.metrics
+   fairdo.optimize
+   fairdo.preprocessing
+   fairdo.utils
 
 
 Indices and tables

@@ -12,10 +12,10 @@ matplotlib.rcParams['ps.fonttype'] = 42
 sns.set(font_scale=0.8)
 
 # Local application/library specific imports
-from fado.metrics import (normalized_mutual_information,
-                          statistical_parity_abs_diff,
-                          statistical_parity_abs_diff_max,
-                          statistical_parity_abs_diff_mean)
+from fairdo.metrics import (normalized_mutual_information,
+                            statistical_parity_abs_diff,
+                            statistical_parity_abs_diff_max,
+                            statistical_parity_abs_diff_mean)
 from measures import count_groups, count_size, sanity_check
 
 
@@ -85,7 +85,7 @@ def plot_results(results_df,
 
     # save plot
     if save_path is not None:
-        plt.savefig(save_path + '.pdf', format='pdf',  bbox_inches='tight', pad_inches=0)
+        plt.savefig(save_path + '.pdf', format='pdf', bbox_inches='tight', pad_inches=0)
         plt.close()
 
     # Show the plot
@@ -124,10 +124,10 @@ def settings(data_str='compas', objective_str='remove_synthetic'):
 
 
 def plot_time(results_df,
-                 groups=None,
-                 disc_dict=None,
-                 save_path=None,
-                 show_plot=True):
+              groups=None,
+              disc_dict=None,
+              save_path=None,
+              show_plot=True):
     """
     Plots the results
 
@@ -182,7 +182,7 @@ def plot_time(results_df,
     # plt.title(results_df['data'][0].capitalize() + ' Dataset')
 
     if save_path is not None:
-        plt.savefig(save_path + '_time.pdf', format='pdf',  bbox_inches='tight', pad_inches=0)
+        plt.savefig(save_path + '_time.pdf', format='pdf', bbox_inches='tight', pad_inches=0)
 
     # Show the plot
     if show_plot:
@@ -194,9 +194,9 @@ def settings_time(data_str='compas', objective_str='remove_synthetic'):
         'Sum SDP': statistical_parity_abs_diff,
         'Maximal SDP': statistical_parity_abs_diff_max,
         'NMI': normalized_mutual_information
-        #'Size': count_size,
-        #'Groups': count_groups
-        }
+        # 'Size': count_size,
+        # 'Groups': count_groups
+    }
 
     # load the results
     save_path = f'evaluation/results/nonbinary/{data_str}/{data_str}_{objective_str}'
@@ -204,9 +204,9 @@ def settings_time(data_str='compas', objective_str='remove_synthetic'):
 
     # plot the results
     plot_time(results,
-                 disc_dict=disc_dict,
-                 save_path=save_path,
-                 show_plot=False)
+              disc_dict=disc_dict,
+              save_path=save_path,
+              show_plot=False)
 
 
 def main():
@@ -215,7 +215,7 @@ def main():
     for data_str in data_strs:
         for obj_str in obj_strs:
             settings(data_str=data_str, objective_str=obj_str)
-            #settings_time(data_str=data_str, objective_str=obj_str)
+            # settings_time(data_str=data_str, objective_str=obj_str)
 
 
 if __name__ == "__main__":

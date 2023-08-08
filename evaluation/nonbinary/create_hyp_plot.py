@@ -12,10 +12,10 @@ matplotlib.rcParams['ps.fonttype'] = 42
 sns.set(font_scale=0.8)
 
 # Local application/library specific imports
-from fado.metrics import (normalized_mutual_information,
-                          statistical_parity_abs_diff,
-                          statistical_parity_abs_diff_max,
-                          statistical_parity_abs_diff_mean)
+from fairdo.metrics import (normalized_mutual_information,
+                            statistical_parity_abs_diff,
+                            statistical_parity_abs_diff_max,
+                            statistical_parity_abs_diff_mean)
 from measures import count_groups, count_size, sanity_check
 
 

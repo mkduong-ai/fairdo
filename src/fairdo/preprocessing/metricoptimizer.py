@@ -1,5 +1,5 @@
-from fado.preprocessing import Preprocessing
-from fado.metrics import statistical_parity_abs_diff
+from fairdo.preprocessing import Preprocessing
+from fairdo.metrics import statistical_parity_abs_diff
 
 # third party
 import numpy as np
