@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 Welcome to FairDo's documentation!
-================================
+==================================
 
 **Fairness-Agnostic Data Optimization (FairDo)** is a Python package designed to
 optimize fairness in datasets. It provides robust, fairness-agnostic methods

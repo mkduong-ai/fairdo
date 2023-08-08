@@ -1,7 +1,7 @@
-fado
-====
+fairdo
+======
 
 .. toctree::
    :maxdepth: 4
 
-   fado
+   fairdo
