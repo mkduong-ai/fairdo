@@ -264,8 +264,8 @@ def setup_experiment(data_str, objective_str):
     # create objective functions
     disc_dict = {
         'Statistical Disparity Sum': statistical_parity_abs_diff,
-        # 'Maximal Statistical Disparity': statistical_parity_abs_diff_max,
-        # 'NMI': normalized_mutual_information,
+        'Maximal Statistical Disparity': statistical_parity_abs_diff_max,
+        'NMI': normalized_mutual_information,
         # 'Size': count_size,
         # 'Distinct Groups': count_groups,
         # 'Sanity Check': sanity_check
@@ -274,11 +274,21 @@ def setup_experiment(data_str, objective_str):
     # create methods
     methods = {  # 'Baseline (Original)': baseline.original_method,
         # 'Random Heuristic': baseline.random_method,
-        'GA (1-Point Crossover)': partial(ga.genetic_algorithm,
-                                          crossover=onepoint_crossover, num_generations=3),
-        'GA (3-Point Crossover)': partial(ga.genetic_algorithm,
-                                          crossover=kpoint_crossover, num_generations=3),
-        # 'GA (Uniform Crossover)': genetic_algorithm_method_wrapper('uniform')
+        'GA (Elitist)': partial(ga.genetic_algorithm,
+                                selection=elitist_selection,
+                                crossover=uniform_crossover,
+                                pop_size=100,
+                                num_generations=500),
+        'GA (Tournament)': partial(ga.genetic_algorithm,
+                                   selection=tournament_selection,
+                                   crossover=uniform_crossover,
+                                   pop_size=100,
+                                   num_generations=500),
+        'GA (Roulette Wheel)': partial(ga.genetic_algorithm,
+                                       selection=roulette_wheel_selection,
+                                       crossover=uniform_crossover,
+                                       pop_size=100,
+                                       num_generations=500),
     }
 
     # create save path
@@ -383,15 +393,15 @@ def main():
         'remove_and_synthetic'
     ]
     data_strs = [
-        # 'adult',
-        # 'compas',
+        'adult',
+        'compas',
         'bank'
     ]
     # Experiments
     # obj_strs = ['remove']
     # data_strs = ['compas']
 
-    n_runs = 15
+    n_runs = 10
     for data_str in data_strs:
         print('------------------------------------')
         print(f'Running experiments for {data_str}...')
