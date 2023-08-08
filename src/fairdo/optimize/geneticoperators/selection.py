@@ -72,6 +72,11 @@ def tournament_selection(population, fitness, num_parents=2, tournament_size=3):
     fitness: ndarray, shape (num_parents,)
         Fitness of the selected parents.
     """
+    if population.shape[0] < tournament_size:
+        raise ValueError("Tournament size cannot be larger than the population size.")
+    if len(population.shape) != 2:
+        population = population.reshape(-1, 1)
+
     parents = np.empty((num_parents, population.shape[1]))
     parents_fitness = np.empty(num_parents)
     for i in range(num_parents):
