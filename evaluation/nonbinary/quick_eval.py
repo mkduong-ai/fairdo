@@ -117,13 +117,15 @@ def run_experiment(data_str, disc_dict, methods,
             # create synthetic data
             gc = GaussianCopula()
             gc.fit(df)
-            df_syn = gc.sample(num_synthetic_data)
+            df_syn = gc.sample(num_synthetic_data,
+                               output_file_path=f'evaluation/results/temp.{np.random.randint(1, 1000000)}.csv')
             df = df_syn
         if objective_str == 'remove_and_synthetic':
             # create synthetic data
             gc = GaussianCopula()
             gc.fit(df)
-            df_syn = gc.sample(num_synthetic_data)
+            df_syn = gc.sample(num_rows=num_synthetic_data,
+                               output_file_path=f'evaluation/results/temp.{np.random.randint(1, 1000000)}.csv')
             df = pd.concat([df, df_syn], axis=0)
 
         # create objective function
@@ -133,7 +135,8 @@ def run_experiment(data_str, disc_dict, methods,
         # create synthetic data
         gc = GaussianCopula()
         gc.fit(df)
-        df_syn = gc.sample(num_synthetic_data)
+        df_syn = gc.sample(num_synthetic_data,
+                           output_file_path=f'evaluation/results/temp.{np.random.randint(1, 1000000)}.csv')
 
         # create objective function
         f = partial(f_add, sample_dataframe=df_syn)
@@ -389,14 +392,14 @@ def run_and_save_experiment(data_str, objective_str, n_runs=10):
 
 def main():
     obj_strs = [
-        'remove',
+        #'remove',
         'add',
-        'remove_and_synthetic'
+        #'remove_and_synthetic'
     ]
     data_strs = [
-        'adult',
+        #'adult',
         'compas',
-        'bank'
+        #'bank'
     ]
     # Experiments
     # obj_strs = ['remove']
