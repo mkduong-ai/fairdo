@@ -6,7 +6,6 @@ import time
 from functools import partial
 
 # Related third-party imports
-from sklearn.preprocessing import LabelEncoder
 from sdv.tabular import GaussianCopula
 import pandas as pd
 import pathos.multiprocessing as mp
