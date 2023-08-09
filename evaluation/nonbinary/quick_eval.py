@@ -198,6 +198,7 @@ def run_experiments(data_str, disc_dict, methods, n_runs=10,
     results = {}
     for i in range(n_runs):
         print(f'Run {i + 1} of {n_runs}')
+        np.random.seed(i)
         results[i] = run_experiment(data_str=data_str, disc_dict=disc_dict, methods=methods,
                                     objective_str=objective_str)
     return results
@@ -206,6 +207,7 @@ def run_experiments(data_str, disc_dict, methods, n_runs=10,
 def run_single_experiment(args):
     i, data_str, disc_dict, methods, objective_str = args
     print(f'Run {i + 1}')
+    np.random.seed(i)
     result = run_experiment(data_str=data_str,
                             disc_dict=disc_dict,
                             methods=methods,
