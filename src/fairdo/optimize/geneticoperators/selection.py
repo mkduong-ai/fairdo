@@ -123,7 +123,9 @@ def roulette_wheel_selection(population, fitness, num_parents=2):
     """
     # Check if the fitness is non-negative
     if np.any(fitness < 0):
-        fitness = fitness - np.min(fitness)
+        # shift the fitness values to be non-negative
+        # also prevent the fitness values from being zero to avoid division by zero
+        fitness = fitness - 2*np.min(fitness)
     fitness_sum = np.sum(fitness)
     selection_probs = fitness / fitness_sum
     parents_idx = np.random.choice(np.arange(len(population)), size=num_parents, p=selection_probs)
@@ -166,7 +168,9 @@ def stochastic_universal_sampling(population, fitness, num_parents=2):
         population = population.reshape(-1, 1)
     # Check if the fitness is non-negative
     if np.any(fitness < 0):
-        fitness = fitness - np.min(fitness)
+        # shift the fitness values to be non-negative
+        # also prevent the fitness values from being zero to avoid division by zero
+        fitness = fitness - 2*np.min(fitness)
     # Normalize the fitness values
     fitness_sum = np.sum(fitness)
     normalized_fitness = fitness / fitness_sum
