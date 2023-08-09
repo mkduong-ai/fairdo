@@ -85,7 +85,7 @@ def create_save_path(data_str, objective_str, prefix='test'):
 
 
 def run_experiment(data_str, disc_dict, methods,
-                   objective_str='remove'):
+                   objective_str='remove', seed=0):
     """
     Runs the experiment
 
@@ -99,7 +99,8 @@ def run_experiment(data_str, disc_dict, methods,
         dictionary of methods
     objective_str: str
         objective function
-
+    seed: int
+        random seed
     Returns
     -------
     results: dict
@@ -118,16 +119,19 @@ def run_experiment(data_str, disc_dict, methods,
             gc = GaussianCopula()
             gc.fit(df)
             df_syn = gc.sample(num_synthetic_data,
-                               output_file_path=f'evaluation/results/temp.{np.random.randint(1, 1000000)}.csv')
-            df = df_syn
+                               output_file_path=f'evaluation/results/temp.{seed}{objective_str}.csv')
+            df = df_syn.copy()
+            # remove temporary synthetic data
+            os.remove(f'evaluation/results/temp.{seed}{objective_str}.csv')
         if objective_str == 'remove_and_synthetic':
             # create synthetic data
             gc = GaussianCopula()
             gc.fit(df)
             df_syn = gc.sample(num_rows=num_synthetic_data,
-                               output_file_path=f'evaluation/results/temp.{np.random.randint(1, 1000000)}.csv')
-            df = pd.concat([df, df_syn], axis=0)
-
+                               output_file_path=f'evaluation/results/temp.{seed}{objective_str}.csv')
+            df = pd.concat([df, df_syn.copy()], axis=0)
+            # remove temporary synthetic data
+            os.remove(f'evaluation/results/temp.{seed}{objective_str}.csv')
         # create objective function
         f = f_remove
         dims = df.shape[0]
@@ -136,11 +140,13 @@ def run_experiment(data_str, disc_dict, methods,
         gc = GaussianCopula()
         gc.fit(df)
         df_syn = gc.sample(num_synthetic_data,
-                           output_file_path=f'evaluation/results/temp.{np.random.randint(1, 1000000)}.csv')
+                           output_file_path=f'evaluation/results/temp.{seed}{objective_str}.csv')
 
         # create objective function
-        f = partial(f_add, sample_dataframe=df_syn)
+        f = partial(f_add, sample_dataframe=df_syn.copy())
         dims = df_syn.shape[0]
+        # remove temporary synthetic data
+        os.remove(f'evaluation/results/temp.{seed}{objective_str}.csv')
     else:
         raise ValueError(f'Objective {objective_str} not supported.')
 
@@ -171,7 +177,7 @@ def run_experiment(data_str, disc_dict, methods,
     return results
 
 
-def run_experiments(data_str, disc_dict, methods, n_runs=10,
+def run_experiments(data_str, disc_dict, methods, n_runs=15,
                     objective_str='remove'):
     """
     Runs the experiments for n_runs times and returns the results.
@@ -199,8 +205,11 @@ def run_experiments(data_str, disc_dict, methods, n_runs=10,
     for i in range(n_runs):
         print(f'Run {i + 1} of {n_runs}')
         np.random.seed(i)
-        results[i] = run_experiment(data_str=data_str, disc_dict=disc_dict, methods=methods,
-                                    objective_str=objective_str)
+        results[i] = run_experiment(data_str=data_str,
+                                    disc_dict=disc_dict,
+                                    methods=methods,
+                                    objective_str=objective_str,
+                                    seed=i)
     return results
 
 
@@ -211,11 +220,12 @@ def run_single_experiment(args):
     result = run_experiment(data_str=data_str,
                             disc_dict=disc_dict,
                             methods=methods,
-                            objective_str=objective_str)
+                            objective_str=objective_str,
+                            seed=i)
     return i, result
 
 
-def run_all_experiments(data_str, disc_dict, methods, n_runs=10,
+def run_all_experiments(data_str, disc_dict, methods, n_runs=15,
                         objective_str='remove'):
     """
     Runs all experiments in parallel using pathos multiprocessing.
@@ -283,18 +293,18 @@ def setup_experiment(data_str, objective_str):
         'GA (Elitist)': partial(ga.genetic_algorithm,
                                 selection=elitist_selection,
                                 crossover=uniform_crossover,
-                                pop_size=10,
-                                num_generations=50),
+                                pop_size=100,
+                                num_generations=500),
         'GA (Tournament)': partial(ga.genetic_algorithm,
                                    selection=tournament_selection,
                                    crossover=uniform_crossover,
-                                   pop_size=10,
-                                   num_generations=50),
+                                   pop_size=100,
+                                   num_generations=500),
         'GA (Roulette Wheel)': partial(ga.genetic_algorithm,
                                        selection=roulette_wheel_selection,
                                        crossover=uniform_crossover,
-                                       pop_size=10,
-                                       num_generations=50),
+                                       pop_size=100,
+                                       num_generations=500),
     }
 
     # create save path
@@ -394,14 +404,14 @@ def run_and_save_experiment(data_str, objective_str, n_runs=10):
 
 def main():
     obj_strs = [
-        #'remove',
+        'remove',
         'add',
-        #'remove_and_synthetic'
+        'remove_and_synthetic'
     ]
     data_strs = [
-        #'adult',
+        'adult',
         'compas',
-        #'bank'
+        'bank'
     ]
     # Experiments
     # obj_strs = ['remove']
