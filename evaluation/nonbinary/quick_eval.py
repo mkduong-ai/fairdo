@@ -386,7 +386,7 @@ def run_and_save_experiment(data_str, objective_str, n_runs=10):
     """
 
     # setup the experiment
-    save_path, disc_dict, methods = setup_experiment(data_str, objective_str)
+    save_path, disc_dict, methods = setup_experiment_hyperparameter(data_str, objective_str)
 
     # run experiment
     results = run_all_experiments(data_str=data_str,
