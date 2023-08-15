@@ -73,12 +73,12 @@ def plot_results(results_df,
         fig, ax = plt.subplots(figsize=(6, 3), dpi=80)
         sns.heatmap(pivot_mean,
                     annot=annotations,
-                    fmt="", cmap="magma",
+                    fmt="",# cmap="magma",
                     vmin=pivot_mean.min().min(),
                     vmax=pivot_mean.max().max(),
                     ax=ax,
-                    # annot_kws={"size": 12.5}, # no time
-                    annot_kws={"size": 10}, # time
+                    annot_kws={"size": 12.5}, # no time
+                    # annot_kws={"size": 10}, # time
                     # cbar_kws={"format":""},
                     cbar=False,
                     )
@@ -132,7 +132,7 @@ def main():
         for obj_str in obj_strs:
             settings(data_str=data_str,
                      objective_str=obj_str,
-                     time=True)
+                     time=False)
             # settings_time(data_str=data_str, objective_str=obj_str)
 
 
