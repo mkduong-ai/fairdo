@@ -115,7 +115,7 @@ def settings(data_str='compas', objective_str='remove_synthetic',
 
 def main():
     obj_strs = ['remove', 'add', 'remove_and_synthetic']
-    data_strs = ['adult', 'compas']
+    data_strs = ['adult', 'compas', 'bank']
     # Experiments
     # obj_strs = ['remove']
     # data_strs = ['compas']
@@ -123,7 +123,7 @@ def main():
         for obj_str in obj_strs:
             settings(data_str=data_str,
                      objective_str=obj_str,
-                     time=False)
+                     time=True)
             # settings_time(data_str=data_str, objective_str=obj_str)
 
 
