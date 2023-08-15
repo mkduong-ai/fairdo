@@ -77,10 +77,19 @@ def plot_results(results_df,
                     vmin=pivot_mean.min().min(),
                     vmax=pivot_mean.max().max(),
                     ax=ax,
-                    annot_kws={"size": 8})
+                    # annot_kws={"size": 12.5}, # no time
+                    annot_kws={"size": 10}, # time
+                    # cbar_kws={"format":""},
+                    cbar=False,
+                    )
         ax.set_xlabel('Number of Generations')
         ax.set_ylabel('Population Size')
-        plt.title(key_disc_measure)
+        ax.set(xlabel="", ylabel="")
+        ax.set_xticklabels(ax.get_xticklabels(), fontsize=13)
+        ax.set_yticklabels(ax.get_yticklabels(), fontsize=13)
+        #ax.get_xaxis().set_visible(False)
+        #ax.get_yaxis().set_visible(False)
+        #plt.title(key_disc_measure)
 
         # save plot
         if save_path is not None:
