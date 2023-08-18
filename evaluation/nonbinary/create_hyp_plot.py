@@ -68,6 +68,8 @@ def plot_results(results_df,
 
         # Create annotation matrix with mean and standard deviation
         annotations = pivot_mean.round(2).astype(str) + ' ± ' + pivot_std.round(2).astype(str)
+        annotations = pivot_mean.round().astype(int).astype(str) + ' ± ' + pivot_std.round().astype(int).astype(str)
+
 
         # Draw the heatmap
         fig, ax = plt.subplots(figsize=(6, 3), dpi=80)
@@ -78,7 +80,7 @@ def plot_results(results_df,
                     vmax=pivot_mean.max().max(),
                     ax=ax,
                     annot_kws={"size": 12.5}, # no time
-                    # annot_kws={"size": 10}, # time
+                    # annot_kws={"size": 15}, # time
                     # cbar_kws={"format":""},
                     cbar=False,
                     )
@@ -132,7 +134,7 @@ def main():
         for obj_str in obj_strs:
             settings(data_str=data_str,
                      objective_str=obj_str,
-                     time=False)
+                     time=True)
             # settings_time(data_str=data_str, objective_str=obj_str)
 
 
