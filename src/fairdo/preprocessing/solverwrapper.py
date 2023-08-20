@@ -104,7 +104,7 @@ class HeuristicWrapper(Preprocessing):
         pd.DataFrame
             The preprocessed (fair) dataset.
         """
-        mask = self.heuristic(self.func, self.dims)[0] == 1
+        mask = self.heuristic(f=self.func, d=self.dims)[0] == 1
         return self.dataset[mask]
 
 
