@@ -35,7 +35,8 @@ def consistency_score(x: np.array, y: np.array, n_neighbors=5, **kwargs) -> floa
     # drop the first column (self-loops)
     indices = indices[:, 1:]
 
-    differences = np.abs(y[indices] - y[:, None])
+    # compute the absolute differences between the output values of each instance and its neighbors
+    differences = np.abs(y[:, None] - y[indices])
 
     return 1 - np.mean(differences)
 
