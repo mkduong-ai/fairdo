@@ -288,7 +288,9 @@ def setup_experiment(data_str, objective_str):
     # create methods
     methods = {
         'Baseline (Original)': baseline.original_method,
-        'Random Heuristic': baseline.random_method,
+        'Random Heuristic': partial(baseline.random_method,
+                                    pop_size=100,
+                                    num_generations=500),
         'GA (Elitist)': partial(ga.genetic_algorithm,
                                 selection=elitist_selection,
                                 crossover=uniform_crossover,
