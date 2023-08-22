@@ -285,27 +285,29 @@ def setup_experiment(data_str, objective_str):
         'Sanity Check': sanity_check
     }
 
+    pop_size = 100
+    num_generations = 500
     # create methods
     methods = {
         'Baseline (Original)': baseline.original_method,
         'Random Heuristic': partial(baseline.random_method,
-                                    pop_size=100,
-                                    num_generations=500),
+                                    pop_size=pop_size,
+                                    num_generations=num_generations),
         'GA (Elitist)': partial(ga.genetic_algorithm,
                                 selection=elitist_selection,
                                 crossover=uniform_crossover,
-                                pop_size=100,
-                                num_generations=500),
+                                pop_size=pop_size,
+                                num_generations=num_generations),
         'GA (Tournament)': partial(ga.genetic_algorithm,
                                    selection=tournament_selection,
                                    crossover=uniform_crossover,
-                                   pop_size=100,
-                                   num_generations=500),
+                                   pop_size=pop_size,
+                                   num_generations=num_generations),
         'GA (Roulette Wheel)': partial(ga.genetic_algorithm,
                                        selection=roulette_wheel_selection,
                                        crossover=uniform_crossover,
-                                       pop_size=100,
-                                       num_generations=500),
+                                       pop_size=pop_size,
+                                       num_generations=num_generations),
     }
 
     # create save path
