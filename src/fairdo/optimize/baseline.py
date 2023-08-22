@@ -57,6 +57,8 @@ def random_method(f, d, pop_size=100, num_generations=500):
 
 def random_method_vectorized(f, d, pop_size=100, num_generations=500):
     """
+    This function is not essentially faster than the original function but requires more memory.
+
     This function generates a random binary vector and evaluates its performance.
     In a for-loop, it generates a new binary vector and evaluates its performance.
     If the new binary vector performs better than the current one, the current vector is replaced with the new one.
