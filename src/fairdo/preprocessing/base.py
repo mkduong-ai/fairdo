@@ -47,19 +47,22 @@ class Preprocessing(metaclass=abc.ABCMeta):
         self._check_valid_datatype()
         return self
 
-    def fit_transform(self, dataset):
+    def fit_transform(self, *args, **kwargs):
         """
         Fit the model to the dataset and transform the dataset.
 
         Parameters
         ----------
-        dataset: pd.DataFrame
+        args: list
+            Positional arguments for the `fit` method.
+        kwargs: dict
+            Keyword arguments for the `fit` method.
 
         Returns
         -------
         self
         """
-        return self.fit(dataset).transform()
+        return self.fit(*args, **kwargs).transform()
 
     def _check_valid_datatype(self):
         if not isinstance(self.dataset, pd.DataFrame):
