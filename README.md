@@ -16,13 +16,35 @@ it is possible to aim for the least fortunate group
 ### Dependencies
 Python (>=3.8, <4), numpy, pandas, scikit-learn, copulas
 
+### Setup Python Environment
+
+```bash
+# Create a virtual environment
+python -m venv .venv
+
+# Activate the virtual environment
+# On Windows:
+.venv\Scripts\activate
+
+# On macOS and Linux:
+source .venv/bin/activate
+```
+
+### PyPI Distribution
+
+The package is not yet distributed over PyPI, but can later be installed with:
+```bash
+pip install fairdo
+```
+It will be made available upon publication.
+
 ### Manual Installation
 
 ```bash
 python setup.py install
 ```
 
-### Development
+### Development Installation
 
 ```python
 pip install -e.
@@ -150,6 +172,37 @@ The plots are stored in the same directory as their corresponding .csv file.
 
 To modify or change several settings (datasets, metrics, #runs) in the
 evaluation, change the file ``evaluation/settings.py``.
+
+## Documentation
+
+The package follows the PEP8 style guide and is documented with NumPy style
+docstrings. To view the HTML pages of the documentation,
+follow these instructions:
+
+Activate virtual environment and install sphinx.
+```bash
+# Activate the virtual environment
+# On Windows:
+.venv\Scripts\activate
+
+# On macOS and Linux:
+source .venv/bin/activate
+
+# Install Sphinx and a required theme
+pip install sphinx furo
+```
+
+Run document generation script:
+```bash
+# Move to /docs
+cd /docs
+
+# Run script to generate documentation
+bash generate_docs.sh
+```
+
+The HTML pages are then located in `docs/_build/html`.
+Open `docs/_build/html/index.html` to view the front page.
 
 ## References
 [1] Larson, J., Angwin, J., Mattu, S.,  Kirchner, L.: Machine
