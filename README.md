@@ -208,4 +208,5 @@ Open `docs/_build/html/index.html` to view the front page.
 [1] Larson, J., Angwin, J., Mattu, S.,  Kirchner, L.: Machine
 bias (May 2016),
 https://www.propublica.org/article/machine-bias-risk-assessments-in-criminal-sentencing
+
 [2] Rawls, J.: A Theory of Justice (1971), Belknap Press, ISBN: 978-0-674-00078-0
