@@ -1,7 +1,13 @@
-from fairdo.preprocessing import Preprocessing
+# Standard library imports
+from functools import partial
 
+# Related third-party imports
 import numpy as np
 import pandas as pd
+
+# fairdo imports
+from fairdo.preprocessing import Preprocessing
+from fairdo.metrics import statistical_parity_abs_diff_max
 
 
 class HeuristicWrapper(Preprocessing):
@@ -32,9 +38,9 @@ class HeuristicWrapper(Preprocessing):
 
     def __init__(self,
                  heuristic,
-                 disc_measure,
                  protected_attribute,
                  label,
+                 disc_measure=statistical_parity_abs_diff_max,
                  **kwargs):
         """
         Constructs all the necessary attributes for the HeuristicWrapper object.
@@ -43,12 +49,14 @@ class HeuristicWrapper(Preprocessing):
         ----------
         heuristic: callable
             The method that optimizes the discrimination measure.
-        disc_measure: callable
-            The discrimination measure to be optimized.
-        protected_attribute: str
+        protected_attribute: str or List[str]
             The protected attribute in the dataset.
         label: str
             The target variable in the dataset.
+        disc_measure: callable, optional (default=statistical_parity_abs_diff_max)
+            The discrimination measure to be optimized.
+            Default is `statistical_parity_abs_diff_max` which is the absolute difference between the maximum and
+            minimum statistical parity values.
         kwargs: dict
             Additional arguments for the heuristic method.
         """
@@ -75,25 +83,30 @@ class HeuristicWrapper(Preprocessing):
             'add' approach is used.
         approach: str
             The approach to be used for the heuristic method. It can be either 'remove' or 'add'.
+
+        Returns
+        -------
+        self
         """
         self.dataset = dataset.copy()
         if approach == 'remove':
-            self.func = lambda binary_vector: f_remove(binary_vector=binary_vector,
-                                                       dataframe=self.dataset,
-                                                       label=self.label,
-                                                       protected_attributes=self.protected_attribute,
-                                                       disc_measure=self.disc_measure)
+            self.func = partial(f_remove,
+                                dataframe=self.dataset,
+                                label=self.label,
+                                protected_attributes=self.protected_attribute,
+                                disc_measure=self.disc_measure)
         elif approach == 'add':
             if sample_dataset is None:
                 raise ValueError('Sample dataset is required for the \'add\' approach.')
 
-            self.func = lambda binary_vector: f_add(binary_vector=binary_vector,
-                                                    dataframe=self.dataset,
-                                                    sample_dataframe=sample_dataset,
-                                                    label=self.label,
-                                                    protected_attributes=self.protected_attribute,
-                                                    disc_measure=self.disc_measure)
+            self.func = partial(f_add,
+                                dataframe=self.dataset,
+                                sample_dataframe=sample_dataset,
+                                label=self.label,
+                                protected_attributes=self.protected_attribute,
+                                disc_measure=self.disc_measure)
         self.dims = len(self.dataset)
+        return self
 
     def transform(self):
         """
@@ -109,7 +122,7 @@ class HeuristicWrapper(Preprocessing):
 
 
 def f_remove(binary_vector, dataframe, label, protected_attributes,
-             disc_measure):
+             disc_measure=statistical_parity_abs_diff_max):
     """
     Calculates a given discrimination measure on a dataframe for a set of selected columns.
     In other words, determine which data points can be removed from the training set to prevent discrimination.
@@ -126,8 +139,10 @@ def f_remove(binary_vector, dataframe, label, protected_attributes,
         The column in the dataframe to use as the target variable.
     protected_attributes: Union[str, List[str]]
         The column or columns in the dataframe to consider as protected attributes.
-    disc_measure: callable
+    disc_measure: callable, optional (default=statistical_parity_abs_diff_max)
         A function that takes in x (features), y (labels), and z (protected attributes) and returns a numeric value.
+        Default is `statistical_parity_abs_diff_max` which is the absolute difference between the maximum and minimum
+        statistical parity values.
 
     Returns
     -------
@@ -153,7 +168,7 @@ def f_remove(binary_vector, dataframe, label, protected_attributes,
 
 
 def f_add(binary_vector, dataframe, sample_dataframe, label, protected_attributes,
-          disc_measure):
+          disc_measure=statistical_parity_abs_diff_max):
     """
     Additional sample data points are added to the original data to promote fairness.
     The sample data can be synthetic data.
@@ -172,8 +187,10 @@ def f_add(binary_vector, dataframe, sample_dataframe, label, protected_attribute
         The column in the dataframe to use as the target variable.
     protected_attributes: Union[str, List[str]]
         The column or columns in the dataframe to consider as protected attributes.
-    disc_measure: callable
+    disc_measure: callable, optional (default=statistical_parity_abs_diff_max)
         A function that takes in x (features), y (labels), and z (protected attributes) and returns a numeric value.
+        Default is `statistical_parity_abs_diff_max` which is the absolute difference between the maximum and minimum
+        statistical parity values.
 
     Returns
     -------
