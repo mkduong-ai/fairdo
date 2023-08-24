@@ -10,14 +10,14 @@ from sdv.tabular import GaussianCopula
 import pandas as pd
 import pathos.multiprocessing as mp
 
-# fado imports
+# fairdo imports
 from fairdo.utils.dataset import load_data
 from fairdo.metrics import (normalized_mutual_information,
                             statistical_parity_abs_diff,
                             statistical_parity_abs_diff_max,
                             statistical_parity_abs_diff_mean)
 from fairdo.preprocessing.solverwrapper import f_add, f_remove
-# from fado.preprocessing import MetricOptimizer, MetricOptRemover
+# from fairdo.preprocessing import MetricOptimizer, MetricOptRemover
 import fairdo.optimize.baseline as baseline
 import fairdo.optimize.geneticalgorithm as ga
 from fairdo.optimize.geneticoperators import *
