@@ -32,11 +32,10 @@ source .venv/bin/activate
 
 ### PyPI Distribution
 
-The package is not yet distributed over PyPI, but can later be installed with:
+The package is distributed via PyPI and can be installed with:
 ```bash
 pip install fairdo
 ```
-It will be made available upon publication.
 
 ### Manual Installation
 
@@ -129,6 +128,20 @@ bash generate_docs.sh
 
 The HTML pages are then located in `docs/_build/html`.
 Open `docs/_build/html/index.html` to view the front page.
+
+## Citing
+
+When using **FairDo** in your work, cite our paper:
+
+```
+@inproceedings{duong2023framework,
+  title={Towards Fairness and Privacy: A Novel Data Pre-processing Optimization Framework for Non-binary Protected Attributes},
+  author={Duong, Manh Khoi and Conrad, Stefan},
+  booktitle={The 21st Australasian Data Mining Conference 2023},
+  year={2023},
+  organization={Springer Nature Singapore}
+}
+```
 
 ## References
 [1] Larson, J., Angwin, J., Mattu, S.,  Kirchner, L.: Machine
