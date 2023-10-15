@@ -1,4 +1,4 @@
-__title__ = "fado"
+__title__ = "fairdo"
 __version__ = "0.1.1"
 __author__ = "Manh Khoi Duong"
 __email__ = "duong@hhu.de"
