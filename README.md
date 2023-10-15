@@ -129,7 +129,7 @@ bash generate_docs.sh
 The HTML pages are then located in `docs/_build/html`.
 Open `docs/_build/html/index.html` to view the front page.
 
-## Citing
+## Citation
 
 When using **FairDo** in your work, cite our paper:
 
