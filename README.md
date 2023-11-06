@@ -139,7 +139,7 @@ When using **FairDo** in your work, cite our paper:
   author={Duong, Manh Khoi and Conrad, Stefan},
   booktitle={The 21st Australasian Data Mining Conference 2023},
   year={2023},
-  organization={Springer Nature Singapore}
+  organization={Springer Nature}
 }
 ```
 
