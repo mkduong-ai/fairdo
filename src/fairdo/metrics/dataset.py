@@ -92,6 +92,32 @@ def statistical_parity_abs_diff(y: np.array, z: np.array, agg_group=np.sum, **kw
     return statistical_parity_abs_diff_multi(y=y, z=z, agg_group=agg_group, **kwargs)
 
 
+def statistical_parity_abs_diff_sum(y: np.array, z: np.array,
+                                    **kwargs) -> float:
+    """
+    Calculate the maximum of statistical parity absolute differences between all groups in a protected attribute.
+    The protected attribute `z` can be binary or non-binary.
+
+    Parameters
+    ----------
+    y: np.array
+        Flattened binary array, can be the prediction or the truth label.
+    z: np.array
+        Flattened array of shape y, represents the protected attribute.
+        Can represent non-binary protected attribute.
+    positive_label: int, optional
+        Label considered as positive. Default is 1.
+    privileged_group: int, optional
+        Label considered as privileged. Default is 1.
+
+    Returns
+    -------
+    float
+        Average of the absolute value of the statistical parity differences between all groups.
+    """
+    return statistical_parity_abs_diff(y=y, z=z, agg_group=np.sum, **kwargs)
+
+
 def statistical_parity_abs_diff_mean(y: np.array, z: np.array,
                                      **kwargs) -> float:
     """
