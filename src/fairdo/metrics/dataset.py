@@ -43,6 +43,7 @@ def statistical_parity_abs_diff_multi(y: np.array, z: np.array,
 
     # get unique values for each attribute
     groups = [np.unique(z[:, i]) for i in range(z.shape[1])]
+    # print(groups)
     # get statistical parity for each attribute
     attributes_disparity = []
     for k, zk in enumerate(groups):
@@ -51,8 +52,13 @@ def statistical_parity_abs_diff_multi(y: np.array, z: np.array,
         # generate all possible pairs of values for the attribute
         pairs = generate_pairs(zk)
         group_disparity = [np.abs(parities[i] - parities[j]) for i, j in pairs]
-        attributes_disparity.append(agg_group(group_disparity))
-
+        # print(group_disparity)
+        try:
+            attributes_disparity.append(agg_group(group_disparity))
+        except ValueError:
+            warnings.warn(f"Could not aggregate disparity for attribute {k} with aggregation function {agg_group}. "
+                          f"Returning disparity of 0.")
+            attributes_disparity.append(0)
     return agg_attribute(attributes_disparity)
 
 
