@@ -14,7 +14,7 @@ it is possible to aim for the least fortunate group
 ## Installation
 
 ### Dependencies
-Python (>=3.8, <4), numpy, pandas, scikit-learn, copulas
+Python (>=3.8, <4), `numpy`, `pandas`, `sklearn`, `sdv`
 
 ### Setup Python Environment
 
