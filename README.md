@@ -32,20 +32,39 @@ source .venv/bin/activate
 
 ### PyPI Distribution
 
-The package is distributed via PyPI and can be installed with:
+The package is distributed via PyPI and can be directly installed with:
 ```bash
 pip install fairdo
 ```
 
-### Manual Installation
+### Manual Installation (latest version)
 
+To install the latest version, execute following commands:
 ```bash
+# Clone repo
+git clone https://github.com/mkduong-ai/fairdo.git
+
+# Move to repo folder
+cd fairdo
+
+# Install from source
 python setup.py install
 ```
 
 ### Development Installation
 
+Installing in development mode is useful to make changes in the source code take effect instantly.
+This means that the package is installed in such a way that changes to the source code
+are immediately reflected without the need to reinstall the package. This can be done in the following
+way:
 ```python
+# Clone repo
+git clone https://github.com/mkduong-ai/fairdo.git
+
+# Move to repo folder
+cd fairdo
+
+# Development installation
 pip install -e.
 ```
 
