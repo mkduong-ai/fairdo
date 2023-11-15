@@ -30,7 +30,7 @@ python -m venv .venv
 source .venv/bin/activate
 ```
 
-### PyPI Distribution
+### PyPI Distribution (recommended)
 
 The package is distributed via PyPI and can be directly installed with:
 ```bash
