@@ -4,8 +4,18 @@ import warnings
 from fairdo.utils.helper import generate_pairs
 
 
-def group_missing(z: np.array, agg_group=np.sum, **kwargs) -> float:
-    pass
+def group_missing_penalty(z: np.array, n_groups: int, agg_group=np.sum, **kwargs) -> float:
+    if agg_group == np.sum:
+        # Return the penalty for each comparison for each missing group
+        n_avail_groups = np.unique(z)
+        n_missing_groups = n_groups - len(n_avail_groups)
+        return n_missing_groups * (2 * n_groups - n_missing_groups - 1) / 2
+    elif agg_group == np.max:
+        # Return 1 if there is at least one group missing
+        return int(len(np.unique(z)) < n_groups)
+    else:
+        raise NotImplementedError("Only np.sum and np.max are implemented for agg_group")
+
 
 def statistical_parity_abs_diff_multi(y: np.array, z: np.array,
                                       agg_attribute=np.sum,
@@ -213,9 +223,9 @@ def statistical_parity_difference(y: np.array, z: np.array,
     y = y.astype(int)
     z = z.astype(int)
     priv = np.sum(y & z) / np.sum(z)
-    unpriv = np.sum(y & (1-z)) / np.sum(1 - z)
+    unpriv = np.sum(y & (1 - z)) / np.sum(1 - z)
 
-    return unpriv-priv
+    return unpriv - priv
 
 
 def mean_difference(*args, **kwargs) -> float:
@@ -286,7 +296,7 @@ def disparate_impact_ratio(y: np.array, z: np.array,
 
         return 1
 
-    return unpriv/priv
+    return unpriv / priv
 
 
 def disparate_impact_ratio_objective(y: np.array, z: np.array,
