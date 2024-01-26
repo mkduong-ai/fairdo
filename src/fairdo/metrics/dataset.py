@@ -4,17 +4,17 @@ import warnings
 from fairdo.utils.helper import generate_pairs
 
 
-def group_missing_penalty(z: np.array, n_groups: int, agg_group=np.sum, **kwargs) -> float:
-    if agg_group == np.sum:
+def group_missing_penalty(z: np.array, n_groups: int, agg_group='sum', **kwargs) -> float:
+    if agg_group == 'sum':
         # Return the penalty for each comparison for each missing group
         n_avail_groups = np.unique(z)
         n_missing_groups = n_groups - len(n_avail_groups)
         return n_missing_groups * (2 * n_groups - n_missing_groups - 1) / 2
-    elif agg_group == np.max:
+    elif agg_group == 'max':
         # Return 1 if there is at least one group missing
         return int(len(np.unique(z)) < n_groups)
     else:
-        raise NotImplementedError("Only np.sum and np.max are implemented for agg_group")
+        raise NotImplementedError("Only sum and max are implemented for agg_group")
 
 
 def statistical_parity_abs_diff_multi(y: np.array, z: np.array,

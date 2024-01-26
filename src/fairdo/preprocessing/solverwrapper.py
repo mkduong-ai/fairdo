@@ -69,7 +69,7 @@ class HeuristicWrapper(Preprocessing):
         self.dataset = None
         super().__init__(protected_attribute=protected_attribute, label=label)
 
-    def fit(self, dataset, sample_dataset=None, approach='remove'):
+    def fit(self, dataset, sample_dataset=None, approach='remove', penalty=None, penalty_kwargs=None):
         """
         Defines the discrimination measure function and the number of dimensions based on the
         input dataset.
@@ -104,7 +104,9 @@ class HeuristicWrapper(Preprocessing):
                                 sample_dataframe=sample_dataset,
                                 label=self.label,
                                 protected_attributes=self.protected_attribute,
-                                disc_measure=self.disc_measure)
+                                disc_measure=self.disc_measure,
+                                penalty=penalty,
+                                penalty_kwargs=penalty_kwargs)
         self.dims = len(self.dataset)
         return self
 
@@ -122,7 +124,8 @@ class HeuristicWrapper(Preprocessing):
 
 
 def f_remove(binary_vector, dataframe, label, protected_attributes,
-             disc_measure=statistical_parity_abs_diff_max):
+             disc_measure=statistical_parity_abs_diff_max,
+             penalty=None, penalty_kwargs=None):
     """
     Calculates a given discrimination measure on a dataframe for a set of selected columns.
     In other words, determine which data points can be removed from the training set to prevent discrimination.
@@ -143,6 +146,12 @@ def f_remove(binary_vector, dataframe, label, protected_attributes,
         A function that takes in x (features), y (labels), and z (protected attributes) and returns a numeric value.
         Default is `statistical_parity_abs_diff_max` which is the absolute difference between the maximum and minimum
         statistical parity values.
+    penalty: callable, optional (default=None)
+        A function that takes a dictionary of keyword arguments and returns a numeric value.
+        This function is used to penalize the discrimination loss.
+        Default is None which means no penalty is applied.
+    penalty_kwargs: dict, optional (default=None)
+        A dictionary of keyword arguments to be passed to the penalty function.
 
     Returns
     -------
@@ -166,11 +175,12 @@ def f_remove(binary_vector, dataframe, label, protected_attributes,
     z = z.to_numpy()
     if len(protected_attributes) == 1:
         z = z.flatten()
-    return disc_measure(x=x, y=y, z=z)
+    return disc_measure(x=x, y=y, z=z) + penalty(**penalty_kwargs) if penalty else disc_measure(x=x, y=y, z=z)
 
 
 def f_add(binary_vector, dataframe, sample_dataframe, label, protected_attributes,
-          disc_measure=statistical_parity_abs_diff_max):
+          disc_measure=statistical_parity_abs_diff_max,
+          penalty=None, penalty_kwargs=None):
     """
     Additional sample data points are added to the original data to promote fairness.
     The sample data can be synthetic data.
@@ -193,6 +203,12 @@ def f_add(binary_vector, dataframe, sample_dataframe, label, protected_attribute
         A function that takes in x (features), y (labels), and z (protected attributes) and returns a numeric value.
         Default is `statistical_parity_abs_diff_max` which is the absolute difference between the maximum and minimum
         statistical parity values.
+    penalty: callable, optional (default=None)
+        A function that takes a dictionary of keyword arguments and returns a numeric value.
+        This function is used to penalize the discrimination loss.
+        Default is None which means no penalty is applied.
+    penalty_kwargs: dict, optional (default=None)
+        A dictionary of keyword arguments to be passed to the penalty function.
 
     Returns
     -------
@@ -220,4 +236,4 @@ def f_add(binary_vector, dataframe, sample_dataframe, label, protected_attribute
     z = z.to_numpy()
     if len(protected_attributes) == 1:
         z = z.flatten()
-    return disc_measure(x=x, y=y, z=z)
+    return disc_measure(x=x, y=y, z=z) + penalty(**penalty_kwargs) if penalty else disc_measure(x=x, y=y, z=z)
