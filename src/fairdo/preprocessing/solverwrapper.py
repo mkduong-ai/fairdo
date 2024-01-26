@@ -161,9 +161,11 @@ def f_remove(binary_vector, dataframe, label, protected_attributes,
     mask = np.array(binary_vector) == 1
     x, y, z = x[mask], y[mask], z[mask]
 
-    # Note: This does not handle multiple protected attributes
+    # We handle multiple protected attributes by not flattening the z array
     y = y.to_numpy().flatten()
-    z = z.to_numpy().flatten()
+    z = z.to_numpy()
+    if len(protected_attributes) == 1:
+        z = z.flatten()
     return disc_measure(x=x, y=y, z=z)
 
 
