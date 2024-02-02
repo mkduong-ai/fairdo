@@ -136,10 +136,10 @@ source .venv/bin/activate
 pip install sphinx furo
 ```
 
-Run document generation script:
+Run document generation script in UNIX-Systems:
 ```bash
 # Move to /docs
-cd /docs
+cd docs
 
 # Run script to generate documentation
 bash generate_docs.sh
