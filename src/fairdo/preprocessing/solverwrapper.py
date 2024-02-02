@@ -175,7 +175,7 @@ def f_remove(binary_vector, dataframe, label, protected_attributes,
     z = z.to_numpy()
     if len(protected_attributes) == 1:
         z = z.flatten()
-    return disc_measure(x=x, y=y, z=z) + penalty(x=x, y=y, z=z, **penalty_kwargs) if penalty else disc_measure(x=x, y=y, z=z)
+    return disc_measure(x=x, y=y, z=z) + penalty(x=x, y=y, z=z, **penalty_kwargs) if penalty is not None else disc_measure(x=x, y=y, z=z)
 
 
 def f_add(binary_vector, dataframe, sample_dataframe, label, protected_attributes,
@@ -236,4 +236,4 @@ def f_add(binary_vector, dataframe, sample_dataframe, label, protected_attribute
     z = z.to_numpy()
     if len(protected_attributes) == 1:
         z = z.flatten()
-    return disc_measure(x=x, y=y, z=z) + penalty(x=x, y=y, z=z, **penalty_kwargs) if penalty else disc_measure(x=x, y=y, z=z)
+    return disc_measure(x=x, y=y, z=z) + penalty(x=x, y=y, z=z, **penalty_kwargs) if penalty is not None else disc_measure(x=x, y=y, z=z)
