@@ -1,4 +1,6 @@
 # Fairness-Agnostic Data Optimization
+![t2i](assets/Pipeline.png)
+
 **FairDo** is a Python package for mitigating bias in data.
 The approaches, which are _fairness-agnostic_, enable optimization of diverse
 fairness criteria quantifying discrimination within datasets,
