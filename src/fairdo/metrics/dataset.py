@@ -5,10 +5,29 @@ from fairdo.utils.helper import generate_pairs
 
 
 def group_missing_penalty(z: np.array, n_groups: int, agg_group='sum', **kwargs) -> float:
+    """
+    Calculate the penalty for missing groups in a protected attribute.
+    The number of groups `n_groups` is used to calculate the penalty.
+
+    Parameters
+    ----------
+    z: np.array
+        Flattened array of shape y, represents the protected attribute.
+        Can represent non-binary protected attribute.
+    n_groups: int
+        Number of groups for the protected attribute.
+    agg_group: str, optional
+        Aggregation function for the group. Default is 'sum'.
+    
+    Returns
+    -------
+    float
+        The penalty for missing groups.
+    """
     if agg_group == 'sum':
         # Return the penalty for each comparison for each missing group
-        n_avail_groups = np.unique(z)
-        n_missing_groups = n_groups - len(n_avail_groups)
+        n_avail_groups = len(np.unique(z))
+        n_missing_groups = n_groups - n_avail_groups
         return n_missing_groups * (2 * n_groups - n_missing_groups - 1) / 2
     elif agg_group == 'max':
         # Return 1 if there is at least one group missing

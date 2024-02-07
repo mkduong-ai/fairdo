@@ -69,7 +69,8 @@ class HeuristicWrapper(Preprocessing):
         self.dataset = None
         super().__init__(protected_attribute=protected_attribute, label=label)
 
-    def fit(self, dataset, sample_dataset=None, approach='remove', penalty=None, penalty_kwargs=None):
+    def fit(self, dataset, sample_dataset=None, approach='remove',
+            penalty=None, penalty_kwargs=None):
         """
         Defines the discrimination measure function and the number of dimensions based on the
         input dataset.
@@ -79,10 +80,11 @@ class HeuristicWrapper(Preprocessing):
         dataset: pd.DataFrame
             The dataset to be preprocessed.
         sample_dataset: pd.DataFrame, optional
-            The sample dataset to be used for the 'add' approach. It is required only if the
-            'add' approach is used.
+            The sample dataset to be used for the 'add' approach.
+            It is required only if the 'add' approach is used.
         approach: str
-            The approach to be used for the heuristic method. It can be either 'remove' or 'add'.
+            The approach to be used for the heuristic method.
+            It can be either 'remove' or 'add'.
 
         Returns
         -------
@@ -94,7 +96,9 @@ class HeuristicWrapper(Preprocessing):
                                 dataframe=self.dataset,
                                 label=self.label,
                                 protected_attributes=self.protected_attribute,
-                                disc_measure=self.disc_measure)
+                                disc_measure=self.disc_measure,
+                                penalty=penalty,
+                                penalty_kwargs=penalty_kwargs)
         elif approach == 'add':
             if sample_dataset is None:
                 raise ValueError('Sample dataset is required for the \'add\' approach.')
@@ -175,6 +179,7 @@ def f_remove(binary_vector, dataframe, label, protected_attributes,
     z = z.to_numpy()
     if len(protected_attributes) == 1:
         z = z.flatten()
+        
     return disc_measure(x=x, y=y, z=z) + penalty(x=x, y=y, z=z, **penalty_kwargs) if penalty is not None else disc_measure(x=x, y=y, z=z)
 
 
