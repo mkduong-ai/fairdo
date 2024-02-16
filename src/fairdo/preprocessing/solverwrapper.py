@@ -163,8 +163,6 @@ class DefaultPreprocessing(Preprocessing):
 
         Parameters
         ----------
-        heuristic: callable
-            The method that optimizes the discrimination measure.
         protected_attribute: str or List[str]
             The protected attribute in the dataset.
         label: str
@@ -176,8 +174,6 @@ class DefaultPreprocessing(Preprocessing):
         kwargs: dict
             Additional arguments for the heuristic method.
         """
-        self.func = None
-        self.dims = None
         self.disc_measure = disc_measure
 
         # required by Preprocessing
@@ -190,7 +186,8 @@ class DefaultPreprocessing(Preprocessing):
         self.preprocessor = HeuristicWrapper(heuristic=self.heuristic,
                                              protected_attribute=self.protected_attribute,
                                              label=self.label,
-                                             disc=disc_measure)
+                                             disc=self.disc_measure,
+                                             **kwargs)
 
     def fit(self, dataset, sample_dataset=None, approach='remove',
             penalty=None, penalty_kwargs=None):
