@@ -8,6 +8,7 @@ import pandas as pd
 # fairdo imports
 from fairdo.preprocessing import Preprocessing
 from fairdo.metrics import statistical_parity_abs_diff_max
+from fairdo.optimize import genetic_algorithm
 
 
 class HeuristicWrapper(Preprocessing):
@@ -126,6 +127,109 @@ class HeuristicWrapper(Preprocessing):
         mask = self.heuristic(f=self.func, d=self.dims)[0] == 1
         return self.dataset[mask]
 
+
+class DefaultPreprocessing(Preprocessing):
+    """
+    DefaultPreprocessing is a processing method that can be used on-the-go.
+    It uses a Genetic Algorithm to select a subset of the given dataset to optimize for fairness.
+    The default parameters are:
+        pop_size=100, num_generations=500.
+        Selection: Elitist
+        Crossover: Uniform
+        Mutation: Fractional Bit Flip
+
+    Attributes
+    ----------
+    func: callable
+        The discrimination measure function to be optimized. It is defined within the `fit`
+        method.
+    dims: int
+        The number of dimensions or columns in the dataset. It is defined within the `fit`
+        method.
+    disc_measure: callable
+        The discrimination measure to be optimized. It takes the feature matrix (x), labels
+        (y), and protected attributes (z) and returns a numeric value.
+    dataset: pd.DataFrame
+        The dataset to be preprocessed. It is defined within the `fit` method.
+    """
+
+    def __init__(self,
+                 protected_attribute,
+                 label,
+                 disc_measure=statistical_parity_abs_diff_max,
+                 **kwargs):
+        """
+        Constructs all the necessary attributes for the HeuristicWrapper object.
+
+        Parameters
+        ----------
+        heuristic: callable
+            The method that optimizes the discrimination measure.
+        protected_attribute: str or List[str]
+            The protected attribute in the dataset.
+        label: str
+            The target variable in the dataset.
+        disc_measure: callable, optional (default=statistical_parity_abs_diff_max)
+            The discrimination measure to be optimized.
+            Default is `statistical_parity_abs_diff_max` which is the absolute difference between the maximum and
+            minimum statistical parity values.
+        kwargs: dict
+            Additional arguments for the heuristic method.
+        """
+        self.func = None
+        self.dims = None
+        self.disc_measure = disc_measure
+
+        # required by Preprocessing
+        self.heuristic = partial(genetic_algorithm,
+                                 pop_size=100,
+                                 num_generations=500)
+        self.dataset = None
+        super().__init__(protected_attribute=protected_attribute, label=label)
+
+        self.preprocessor = HeuristicWrapper(heuristic=self.heuristic,
+                                             protected_attribute=self.protected_attribute,
+                                             label=self.label,
+                                             disc=disc_measure)
+
+    def fit(self, dataset, sample_dataset=None, approach='remove',
+            penalty=None, penalty_kwargs=None):
+        """
+        Defines the discrimination measure function and the number of dimensions based on the
+        input dataset.
+
+        Parameters
+        ----------
+        dataset: pd.DataFrame
+            The dataset to be preprocessed.
+        sample_dataset: pd.DataFrame, optional
+            The sample dataset to be used for the 'add' approach.
+            It is required only if the 'add' approach is used.
+        approach: str
+            The approach to be used for the heuristic method.
+            It can be either 'remove' or 'add'.
+
+        Returns
+        -------
+        self
+        """
+        return self.preprocessor.fit(dataset=dataset,
+                                     sample_dataset=sample_dataset,
+                                     approach=approach,
+                                     penalty=penalty,
+                                     penalty_kwargs=penalty_kwargs)
+
+    def transform(self):
+        """
+        Applies the heuristic method to the dataset and returns a preprocessed version of it.
+
+        Returns
+        -------
+        pd.DataFrame
+            The preprocessed (fair) dataset.
+        """
+        return self.preprocessor.transform()
+    
 
 def f_remove(binary_vector, dataframe, label, protected_attributes,
              disc_measure=statistical_parity_abs_diff_max,

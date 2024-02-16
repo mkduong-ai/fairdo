@@ -256,7 +256,7 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
 
 
 def genetic_algorithm(f, d, pop_size, num_generations,
-                      selection=tournament_selection,
+                      selection=elitist_selection,
                       crossover=uniform_crossover,
                       mutation=fractional_flip_mutation,
                       maximize=False,
