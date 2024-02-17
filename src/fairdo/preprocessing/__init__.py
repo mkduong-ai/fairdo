@@ -22,5 +22,5 @@ randomly removes data points from the dataset and a `OriginalData` that returns 
 Both of these pre-processors are used for comparison purposes.
 """
 from fairdo.preprocessing.base import OriginalData, Random
-from fairdo.preprocessing.metricoptimizer import *
+from fairdo.preprocessing.metricoptimizer import MetricOptimizer, MetricOptGenerator, MetricOptRemover
 from fairdo.preprocessing.solverwrapper import HeuristicWrapper
