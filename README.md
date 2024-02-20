@@ -98,43 +98,28 @@ Here, we deploy a genetic algorithm to remove discriminatory samples
 of the merged original and synthetic dataset:
 
 ```python
-# Standard library
-from functools import partial
-
-# Related third-party imports
-from sdv.tabular import GaussianCopula
-import pandas as pd
-
 # fairdo package
 from fairdo.utils.dataset import load_data
-from fairdo.preprocessing import HeuristicWrapper
-from fairdo.optimize.geneticalgorithm import genetic_algorithm
+from fairdo.preprocessing import DefaultPreprocessing
+# fairdo metrics
 from fairdo.metrics import statistical_parity_abs_diff_max
 
-# Loading a sample database and encoding for appropriate usage
-# data is a pandas dataframe
-data, label, protected_attributes = load_data('compas')
+# Loading a sample dataset with all required information
+# data is a pandas.DataFrame
+data, label, protected_attributes = load_data('compas', print_info=False)
 
-# Create synthetic data
-gc = GaussianCopula()
-gc.fit(data)
-data_syn = gc.sample(data.shape[0])
+# Initialize DefaultPreprocessing object
+preprocessor = DefaultPreprocessing(protected_attribute=protected_attributes[0],
+                                    label=label)
 
-# Merge/concat original and synthetic data
-data = pd.concat([data, data_syn.copy()], axis=0)
+# Fit and transform the data
+data_fair = preprocessor.fit_transform(dataset=data)
 
-# Initial settings for the Genetic Algorithm
-ga = partial(genetic_algorithm,
-             pop_size=100,
-             num_generations=100)
-             
-# Optimization step
-preprocessor = HeuristicWrapper(heuristic=ga,
-                                protected_attribute=protected_attributes[0],
-                                label=label,
-                                disc=statistical_parity_abs_diff_max)
-data_fair = preprocessor.fit_transform(dataset=data,
-                                       approach='remove')                                
+# Print no. samples and discrimination before and after
+disc_before = statistical_parity_abs_diff_max(data[label], data[protected_attributes[0]].to_numpy())
+disc_after = statistical_parity_abs_diff_max(data_fair[label], data_fair[protected_attributes[0]].to_numpy())
+print(len(data), disc_before)
+print(len(data_fair), disc_after)
 ```
 
 
