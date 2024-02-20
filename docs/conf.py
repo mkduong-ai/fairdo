@@ -13,7 +13,7 @@ sys.path.insert(0, os.path.abspath('../src/fairdo/'))
 
 project = 'fairdo'
 copyright = '2024, Manh Khoi Duong'
-author = 'Anonymous'
+author = 'Manh Khoi Duong'
 release = '0.1.3'
 
 # -- General configuration ---------------------------------------------------
