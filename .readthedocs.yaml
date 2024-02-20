@@ -5,8 +5,6 @@
 # Required
 version: 2
 
-submodules:
-  include: all
 
 # Set the OS, Python version and other tools you might need
 build:
@@ -22,6 +20,9 @@ build:
 sphinx:
   builder: html
   configuration: docs/conf.py
+ 
+submodules:
+  include: all
 
 # Optionally build your docs in additional formats such as PDF and ePub
 # formats:
