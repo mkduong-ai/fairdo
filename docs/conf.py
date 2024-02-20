@@ -12,9 +12,9 @@ sys.path.insert(0, os.path.abspath('../src/fairdo/'))
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'fairdo'
-copyright = '2023, Anonymous'
+copyright = '2024, Manh Khoi Duong'
 author = 'Anonymous'
-release = '0.1.1'
+release = '0.1.3'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
