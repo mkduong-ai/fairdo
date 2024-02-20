@@ -1,4 +1,7 @@
 # Fairness-Agnostic Data Optimization
+
+Official repository of [Towards Fairness and Privacy: A Novel Data Pre-processing Optimization Framework for Non-binary Protected Attributes](https://link.springer.com/chapter/10.1007/978-981-99-8696-5_8)
+
 <div align="left">
 <br/>
 <p align="center">
@@ -9,16 +12,25 @@
 </div>
 
 **FairDo** is a Python package for mitigating bias in data.
-The approaches, which are _fairness-agnostic_, enable optimization of diverse
-fairness criteria quantifying discrimination within datasets,
-leading to the generation of biased-reduced datasets.
-Our framework is able to deal with non-binary protected attributes
+It works specifically for tabular data (`pandas.DataFrame`) where the data is pre-processed in
+such a way that it becomes fair according to a user-given fairness metric.
+The pre-processing approach is **fairness-agnostic**, enabling the optimization
+of different fairness criteria.
+Our framework is able to deal with **non-binary** protected attributes
 such as nationality, race, and gender that naturally arise in many
-applications.
-Due to the possibility to choose between any of the available fairness metrics,
+datasets.
+Due to the possibility of choosing between any of the available fairness metrics,
 it is possible to aim for the least fortunate group
 (Rawls' A Theory of Justice [2]) or the general utility of all groups
 (Utilitarianism).
+
+The pre-processing methods work by **removing discriminatory data points**.
+By doing so, the dataset becomes much more balanced and less biased towards
+a particular social group.
+We approach this task as a combinatorial optimization problem, which
+means selecting a subset of the dataset that minimizes the discrimination score.
+Because there are exponentially many possibilities for selecting a subset,
+our approach uses **genetic algorithms** to find a fair subset.
 
 ## Installation
 
