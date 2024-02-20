@@ -157,6 +157,8 @@ class DefaultPreprocessing(Preprocessing):
                  protected_attribute,
                  label,
                  disc_measure=statistical_parity_abs_diff_max,
+                 pop_size=100,
+                 num_generations=500,
                  **kwargs):
         """
         Constructs all the necessary attributes for the HeuristicWrapper object.
@@ -171,6 +173,10 @@ class DefaultPreprocessing(Preprocessing):
             The discrimination measure to be optimized.
             Default is `statistical_parity_abs_diff_max` which is the absolute difference between the maximum and
             minimum statistical parity values.
+        pop_size: int, optional (default=100)
+            The population size for the genetic algorithm.
+        num_generations: int, optional (default=500)
+            The number of generations for the genetic algorithm.
         kwargs: dict
             Additional arguments for the heuristic method.
         """
@@ -178,15 +184,15 @@ class DefaultPreprocessing(Preprocessing):
 
         # required by Preprocessing
         self.heuristic = partial(genetic_algorithm,
-                                 pop_size=100,
-                                 num_generations=500)
+                                 pop_size=pop_size,
+                                 num_generations=num_generations)
         self.dataset = None
         super().__init__(protected_attribute=protected_attribute, label=label)
 
         self.preprocessor = HeuristicWrapper(heuristic=self.heuristic,
                                              protected_attribute=self.protected_attribute,
                                              label=self.label,
-                                             disc=self.disc_measure,
+                                             disc_measure=self.disc_measure,
                                              **kwargs)
 
     def fit(self, dataset, sample_dataset=None, approach='remove',
