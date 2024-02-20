@@ -124,7 +124,7 @@ class HeuristicWrapper(Preprocessing):
         return self.transformed_data
 
 
-class DefaultPreprocessing(Preprocessing):
+class DefaultPreprocessing(HeuristicWrapper):
     """
     DefaultPreprocessing is a processing method that can be used on-the-go.
     It uses a Genetic Algorithm to select a subset of the given dataset to optimize for fairness.
@@ -178,56 +178,15 @@ class DefaultPreprocessing(Preprocessing):
         kwargs: dict
             Additional arguments for the heuristic method.
         """
-        self.disc_measure = disc_measure
+        # set default heuristic method
+        heuristic = partial(genetic_algorithm,
+                            pop_size=pop_size,
+                            num_generations=num_generations)
+        super().__init__(heuristic=heuristic,
+                         protected_attribute=protected_attribute,
+                         label=label,
+                         disc_measure=disc_measure)
 
-        # required by Preprocessing
-        self.heuristic = partial(genetic_algorithm,
-                                 pop_size=pop_size,
-                                 num_generations=num_generations)
-        self.dataset = None
-        super().__init__(protected_attribute=protected_attribute, label=label)
-
-        self.preprocessor = HeuristicWrapper(heuristic=self.heuristic,
-                                             protected_attribute=self.protected_attribute,
-                                             label=self.label,
-                                             disc_measure=self.disc_measure,
-                                             **kwargs)
-
-    def fit(self, dataset, sample_dataset=None, approach='remove'):
-        """
-        Defines the discrimination measure function and the number of dimensions based on the
-        input dataset.
-
-        Parameters
-        ----------
-        dataset: pd.DataFrame
-            The dataset to be preprocessed.
-        sample_dataset: pd.DataFrame, optional
-            The sample dataset to be used for the 'add' approach.
-            It is required only if the 'add' approach is used.
-        approach: str
-            The approach to be used for the heuristic method.
-            It can be either 'remove' or 'add'.
-
-        Returns
-        -------
-        self
-        """
-        return self.preprocessor.fit(dataset=dataset,
-                                     sample_dataset=sample_dataset,
-                                     approach=approach)
-
-    def transform(self):
-        """
-        Applies the heuristic method to the dataset and returns a preprocessed version of it.
-
-        Returns
-        -------
-        pd.DataFrame
-            The preprocessed (fair) dataset.
-        """
-        return self.preprocessor.transform()
-    
 
 def f(binary_vector, dataframe, label, protected_attributes,
       approach='remove',
