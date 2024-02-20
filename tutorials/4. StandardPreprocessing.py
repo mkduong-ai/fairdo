@@ -1,7 +1,7 @@
 from functools import partial
 
 # Related third-party imports
-from sdv.tabular import GaussianCopula
+# from sdv.tabular import GaussianCopula
 import pandas as pd
 
 # fairdo package
@@ -13,16 +13,17 @@ from fairdo.metrics import group_missing_penalty
 
 # Loading a sample database and encoding for appropriate usage
 # data is a pandas dataframe
-data_orig, label, protected_attributes = load_data('compas')
+data_orig, label, protected_attributes = load_data('compas', print_info=False)
 
 # Create synthetic data
-gc = GaussianCopula()
-gc.fit(data_orig)
-data_syn = gc.sample(data_orig.shape[0])
+# gc = GaussianCopula()
+# gc.fit(data_orig)
+# data_syn = gc.sample(data_orig.shape[0])
 
 # Merge/concat original and synthetic data
-data = pd.concat([data_orig, data_syn.copy()], axis=0)
-             
+# data = pd.concat([data_orig, data_syn.copy()], axis=0)
+data = data_orig.copy()
+
 # Optimization step
 preprocessor = DefaultPreprocessing(protected_attribute=protected_attributes[0],
                                     label=label,

@@ -21,6 +21,6 @@ Other pre-processors are implemented in the `base` submodule which include a `Ra
 randomly removes data points from the dataset and a `OriginalData` that returns the original dataset.
 Both of these pre-processors are used for comparison purposes.
 """
-from fairdo.preprocessing.base import OriginalData, Random
+from fairdo.preprocessing.base import Preprocessing, OriginalData, Random
 from fairdo.preprocessing.metricoptimizer import MetricOptimizer, MetricOptGenerator, MetricOptRemover
-from fairdo.preprocessing.solverwrapper import HeuristicWrapper
+from fairdo.preprocessing.solverwrapper import HeuristicWrapper, DefaultPreprocessing

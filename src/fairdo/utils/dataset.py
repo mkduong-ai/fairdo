@@ -29,7 +29,7 @@ def downcast(data):
     return data
 
 
-def load_data(dataset_str):
+def load_data(dataset_str, print_info=True):
     """
     Load the dataset and preprocess it. The preprocessing steps include:
     - Dropping rows with missing values
@@ -61,24 +61,7 @@ def load_data(dataset_str):
         # Label encoding protected_attribute and label
         label = 'income'
         protected_attributes = ['race']
-        print(data[protected_attributes].iloc[:, 0].unique())
-        print(data[protected_attributes].iloc[:, 0].value_counts())
-        cols_to_labelencode = protected_attributes.copy()
-        cols_to_labelencode.append(label)
-        data[cols_to_labelencode] = \
-            data[cols_to_labelencode].apply(LabelEncoder().fit_transform)
 
-        # Encode categorical variables as one-hot
-        categorical_cols = list(data.select_dtypes(include='object'))
-        data = pd.get_dummies(data, columns=categorical_cols)
-
-        # Downcast
-        data = downcast(data)
-
-        # print the shape of the data
-        print(data.shape)
-
-        return data, label, protected_attributes
     elif dataset_str == 'compas':
         use_cols = ['race', 'priors_count', 'age_cat', 'c_charge_degree', 'two_year_recid']
         data = pd.read_csv(
@@ -92,24 +75,7 @@ def load_data(dataset_str):
         # Label encoding protected_attribute and label
         label = 'two_year_recid'
         protected_attributes = ['race']
-        print(data[protected_attributes].iloc[:, 0].unique())
-        print(data[protected_attributes].iloc[:, 0].value_counts())
-        cols_to_labelencode = protected_attributes.copy()
-        cols_to_labelencode.append(label)
-        data[cols_to_labelencode] = \
-            data[cols_to_labelencode].apply(LabelEncoder().fit_transform)
 
-        # Encode categorical variables as one-hot
-        categorical_cols = list(data.select_dtypes(include='object'))
-        data = pd.get_dummies(data, columns=categorical_cols)
-
-        # Downcast
-        data = downcast(data)
-
-        # print the shape of the data
-        print(data.shape)
-
-        return data, label, protected_attributes
     elif dataset_str == 'bank':
         # Loading Bank Marketing dataset
         r = get("http://archive.ics.uci.edu/ml/machine-learning-databases/00222/bank-additional.zip")
@@ -124,24 +90,7 @@ def load_data(dataset_str):
         # Label encoding protected_attribute and label
         label = 'y'
         protected_attributes = ['job']
-        print(data[protected_attributes].iloc[:, 0].unique())
-        print(data[protected_attributes].iloc[:, 0].value_counts())
-        cols_to_labelencode = protected_attributes.copy()
-        cols_to_labelencode.append(label)
-        data[cols_to_labelencode] = \
-            data[cols_to_labelencode].apply(LabelEncoder().fit_transform)
 
-        # Encode categorical variables as one-hot
-        categorical_cols = list(data.select_dtypes(include='object').columns)
-        data = pd.get_dummies(data, columns=categorical_cols)
-
-        # Downcast
-        data = downcast(data)
-
-        # print the shape of the data
-        print(data.shape)
-
-        return data, label, protected_attributes
     elif dataset_str == 'german':
         # Loading German Credit dataset
         data = pd.read_csv("http://archive.ics.uci.edu/ml/machine-learning-databases/statlog/german/german.data",
@@ -156,3 +105,24 @@ def load_data(dataset_str):
         raise NotImplementedError
     else:
         raise NotImplementedError
+    
+    # Label encoding protected_attribute and label
+    cols_to_labelencode = protected_attributes.copy()
+    cols_to_labelencode.append(label)
+    data[cols_to_labelencode] = \
+        data[cols_to_labelencode].apply(LabelEncoder().fit_transform)
+    
+    # Encode categorical variables as one-hot
+    categorical_cols = list(data.select_dtypes(include='object').columns)
+    data = pd.get_dummies(data, columns=categorical_cols)
+
+    # Downcast
+    data = downcast(data)
+    
+    # print info of the data
+    if print_info:
+        print(data[protected_attributes].iloc[:, 0].unique())
+        print(data[protected_attributes].iloc[:, 0].value_counts())
+        print(data.shape)
+
+    return data, label, protected_attributes
