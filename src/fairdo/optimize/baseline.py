@@ -46,7 +46,7 @@ def random_method(f, d, pop_size=100, num_generations=500):
     """
     best_solution = np.random.randint(0, 2, size=d)
     best_fitness = f(best_solution)
-    for i in range(pop_size * num_generations):
+    for _ in range(pop_size * num_generations):
         new_solution = np.random.randint(0, 2, size=d)
         new_fitness = f(new_solution)
         if new_fitness < best_fitness:
