@@ -7,9 +7,18 @@ import pandas as pd
 class Preprocessing(metaclass=abc.ABCMeta):
     """
     Base class for all preprocessing methods.
+
+    Parameters
+    ----------
+    protected_attribute: str
+    label: str
+        predicting label
+    dataset: pd.DataFrame
+        original dataset
+    transformed_data: pd.DataFrame
+        dataset after transformation/pre-processing
     """
-    def __init__(self, protected_attribute, label,
-                 frac=0.8):
+    def __init__(self, protected_attribute, label):
         """
         Base class for all preprocessing methods.
 
@@ -19,9 +28,6 @@ class Preprocessing(metaclass=abc.ABCMeta):
         label: str
             predicting label
         """
-        if frac in (0, 1):
-            raise ValueError('frac can not be set to 0 or 1.')
-        self.frac = frac
         self.protected_attribute = protected_attribute
         self.label = label
         self.dataset = None

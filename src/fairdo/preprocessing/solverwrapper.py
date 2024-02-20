@@ -119,7 +119,9 @@ class HeuristicWrapper(Preprocessing):
             The preprocessed (fair) dataset.
         """
         mask = self.heuristic(f=self.func, d=self.dims)[0] == 1
-        return self.dataset[mask]
+        self.transformed_data = self.dataset[mask]
+
+        return self.transformed_data
 
 
 class DefaultPreprocessing(Preprocessing):

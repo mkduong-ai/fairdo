@@ -20,7 +20,11 @@ class MetricOptimizer(Preprocessing):
                  fairness_metric=statistical_parity_abs_diff,
                  data_generator='GaussianCopula',
                  data_generator_params=None, random_state=None):
-        super().__init__(frac=frac, protected_attribute=protected_attribute, label=label)
+        super().__init__(protected_attribute=protected_attribute,
+                         label=label)
+        if frac in (0, 1):
+            raise ValueError('frac can not be set to 0 or 1.')
+        self.frac = frac
         self.preproc = None
         self.fairness_metric = fairness_metric
         self.m = m
@@ -88,9 +92,11 @@ class MetricOptRemover(Preprocessing):
             A fairness metric which can take x, y, or z as array parameters and calculates a fairness score.
         random_state: int
         """
-        super().__init__(frac=frac, protected_attribute=protected_attribute, label=label)
+        super().__init__(protected_attribute=protected_attribute,
+                         label=label)
         if self.frac > 1:
             raise Exception('Fraction frac can not be greater than 1.')
+        self.frac = frac
         self.fairness_metric = fairness_metric
         self.m = m
         self.eps = eps
@@ -180,9 +186,11 @@ class MetricOptGenerator(Preprocessing):
             .fit() and .sample() methods.
         random_state: int
         """
-        super().__init__(frac=frac, protected_attribute=protected_attribute, label=label)
+        super().__init__(protected_attribute=protected_attribute,
+                         label=label)
         if self.frac < 1:
             raise Exception('Fraction frac can not be less than 1.')
+        self.frac = frac
         self.fairness_metric = fairness_metric
         self.m = m
         self.eps = eps
