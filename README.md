@@ -6,7 +6,7 @@ Official repository of [Towards Fairness and Privacy: A Novel Data Pre-processin
 <br/>
 <p align="center">
 <a href="https://github.com/mkduong-ai/fairdo">
-<img align="center" width=100% src="https://github.com/mkduong-ai/fairdo/blob/main/assets/Pipeline.png"></img>
+<img align="center" width=70% src="https://media.githubusercontent.com/media/mkduong-ai/fairdo/main/assets/Pipeline.png"></img>
 </a>
 </p>
 </div>
