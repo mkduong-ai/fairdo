@@ -1,6 +1,11 @@
 # Fairness-Agnostic Data Optimization
 
-Official repository of [Towards Fairness and Privacy: A Novel Data Pre-processing Optimization Framework for Non-binary Protected Attributes](https://link.springer.com/chapter/10.1007/978-981-99-8696-5_8)
+**FairDo** is a Python package for mitigating bias in data.
+
+- **Official repository** of: [Towards Fairness and Privacy: A Novel Data Pre-processing Optimization Framework for Non-binary Protected Attributes](https://link.springer.com/chapter/10.1007/978-981-99-8696-5_8)
+- **Documentation**: [https://fairdo.readthedocs.io/en/latest/](https://fairdo.readthedocs.io/en/latest/)
+- **Source Code**: [https://github.com/mkduong-ai/fairdo/tree/main](https://github.com/mkduong-ai/fairdo/tree/main)
+
 
 <div align="left">
 <br/>
@@ -11,14 +16,12 @@ Official repository of [Towards Fairness and Privacy: A Novel Data Pre-processin
 </p>
 </div>
 
-**FairDo** is a Python package for mitigating bias in data.
-It works specifically for tabular data (`pandas.DataFrame`) where the data is pre-processed in
+**FairDo** works specifically for tabular data (`pandas.DataFrame`) where the data is pre-processed in
 such a way that it becomes fair according to a user-given fairness metric.
 The pre-processing approach is **fairness-agnostic**, enabling the optimization
 of different fairness criteria.
-Our framework is able to deal with **non-binary** protected attributes
-such as nationality, race, and gender that naturally arise in many
-datasets.
+The framework is able to deal with **non-binary** protected attributes
+such as nationality, race, and gender that arise in real-world datasets.
 Due to the possibility of choosing between any of the available fairness metrics,
 it is possible to aim for the least fortunate group
 (Rawls' A Theory of Justice [2]) or the general utility of all groups
@@ -129,8 +132,11 @@ while the **original dataset exhibits 27% statistical disparity**.
 
 ## Documentation
 
+The documentation is available at [https://fairdo.readthedocs.io/en/latest/](https://fairdo.readthedocs.io/en/latest/).
+To build the documentation manually, follow this guide:
+
 The package follows the PEP8 style guide and is documented with NumPy style
-docstrings. To view the HTML pages of the documentation,
+DocStrings. To build the HTML pages from the documentation manually,
 follow these instructions:
 
 Activate virtual environment and install sphinx.
