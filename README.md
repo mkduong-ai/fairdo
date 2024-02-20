@@ -1,5 +1,12 @@
 # Fairness-Agnostic Data Optimization
-![t2i](assets/Pipeline.png)
+<div align="left">
+<br/>
+<p align="center">
+<a href="https://github.com/mkduong-ai/fairdo">
+<img align="center" width=40% src="https://github.com/mkduong-ai/fairdo/blob/main/assets/Pipeline.png"></img>
+</a>
+</p>
+</div>
 
 **FairDo** is a Python package for mitigating bias in data.
 The approaches, which are _fairness-agnostic_, enable optimization of diverse
