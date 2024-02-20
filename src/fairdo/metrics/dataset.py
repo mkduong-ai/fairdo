@@ -4,7 +4,8 @@ import warnings
 from fairdo.utils.helper import generate_pairs
 
 
-def group_missing_penalty(z: np.array, n_groups: int, agg_group='sum', **kwargs) -> float:
+def group_missing_penalty(z: np.array, n_groups: int,
+                          agg_group='max', **kwargs) -> float:
     """
     Calculate the penalty for missing groups in a protected attribute.
     The number of groups `n_groups` is used to calculate the penalty.
@@ -40,7 +41,6 @@ def statistical_parity_abs_diff_multi(y: np.array, z: np.array,
                                       agg_attribute=np.sum,
                                       agg_group=np.sum,
                                       positive_label=1,
-                                      g_n=None,
                                       **kwargs) -> float:
     """
     Calculate the absolute difference in statistical parity for multiple non-binary protected attributes.
@@ -58,9 +58,6 @@ def statistical_parity_abs_diff_multi(y: np.array, z: np.array,
         Aggregation function for the group. Default is np.sum.
     positive_label: int, optional
         Label considered as positive. Default is 1.
-    g_n: int or list of int, optional
-        Number of groups for each attribute.
-        If None, the number of groups is not taken into account for the calculation.
 
     Returns
     -------
