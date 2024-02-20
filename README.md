@@ -6,7 +6,7 @@ Official repository of [Towards Fairness and Privacy: A Novel Data Pre-processin
 <br/>
 <p align="center">
 <a href="https://github.com/mkduong-ai/fairdo">
-<img align="center" width=40% src="https://github.com/mkduong-ai/fairdo/blob/main/assets/Pipeline.png"></img>
+<img align="center" width=100% src="https://github.com/mkduong-ai/fairdo/blob/main/assets/Pipeline.png"></img>
 </a>
 </p>
 </div>
@@ -27,7 +27,7 @@ it is possible to aim for the least fortunate group
 The pre-processing methods work by **removing discriminatory data points**.
 By doing so, the dataset becomes much more balanced and less biased towards
 a particular social group.
-We approach this task as a combinatorial optimization problem, which
+We approach this task as a **combinatorial optimization problem**, which
 means selecting a subset of the dataset that minimizes the discrimination score.
 Because there are exponentially many possibilities for selecting a subset,
 our approach uses **genetic algorithms** to find a fair subset.
@@ -35,7 +35,7 @@ our approach uses **genetic algorithms** to find a fair subset.
 ## Installation
 
 ### Dependencies
-Python (>=3.8, <4), `numpy`, `pandas`, `sklearn`, `sdv`
+Python (>=3.8, <=3.9), `numpy`, `pandas`, `sklearn`, `sdv`
 
 ### Setup Python Environment
 
@@ -91,11 +91,11 @@ pip install -e.
 
 ## Example Usage
 
-### Genetic Algorithms
 In the following example, we use the COMPAS [1] dataset.
-The protected attribute is race and the label is recidivism.
-Here, we deploy a genetic algorithm to remove discriminatory samples
-of the merged original and synthetic dataset:
+The protected attribute is _race_ and the label is _recidivism_.
+Here, we deploy the **default pre-processor**, which internally uses a genetic algorithm,
+to remove discriminatory samples of the given dataset.
+The default pre-processor prevents removing all individuals of a single group.
 
 ```python
 # fairdo package
@@ -116,12 +116,16 @@ preprocessor = DefaultPreprocessing(protected_attribute=protected_attributes[0],
 data_fair = preprocessor.fit_transform(dataset=data)
 
 # Print no. samples and discrimination before and after
-disc_before = statistical_parity_abs_diff_max(data[label], data[protected_attributes[0]].to_numpy())
-disc_after = statistical_parity_abs_diff_max(data_fair[label], data_fair[protected_attributes[0]].to_numpy())
+disc_before = statistical_parity_abs_diff_max(data[label],
+                                              data[protected_attributes[0]].to_numpy())
+disc_after = statistical_parity_abs_diff_max(data_fair[label],
+                                             data_fair[protected_attributes[0]].to_numpy())
 print(len(data), disc_before)
 print(len(data_fair), disc_after)
 ```
 
+By running this example, the **resulting dataset** usually has a statistical **disparity score of <1%** (max. score between all five races),
+while the **original dataset exhibits 27% statistical disparity**.
 
 ## Documentation
 
