@@ -7,8 +7,11 @@ import pandas as pd
 
 # fairdo imports
 from fairdo.preprocessing import Preprocessing
-from fairdo.metrics import statistical_parity_abs_diff_max
 from fairdo.optimize import genetic_algorithm
+
+# fairdo metrics
+from fairdo.metrics import statistical_parity_abs_diff_max
+from fairdo.metrics import group_missing_penalty
 
 
 class HeuristicWrapper(Preprocessing):
@@ -70,8 +73,7 @@ class HeuristicWrapper(Preprocessing):
         self.dataset = None
         super().__init__(protected_attribute=protected_attribute, label=label)
 
-    def fit(self, dataset, sample_dataset=None, approach='remove',
-            penalty=None, penalty_kwargs=None):
+    def fit(self, dataset, sample_dataset=None, approach='remove'):
         """
         Defines the discrimination measure function and the number of dimensions based on the
         input dataset.
@@ -92,27 +94,19 @@ class HeuristicWrapper(Preprocessing):
         self
         """
         self.dataset = dataset.copy()
-        if approach == 'remove':
-            self.func = partial(f_remove,
-                                dataframe=self.dataset,
-                                label=self.label,
-                                protected_attributes=self.protected_attribute,
-                                disc_measure=self.disc_measure,
-                                penalty=penalty,
-                                penalty_kwargs=penalty_kwargs)
-        elif approach == 'add':
-            if sample_dataset is None:
-                raise ValueError('Sample dataset is required for the \'add\' approach.')
-
-            self.func = partial(f_add,
-                                dataframe=self.dataset,
-                                sample_dataframe=sample_dataset,
-                                label=self.label,
-                                protected_attributes=self.protected_attribute,
-                                disc_measure=self.disc_measure,
-                                penalty=penalty,
-                                penalty_kwargs=penalty_kwargs)
         self.dims = len(self.dataset)
+        # define penalty function
+        penalty = partial(group_missing_penalty, n_groups=len(dataset[self.protected_attribute].unique()))
+
+        self.func = partial(f,
+                            dataframe=self.dataset,
+                            label=self.label,
+                            protected_attributes=self.protected_attribute,
+                            approach=approach,
+                            sample_dataframe=sample_dataset,
+                            disc_measure=self.disc_measure,
+                            penalty=penalty)
+
         return self
 
     def transform(self):
@@ -132,6 +126,8 @@ class DefaultPreprocessing(Preprocessing):
     """
     DefaultPreprocessing is a processing method that can be used on-the-go.
     It uses a Genetic Algorithm to select a subset of the given dataset to optimize for fairness.
+    It also includes a penalty for missing groups in the protected attribute.
+
     The default parameters are:
         pop_size=100, num_generations=500.
         Selection: Elitist
@@ -195,8 +191,7 @@ class DefaultPreprocessing(Preprocessing):
                                              disc_measure=self.disc_measure,
                                              **kwargs)
 
-    def fit(self, dataset, sample_dataset=None, approach='remove',
-            penalty=None, penalty_kwargs=None):
+    def fit(self, dataset, sample_dataset=None, approach='remove'):
         """
         Defines the discrimination measure function and the number of dimensions based on the
         input dataset.
@@ -218,9 +213,7 @@ class DefaultPreprocessing(Preprocessing):
         """
         return self.preprocessor.fit(dataset=dataset,
                                      sample_dataset=sample_dataset,
-                                     approach=approach,
-                                     penalty=penalty,
-                                     penalty_kwargs=penalty_kwargs)
+                                     approach=approach)
 
     def transform(self):
         """
@@ -234,65 +227,11 @@ class DefaultPreprocessing(Preprocessing):
         return self.preprocessor.transform()
     
 
-def f_remove(binary_vector, dataframe, label, protected_attributes,
-             disc_measure=statistical_parity_abs_diff_max,
-             penalty=None, penalty_kwargs=None):
-    """
-    Calculates a given discrimination measure on a dataframe for a set of selected columns.
-    In other words, determine which data points can be removed from the training set to prevent discrimination.
-    This can be easily applied for any dataset where discrimination prevention happens before
-    training any machine learning model.
-
-    Parameters
-    ----------
-    binary_vector: np.array
-        Binary vector indicating which columns to include in the discrimination measure calculation.
-    dataframe: pd.DataFrame
-        The data to calculate the discrimination measure on.
-    label: str
-        The column in the dataframe to use as the target variable.
-    protected_attributes: Union[str, List[str]]
-        The column or columns in the dataframe to consider as protected attributes.
-    disc_measure: callable, optional (default=statistical_parity_abs_diff_max)
-        A function that takes in x (features), y (labels), and z (protected attributes) and returns a numeric value.
-        Default is `statistical_parity_abs_diff_max` which is the absolute difference between the maximum and minimum
-        statistical parity values.
-    penalty: callable, optional (default=None)
-        A function that takes a dictionary of keyword arguments and returns a numeric value.
-        This function is used to penalize the discrimination loss.
-        Default is None which means no penalty is applied.
-    penalty_kwargs: dict, optional (default=None)
-        A dictionary of keyword arguments to be passed to the penalty function.
-
-    Returns
-    -------
-    float
-        The calculated discrimination measure.
-    """
-    if isinstance(protected_attributes, str):
-        protected_attributes = [protected_attributes]
-
-    y = dataframe[label]
-    z = dataframe[protected_attributes]
-    cols_to_drop = protected_attributes + [label]
-    x = dataframe.drop(columns=cols_to_drop)
-
-    # only keep the columns that are selected by the heuristic
-    mask = np.array(binary_vector) == 1
-    x, y, z = x[mask], y[mask], z[mask]
-
-    # We handle multiple protected attributes by not flattening the z array
-    y = y.to_numpy().flatten()
-    z = z.to_numpy()
-    if len(protected_attributes) == 1:
-        z = z.flatten()
-        
-    return disc_measure(x=x, y=y, z=z) + penalty(x=x, y=y, z=z, **penalty_kwargs) if penalty is not None else disc_measure(x=x, y=y, z=z)
-
-
-def f_add(binary_vector, dataframe, sample_dataframe, label, protected_attributes,
-          disc_measure=statistical_parity_abs_diff_max,
-          penalty=None, penalty_kwargs=None):
+def f(binary_vector, dataframe, label, protected_attributes,
+      approach='remove',
+      sample_dataframe=None,
+      disc_measure=statistical_parity_abs_diff_max,
+      penalty=None):
     """
     Additional sample data points are added to the original data to promote fairness.
     The sample data can be synthetic data.
@@ -305,12 +244,16 @@ def f_add(binary_vector, dataframe, sample_dataframe, label, protected_attribute
         Binary vector indicating which columns to include in the discrimination measure calculation.
     dataframe: pd.DataFrame
         The data to calculate the discrimination measure on.
-    sample_dataframe: pd.DataFrame
-        Extra samples to be added to the original data. Samples can be synthetic data.
     label: str
         The column in the dataframe to use as the target variable.
     protected_attributes: Union[str, List[str]]
         The column or columns in the dataframe to consider as protected attributes.
+    approach: str
+        The approach to be used for the heuristic method.
+        It can be either 'remove' or 'add'.
+    sample_dataframe: pd.DataFrame, optional
+        Extra samples to be added to the original data. Samples can be synthetic data.
+        It is required only if the 'add' approach is used.
     disc_measure: callable, optional (default=statistical_parity_abs_diff_max)
         A function that takes in x (features), y (labels), and z (protected attributes) and returns a numeric value.
         Default is `statistical_parity_abs_diff_max` which is the absolute difference between the maximum and minimum
@@ -330,14 +273,22 @@ def f_add(binary_vector, dataframe, sample_dataframe, label, protected_attribute
     if isinstance(protected_attributes, str):
         protected_attributes = [protected_attributes]
 
-    # mask on sample data
+    # Create mask
     mask = np.array(binary_vector) == 1
-    sample_dataframe = sample_dataframe[mask]
 
-    # concatenate synthetic data with original data
-    dataframe = pd.concat([dataframe, sample_dataframe], axis=0)
+    if approach=='add' and sample_dataframe is not None:
+        # mask on sample data
+        sample_dataframe = sample_dataframe[mask]
 
-    # evaluate on whole dataset
+        # concatenate synthetic data with original data
+        dataframe = pd.concat([dataframe, sample_dataframe], axis=0)
+    elif approach=='remove':
+        # only keep the columns that are selected by the heuristic
+        dataframe = dataframe[mask]
+    else:
+        raise ValueError('Invalid approach. It can be either \'remove\' or \'add\'.')
+
+    # evaluate on masked dataset
     y = dataframe[label]
     z = dataframe[protected_attributes]
     cols_to_drop = protected_attributes + [label]
@@ -348,4 +299,5 @@ def f_add(binary_vector, dataframe, sample_dataframe, label, protected_attribute
     z = z.to_numpy()
     if len(protected_attributes) == 1:
         z = z.flatten()
-    return disc_measure(x=x, y=y, z=z) + penalty(x=x, y=y, z=z, **penalty_kwargs) if penalty is not None else disc_measure(x=x, y=y, z=z)
+
+    return disc_measure(x=x, y=y, z=z) + penalty(x=x, y=y, z=z) if penalty is not None else disc_measure(x=x, y=y, z=z)
