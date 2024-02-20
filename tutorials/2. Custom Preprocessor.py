@@ -37,6 +37,7 @@ preprocessor = HeuristicWrapper(heuristic=ga,
 data_fair = preprocessor.fit_transform(dataset=data)
 
 # Print no. samples and discrimination before and after
-print(len(data_orig), statistical_parity_abs_diff_max(data_orig[label], data_orig[protected_attributes[0]].to_numpy()))
-print(len(data), statistical_parity_abs_diff_max(data[label], data[protected_attributes[0]].to_numpy()))
-print(len(data_fair), statistical_parity_abs_diff_max(data_fair[label], data_fair[protected_attributes[0]].to_numpy()))
+print("Size and discrimination (lower is better).")
+print("Original data:", len(data_orig), statistical_parity_abs_diff_max(data_orig[label], data_orig[protected_attributes[0]].to_numpy()))
+print("Merged data (original and synthetic):", len(data), statistical_parity_abs_diff_max(data[label], data[protected_attributes[0]].to_numpy()))
+print("Preprocessed merged data:", len(data_fair), statistical_parity_abs_diff_max(data_fair[label], data_fair[protected_attributes[0]].to_numpy()))
