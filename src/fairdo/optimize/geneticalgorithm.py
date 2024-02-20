@@ -149,7 +149,7 @@ def evaluate_population(f, n, population, penalty_function=relative_difference_p
 
 
 def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
-                                 selection=tournament_selection,
+                                 selection=elitist_selection,
                                  crossover=uniform_crossover,
                                  mutation=fractional_flip_mutation,
                                  maximize=False,
@@ -311,7 +311,9 @@ def genetic_algorithm(f, d, pop_size, num_generations,
     The fitness function must map the binary vector to a positive value, i.e.,
     :math:`f: \{0, 1\}^d \rightarrow \mathbb{R}^+`.
     """
-    return genetic_algorithm_constraint(f=f, d=d, n=0, pop_size=pop_size, num_generations=num_generations,
+    return genetic_algorithm_constraint(f=f, d=d, n=0,
+                                        pop_size=pop_size,
+                                        num_generations=num_generations,
                                         selection=selection,
                                         crossover=crossover,
                                         mutation=mutation,
