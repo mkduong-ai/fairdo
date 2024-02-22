@@ -22,8 +22,8 @@ sphinx:
   configuration: docs/conf.py
  
 submodules:
-  include: all
-  recursive: true
+  include: ["src/fairdo"]
+#  recursive: true
 
 # Optionally build your docs in additional formats such as PDF and ePub
 # formats:
