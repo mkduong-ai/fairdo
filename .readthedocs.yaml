@@ -10,7 +10,7 @@ version: 2
 build:
   os: ubuntu-22.04
   tools:
-    python: "3.12"
+    python: "3.9"
     # You can also specify other tool versions:
     # nodejs: "19"
     # rust: "1.64"
@@ -22,8 +22,8 @@ sphinx:
   configuration: docs/conf.py
  
 submodules:
-  include: ["src/fairdo"]
-#  recursive: true
+  include: all
+  recursive: true
 
 # Optionally build your docs in additional formats such as PDF and ePub
 # formats:
