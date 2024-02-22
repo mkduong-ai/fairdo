@@ -11,7 +11,7 @@ penalties are applied to the solutions.
 import numpy as np
 
 
-def absolute_difference_penalty(x, n):
+def absolute_difference_penalty(x: np.array, n: int):
     """
     Penalty function that penalizes the fitness of a solution if it does not satisfy the constraint.
     The number of 1s in the binary vector should be equal to ``n``. If it is not,
@@ -36,7 +36,7 @@ def absolute_difference_penalty(x, n):
         return 0
 
 
-def relative_difference_penalty(x, n):
+def relative_difference_penalty(x: np.array, n: int):
     """
     Percentage of the sum of the entries of the vector ``x`` that is greater than ``n``.
 
@@ -58,7 +58,7 @@ def relative_difference_penalty(x, n):
         return 0
 
 
-def relative_shortfall_penalty(x, n):
+def relative_shortfall_penalty(x: np.array, n: int):
     """
     Calculates the relative shortfall penalty.
 

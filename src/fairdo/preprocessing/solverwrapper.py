@@ -223,8 +223,6 @@ def f(binary_vector, dataframe, label, protected_attributes,
         A function that takes a dictionary of keyword arguments and returns a numeric value.
         This function is used to penalize the discrimination loss.
         Default is None which means no penalty is applied.
-    penalty_kwargs: dict, optional (default=None)
-        A dictionary of keyword arguments to be passed to the penalty function.
 
     Returns
     -------
@@ -237,13 +235,13 @@ def f(binary_vector, dataframe, label, protected_attributes,
     # Create mask
     mask = np.array(binary_vector) == 1
 
-    if approach=='add' and sample_dataframe is not None:
+    if approach == 'add' and sample_dataframe is not None:
         # mask on sample data
         sample_dataframe = sample_dataframe[mask]
 
         # concatenate synthetic data with original data
         dataframe = pd.concat([dataframe, sample_dataframe], axis=0)
-    elif approach=='remove':
+    elif approach == 'remove':
         # only keep the columns that are selected by the heuristic
         dataframe = dataframe[mask]
     else:
