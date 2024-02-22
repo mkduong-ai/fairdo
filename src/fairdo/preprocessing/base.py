@@ -104,6 +104,36 @@ class OriginalData(Preprocessing):
         return self.dataset
 
 
+class Unawareness(Preprocessing):
+    """
+    Fairness Through Unawareness
+
+    Removes all columns of protected attributes from the dataset.
+    Is a simple and effective method to ensure fairness in the dataset.
+    But fails to consider the possibility of indirect discrimination, i.e.,
+    the protected attribute may be correlated with other features in the dataset.
+    """
+    def __init__(self, protected_attribute=None, label=None, **kwargs):
+        super().__init__(protected_attribute=protected_attribute, label=label)
+
+    def transform(self):
+        """
+        Removes all protected attributes from the dataset.
+
+        Returns
+        -------
+        pd.DataFrame
+            The dataset without the protected attribute.
+        """
+        if self.dataset is None:
+            raise Exception('Model not fitted.')
+        if self.protected_attribute is None or self.protected_attribute not in self.dataset.columns:
+            raise Exception('Protected attribute not given.')
+
+        self.transformed_data = self.dataset.drop(columns=self.protected_attribute)
+        return self.transformed_data
+
+
 class Random(Preprocessing):
     """
     This class is used to return a random subset of the dataset.
@@ -111,13 +141,15 @@ class Random(Preprocessing):
     """
     def __init__(self, frac=0.8,
                  protected_attribute=None, label=None, random_state=None):
-        super().__init__(frac=frac, protected_attribute=protected_attribute, label=label)
+        super().__init__(protected_attribute=protected_attribute, label=label)
+        self.frac = frac
         self.random_state = random_state
         np.random.seed(self.random_state)
 
     def transform(self):
         """
         Returns a random subset of the dataset.
+        A fraction `frac` of the dataset is returned.
 
         Returns
         -------
