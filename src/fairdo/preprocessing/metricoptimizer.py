@@ -1,12 +1,11 @@
 from fairdo.preprocessing import Preprocessing
 from fairdo.metrics import statistical_parity_abs_diff
+# import third-party synthetic data generation package
+from fairdo.utils.helper import data_generator
 
 # third party
 import numpy as np
 import pandas as pd
-
-# generate synthetic datapoints
-from sdv.tabular import GaussianCopula
 
 
 class MetricOptimizer(Preprocessing):
@@ -18,8 +17,7 @@ class MetricOptimizer(Preprocessing):
                  additions=None,
                  deletions=None,
                  fairness_metric=statistical_parity_abs_diff,
-                 data_generator='GaussianCopula',
-                 data_generator_params=None, random_state=None):
+                 random_state=None):
         super().__init__(protected_attribute=protected_attribute,
                          label=label)
         if frac in (0, 1):
@@ -31,8 +29,6 @@ class MetricOptimizer(Preprocessing):
         self.eps = eps
         # generating data
         self.additions = additions
-        self.data_generator = data_generator
-        self.data_generator_params = data_generator_params
         # removing data
         self.deletions = deletions
         self.random_state = random_state
@@ -52,7 +48,6 @@ class MetricOptimizer(Preprocessing):
                                               frac=self.frac, m=self.m, eps=self.eps,
                                               additions=self.additions,
                                               fairness_metric=self.fairness_metric,
-                                              data_generator=self.data_generator,
                                               random_state=self.random_state)
         self.__class__.__name__ = type(self.preproc).__name__
 
@@ -72,7 +67,8 @@ class MetricOptRemover(Preprocessing):
     def __init__(self, protected_attribute, label,
                  frac=0.75, m=5, eps=0,
                  deletions=None,
-                 fairness_metric=statistical_parity_abs_diff, random_state=None):
+                 fairness_metric=statistical_parity_abs_diff,
+                 random_state=None):
         """
 
         Parameters
@@ -163,7 +159,7 @@ class MetricOptGenerator(Preprocessing):
                  frac=1.25, m=5, eps=0,
                  additions=None,
                  fairness_metric=statistical_parity_abs_diff,
-                 data_generator='GaussianCopula', random_state=None):
+                 random_state=None):
         """
 
         Parameters
@@ -181,9 +177,6 @@ class MetricOptGenerator(Preprocessing):
             If additions is given, then frac is ignored. Number of samples to be added to the dataset.
         fairness_metric:
             A fairness metric which can take x, y, or z as array parameters and calculates a fairness score.
-        data_generator:
-            A string indicating the generative model or the generative model itself with
-            .fit() and .sample() methods.
         random_state: int
         """
         super().__init__(protected_attribute=protected_attribute,
@@ -196,15 +189,7 @@ class MetricOptGenerator(Preprocessing):
         self.eps = eps
         self.additions = additions
         self.data_fitted = False
-        if isinstance(data_generator, str):
-            data_generators = {'GaussianCopula': GaussianCopula}
-            # init data generator
-            if data_generator in data_generators.keys():
-                self.data_generator = data_generators[data_generator]()
-            else:
-                raise Exception('Unknown data generator.')
-        else:
-            self.data_generator = data_generator
+        self.data_generator = None
         self.random_state = random_state
         np.random.seed(random_state)
 
@@ -223,7 +208,7 @@ class MetricOptGenerator(Preprocessing):
 
         # fit data generator to data if not fitted
         if not self.data_fitted:
-            self.data_generator.fit(dataset)
+            self.data_generator = data_generator(dataset)
             self.data_fitted = True
 
         return self
@@ -252,7 +237,7 @@ class MetricOptGenerator(Preprocessing):
 
         for i in range(0, n):
             # create candidates
-            cands = self.data_generator.sample(self.m)
+            cands = self.data_generator.sample(num_rows=self.m)
 
             # list consists of single candidates added to dataset
             samples_concat_list = [pd.concat([samples, cands.iloc[[j]]], ignore_index=True) for j in range(len(cands))]
