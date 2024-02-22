@@ -24,5 +24,5 @@ data_fair = preprocessor.fit_transform(dataset=data_syn)
 print("Size and discrimination (lower is better).")
 print("Original data:", len(data_orig),
       statistical_parity_abs_diff_max(data_orig[label], data_orig[protected_attributes[0]].to_numpy()))
-print("Fair synthetic data:", len(data_fair),
+print("Anonymous, fair synthetic data:", len(data_fair),
       statistical_parity_abs_diff_max(data_fair[label], data_fair[protected_attributes[0]].to_numpy()))

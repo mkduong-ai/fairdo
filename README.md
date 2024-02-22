@@ -41,8 +41,8 @@ our approach uses **genetic algorithms** to find a fair subset.
 :rocket: **For a quick start**, use the `DefaultPreprocessing` class with the default settings.
 An example is given in `tutorials/1. Default Preprocessor` and below.
 
-:white_check_mark: **For data integrity**, you want to keep the original data :math:`D`
-and only add fair synthetic data :math:`G` on top of it.
+:white_check_mark: **For data integrity**, you want to keep the original data $D$
+and only add fair synthetic data $G$ on top of it.
 (We include examples in `tutorials/` where we use the (SDV)[https://github.com/sdv-dev/SDV] package
 to generate synthetic data.)
 For this, you need to specify
@@ -51,13 +51,13 @@ For this, you need to specify
 This will only add the fair pre-processed synthetic data
 to the original data.
 
-:dash: **When having limited data**, we advise employing synthetic data :math:`G` additionally
-and merge it with the original data :math:`D`, i.e., :math:`D \cup G`.
-The pre-processor can then be used on the merged data :math:`D \cup G` to ensure fairness.
+:dash: **When having limited data**, we advise employing synthetic data $G$ additionally
+and merge it with the original data $D$, i.e., $D \cup G$.
+The pre-processor can then be used on the merged data $D \cup G$ to ensure fairness.
 It is also possible to use the methodology for **data integrity**, as described above.
 
-:briefcase: **When anonymity is required**, only use synthetic data :math:`G` and do not
-merge it with the original data :math:`D`. The generated data :math:`G` can then be
+:briefcase: **When anonymity is required**, only use synthetic data $G$ and do not
+merge it with the original data $D$. The generated data $G$ can then be
 pre-processed with our methods to ensure fairness.
 
 ## Installation
