@@ -34,7 +34,7 @@ import numpy as np
 from fairdo.optimize.geneticoperators.crossover import onepoint_crossover, uniform_crossover
 from fairdo.optimize.geneticoperators.mutation import fractional_flip_mutation
 from fairdo.optimize.geneticoperators.selection import elitist_selection, tournament_selection
-from fairdo.utils.penalty import relative_difference_penalty
+from fairdo.metrics.penalty import relative_difference_penalty
 
 
 def generate_population(pop_size, d):

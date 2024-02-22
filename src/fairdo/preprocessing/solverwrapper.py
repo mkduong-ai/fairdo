@@ -11,7 +11,7 @@ from fairdo.optimize import genetic_algorithm
 
 # fairdo metrics
 from fairdo.metrics import statistical_parity_abs_diff_max
-from fairdo.metrics import group_missing_penalty
+from fairdo.metrics.penalty import group_missing_penalty
 
 
 class HeuristicWrapper(Preprocessing):
