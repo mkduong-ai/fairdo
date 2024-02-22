@@ -23,11 +23,13 @@ of different fairness criteria.
 The framework is able to deal with **non-binary** protected attributes
 such as nationality, race, and gender that arise in real-world datasets.
 Due to the possibility of choosing between any of the available fairness metrics,
-it is possible to aim for the least fortunate group
+it is possible to aim for the **least fortunate group
 (Rawls' A Theory of Justice [2]) or the general utility of all groups
-(Utilitarianism).
+(Utilitarianism)**.
 
-The pre-processing methods work by **removing discriminatory data points**.
+### How does it work?
+The pre-processing methods (`fairdo.preprocessing.HeuristicWrapper` and `fairdo.preprocessing.DefaultPreprocessing`)
+work by **removing discriminatory data points**.
 By doing so, the dataset becomes much more balanced and less biased towards
 a particular social group.
 We approach this task as a **combinatorial optimization problem**, which
@@ -35,10 +37,33 @@ means selecting a subset of the dataset that minimizes the discrimination score.
 Because there are exponentially many possibilities for selecting a subset,
 our approach uses **genetic algorithms** to find a fair subset.
 
+### Advices
+:rocket: **For a quick start**, use the `DefaultPreprocessing` class with the default settings.
+An example is given in `tutorials/1. Default Preprocessor` and below.
+
+:white_check_mark: **For data integrity**, you want to keep the original data :math:`D`
+and only add fair synthetic data :math:`G` on top of it.
+(We include examples in `tutorials/` where we use the (SDV)[https://github.com/sdv-dev/SDV] package
+to generate synthetic data.)
+For this, you need to specify
+`.fit_transform(approach='add')` for the pre-processors `fairdo.preprocessing.HeuristicWrapper` and
+`fairdo.preprocessing.DefaultPreprocessing`.
+This will only add the fair pre-processed synthetic data
+to the original data.
+
+:dash: **When having limited data**, we advise employing synthetic data :math:`G` additionally
+and merge it with the original data :math:`D`, i.e., :math:`D \cup G`.
+The pre-processor can then be used on the merged data :math:`D \cup G` to ensure fairness.
+It is also possible to use the methodology for **data integrity**, as described above.
+
+:briefcase: **When anonymity is required**, only use synthetic data :math:`G` and do not
+merge it with the original data :math:`D`. The generated data :math:`G` can then be
+pre-processed with our methods to ensure fairness.
+
 ## Installation
 
 ### Dependencies
-Python (>=3.8, <=3.9), `numpy`, `pandas`, `sklearn`, `sdv`
+Python (>=3.8, <=3.10), `numpy`, `scipy`, `pandas`, `sklearn`
 
 ### Setup Python Environment
 
@@ -81,7 +106,7 @@ Installing in development mode is useful to make changes in the source code take
 This means that the package is installed in such a way that changes to the source code
 are immediately reflected without the need to reinstall the package. This can be done in the following
 way:
-```python
+```bash
 # Clone repo
 git clone https://github.com/mkduong-ai/fairdo.git
 
@@ -91,6 +116,19 @@ cd fairdo
 # Development installation
 pip install -e.
 ```
+
+### Install Optional Dependencies
+
+To use the synthetic data generation, you can install the `SDV` package
+by executing the following command:
+```bash
+pip install sdv==1.10.0
+```
+
+We did not include the `SDV` package as a dependency, because it is not required
+for the core functionality of the **FairDo** package.
+Using any other synthetic data generation package is also possible.
+Still, some examples in the `tutorials/` folder use the `SDV` package.
 
 ## Example Usage
 
@@ -168,7 +206,7 @@ Open `docs/_build/html/index.html` to view the front page.
 
 When using **FairDo** in your work, cite our paper:
 
-```
+```BibTeX
 @inproceedings{duong2023framework,
   title={Towards Fairness and Privacy: A Novel Data Pre-processing Optimization Framework for Non-binary Protected Attributes},
   author={Duong, Manh Khoi and Conrad, Stefan},

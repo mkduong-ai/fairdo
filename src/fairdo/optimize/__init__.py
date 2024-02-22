@@ -33,7 +33,7 @@ Example
 >>> num_generations = 100
 >>> # Now you can use my_mutation_function as an argument to genetic_algorithm_constraint
 >>> best_solution, fitness = genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
->>>                                                       select_parents=elitist_selection,
+>>>                                                       selection=elitist_selection,
 >>>                                                       crossover=onepoint_crossover,
 >>>                                                       mutate=fractional_flip_mutation, maximize=False)
 

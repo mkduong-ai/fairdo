@@ -71,9 +71,11 @@ class HeuristicWrapper(Preprocessing):
 
         # required by Preprocessing
         self.dataset = None
+        self.synthetic_dataset = None
+        self.approach = None
         super().__init__(protected_attribute=protected_attribute, label=label)
 
-    def fit(self, dataset, sample_dataset=None, approach='remove'):
+    def fit(self, dataset, synthetic_dataset=None, approach='remove'):
         """
         Defines the discrimination measure function and the number of dimensions based on the
         input dataset.
@@ -82,8 +84,8 @@ class HeuristicWrapper(Preprocessing):
         ----------
         dataset: pd.DataFrame
             The dataset to be preprocessed.
-        sample_dataset: pd.DataFrame, optional
-            The sample dataset to be used for the 'add' approach.
+        synthetic_dataset: pd.DataFrame, optional
+            The synthetic dataset to be used for the 'add' approach.
             It is required only if the 'add' approach is used.
         approach: str
             The approach to be used for the heuristic method.
@@ -94,16 +96,25 @@ class HeuristicWrapper(Preprocessing):
         self
         """
         self.dataset = dataset.copy()
-        self.dims = len(self.dataset)
+        if synthetic_dataset is not None:
+            self.synthetic_dataset = synthetic_dataset.copy()
+
+        self.approach = approach
+        # Number of dimensions
+        if approach == 'add':
+            self.dims = len(self.synthetic_dataset)
+        elif approach == 'remove':
+            self.dims = len(self.dataset)
+
         # define penalty function
-        penalty = partial(group_missing_penalty, n_groups=len(dataset[self.protected_attribute].unique()))
+        penalty = partial(group_missing_penalty, n_groups=len(self.dataset[self.protected_attribute].unique()))
 
         self.func = partial(f,
-                            dataframe=self.dataset,
+                            dataset=self.dataset,
                             label=self.label,
                             protected_attributes=self.protected_attribute,
                             approach=approach,
-                            sample_dataframe=sample_dataset,
+                            synthetic_dataset=self.synthetic_dataset,
                             disc_measure=self.disc_measure,
                             penalty=penalty)
 
@@ -119,7 +130,12 @@ class HeuristicWrapper(Preprocessing):
             The preprocessed (fair) dataset.
         """
         mask = self.heuristic(f=self.func, d=self.dims)[0] == 1
-        self.transformed_data = self.dataset[mask]
+
+        # apply the mask to the dataset
+        if self.approach == 'add':
+            self.transformed_data = pd.concat([self.dataset, self.synthetic_dataset[mask]], axis=0)
+        elif self.approach == 'remove':
+            self.transformed_data = self.dataset[mask]
 
         return self.transformed_data
 
@@ -188,31 +204,33 @@ class DefaultPreprocessing(HeuristicWrapper):
                          disc_measure=disc_measure)
 
 
-def f(binary_vector, dataframe, label, protected_attributes,
+def f(binary_vector, dataset, label, protected_attributes,
       approach='remove',
-      sample_dataframe=None,
+      synthetic_dataset=None,
       disc_measure=statistical_parity_abs_diff_max,
       penalty=None):
     """
-    Additional sample data points are added to the original data to promote fairness.
+    Two different approaches can be used for the heuristic method:
+    1. 'remove': The data points from the given `dataset` are removed to promote fairness.
+    2. 'add': Additional samples are added to the original data to promote fairness.
     The sample data can be synthetic data.
-    The question here is: Which of the data points from the sample set should be added to the
+    Approach addresses this question: Which of the data points from the `synthetic_dataframe` should be added to the
     original data to prevent discrimination?
 
     Parameters
     ----------
     binary_vector: np.array
         Binary vector indicating which columns to include in the discrimination measure calculation.
-    dataframe: pd.DataFrame
+    dataset: pd.DataFrame
         The data to calculate the discrimination measure on.
     label: str
-        The column in the dataframe to use as the target variable.
+        The column in the dataset to use as the target variable.
     protected_attributes: Union[str, List[str]]
-        The column or columns in the dataframe to consider as protected attributes.
+        The column or columns in the dataset to consider as protected attributes.
     approach: str
         The approach to be used for the heuristic method.
         It can be either 'remove' or 'add'.
-    sample_dataframe: pd.DataFrame, optional
+    synthetic_dataset: pd.DataFrame, optional
         Extra samples to be added to the original data. Samples can be synthetic data.
         It is required only if the 'add' approach is used.
     disc_measure: callable, optional (default=statistical_parity_abs_diff_max)
@@ -235,23 +253,23 @@ def f(binary_vector, dataframe, label, protected_attributes,
     # Create mask
     mask = np.array(binary_vector) == 1
 
-    if approach == 'add' and sample_dataframe is not None:
+    if approach == 'add' and synthetic_dataset is not None:
         # mask on sample data
-        sample_dataframe = sample_dataframe[mask]
+        synthetic_dataset = synthetic_dataset[mask]
 
         # concatenate synthetic data with original data
-        dataframe = pd.concat([dataframe, sample_dataframe], axis=0)
+        dataset = pd.concat([dataset, synthetic_dataset], axis=0)
     elif approach == 'remove':
         # only keep the columns that are selected by the heuristic
-        dataframe = dataframe[mask]
+        dataset = dataset[mask]
     else:
         raise ValueError('Invalid approach. It can be either \'remove\' or \'add\'.')
 
     # evaluate on masked dataset
-    y = dataframe[label]
-    z = dataframe[protected_attributes]
+    y = dataset[label]
+    z = dataset[protected_attributes]
     cols_to_drop = protected_attributes + [label]
-    x = dataframe.drop(columns=cols_to_drop)
+    x = dataset.drop(columns=cols_to_drop)
 
     # We handle multiple protected attributes by not flattening the z array
     y = y.to_numpy().flatten()
