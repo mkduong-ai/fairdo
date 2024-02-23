@@ -4,7 +4,7 @@ stages:
   - tutorials
 
 before_script:
-  - python -m pip install --upgrade pip
+  - python3 -m pip install --upgrade pip
   - python setup.py install
 
 test:
