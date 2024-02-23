@@ -7,9 +7,6 @@ variables:
   PYTHON_VERSION: "3.8"
 
 before_script:
-  - pip install virtualenv
-  - virtualenv venv
-  - source venv/bin/activate
   - python -m pip install --upgrade pip
   - python setup.py install
 
