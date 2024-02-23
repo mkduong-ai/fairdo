@@ -57,6 +57,7 @@ def statistical_parity_abs_diff_multi(y: np.array, z: np.array,
             attributes_disparity.append(agg_group(group_disparity))
         except ValueError:
             warnings.warn(f"Could not aggregate disparity for attribute {k} with aggregation function {agg_group}. "
+                          f"The disparity for this attribute is {group_disparity}. "
                           f"Returning disparity of 0.")
             attributes_disparity.append(0)
     return agg_attribute(attributes_disparity)

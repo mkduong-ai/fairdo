@@ -32,9 +32,9 @@ data_fair = preprocessor.fit_transform(dataset=data)
 
 # Print no. samples and discrimination before and after
 print("Size and discrimination (lower is better).")
-print("Merged data (original and synthetic):", len(data),
+print("Original data:", len(data),
       statistical_parity_abs_diff_max(data[label],
                                       data[protected_attributes[0]].to_numpy()))
-print("Preprocessed merged data:", len(data_fair),
+print("Preprocessed fair data:", len(data_fair),
       statistical_parity_abs_diff_max(data_fair[label],
                                       data_fair[protected_attributes[0]].to_numpy()))

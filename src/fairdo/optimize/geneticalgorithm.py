@@ -31,30 +31,11 @@ A fast and elitist multiobjective genetic algorithm: NSGA-II. IEEE Transactions 
 import pathos.multiprocessing as mp
 import numpy as np
 
+from fairdo.optimize.geneticoperators.initialization import random_initialization
 from fairdo.optimize.geneticoperators.crossover import onepoint_crossover, uniform_crossover
 from fairdo.optimize.geneticoperators.mutation import fractional_flip_mutation
 from fairdo.optimize.geneticoperators.selection import elitist_selection, tournament_selection
 from fairdo.metrics.penalty import relative_difference_penalty
-
-
-def generate_population(pop_size, d):
-    """
-    Generate a random population of binary vectors. Each vector has a length of d.
-    The values of the vectors are either 0 or 1. The population is generated randomly.
-
-    Parameters
-    ----------
-    pop_size: int
-        The size of the population to generate.
-    d: int
-        The dimension of the binary vectors.
-
-    Returns
-    -------
-    population: ndarray, shape (pop_size, d)
-        The generated population of binary vectors.
-    """
-    return np.random.randint(2, size=(pop_size, d))
 
 
 def evaluate_individual(args):
@@ -149,6 +130,7 @@ def evaluate_population(f, n, population, penalty_function=relative_difference_p
 
 
 def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
+                                 initialization=random_initialization,
                                  selection=elitist_selection,
                                  crossover=uniform_crossover,
                                  mutation=fractional_flip_mutation,
@@ -180,6 +162,8 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
         The size of the population.
     num_generations: int
         The number of generations.
+    initialization: callable
+        The function to initialize the population.
     selection: callable
         The function to select the parents from the population.
     crossover: callable
@@ -215,7 +199,7 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
         f = lambda x: -f_orig(x)
 
     # generate the initial population
-    population = generate_population(pop_size, d)
+    population = initialization(pop_size=pop_size, d=d)
     # evaluate the function for each vector in the population
     fitness = evaluate_population(f, n, population, penalty_function=relative_difference_penalty)
     best_idx = np.argmax(fitness)
@@ -256,6 +240,7 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
 
 
 def genetic_algorithm(f, d, pop_size, num_generations,
+                      initialization=random_initialization,
                       selection=elitist_selection,
                       crossover=uniform_crossover,
                       mutation=fractional_flip_mutation,
@@ -282,6 +267,8 @@ def genetic_algorithm(f, d, pop_size, num_generations,
         The size of the population.
     num_generations: int
         The number of generations.
+    initialization: callable
+        The function to initialize the population.
     selection: callable
         The function to select the parents from the population.
     crossover: callable
@@ -314,6 +301,7 @@ def genetic_algorithm(f, d, pop_size, num_generations,
     return genetic_algorithm_constraint(f=f, d=d, n=0,
                                         pop_size=pop_size,
                                         num_generations=num_generations,
+                                        initialization=initialization,
                                         selection=selection,
                                         crossover=crossover,
                                         mutation=mutation,

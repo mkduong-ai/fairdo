@@ -141,3 +141,18 @@ def data_integrity_penalty():
     Placeholder for data integrity penalty.
     """
     raise NotImplementedError("Data Integrity Penalty is not implemented yet.")
+
+
+def data_size_measure(y: np.array, dims: int, **kwargs) -> float:
+    """
+    Test function to measure the size of the data.
+    The function returns the negative of the length of the vector `y` divided by `dims`.
+    This is used to test whether genetic algorithms are able to select all the data points.
+
+    Parameters
+    ----------
+    y: np.array
+        Vector to measure the size of.
+    dims: int
+    """
+    return - len(y) / dims

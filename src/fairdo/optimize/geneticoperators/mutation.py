@@ -88,3 +88,68 @@ def swap_mutation(offspring):
         offspring[idx, bit1], offspring[idx, bit2] = offspring[idx, bit2], offspring[idx, bit1]
     return offspring
 
+
+def adaptive_mutation(offspring, mutation_rate=0.05, diversity_threshold=0.1):
+    """
+    Mutates the given offspring with an adaptive mutation rate based on population diversity.
+
+    Parameters
+    ----------
+    offspring: ndarray, shape (n, d)
+        The offspring to be mutated. Each row represents an offspring, and each column represents a bit.
+    mutation_rate: float, optional
+        The initial probability of flipping each bit for each offspring. Default is 0.05.
+    diversity_threshold: float, optional
+        The threshold for population diversity. If diversity falls below this threshold, increase mutation rate. Default is 0.1.
+
+    Returns
+    -------
+    offspring: ndarray, shape (n, d)
+        The mutated offspring. Each row represents an offspring, and each column represents a bit.
+    """
+    # Calculate population diversity
+    population_diversity = np.mean(np.std(offspring, axis=0))
+    # Adjust mutation rate based on diversity
+    if population_diversity < diversity_threshold:
+        mutation_rate *= 2  # Increase mutation rate
+    # Apply random mutation
+    return bit_flip_mutation(offspring, mutation_rate)
+
+
+def diverse_mutation(offspring, mutation_rate=0.05):
+    """
+    Mutates the given offspring in a diverse manner to prevent convergence towards 50% selection rate.
+
+    Parameters
+    ----------
+    offspring: ndarray, shape (n, d)
+        The offspring to be mutated. Each row represents an offspring, and each column represents a bit.
+    mutation_rate: float, optional
+        The base mutation rate for each bit. Default is 0.05.
+
+    Returns
+    -------
+    offspring: ndarray, shape (n, d)
+        The mutated offspring. Each row represents an offspring, and each column represents a bit.
+    """
+    # Calculate the proportion of 1s in each offspring
+    proportion_ones = np.mean(offspring, axis=1)
+    
+    # Adjust the mutation rate based on the proportion of 1s
+    mutated_proportion_ones = proportion_ones + np.random.uniform(-0.1, 0.1, size=proportion_ones.shape)
+    mutated_proportion_ones = np.clip(mutated_proportion_ones, 0, 1)  # Ensure values are within [0, 1] range
+    
+    # Generate mutated offspring
+    mutated_offspring = np.zeros_like(offspring)
+    for i in range(offspring.shape[0]):
+        for j in range(offspring.shape[1]):
+            mutation_prob = mutation_rate * mutated_proportion_ones[i]
+            if np.random.rand() < mutation_prob:
+                mutated_offspring[i, j] = 1 - offspring[i, j]  # Flip the bit with mutation probability
+            else:
+                mutated_offspring[i, j] = offspring[i, j]  # Keep the bit unchanged
+    return mutated_offspring
+
+
+def divergent_mutation(offspring, mutation_rate=0.05):
+    raise NotImplementedError("Divergent mutation is not yet implemented.")

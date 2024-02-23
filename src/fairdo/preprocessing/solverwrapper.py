@@ -284,4 +284,7 @@ def f(binary_vector, dataset, label, protected_attributes,
     if len(protected_attributes) == 1:
         z = z.flatten()
 
-    return disc_measure(x=x, y=y, z=z) + penalty(x=x, y=y, z=z) if penalty is not None else disc_measure(x=x, y=y, z=z)
+    if penalty is not None:
+        return disc_measure(x=x, y=y, z=z, dims=len(mask)) + penalty(x=x, y=y, z=z)
+    else:
+        return disc_measure(x=x, y=y, z=z)

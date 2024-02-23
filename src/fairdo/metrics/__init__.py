@@ -34,3 +34,4 @@ from fairdo.metrics.dataset import *
 from fairdo.metrics.independence import *
 from fairdo.metrics.individual import *
 from fairdo.metrics.prediction import *
+from fairdo.metrics.penalty import *

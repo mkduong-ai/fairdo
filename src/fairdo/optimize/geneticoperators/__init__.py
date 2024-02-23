@@ -27,7 +27,7 @@ Example
 >>>                                       mutate=my_mutation_function, maximize=False)
 
 """
-
+from fairdo.optimize.geneticoperators.initialization import *
 from fairdo.optimize.geneticoperators.crossover import *
 from fairdo.optimize.geneticoperators.mutation import *
 from fairdo.optimize.geneticoperators.selection import *
