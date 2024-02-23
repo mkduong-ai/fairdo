@@ -1,0 +1,19 @@
+image: python:3.8
+
+stages:
+  - tutorials
+
+variables:
+  PYTHON_VERSION: "3.8"
+
+before_script:
+  - pip install virtualenv
+  - virtualenv venv
+  - source venv/bin/activate
+  - python -m pip install --upgrade pip
+  - python -m pip install -r requirements.txt
+
+test:
+  stage: tutorials
+  script:
+    - python -m unittest discover -s tutorials -p "*.py"
