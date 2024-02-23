@@ -3,9 +3,6 @@ image: python:3.8
 stages:
   - tutorials
 
-variables:
-  PYTHON_VERSION: "3.8"
-
 before_script:
   - python -m pip install --upgrade pip
   - python setup.py install
