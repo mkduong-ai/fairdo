@@ -63,7 +63,7 @@ pre-processed with our methods to ensure fairness.
 ## Installation
 
 ### Dependencies
-Python (>=3.8, <=3.10), `numpy`, `scipy`, `pandas`, `sklearn`
+Python (==3.8), `numpy`, `scipy`, `pandas`, `sklearn`
 
 ### Setup Python Environment
 

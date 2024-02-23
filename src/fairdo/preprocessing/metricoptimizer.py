@@ -90,7 +90,7 @@ class MetricOptRemover(Preprocessing):
         """
         super().__init__(protected_attribute=protected_attribute,
                          label=label)
-        if self.frac > 1:
+        if frac > 1:
             raise Exception('Fraction frac can not be greater than 1.')
         self.frac = frac
         self.fairness_metric = fairness_metric
@@ -120,7 +120,7 @@ class MetricOptRemover(Preprocessing):
         if self.fairness_metric(x=x, y=y, z=z) <= self.eps:
             return samples
 
-        for i in range(1, n):
+        for _ in range(1, n):
             # create candidates
             cands = samples.sample(n=min(self.m, len(samples)), replace=False)
 
@@ -177,11 +177,17 @@ class MetricOptGenerator(Preprocessing):
             If additions is given, then frac is ignored. Number of samples to be added to the dataset.
         fairness_metric:
             A fairness metric which can take x, y, or z as array parameters and calculates a fairness score.
+        data_fitted: bool
+            Whether the data generator is fitted to the data.
+        data_generator: object
+            The data generator object
+        synthetic_data: pd.DataFrame
+            The synthetic data generated
         random_state: int
         """
         super().__init__(protected_attribute=protected_attribute,
                          label=label)
-        if self.frac < 1:
+        if frac < 1:
             raise Exception('Fraction frac can not be less than 1.')
         self.frac = frac
         self.fairness_metric = fairness_metric
@@ -190,6 +196,7 @@ class MetricOptGenerator(Preprocessing):
         self.additions = additions
         self.data_fitted = False
         self.data_generator = None
+        self.synthetic_data = None
         self.random_state = random_state
         np.random.seed(random_state)
 
@@ -210,6 +217,8 @@ class MetricOptGenerator(Preprocessing):
         if not self.data_fitted:
             self.data_generator = data_generator(dataset)
             self.data_fitted = True
+
+        self.synthetic_data = self.data_generator.sample(num_rows=int(len(dataset) * self.frac * self.m))
 
         return self
 
@@ -235,9 +244,9 @@ class MetricOptGenerator(Preprocessing):
         if self.fairness_metric(x=x, y=y, z=z) <= self.eps:
             return samples
 
-        for i in range(0, n):
+        for _ in range(0, n):
             # create candidates
-            cands = self.data_generator.sample(num_rows=self.m)
+            cands = self.synthetic_data.sample(n=self.m)
 
             # list consists of single candidates added to dataset
             samples_concat_list = [pd.concat([samples, cands.iloc[[j]]], ignore_index=True) for j in range(len(cands))]

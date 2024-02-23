@@ -105,9 +105,16 @@ class HeuristicWrapper(Preprocessing):
             self.dims = len(self.synthetic_dataset)
         elif approach == 'remove':
             self.dims = len(self.dataset)
+        
+        # get unique values for each protected attribute
+        if isinstance(self.protected_attribute, list):
+            n_groups = np.array([self.dataset[attr].nunique() for attr in self.protected_attribute])
+        else:
+            n_groups = np.array([self.dataset[self.protected_attribute].nunique()])
 
         # define penalty function
-        penalty = partial(group_missing_penalty, n_groups=len(self.dataset[self.protected_attribute].unique()))
+        penalty = partial(group_missing_penalty,
+                          n_groups=n_groups)
 
         self.func = partial(f,
                             dataset=self.dataset,

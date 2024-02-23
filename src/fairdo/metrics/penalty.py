@@ -9,6 +9,7 @@ where the number of data points is less than this specified value, and in such c
 penalties are applied to the solutions.
 """
 import numpy as np
+from fairdo.utils.helper import nunique
 
 
 def absolute_difference_penalty(x: np.array, n: int):
@@ -87,19 +88,27 @@ def relative_shortfall_penalty(x: np.array, n: int):
         return 0
 
 
-def group_missing_penalty(z: np.array, n_groups: int,
+def group_missing_penalty(z: np.array, n_groups: np.array,
+                          agg_attribute='max',
                           agg_group='max', **kwargs) -> float:
     """
     Calculate the penalty for missing groups in a protected attribute.
     The number of groups `n_groups` is used to calculate the penalty.
 
+    If `agg_group` is 'max', the penalty is 1 if any group is missing, otherwise 0.
+    If `agg_group` is 'sum', the penalty is the sum of the penalties for each group.
+    `agg_attribute` is used to aggregate the penalties for each protected attribute.
+
     Parameters
     ----------
     z: np.array
-        Flattened array of shape y, represents the protected attribute.
-        Can represent non-binary protected attribute.
-    n_groups: int
-        Number of groups for the protected attribute.
+        Array of shape (n_samples, n_protected_attributes) representing multiple protected attributes.
+        or
+        (n_samples,) represents one protected attribute.
+        
+        Each protected attribute can consists of >2 groups.
+    n_groups: np.array
+        Number of groups for each protected attribute.
     agg_group: str, optional
         Aggregation function for the group. Default is 'sum'.
 
@@ -108,16 +117,23 @@ def group_missing_penalty(z: np.array, n_groups: int,
     float
         The penalty for missing groups.
     """
-    if agg_group == 'sum':
-        # Return the penalty for each comparison for each missing group
-        n_avail_groups = len(np.unique(z))
+    n_avail_groups = nunique(z, axis=0)
+
+    if agg_group == 'max':
+        if agg_attribute == 'max':
+            return int(np.any(n_avail_groups < n_groups))
+        elif agg_attribute == 'sum':
+            return np.sum(n_avail_groups < n_groups)
+    elif agg_group == 'sum':
         n_missing_groups = n_groups - n_avail_groups
-        return n_missing_groups * (2 * n_groups - n_missing_groups - 1) / 2
-    elif agg_group == 'max':
-        # Return 1 if there is at least one group missing
-        return int(len(np.unique(z)) < n_groups)
+        group_penalties = n_missing_groups * (2 * n_groups - n_missing_groups - 1) / 2
+        
+        if agg_attribute == 'sum':
+            return np.sum(group_penalties)
+        elif agg_attribute == 'max':
+            return np.max(group_penalties)
     else:
-        raise NotImplementedError("Only sum and max are implemented for agg_group")
+        raise NotImplementedError("Only sum and max are implemented for agg_group and agg_attribute.")
 
 
 def data_integrity_penalty():
