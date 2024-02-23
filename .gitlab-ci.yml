@@ -10,4 +10,7 @@ before_script:
 test:
   stage: tutorials
   script:
-    - python -m unittest discover -s tutorials -p "*.py"
+    - python -m unittest discover -s tests -p "*.py"
+    - python -m compileall tutorials  # Compile all Python files in tutorials folder (optional)
+    - python -m compileall -l tutorials  # List compiled files (optional)
+    - find tutorials -name "*.py" -exec python {} \;
