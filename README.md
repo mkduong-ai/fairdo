@@ -43,7 +43,7 @@ An example is given in `tutorials/1. Default Preprocessor` and below.
 
 :white_check_mark: **For data integrity**, you want to keep the original data $D$
 and only add fair synthetic data $G$ on top of it.
-(We include examples in `tutorials/` where we use the (SDV)[https://github.com/sdv-dev/SDV] package
+(We include examples in `tutorials/` where we use the [SDV](https://github.com/sdv-dev/SDV) package
 to generate synthetic data.)
 For this, you need to specify
 `.fit_transform(approach='add')` for the pre-processors `fairdo.preprocessing.HeuristicWrapper` and
