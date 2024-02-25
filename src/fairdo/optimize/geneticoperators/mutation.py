@@ -151,5 +151,22 @@ def diverse_mutation(offspring, mutation_rate=0.05):
     return mutated_offspring
 
 
-def divergent_mutation(offspring, mutation_rate=0.05):
-    raise NotImplementedError("Divergent mutation is not yet implemented.")
+def shuffle_mutation(offspring, **kwargs):
+    """
+    Mutates the given offspring by shuffling the bits of each offspring.
+    
+    Parameters
+    ----------
+    offspring: ndarray, shape (n, d)
+        The offspring to be mutated. Each row represents an offspring, and each column represents a bit.
+    kwargs: dict
+        Additional keyword arguments. Ignored.
+    
+    Returns
+    -------
+    offspring: ndarray, shape (n, d)
+        The mutated offspring. Each row represents an offspring, and each column represents a bit.
+    """
+    rng = np.random.default_rng()
+    rng.shuffle(offspring, axis=1)
+    return offspring

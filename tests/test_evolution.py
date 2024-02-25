@@ -5,7 +5,7 @@ from fairdo.utils.dataset import load_data
 # everything needed for custom preprocessing
 from fairdo.preprocessing import HeuristicWrapper
 from fairdo.optimize.geneticalgorithm import genetic_algorithm
-from fairdo.optimize.geneticoperators import uniform_crossover, onepoint_crossover, adaptive_mutation, bit_flip_mutation, fractional_flip_mutation, elitist_selection, variable_probability_initialization
+from fairdo.optimize.geneticoperators import uniform_crossover, onepoint_crossover, shuffle_mutation, adaptive_mutation, bit_flip_mutation, fractional_flip_mutation, elitist_selection, variable_probability_initialization
 # fairdo metrics
 from fairdo.metrics import statistical_parity_abs_diff_max, data_size_measure
 
@@ -33,15 +33,15 @@ data_fair = preprocessor.fit_transform(dataset=data)
 # Custom settings for the First Genetic Algorithm
 initialization = partial(variable_probability_initialization,
                          initial_probability=0.75,
-                         min_probability=0.25)
+                         min_probability=0.5)
 
-mutation = partial(bit_flip_mutation,
+mutation = partial(shuffle_mutation,
                    mutation_rate=0.01)
 ga = partial(genetic_algorithm,
              initialization=initialization,
              selection=elitist_selection,
              crossover=uniform_crossover,
-             mutation=bit_flip_mutation,
+             mutation=mutation,
              pop_size=50,
              num_generations=100)
 

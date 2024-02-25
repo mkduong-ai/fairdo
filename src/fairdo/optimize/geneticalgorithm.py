@@ -230,7 +230,8 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
             # early stopping if the best solution is found
             no_improvement_streak += 1
             if no_improvement_streak >= patience:
-                print(f"Stopping after {generation + 1} generations due to lack of improvement.")
+                print(f"Stopping after {generation + 1} generations after stagnating for "
+                      f"{no_improvement_streak} generations.")
                 break
 
     if not maximize:
