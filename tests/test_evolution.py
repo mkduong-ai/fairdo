@@ -18,7 +18,7 @@ ga = partial(genetic_algorithm,
              selection=elitist_selection,
              crossover=uniform_crossover,
              mutation=fractional_flip_mutation,
-             pop_size=50,
+             pop_size=100,
              num_generations=100)
 
 # Initialize the wrapper class for custom preprocessors
@@ -32,7 +32,7 @@ data_fair = preprocessor.fit_transform(dataset=data)
 
 # Custom settings for the First Genetic Algorithm
 initialization = partial(variable_probability_initialization,
-                         initial_probability=0.75,
+                         initial_probability=0.95,
                          min_probability=0.5)
 
 mutation = partial(shuffle_mutation,
@@ -42,7 +42,7 @@ ga = partial(genetic_algorithm,
              selection=elitist_selection,
              crossover=uniform_crossover,
              mutation=mutation,
-             pop_size=50,
+             pop_size=100,
              num_generations=100)
 
 # Initialize the wrapper class for custom preprocessors
