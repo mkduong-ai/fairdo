@@ -137,7 +137,7 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
                                  maximize=False,
                                  tol=1e-6,
                                  patience=50):
-    r"""
+    """
     Perform a genetic algorithm with constraints. The constraint is that the sum of the binary vector must be equal
     to n. The fitness function is the value of the fitness function plus a penalty for individuals that do not satisfy
     the size constraint.
@@ -248,7 +248,7 @@ def genetic_algorithm(f, d, pop_size, num_generations,
                       maximize=False,
                       tol=1e-6,
                       patience=50):
-    r"""
+    """
     Perform a genetic algorithm. The genetic algorithm is used to maximize the given fitness function.
     It consists of the following steps which are repeated for a specified number of generations:
 
