@@ -84,8 +84,8 @@ def statistical_parity_abs_diff_intersectionality(y: np.array, z: np.array,
         Additional keyword arguments.
     """
     z_subgroups = np.apply_along_axis(lambda x: ''.join(map(str, x)), axis=1, arr=z)
-    all_subgroups = (z_subgroups)
-    parities = {i: np.sum(y & (z_subgroups == i)) / np.sum(z_subgroups == i) for i in list(all_subgroups)}
+    all_subgroups = list(set(z_subgroups))
+    parities = {i: np.sum(y & (z_subgroups == i)) / np.sum(z_subgroups == i) for i in all_subgroups}
     pairs = generate_pairs(list(all_subgroups))
     group_disparity = [np.abs(parities[i] - parities[j]) for i, j in pairs]
 
