@@ -1,12 +1,13 @@
 import numpy as np
 import warnings
+from itertools import product
 
 from fairdo.utils.helper import generate_pairs
 
 
 def statistical_parity_abs_diff_multi(y: np.array, z: np.array,
-                                      agg_attribute=np.sum,
-                                      agg_group=np.sum,
+                                      agg_attribute=np.max,
+                                      agg_group=np.max,
                                       positive_label=1,
                                       **kwargs) -> float:
     """
@@ -61,6 +62,34 @@ def statistical_parity_abs_diff_multi(y: np.array, z: np.array,
                           f"Returning disparity of 0.")
             attributes_disparity.append(0)
     return agg_attribute(attributes_disparity)
+
+
+def statistical_parity_abs_diff_intersectionality(y: np.array, z: np.array,
+                                                  agg_group=np.max,
+                                                  **kwargs) -> float:
+    """
+    Calculate the absolute difference in statistical parity for multiple non-binary protected attributes.
+    Intersections from all protected attributes are considered.
+    Protected attributes `z[i]` can be binary or non-binary.
+
+    Parameters
+    ----------
+    y: np.array
+        Flattened binary array of shape (n_samples,), can be the prediction or the truth label.
+    z: np.array
+        Array of shape (n_samples, n_protected_attributes) representing the protected attribute.
+    agg_group: callable, optional
+        Aggregation function for the group. Default is np.sum.
+    **kwargs: dict
+        Additional keyword arguments.
+    """
+    z_subgroups = np.apply_along_axis(lambda x: ''.join(map(str, x)), axis=1, arr=z)
+    all_subgroups = (z_subgroups)
+    parities = {i: np.sum(y & (z_subgroups == i)) / np.sum(z_subgroups == i) for i in list(all_subgroups)}
+    pairs = generate_pairs(list(all_subgroups))
+    group_disparity = [np.abs(parities[i] - parities[j]) for i, j in pairs]
+
+    return agg_group(group_disparity)
 
 
 def statistical_parity_abs_diff(y: np.array, z: np.array, agg_group=np.sum, **kwargs) -> float:
