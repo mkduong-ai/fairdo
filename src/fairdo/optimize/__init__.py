@@ -41,3 +41,4 @@ Example
 
 from fairdo.optimize.baseline import *
 from fairdo.optimize.geneticalgorithm import *
+from fairdo.optimize.nsga2 import nsga2

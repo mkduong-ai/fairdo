@@ -1,10 +1,15 @@
 import numpy as np
 
+from fairdo.optimize.geneticoperators.initialization import random_initialization
+from fairdo.optimize.geneticoperators.selection import elitist_selection, tournament_selection
+from fairdo.optimize.geneticoperators.crossover import onepoint_crossover, uniform_crossover, simulated_binary_crossover
+from fairdo.optimize.geneticoperators.mutation import fractional_flip_mutation, shuffle_mutation
+
 def nsga2(fitness_functions, d, pop_size, num_generations,
           initialization=random_initialization,
           selection=tournament_selection,
-          crossover=simulated_binary_crossover,
-          mutation=polynomial_mutation,
+          crossover=uniform_crossover,
+          mutation=shuffle_mutation,
           maximize=False,
           tol=1e-6,
           patience=50):
@@ -128,10 +133,12 @@ def generate_offspring(population, fitness_values, selection, crossover, mutatio
     offspring : ndarray, shape (pop_size, d)
         The offspring generated through selection, crossover, and mutation.
     """
+    pop_size = population.shape[0]
     # Select parents
-    parents = selection(population, fitness_values)
+    parents, _ = selection(population, fitness_values)
     # Perform crossover
-    offspring = crossover(parents)
+    num_offspring = pop_size - parents.shape[0]
+    offspring = crossover(parents, num_offspring)
     # Perform mutation
     offspring = mutation(offspring)
     return offspring

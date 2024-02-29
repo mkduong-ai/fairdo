@@ -97,3 +97,41 @@ def kpoint_crossover(parents, num_offspring, k=2):
             offspring[i, start:end] = parents[parent_idx, start:end]
 
     return offspring
+
+
+def simulated_binary_crossover(parents, num_offspring, eta=15):
+    """
+    Perform the crossover operation with Simulated Binary Crossover (SBX) on the parents to create the offspring.
+    
+    Parameters
+    ----------
+    parents: numpy array
+        Parents of the offspring with shape (2, d).
+    num_offspring: int
+        Number of offsprings.
+    
+    Returns
+    -------
+    offspring: ndarray, shape (num_offspring, d)
+
+    References
+    ----------
+    Kalyanmoy Deb, Karthik Sindhya, and Tatsuya Okabe. Self-adaptive simulated binary crossover for real-parameter optimization. In Proceedings of the 9th Annual Conference on Genetic and Evolutionary Computation, GECCO ‘07, pages 1187–1194, New York, NY, USA, 2007. Association for Computing Machinery.
+    """
+    # initialize offspring
+    d = parents.shape[1]
+    offspring = np.empty((num_offspring, d))
+
+    # generate the offspring
+    for i in range(num_offspring):
+        # select two parents
+        parent1, parent2 = parents[np.random.choice(2, 2, replace=False)]
+        # generate a random number
+        u = np.random.rand(d)
+        beta = np.empty(d)
+        beta[u <= 0.5] = (2 * u[u <= 0.5]) ** (1 / (eta + 1))
+        beta[u > 0.5] = (1 / (2 * (1 - u[u > 0.5]))) ** (1 / (eta + 1))
+        # generate the offspring
+        offspring[i] = 0.5 * ((1 + beta) * parent1 + (1 - beta) * parent2)
+    
+    return offspring

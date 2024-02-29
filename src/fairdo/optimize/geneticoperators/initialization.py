@@ -41,7 +41,7 @@ def biased_random_initialization(pop_size, d, selection_probability=0.8):
     return population
 
 
-def variable_probability_initialization(pop_size, d, initial_probability=1, min_probability=0.75):
+def variable_probability_initialization(pop_size, d, initial_probability=0.99, min_probability=0.75):
     """
     Initialize the population with a variable probability of selecting items.
 
@@ -59,6 +59,6 @@ def variable_probability_initialization(pop_size, d, initial_probability=1, min_
     Returns:
         np.ndarray: Initialized population with shape (pop_size, d).
     """
-    probabilities = np.linspace(initial_probability, min_probability, num=d)
+    probabilities = np.linspace(initial_probability, min_probability, num=pop_size)
     population = np.array([np.random.choice([0, 1], size=d, p=[1 - p, p]) for p in probabilities])
     return population
