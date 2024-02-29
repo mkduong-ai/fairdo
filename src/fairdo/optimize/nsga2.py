@@ -67,15 +67,20 @@ def nsga2(fitness_functions, d, pop_size, num_generations,
     
     # Perform NSGA-II for the specified number of generations
     for generation in range(num_generations):
-        # Create offspring through selection, crossover, and mutation
-        offspring = generate_offspring(population, fitness_values, selection, crossover, mutation)
+        # Select parents
+        parents, fitness = selection(population, fitness_values)
+        # Perform crossover
+        num_offspring = pop_size - parents.shape[0]
+        offspring = crossover(parents, num_offspring)
+        # Perform mutation
+        offspring = mutation(offspring)
         
         # Evaluate the fitness of the offspring
         offspring_fitness_values = evaluate_population(fitness_functions, offspring)
         
-        # Combine the population and the offspring
-        combined_population = np.concatenate((population, offspring))
-        combined_fitness_values = np.concatenate((fitness_values, offspring_fitness_values))
+        # Combine the parents and the offspring
+        combined_population = np.concatenate((parents, offspring))
+        combined_fitness_values = np.concatenate((fitness, offspring_fitness_values))
         
         # Select the best individuals using non-dominated sorting and crowding distance
         population_indices = non_dominated_sort(combined_fitness_values)
@@ -108,40 +113,8 @@ def evaluate_population(fitness_functions, population):
     num_fitness_functions = len(fitness_functions)
     fitness_values = np.zeros((population.shape[0], num_fitness_functions))
     for i, fitness_function in enumerate(fitness_functions):
-        fitness_values[:, i] = fitness_function(population)
+        fitness_values[:, i] = fitness_function(population).flatten()
     return fitness_values
-
-def generate_offspring(population, fitness_values, selection, crossover, mutation):
-    """
-    Generate offspring through selection, crossover, and mutation.
-
-    Parameters
-    ----------
-    population : ndarray, shape (pop_size, d)
-        The population of binary vectors.
-    fitness_values : ndarray, shape (pop_size, num_fitness_functions)
-        The fitness values of each individual in the population for each fitness function.
-    selection : callable
-        The function to perform selection.
-    crossover : callable
-        The function to perform crossover.
-    mutation : callable
-        The function to perform mutation.
-
-    Returns
-    -------
-    offspring : ndarray, shape (pop_size, d)
-        The offspring generated through selection, crossover, and mutation.
-    """
-    pop_size = population.shape[0]
-    # Select parents
-    parents, _ = selection(population, fitness_values)
-    # Perform crossover
-    num_offspring = pop_size - parents.shape[0]
-    offspring = crossover(parents, num_offspring)
-    # Perform mutation
-    offspring = mutation(offspring)
-    return offspring
 
 
 def non_dominated_sort(fitness_values):

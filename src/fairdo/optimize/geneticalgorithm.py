@@ -38,97 +38,6 @@ from fairdo.optimize.geneticoperators.mutation import fractional_flip_mutation, 
 from fairdo.metrics.penalty import relative_difference_penalty
 
 
-def evaluate_individual(args):
-    """
-    Calculates the fitness of an individual. The fitness is the value of the fitness function
-    plus a penalty for individuals that do not satisfy the size constraint.
-
-    Parameters
-    ----------
-    args: tuple
-        The arguments to pass to the function. The arguments are (f, n, individual, penalty_function).
-
-    Returns
-    -------
-    fitness: float
-        The fitness of the individual.
-    """
-    f, n, individual, penalty_function = args
-    fitness = f(individual)
-    if n > 0:
-        fitness += penalty_function(individual, n)
-    return fitness
-
-
-def evaluate_population_single_cpu(f, n, population, penalty_function=relative_difference_penalty):
-    """
-    Calculates the fitness of each individual in a population. The fitness is the value of the fitness function
-    plus a penalty for individuals that do not satisfy the size constraint.
-
-    Parameters
-    ----------
-    f: callable
-        The fitness function to evaluate.
-    n: int
-        The constraint value.
-    population: ndarray, shape (pop_size, d)
-        The population of vectors to evaluate.
-    penalty_function: callable, optional
-        The penalty function to apply to individuals that do not satisfy the size constraint.
-
-    Returns
-    -------
-    fitness: ndarray, shape (pop_size,)
-        The fitness values of the population.
-    """
-    # fallback to single process execution if multiprocessing fails
-    fitness = np.apply_along_axis(f, axis=1, arr=population)
-    if n > 0:
-        # add absolute_difference_penalty to the fitness of all individuals
-        # that do not satisfy the size constraint
-        fitness += np.apply_along_axis(lambda x: penalty_function(x, n), axis=1, arr=population)
-
-    return fitness
-
-
-def evaluate_population(f, n, population, penalty_function=relative_difference_penalty):
-    """
-    Calculates the fitness of each individual in a population. The fitness is the value of the fitness function
-    plus a penalty for individuals that do not satisfy the size constraint.
-
-    Parameters
-    ----------
-    f: callable
-        The fitness function to evaluate.
-    n: int
-        The constraint value.
-    population: ndarray, shape (pop_size, d)
-        The population of vectors to evaluate.
-    penalty_function: callable, optional
-        The penalty function to apply to individuals that do not satisfy the size constraint.
-
-    Returns
-    -------
-    fitness: ndarray, shape (pop_size,)
-        The fitness values of the population.
-    """
-    try:
-        # use multiprocessing to speed up the evaluation if the population is large enough
-        if mp.cpu_count() > 1 and population.shape[0] >= 200:
-            # use multiprocessing to speed up the evaluation
-            with mp.Pool() as pool:
-                fitness = pool.map(evaluate_individual, [(f, n, individual, penalty_function)
-                                                         for individual in population])
-
-            return np.array(fitness)
-        else:
-            return evaluate_population_single_cpu(f, n, population, penalty_function)
-    except Exception as e:
-        print(f"Multiprocessing pool failed with error: {e}")
-        print("Falling back to single process execution")
-        return evaluate_population_single_cpu(f, n, population, penalty_function)
-
-
 def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
                                  initialization=random_initialization,
                                  selection=elitist_selection,
@@ -198,28 +107,31 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
         f_orig = f
         f = lambda x: -f_orig(x)
 
-    # generate the initial population
+    # Generate the initial population
     population = initialization(pop_size=pop_size, d=d)
-    # evaluate the function for each vector in the population
+    # Evaluate the function for each vector in the population
     fitness = evaluate_population(f, n, population, penalty_function=relative_difference_penalty)
     best_idx = np.argmax(fitness)
     best_fitness = fitness[best_idx]
     best_population = population[best_idx]
     no_improvement_streak = 0
-    # perform the genetic algorithm for the specified number of generations
+    # Perform the genetic algorithm for the specified number of generations
     for generation in range(num_generations):
-        # select the parents
+        # Select the parents
         parents, fitness = selection(population, fitness)
-        # create the offspring
+        # Create the offspring
         num_offspring = pop_size - parents.shape[0]
         offspring = crossover(parents, num_offspring)
-        # mutate the offspring
+        # Mutate the offspring
         offspring = mutation(offspring)
-        # evaluate the function for the new offspring
+
+        # Evaluate the fitness of the offspring
         offspring_fitness = evaluate_population(f, n, offspring, penalty_function=relative_difference_penalty)
-        # create the new population (allow the parents to be part of the next generation)
+
+        # Create the new population (allow the parents to be part of the next generation)
         population = np.concatenate((parents, offspring))
         fitness = np.concatenate((fitness, offspring_fitness))
+        
         # save the best solution found so far
         best_idx = np.argmax(offspring_fitness)
         if offspring_fitness[best_idx] > best_fitness + tol:
@@ -309,3 +221,94 @@ def genetic_algorithm(f, d, pop_size, num_generations,
                                         maximize=maximize,
                                         tol=tol,
                                         patience=patience)
+
+
+def evaluate_individual(args):
+    """
+    Calculates the fitness of an individual. The fitness is the value of the fitness function
+    plus a penalty for individuals that do not satisfy the size constraint.
+
+    Parameters
+    ----------
+    args: tuple
+        The arguments to pass to the function. The arguments are (f, n, individual, penalty_function).
+
+    Returns
+    -------
+    fitness: float
+        The fitness of the individual.
+    """
+    f, n, individual, penalty_function = args
+    fitness = f(individual)
+    if n > 0:
+        fitness += penalty_function(individual, n)
+    return fitness
+
+
+def evaluate_population_single_cpu(f, n, population, penalty_function=relative_difference_penalty):
+    """
+    Calculates the fitness of each individual in a population. The fitness is the value of the fitness function
+    plus a penalty for individuals that do not satisfy the size constraint.
+
+    Parameters
+    ----------
+    f: callable
+        The fitness function to evaluate.
+    n: int
+        The constraint value.
+    population: ndarray, shape (pop_size, d)
+        The population of vectors to evaluate.
+    penalty_function: callable, optional
+        The penalty function to apply to individuals that do not satisfy the size constraint.
+
+    Returns
+    -------
+    fitness: ndarray, shape (pop_size,)
+        The fitness values of the population.
+    """
+    # fallback to single process execution if multiprocessing fails
+    fitness = np.apply_along_axis(f, axis=1, arr=population)
+    if n > 0:
+        # add absolute_difference_penalty to the fitness of all individuals
+        # that do not satisfy the size constraint
+        fitness += np.apply_along_axis(lambda x: penalty_function(x, n), axis=1, arr=population)
+
+    return fitness
+
+
+def evaluate_population(f, n, population, penalty_function=relative_difference_penalty):
+    """
+    Calculates the fitness of each individual in a population. The fitness is the value of the fitness function
+    plus a penalty for individuals that do not satisfy the size constraint.
+
+    Parameters
+    ----------
+    f: callable
+        The fitness function to evaluate.
+    n: int
+        The constraint value.
+    population: ndarray, shape (pop_size, d)
+        The population of vectors to evaluate.
+    penalty_function: callable, optional
+        The penalty function to apply to individuals that do not satisfy the size constraint.
+
+    Returns
+    -------
+    fitness: ndarray, shape (pop_size,)
+        The fitness values of the population.
+    """
+    try:
+        # use multiprocessing to speed up the evaluation if the population is large enough
+        if mp.cpu_count() > 1 and population.shape[0] >= 200:
+            # use multiprocessing to speed up the evaluation
+            with mp.Pool() as pool:
+                fitness = pool.map(evaluate_individual, [(f, n, individual, penalty_function)
+                                                         for individual in population])
+
+            return np.array(fitness)
+        else:
+            return evaluate_population_single_cpu(f, n, population, penalty_function)
+    except Exception as e:
+        print(f"Multiprocessing pool failed with error: {e}")
+        print("Falling back to single process execution")
+        return evaluate_population_single_cpu(f, n, population, penalty_function)
