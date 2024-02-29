@@ -302,8 +302,7 @@ def evaluate_population(f, n, population, penalty_function=relative_difference_p
         if mp.cpu_count() > 1 and population.shape[0] >= 200:
             # use multiprocessing to speed up the evaluation
             with mp.Pool() as pool:
-                fitness = pool.map(evaluate_individual, [(f, n, individual, penalty_function)
-                                                         for individual in population])
+                fitness = pool.map(evaluate_individual, [(f, n, individual, penalty_function) for individual in population])
 
             return np.array(fitness)
         else:

@@ -59,6 +59,8 @@ def nsga2(fitness_functions, d, pop_size, num_generations,
     ----------
     Deb, K., Pratap, A., Agarwal, S., & Meyarivan, T. (2002). A fast and elitist multiobjective genetic algorithm: NSGA-II.
     """
+    # Negate the fitness functions if not maximizing
+
     # Generate the initial population
     population = initialization(pop_size=pop_size, d=d)
     
@@ -68,7 +70,7 @@ def nsga2(fitness_functions, d, pop_size, num_generations,
     # Perform NSGA-II for the specified number of generations
     for generation in range(num_generations):
         # Select parents
-        parents, fitness = selection(population, fitness_values)
+        parents, _ = selection(population, fitness_values)
         # Perform crossover
         num_offspring = pop_size - parents.shape[0]
         offspring = crossover(parents, num_offspring)
@@ -79,20 +81,18 @@ def nsga2(fitness_functions, d, pop_size, num_generations,
         offspring_fitness_values = evaluate_population(fitness_functions, offspring)
         
         # Combine the parents and the offspring
-        combined_population = np.concatenate((parents, offspring))
-        combined_fitness_values = np.concatenate((fitness, offspring_fitness_values))
+        combined_population = np.concatenate((population, offspring))
+        combined_fitness_values = np.concatenate((fitness_values, offspring_fitness_values))
         
         # Select the best individuals using non-dominated sorting and crowding distance
         population_indices = non_dominated_sort(combined_fitness_values)
         population = select_population(combined_population, population_indices, pop_size)
+        # TODO: prevent double calculation of fitness values
         fitness_values = select_population(combined_fitness_values, population_indices, pop_size)
     
     # Find the best solution in the final population
-    best_idx = np.argmin(fitness_values) if maximize else np.argmax(fitness_values)
-    best_population = population[best_idx]
-    best_fitness = fitness_values[best_idx]
+    # TODO: Return Pareto-Front
     
-    return best_population, best_fitness
 
 def evaluate_population(fitness_functions, population):
     """
@@ -113,7 +113,9 @@ def evaluate_population(fitness_functions, population):
     num_fitness_functions = len(fitness_functions)
     fitness_values = np.zeros((population.shape[0], num_fitness_functions))
     for i, fitness_function in enumerate(fitness_functions):
-        fitness_values[:, i] = fitness_function(population).flatten()
+        # TODO: Parallelize this loop
+        fitness_values[:, i] = np.apply_along_axis(fitness_function, axis=1, arr=population).flatten()
+    
     return fitness_values
 
 
