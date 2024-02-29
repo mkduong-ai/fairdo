@@ -136,6 +136,7 @@ def generate_offspring(population, fitness_values, selection, crossover, mutatio
     offspring = mutation(offspring)
     return offspring
 
+
 def non_dominated_sort(fitness_values):
     """
     Perform non-dominated sorting on the given fitness values.
@@ -147,17 +148,103 @@ def non_dominated_sort(fitness_values):
 
     Returns
     -------
-    population_indices : list of ndarray
-        The indices of individuals in each Pareto front.
+    fronts : list of ndarrays
+        List of fronts, where each front contains the indices of individuals in that front.
     """
-    raise NotImplementedError
-    population_indices = []
-    return population_indices
+    pop_size = fitness_values.shape[0]
+    fronts = []
+    dominating_counts = np.zeros(pop_size, dtype=int)
+    dominated_indices = [[] for _ in range(pop_size)]
+
+    for i in range(pop_size):
+        for j in range(i + 1, pop_size):
+            if all(fitness_values[j] >= fitness_values[i]):
+                dominating_counts[i] += 1
+                dominated_indices[j].append(i)
+            elif all(fitness_values[i] >= fitness_values[j]):
+                dominating_counts[j] += 1
+                dominated_indices[i].append(j)
+
+    current_front = np.where(dominating_counts == 0)[0]
+    while current_front.size > 0:
+        fronts.append(current_front)
+        next_front = []
+        for i in current_front:
+            for j in dominated_indices[i]:
+                dominating_counts[j] -= 1
+                if dominating_counts[j] == 0:
+                    next_front.append(j)
+        current_front = np.array(next_front)
+
+    return fronts
+
+
+def crowding_distance(fitness_values):
+    """
+    Calculate crowding distance for each individual in the population.
+
+    Parameters
+    ----------
+    fitness_values : ndarray, shape (N, num_fitness_functions)
+        Fitness values of the population.
+
+    Returns
+    -------
+    crowding_distances : ndarray, shape (N,)
+        Crowding distances for each individual.
+    """
+    pop_size = len(fitness_values)
+    num_objectives = fitness_values.shape[1]
+    crowding_distances = np.zeros(pop_size)
+
+    for obj_index in range(num_objectives):
+        sorted_indices = np.argsort(fitness_values[:, obj_index])
+        crowding_distances[sorted_indices[0]] = np.inf
+        crowding_distances[sorted_indices[-1]] = np.inf
+        for i in range(1, pop_size - 1):
+            crowding_distances[sorted_indices[i]] += (fitness_values[sorted_indices[i + 1], obj_index]
+                                                      - fitness_values[sorted_indices[i - 1], obj_index])
+
+    return crowding_distances
+
 
 def select_population(combined_population, population_indices, pop_size):
     """
-    Select the best individuals from the combined population based on non-dominated sorting and crowding distance
-    to maintain diversity.
+    Select the best individuals from the combined population based on the non-dominated sorting results and crowding distance to maintain diversity.
+
+    Parameters
+    ----------
+    combined_population : ndarray, shape (N, d)
+        Combined population containing both parents and offspring.
+    population_indices : list of ndarrays
+        List of fronts, where each front contains the indices of individuals in that front.
+    pop_size : int
+        The size of the population.
+
+    Returns
+    -------
+    selected_population : ndarray, shape (pop_size, d)
+        Selected individuals from the combined population.
     """
-    raise NotImplementedError
-    return combined_population[:pop_size]
+    selected_population = []
+    remaining_space = pop_size
+    front_idx = 0
+
+    # Iterate over fronts until the selected population size reaches pop_size
+    while remaining_space > 0 and front_idx < len(population_indices):
+        current_front = population_indices[front_idx]
+        if len(current_front) <= remaining_space:
+            # If the current front can fit entirely into the selected population, add it
+            selected_population.extend(combined_population[current_front])
+            remaining_space -= len(current_front)
+        else:
+            # If the current front cannot fit entirely, select individuals based on crowding distance
+            crowding_distances = crowding_distance(combined_population[current_front])
+            # Select individuals with larger crowding distances first
+            sorted_indices = np.argsort(crowding_distances)[::-1]
+            selected_indices = current_front[sorted_indices[:remaining_space]]
+            selected_population.extend(combined_population[selected_indices])
+            remaining_space = 0
+        front_idx += 1
+
+    return np.array(selected_population)
