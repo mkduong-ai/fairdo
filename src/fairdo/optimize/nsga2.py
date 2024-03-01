@@ -85,16 +85,17 @@ def nsga2(fitness_functions, d, pop_size, num_generations,
         combined_fitness_values = np.concatenate((fitness_values, offspring_fitness_values))
         
         # Select the best individuals using non-dominated sorting and crowding distance
+        print(combined_fitness_values.shape)
         population_indices = non_dominated_sort(combined_fitness_values)
-        print('population indices', population_indices)
+        # print('population indices', population_indices)
         selected_indices = select_indices(combined_fitness_values, population_indices, pop_size)
 
         # Update the population and fitness values
         population = combined_population[selected_indices]
         fitness_values = combined_fitness_values[selected_indices]
         
-        print('population', population)
-        print('fitness_value', fitness_values)
+        #print('population', population)
+        #print('fitness_value', fitness_values)
     
     # Return Pareto front
     pareto_front = population[population_indices[0]]
@@ -144,8 +145,8 @@ def non_dominated_sort(fitness_values):
     """
     pop_size = fitness_values.shape[0]
     fronts = []
-    dominating_counts = np.zeros(pop_size, dtype=int)
-    dominated_indices = [[] for _ in range(pop_size)]
+    dominating_counts2 = np.zeros(pop_size, dtype=int)
+    dominated_indices2 = [[] for _ in range(pop_size)]
 
     print(fitness_values.shape)
     # Calculate the dominating counts and the indices of individuals that are dominated by each individual
@@ -169,6 +170,7 @@ def non_dominated_sort(fitness_values):
                 dominating_counts[j] += 1
                 dominated_indices[i].append(j)
     
+    print(all(dominating_counts2 == dominating_counts))
     # print(dominating_counts)
     # print(dominated_indices)
 
@@ -185,7 +187,6 @@ def non_dominated_sort(fitness_values):
                     next_front.append(j)
         current_front = np.array(next_front)
 
-    print(fronts)
     return fronts
 
 
@@ -273,7 +274,7 @@ def select_indices(combined_fitness_values, population_indices, pop_size):
             selected_indices.extend(current_front[sorted_indices[:remaining_space]])
             remaining_space = 0
         front_idx += 1
-        print(selected_indices)
+        #print(selected_indices)
 
     return selected_indices
 

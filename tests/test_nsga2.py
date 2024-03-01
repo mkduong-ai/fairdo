@@ -27,9 +27,12 @@ fitness_functions = [function1, function2]
 
 # Run NSGA-II for each fitness function
 solutions = []
-for f in fitness_functions:
-    solution, _ = nsga2([f], d, pop_size, num_generations)
-    solutions.append(solution)
+#for f in fitness_functions:
+#    solution, _ = nsga2([f], d, pop_size, num_generations)
+#    solutions.append(solution)
+
+solution, _ = nsga2([function1, function2], d, pop_size, num_generations)
+
 
 # Plot the solutions
 plt.figure(figsize=(10, 5))
