@@ -68,12 +68,11 @@ def nsga2(fitness_functions, d, pop_size, num_generations,
     fitness_values = evaluate_population(fitness_functions, population)
     
     # Perform NSGA-II for the specified number of generations
-    for generation in range(num_generations):
+    for _ in range(num_generations):
         # Select parents
         parents, _ = selection(population, fitness_values)
         # Perform crossover
-        num_offspring = pop_size - parents.shape[0]
-        offspring = crossover(parents, num_offspring)
+        offspring = crossover(parents, pop_size)
         # Perform mutation
         offspring = mutation(offspring)
         
@@ -86,12 +85,17 @@ def nsga2(fitness_functions, d, pop_size, num_generations,
         
         # Select the best individuals using non-dominated sorting and crowding distance
         population_indices = non_dominated_sort(combined_fitness_values)
-        population = select_population(combined_population, population_indices, pop_size)
-        # TODO: prevent double calculation of fitness values
-        # fitness_values = select_population(combined_fitness_values, population_indices, pop_size)
+        selected_indices = select_indices(combined_fitness_values, population_indices, pop_size)
+
+        # Update the population and fitness values
+        population = combined_population[selected_indices]
+        fitness_values = combined_fitness_values[selected_indices]
     
-    # Find the best solution in the final population
-    # TODO: Return Pareto-Front
+    # Return Pareto front
+    pareto_front = population[population_indices[0]]
+    pareto_front_fitness = fitness_values[population_indices[0]]
+    
+    return pareto_front, pareto_front_fitness
     
 
 def evaluate_population(fitness_functions, population):
@@ -206,7 +210,48 @@ def non_dominated_sort_deprecated(fitness_values):
     return fronts
 
 
-def select_population(combined_population, population_indices, pop_size):
+def select_indices(combined_fitness_values, population_indices, pop_size):
+    """
+    Select the best individuals from the combined population based on the non-dominated sorting results and crowding distance to maintain diversity.
+
+    Parameters
+    ----------
+    combined_fitness_values : ndarray, shape (N, d)
+        Combined population containing both original population and offspring.
+    population_indices : list of ndarrays
+        List of fronts, where each front contains the indices of individuals in that front.
+    pop_size : int
+        The size of the population.
+
+    Returns
+    -------
+    selected_indices : list
+        Selected indices from the combined population.
+    """
+    selected_indices = []
+    remaining_space = pop_size
+    front_idx = 0
+
+    # Iterate over fronts until the selected population size reaches pop_size
+    while remaining_space > 0 and front_idx < len(population_indices):
+        current_front = population_indices[front_idx]
+        if len(current_front) <= remaining_space:
+            # If the current front can fit entirely into the selected population, add it
+            selected_indices.extend(current_front)
+            remaining_space -= len(current_front)
+        else:
+            # If the current front cannot fit entirely, select individuals based on crowding distance
+            crowding_distances = crowding_distance(combined_fitness_values[current_front])
+            # Select individuals with larger crowding distances first
+            sorted_indices = np.argsort(crowding_distances)[::-1]
+            selected_indices.extend(current_front[sorted_indices[:remaining_space]])
+            remaining_space = 0
+        front_idx += 1
+
+    return selected_indices
+
+
+def select_population_deprecated(combined_population, population_indices, pop_size):
     """
     Select the best individuals from the combined population based on the non-dominated sorting results and crowding distance to maintain diversity.
 
@@ -224,7 +269,7 @@ def select_population(combined_population, population_indices, pop_size):
     selected_population : ndarray, shape (pop_size, d)
         Selected individuals from the combined population.
     """
-    # TODO: Return Indexes
+    # TODO: Return Indexes. Make current front a list of indexes
     selected_population = []
     remaining_space = pop_size
     front_idx = 0
