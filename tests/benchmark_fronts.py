@@ -62,7 +62,7 @@ def benchmark(pop_size, num_objectives):
 
     # Benchmark optimized method
     start_time = time.time()
-    optimized_find_fronts(dominating_counts.copy(), [indices.copy() for indices in dominated_indices])
+    # optimized_find_fronts(dominating_counts.copy(), [indices.copy() for indices in dominated_indices])
     optimized_time = time.time() - start_time
 
     return original_time, optimized_time
