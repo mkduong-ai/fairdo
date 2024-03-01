@@ -15,7 +15,7 @@ sys.path.insert(0, os.path.abspath('../src/fairdo/'))
 project = 'fairdo'
 copyright = '2024, Manh Khoi Duong'
 author = 'Manh Khoi Duong'
-release = '0.1.5'
+release = '0.1.6'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

@@ -5,6 +5,7 @@ from fairdo.optimize.geneticoperators.selection import elitist_selection, tourna
 from fairdo.optimize.geneticoperators.crossover import onepoint_crossover, uniform_crossover, simulated_binary_crossover
 from fairdo.optimize.geneticoperators.mutation import fractional_flip_mutation, shuffle_mutation
 
+
 def nsga2(fitness_functions, d, pop_size, num_generations,
           initialization=random_initialization,
           selection=tournament_selection,
@@ -85,18 +86,22 @@ def nsga2(fitness_functions, d, pop_size, num_generations,
         
         # Select the best individuals using non-dominated sorting and crowding distance
         population_indices = non_dominated_sort(combined_fitness_values)
+        print('population indices', population_indices)
         selected_indices = select_indices(combined_fitness_values, population_indices, pop_size)
 
         # Update the population and fitness values
         population = combined_population[selected_indices]
         fitness_values = combined_fitness_values[selected_indices]
+        
+        print('population', population)
+        print('fitness_value', fitness_values)
     
     # Return Pareto front
     pareto_front = population[population_indices[0]]
     pareto_front_fitness = fitness_values[population_indices[0]]
     
     return pareto_front, pareto_front_fitness
-    
+
 
 def evaluate_population(fitness_functions, population):
     """
@@ -142,10 +147,30 @@ def non_dominated_sort(fitness_values):
     dominating_counts = np.zeros(pop_size, dtype=int)
     dominated_indices = [[] for _ in range(pop_size)]
 
+    print(fitness_values.shape)
     # Calculate the dominating counts and the indices of individuals that are dominated by each individual
     for i in range(pop_size):
         dominating_counts[i] = np.sum(np.all(fitness_values[i] <= fitness_values, axis=1)) - 1
         dominated_indices[i] = np.where(np.all(fitness_values[i] >= fitness_values, axis=1) & ~(np.arange(pop_size) == i))[0].tolist()
+
+    # print(dominating_counts)
+    # print(dominated_indices)
+
+    dominating_counts = np.zeros(pop_size, dtype=int)
+    dominated_indices = [[] for _ in range(pop_size)]
+
+    # Calculate the dominating counts and the indices of individuals that are dominated by each individual
+    for i in range(pop_size):
+        for j in range(i + 1, pop_size):
+            if all(fitness_values[j] >= fitness_values[i]):
+                dominating_counts[i] += 1
+                dominated_indices[j].append(i)
+            elif all(fitness_values[i] >= fitness_values[j]):
+                dominating_counts[j] += 1
+                dominated_indices[i].append(j)
+    
+    # print(dominating_counts)
+    # print(dominated_indices)
 
     # Find the first front
     current_front = np.where(dominating_counts == 0)[0]
@@ -160,6 +185,7 @@ def non_dominated_sort(fitness_values):
                     next_front.append(j)
         current_front = np.array(next_front)
 
+    print(fronts)
     return fronts
 
 
@@ -247,6 +273,7 @@ def select_indices(combined_fitness_values, population_indices, pop_size):
             selected_indices.extend(current_front[sorted_indices[:remaining_space]])
             remaining_space = 0
         front_idx += 1
+        print(selected_indices)
 
     return selected_indices
 
