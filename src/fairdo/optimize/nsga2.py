@@ -93,15 +93,10 @@ def nsga2(fitness_functions, d, pop_size, num_generations,
         # Update the population and fitness values
         population = combined_population[selected_indices]
         fitness_values = combined_fitness_values[selected_indices]
-        
-        #print('population', population)
-        #print('fitness_value', fitness_values)
     
     # Return Pareto front
     pareto_front = population[:len(fronts[0])]
     pareto_front_fitness = fitness_values[:len(fronts[0])]
-    
-    print(pareto_front_fitness)
 
     return pareto_front, pareto_front_fitness
 

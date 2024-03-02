@@ -31,7 +31,7 @@ solutions = []
 #    solution, _ = nsga2([f], d, pop_size, num_generations)
 #    solutions.append(solution)
 
-solution, _ = nsga2([function1, function2], d, pop_size, num_generations)
+solutions, _ = nsga2([function1, function2], d, pop_size, num_generations)
 
 
 # Plot the solutions
