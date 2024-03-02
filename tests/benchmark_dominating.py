@@ -9,10 +9,10 @@ def original_method(fitness_values):
 
     for i in range(pop_size):
         for j in range(i + 1, pop_size):
-            if all(fitness_values[j] >= fitness_values[i]):
+            if all(fitness_values[j] <= fitness_values[i]):
                 dominating_counts[i] += 1
                 dominated_indices[j].append(i)
-            elif all(fitness_values[i] >= fitness_values[j]):
+            elif all(fitness_values[i] <= fitness_values[j]):
                 dominating_counts[j] += 1
                 dominated_indices[i].append(j)
 
@@ -25,8 +25,8 @@ def numpy_method(fitness_values):
     dominated_indices = [[] for _ in range(pop_size)]
 
     for i in range(pop_size):
-        dominating_counts[i] = np.sum(np.all(fitness_values[i] <= fitness_values, axis=1)) - 1
-        dominated_indices[i] = np.where(np.all(fitness_values[i] >= fitness_values, axis=1) & ~(np.arange(pop_size) == i))[0].tolist()
+        dominating_counts[i] = np.sum(np.all(fitness_values[i] >= fitness_values, axis=1)) - 1
+        dominated_indices[i] = np.where(np.all(fitness_values[i] <= fitness_values, axis=1) & ~(np.arange(pop_size) == i))[0].tolist()
 
     return dominating_counts, dominated_indices
 
@@ -34,6 +34,11 @@ def numpy_method(fitness_values):
 def benchmark(pop_size, num_objectives):
     # Generate random fitness values
     fitness_values = np.random.rand(pop_size, num_objectives)
+    # fitness_values = np.array([[0, 4],
+    #                            [0, 4],
+    #                            [1, 1],
+    #                            [1, 1],
+    #                            ])
     # print(fitness_values)
 
     # Benchmark original method
@@ -48,6 +53,8 @@ def benchmark(pop_size, num_objectives):
     
     print(np.all(counts==counts2))
     print(np.all(indices==indices2))
+    print(counts)
+    print(counts2)
     
     return original_time, numpy_time
 

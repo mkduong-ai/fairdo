@@ -20,7 +20,7 @@ d = 1
 num_generations = 100
 
 # Define the population size
-pop_size = 25
+pop_size = 10
 
 # Define the fitness functions to optimize
 fitness_functions = [function1, function2]

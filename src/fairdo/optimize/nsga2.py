@@ -60,6 +60,8 @@ def nsga2(fitness_functions, d, pop_size, num_generations,
     ----------
     Deb, K., Pratap, A., Agarwal, S., & Meyarivan, T. (2002). A fast and elitist multiobjective genetic algorithm: NSGA-II.
     """
+    rng = np.random.default_rng()
+
     # Negate the fitness functions if not maximizing
 
     # Generate the initial population
@@ -67,16 +69,15 @@ def nsga2(fitness_functions, d, pop_size, num_generations,
     
     # Evaluate the fitness of each individual in the population
     fitness_values = evaluate_population(fitness_functions, population)
-    
+
     # Perform NSGA-II for the specified number of generations
     for _ in range(num_generations):
         # Select parents
-        parents, _ = selection(population, fitness_values)
+        parents = rng.choice(population, size=2, replace=False, axis=0)
         # Perform crossover
         offspring = crossover(parents, pop_size)
         # Perform mutation
         offspring = mutation(offspring)
-        
         # Evaluate the fitness of the offspring
         offspring_fitness_values = evaluate_population(fitness_functions, offspring)
         
@@ -85,10 +86,9 @@ def nsga2(fitness_functions, d, pop_size, num_generations,
         combined_fitness_values = np.concatenate((fitness_values, offspring_fitness_values))
         
         # Select the best individuals using non-dominated sorting and crowding distance
-        print(combined_fitness_values.shape)
-        population_indices = non_dominated_sort(combined_fitness_values)
+        fronts = non_dominated_sort(combined_fitness_values)
         # print('population indices', population_indices)
-        selected_indices = select_indices(combined_fitness_values, population_indices, pop_size)
+        selected_indices = selection_indices(combined_fitness_values, fronts, pop_size)
 
         # Update the population and fitness values
         population = combined_population[selected_indices]
@@ -98,9 +98,11 @@ def nsga2(fitness_functions, d, pop_size, num_generations,
         #print('fitness_value', fitness_values)
     
     # Return Pareto front
-    pareto_front = population[population_indices[0]]
-    pareto_front_fitness = fitness_values[population_indices[0]]
+    pareto_front = population[:len(fronts[0])]
+    pareto_front_fitness = fitness_values[:len(fronts[0])]
     
+    print(pareto_front_fitness)
+
     return pareto_front, pareto_front_fitness
 
 
@@ -143,37 +145,9 @@ def non_dominated_sort(fitness_values):
     fronts : list of ndarrays
         List of fronts, where each front contains the indices of individuals in that front.
     """
-    pop_size = fitness_values.shape[0]
+    dominating_counts, dominated_indices = dom_counts_indices(fitness_values)
+
     fronts = []
-    dominating_counts2 = np.zeros(pop_size, dtype=int)
-    dominated_indices2 = [[] for _ in range(pop_size)]
-
-    print(fitness_values.shape)
-    # Calculate the dominating counts and the indices of individuals that are dominated by each individual
-    for i in range(pop_size):
-        dominating_counts[i] = np.sum(np.all(fitness_values[i] <= fitness_values, axis=1)) - 1
-        dominated_indices[i] = np.where(np.all(fitness_values[i] >= fitness_values, axis=1) & ~(np.arange(pop_size) == i))[0].tolist()
-
-    # print(dominating_counts)
-    # print(dominated_indices)
-
-    dominating_counts = np.zeros(pop_size, dtype=int)
-    dominated_indices = [[] for _ in range(pop_size)]
-
-    # Calculate the dominating counts and the indices of individuals that are dominated by each individual
-    for i in range(pop_size):
-        for j in range(i + 1, pop_size):
-            if all(fitness_values[j] >= fitness_values[i]):
-                dominating_counts[i] += 1
-                dominated_indices[j].append(i)
-            elif all(fitness_values[i] >= fitness_values[j]):
-                dominating_counts[j] += 1
-                dominated_indices[i].append(j)
-    
-    print(all(dominating_counts2 == dominating_counts))
-    # print(dominating_counts)
-    # print(dominated_indices)
-
     # Find the first front
     current_front = np.where(dominating_counts == 0)[0]
     # Iterate over the fronts
@@ -190,10 +164,8 @@ def non_dominated_sort(fitness_values):
     return fronts
 
 
-def non_dominated_sort_deprecated(fitness_values):
+def dom_counts_indices(fitness_values):
     """
-    Perform non-dominated sorting on the given fitness values.
-
     Parameters
     ----------
     fitness_values : ndarray, shape (pop_size, num_fitness_functions)
@@ -201,43 +173,54 @@ def non_dominated_sort_deprecated(fitness_values):
 
     Returns
     -------
-    fronts : list of ndarrays
-        List of fronts, where each front contains the indices of individuals in that front.
+    dominating_counts : ndarray, shape (pop_size,)
+        The number of individuals that dominate each individual.
+    dominated_indices : list of ndarrays
+        The indices of individuals that are dominated by each individual.
     """
-    # Remark: This implementation is not efficient and can be improved
-    # TODO: Already maximized?
     pop_size = fitness_values.shape[0]
-    fronts = []
     dominating_counts = np.zeros(pop_size, dtype=int)
     dominated_indices = [[] for _ in range(pop_size)]
 
-    # Calculate the dominating counts and the indices of individuals that are dominated by each individual
     for i in range(pop_size):
         for j in range(i + 1, pop_size):
-            if all(fitness_values[j] >= fitness_values[i]):
+            if all(fitness_values[j] <= fitness_values[i]):
                 dominating_counts[i] += 1
                 dominated_indices[j].append(i)
-            elif all(fitness_values[i] >= fitness_values[j]):
+            elif all(fitness_values[i] <= fitness_values[j]):
                 dominating_counts[j] += 1
                 dominated_indices[i].append(j)
 
-    # Find the first front
-    current_front = np.where(dominating_counts == 0)[0]
-    # Iterate over the fronts
-    while current_front.size > 0:
-        fronts.append(current_front)
-        next_front = []
-        for i in current_front:
-            for j in dominated_indices[i]:
-                dominating_counts[j] -= 1
-                if dominating_counts[j] == 0:
-                    next_front.append(j)
-        current_front = np.array(next_front)
-
-    return fronts
+    return dominating_counts, dominated_indices
 
 
-def select_indices(combined_fitness_values, population_indices, pop_size):
+def dom_counts_indices_fast(fitness_values):
+    """
+    TODO: Two solutions can dominate each other. This is not handled in the current implementation.
+    Parameters
+    ----------
+    fitness_values : ndarray, shape (pop_size, num_fitness_functions)
+        The fitness values of each individual in the population for each fitness function.
+
+    Returns
+    -------
+    dominating_counts : ndarray, shape (pop_size,)
+        The number of individuals that dominate each individual.
+    dominated_indices : list of ndarrays
+        The indices of individuals that are dominated by each individual.
+    """
+    pop_size = fitness_values.shape[0]
+    dominating_counts = np.zeros(pop_size, dtype=int)
+    dominated_indices = [[] for _ in range(pop_size)]
+
+    for i in range(pop_size):
+        dominating_counts[i] = np.sum(np.all(fitness_values[i] >= fitness_values, axis=1)) - 1
+        dominated_indices[i] = np.where(np.all(fitness_values[i] <= fitness_values, axis=1) & ~(np.arange(pop_size) == i))[0].tolist()
+
+    return dominating_counts, dominated_indices
+
+
+def selection_indices(combined_fitness_values, fronts, pop_size):
     """
     Select the best individuals from the combined population based on the non-dominated sorting results and crowding distance to maintain diversity.
 
@@ -245,7 +228,7 @@ def select_indices(combined_fitness_values, population_indices, pop_size):
     ----------
     combined_fitness_values : ndarray, shape (N, d)
         Combined population containing both original population and offspring.
-    population_indices : list of ndarrays
+    fronts : list of ndarrays
         List of fronts, where each front contains the indices of individuals in that front.
     pop_size : int
         The size of the population.
@@ -260,8 +243,8 @@ def select_indices(combined_fitness_values, population_indices, pop_size):
     front_idx = 0
 
     # Iterate over fronts until the selected population size reaches pop_size
-    while remaining_space > 0 and front_idx < len(population_indices):
-        current_front = population_indices[front_idx]
+    while remaining_space > 0 and front_idx < len(fronts):
+        current_front = fronts[front_idx]
         if len(current_front) <= remaining_space:
             # If the current front can fit entirely into the selected population, add it
             selected_indices.extend(current_front)
@@ -277,49 +260,6 @@ def select_indices(combined_fitness_values, population_indices, pop_size):
         #print(selected_indices)
 
     return selected_indices
-
-
-def select_population_deprecated(combined_population, population_indices, pop_size):
-    """
-    Select the best individuals from the combined population based on the non-dominated sorting results and crowding distance to maintain diversity.
-
-    Parameters
-    ----------
-    combined_population : ndarray, shape (N, d)
-        Combined population containing both parents and offspring.
-    population_indices : list of ndarrays
-        List of fronts, where each front contains the indices of individuals in that front.
-    pop_size : int
-        The size of the population.
-
-    Returns
-    -------
-    selected_population : ndarray, shape (pop_size, d)
-        Selected individuals from the combined population.
-    """
-    # TODO: Return Indexes. Make current front a list of indexes
-    selected_population = []
-    remaining_space = pop_size
-    front_idx = 0
-
-    # Iterate over fronts until the selected population size reaches pop_size
-    while remaining_space > 0 and front_idx < len(population_indices):
-        current_front = population_indices[front_idx]
-        if len(current_front) <= remaining_space:
-            # If the current front can fit entirely into the selected population, add it
-            selected_population.extend(combined_population[current_front])
-            remaining_space -= len(current_front)
-        else:
-            # If the current front cannot fit entirely, select individuals based on crowding distance
-            crowding_distances = crowding_distance(combined_population[current_front])
-            # Select individuals with larger crowding distances first
-            sorted_indices = np.argsort(crowding_distances)[::-1]
-            selected_indices = current_front[sorted_indices[:remaining_space]]
-            selected_population.extend(combined_population[selected_indices])
-            remaining_space = 0
-        front_idx += 1
-
-    return np.array(selected_population)
 
 
 def crowding_distance(fitness_values):
