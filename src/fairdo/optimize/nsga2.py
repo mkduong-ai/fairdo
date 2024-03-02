@@ -8,7 +8,6 @@ from fairdo.optimize.geneticoperators.mutation import fractional_flip_mutation, 
 
 def nsga2(fitness_functions, d, pop_size, num_generations,
           initialization=random_initialization,
-          selection=tournament_selection,
           crossover=uniform_crossover,
           mutation=shuffle_mutation,
           maximize=False,
@@ -19,6 +18,8 @@ def nsga2(fitness_functions, d, pop_size, num_generations,
 
     NSGA-II maintains a population of solutions and uses non-dominated sorting and crowding distance to select
     the best solutions.
+
+    Fitness functions are minimized by default.
 
     Parameters
     ----------
@@ -260,6 +261,8 @@ def selection_indices(combined_fitness_values, fronts, pop_size):
 def crowding_distance(fitness_values):
     """
     Calculate crowding distance for each individual in the population.
+    Normalization skipped because it is not necessary for selection
+    and risk of division by zero.
 
     Parameters
     ----------
@@ -271,14 +274,14 @@ def crowding_distance(fitness_values):
     crowding_distances : ndarray, shape (N,)
         Crowding distances for each individual.
     """
-    pop_size = len(fitness_values)
-    num_objectives = fitness_values.shape[1]
+    pop_size, num_objectives = fitness_values.shape
     crowding_distances = np.zeros(pop_size)
 
     for obj_index in range(num_objectives):
         sorted_indices = np.argsort(fitness_values[:, obj_index])
         crowding_distances[sorted_indices[0]] = np.inf
         crowding_distances[sorted_indices[-1]] = np.inf
+
         for i in range(1, pop_size - 1):
             crowding_distances[sorted_indices[i]] += (fitness_values[sorted_indices[i + 1], obj_index]
                                                       - fitness_values[sorted_indices[i - 1], obj_index])
