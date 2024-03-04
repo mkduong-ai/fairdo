@@ -38,7 +38,7 @@ from fairdo.optimize.geneticoperators.mutation import fractional_flip_mutation, 
 from fairdo.metrics.penalty import relative_difference_penalty
 
 
-def genetic_algorithm_constraint(f, d, pop_size, num_generations,
+def genetic_algorithm(f, d, pop_size, num_generations,
                                  initialization=random_initialization,
                                  selection=elitist_selection,
                                  crossover=uniform_crossover,
@@ -148,77 +148,6 @@ def genetic_algorithm_constraint(f, d, pop_size, num_generations,
         # negate the fitness back to its original form
         best_fitness = -best_fitness
     return best_population, best_fitness
-
-
-def genetic_algorithm(f, d, pop_size, num_generations,
-                      initialization=random_initialization,
-                      selection=elitist_selection,
-                      crossover=uniform_crossover,
-                      mutation=fractional_flip_mutation,
-                      maximize=False,
-                      tol=1e-6,
-                      patience=50):
-    """
-    Perform a genetic algorithm. The genetic algorithm is used to maximize the given fitness function.
-    It consists of the following steps which are repeated for a specified number of generations:
-
-    1. Generate an initial population of binary vectors.
-    2. Evaluate the fitness of each vector in the population.
-    3. Select the best individuals to be parents. (Selection)
-    4. Create offspring by performing crossover on the parents. (Crossover)
-    5. Mutate the offspring. (Mutation)
-
-    Parameters
-    ----------
-    f: callable
-        The fitness function to optimize.
-    d: int
-        The number of dimensions.
-    pop_size: int
-        The size of the population.
-    num_generations: int
-        The number of generations.
-    initialization: callable
-        The function to initialize the population.
-    selection: callable
-        The function to select the parents from the population.
-    crossover: callable
-        The function to perform the crossover operation.
-    mutation: callable
-        The function to perform the mutation operation.
-    maximize: bool, optional
-        Whether to maximize or minimize the fitness function.
-    tol: float, optional
-        The tolerance for early stopping. If the best solution found is within tol of the previous best solution,
-        then the algorithm stops.
-    patience: int, optional
-        The number of generations to wait before early stopping.
-
-    Returns
-    -------
-    best_solution: ndarray
-        The best solution found by the algorithm.
-    best_fitness: float
-        The fitness of the best solution found by the algorithm.
-
-    Notes
-    -----
-    The genetic algorithm is used to maximize the given fitness function.
-    To avoid having to rewrite the selection, crossover, and mutation functions to work with minimization problems,
-    the fitness function is negated if we are minimizing.
-    The fitness function must map the binary vector to a positive value, i.e.,
-    :math:`f: \{0, 1\}^d \rightarrow \mathbb{R}^+`.
-    """
-    return genetic_algorithm_constraint(f=f, d=d,
-                                        pop_size=pop_size,
-                                        num_generations=num_generations,
-                                        initialization=initialization,
-                                        selection=selection,
-                                        crossover=crossover,
-                                        mutation=mutation,
-                                        maximize=maximize,
-                                        tol=tol,
-                                        patience=patience)
 
 
 def evaluate_individual(args):
