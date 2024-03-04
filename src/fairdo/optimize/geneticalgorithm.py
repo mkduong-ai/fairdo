@@ -38,7 +38,7 @@ from fairdo.optimize.geneticoperators.mutation import fractional_flip_mutation, 
 from fairdo.metrics.penalty import relative_difference_penalty
 
 
-def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
+def genetic_algorithm_constraint(f, d, pop_size, num_generations,
                                  initialization=random_initialization,
                                  selection=elitist_selection,
                                  crossover=uniform_crossover,
@@ -65,8 +65,6 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
         The fitness function to minimize.
     d: int
         The number of dimensions.
-    n: int
-        The constraint value.
     pop_size: int
         The size of the population.
     num_generations: int
@@ -110,7 +108,7 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
     # Generate the initial population
     population = initialization(pop_size=pop_size, d=d)
     # Evaluate the function for each vector in the population
-    fitness = evaluate_population(f, n, population, penalty_function=relative_difference_penalty)
+    fitness = evaluate_population(f, population)
     best_idx = np.argmax(fitness)
     best_fitness = fitness[best_idx]
     best_population = population[best_idx]
@@ -126,7 +124,7 @@ def genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
         offspring = mutation(offspring)
 
         # Evaluate the fitness of the offspring
-        offspring_fitness = evaluate_population(f, n, offspring, penalty_function=relative_difference_penalty)
+        offspring_fitness = evaluate_population(f, offspring)
 
         # Create the new population (allow the parents to be part of the next generation)
         population = np.concatenate((parents, offspring))
@@ -211,7 +209,7 @@ def genetic_algorithm(f, d, pop_size, num_generations,
     The fitness function must map the binary vector to a positive value, i.e.,
     :math:`f: \{0, 1\}^d \rightarrow \mathbb{R}^+`.
     """
-    return genetic_algorithm_constraint(f=f, d=d, n=0,
+    return genetic_algorithm_constraint(f=f, d=d,
                                         pop_size=pop_size,
                                         num_generations=num_generations,
                                         initialization=initialization,
@@ -231,21 +229,19 @@ def evaluate_individual(args):
     Parameters
     ----------
     args: tuple
-        The arguments to pass to the function. The arguments are (f, n, individual, penalty_function).
+        The arguments to pass to the function. The arguments are (f, individual).
 
     Returns
     -------
     fitness: float
         The fitness of the individual.
     """
-    f, n, individual, penalty_function = args
+    f, individual = args
     fitness = f(individual)
-    if n > 0:
-        fitness += penalty_function(individual, n)
     return fitness
 
 
-def evaluate_population_single_cpu(f, n, population, penalty_function=relative_difference_penalty):
+def evaluate_population_single_cpu(f, population):
     """
     Calculates the fitness of each individual in a population. The fitness is the value of the fitness function
     plus a penalty for individuals that do not satisfy the size constraint.
@@ -258,8 +254,6 @@ def evaluate_population_single_cpu(f, n, population, penalty_function=relative_d
         The constraint value.
     population: ndarray, shape (pop_size, d)
         The population of vectors to evaluate.
-    penalty_function: callable, optional
-        The penalty function to apply to individuals that do not satisfy the size constraint.
 
     Returns
     -------
@@ -268,15 +262,11 @@ def evaluate_population_single_cpu(f, n, population, penalty_function=relative_d
     """
     # fallback to single process execution if multiprocessing fails
     fitness = np.apply_along_axis(f, axis=1, arr=population)
-    if n > 0:
-        # add absolute_difference_penalty to the fitness of all individuals
-        # that do not satisfy the size constraint
-        fitness += np.apply_along_axis(lambda x: penalty_function(x, n), axis=1, arr=population)
 
     return fitness
 
 
-def evaluate_population(f, n, population, penalty_function=relative_difference_penalty):
+def evaluate_population(f, population):
     """
     Calculates the fitness of each individual in a population. The fitness is the value of the fitness function
     plus a penalty for individuals that do not satisfy the size constraint.
@@ -285,12 +275,8 @@ def evaluate_population(f, n, population, penalty_function=relative_difference_p
     ----------
     f: callable
         The fitness function to evaluate.
-    n: int
-        The constraint value.
     population: ndarray, shape (pop_size, d)
         The population of vectors to evaluate.
-    penalty_function: callable, optional
-        The penalty function to apply to individuals that do not satisfy the size constraint.
 
     Returns
     -------
@@ -302,12 +288,12 @@ def evaluate_population(f, n, population, penalty_function=relative_difference_p
         if mp.cpu_count() > 1 and population.shape[0] >= 200:
             # use multiprocessing to speed up the evaluation
             with mp.Pool() as pool:
-                fitness = pool.map(evaluate_individual, [(f, n, individual, penalty_function) for individual in population])
+                fitness = pool.map(evaluate_individual, [(f, individual) for individual in population])
 
             return np.array(fitness)
         else:
-            return evaluate_population_single_cpu(f, n, population, penalty_function)
+            return evaluate_population_single_cpu(f, population)
     except Exception as e:
         print(f"Multiprocessing pool failed with error: {e}")
         print("Falling back to single process execution")
-        return evaluate_population_single_cpu(f, n, population, penalty_function)
+        return evaluate_population_single_cpu(f, population)
