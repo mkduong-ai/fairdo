@@ -84,7 +84,7 @@ def nsga2(fitness_functions, d, pop_size, num_generations,
         
         # Select the best individuals using non-dominated sorting and crowding distance
         fronts = non_dominated_sort(combined_fitness_values)
-        # Fit the first fronts to the population size
+        # Fit the first fronts to the population size. The front that doesnt fit will be selected based on crowding distance
         selected_indices = selection_indices(combined_fitness_values, fronts, pop_size)
 
         # Update the population and fitness values
