@@ -5,13 +5,13 @@ import time
 from fairdo.optimize import nsga2
 
 def function3(x):
-    return 1.5*np.sum(x) * np.random.rand()
+    return np.sum(x) * np.random.rand()
 
 def function4(x):
     return -np.sum(x) * np.random.rand()
 
 # Define the number of dimensions
-d = 10000
+d = 100
 
 # Define the number of generations
 num_generations = 200
