@@ -140,14 +140,10 @@ def diverse_mutation(offspring, mutation_rate=0.05):
     mutated_proportion_ones = np.clip(mutated_proportion_ones, 0, 1)  # Ensure values are within [0, 1] range
     
     # Generate mutated offspring
-    mutated_offspring = np.zeros_like(offspring)
-    for i in range(offspring.shape[0]):
-        for j in range(offspring.shape[1]):
-            mutation_prob = mutation_rate * mutated_proportion_ones[i]
-            if np.random.rand() < mutation_prob:
-                mutated_offspring[i, j] = 1 - offspring[i, j]  # Flip the bit with mutation probability
-            else:
-                mutated_offspring[i, j] = offspring[i, j]  # Keep the bit unchanged
+    mutation_probs = mutation_rate * mutated_proportion_ones
+    mutated_mask = np.random.rand(*offspring.shape) < mutation_probs[:, np.newaxis]
+    mutated_offspring = np.where(mutated_mask, 1 - offspring, offspring)
+    
     return mutated_offspring
 
 

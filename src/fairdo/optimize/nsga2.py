@@ -10,9 +10,7 @@ def nsga2(fitness_functions, d, pop_size, num_generations,
           initialization=random_initialization,
           crossover=uniform_crossover,
           mutation=shuffle_mutation,
-          maximize=False,
-          tol=1e-6,
-          patience=50):
+          return_all_fronts=False):
     """
     Perform NSGA-II (Non-dominated Sorting Genetic Algorithm II) for multi-objective optimization.
 
@@ -39,19 +37,19 @@ def nsga2(fitness_functions, d, pop_size, num_generations,
         The function to perform crossover. Default is simulated_binary_crossover.
     mutation : callable, optional
         The function to perform mutation. Default is polynomial_mutation.
-    maximize : bool, optional
-        Whether to maximize or minimize the fitness functions. Default is False.
-    tol : float, optional
-        The tolerance for early stopping. Default is 1e-6.
-    patience : int, optional
-        The number of generations to wait before early stopping. Default is 50.
+    return_all_fronts : bool, optional
+        Whether to return all fronts. Default is False.
+        If True, the `combined population` and `fitness values` are returned along with the `fronts`.
 
     Returns
     -------
-    best_population : ndarray, shape (d,)
+    population : ndarray, shape (pop_size, d)
         The best solution found by NSGA-II.
-    best_fitness : ndarray, shape (num_fitness_functions,)
+    fitness_values : ndarray, shape (pop_size, num_fitness_functions)
         The fitness values of the best solution found by NSGA-II.
+    (fronts : list of ndarrays
+        List of fronts, where each front contains the indices of individuals in that front.
+        Only returned if return_all_fronts is True.)
 
     Notes
     -----
@@ -62,8 +60,6 @@ def nsga2(fitness_functions, d, pop_size, num_generations,
     Deb, K., Pratap, A., Agarwal, S., & Meyarivan, T. (2002). A fast and elitist multiobjective genetic algorithm: NSGA-II.
     """
     rng = np.random.default_rng()
-
-    # Negate the fitness functions if not maximizing
 
     # Generate the initial population
     population = initialization(pop_size=pop_size, d=d)
@@ -88,19 +84,17 @@ def nsga2(fitness_functions, d, pop_size, num_generations,
         
         # Select the best individuals using non-dominated sorting and crowding distance
         fronts = non_dominated_sort(combined_fitness_values)
-        # print('population indices', population_indices)
+        # Fit the first fronts to the population size
         selected_indices = selection_indices(combined_fitness_values, fronts, pop_size)
 
         # Update the population and fitness values
         population = combined_population[selected_indices]
         fitness_values = combined_fitness_values[selected_indices]
     
-    # Return Pareto front
-    pareto_front = population[:len(fronts[0])]
-    pareto_front_fitness = fitness_values[:len(fronts[0])]
-
-    return pareto_front, pareto_front_fitness
-
+    if return_all_fronts is False:
+        return combined_population[fronts[0]], combined_fitness_values[fronts[0]]
+    else:
+        return combined_population, combined_fitness_values, fronts
 
 def evaluate_population(fitness_functions, population):
     """
