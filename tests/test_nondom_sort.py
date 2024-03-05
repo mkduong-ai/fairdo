@@ -28,16 +28,18 @@ def benchmark(func, repeats=10):
 
 
 def test(pop_size, num_objectives):
+    repeats = 5
+
     # Generate random fitness values
     fitness_values = np.random.rand(pop_size, num_objectives)
     fitness_values[0, :] = [0, 0]
     fitness_values[1, :] = [0, 0]
 
-    time = benchmark(lambda: dom_counts_indices(fitness_values), repeats=10)
-    time_broadcast = benchmark(lambda: dom_counts_indices_fast(fitness_values), repeats=10)
+    time = benchmark(lambda: dom_counts_indices(fitness_values), repeats=repeats)
+    time_broadcast = benchmark(lambda: dom_counts_indices_fast(fitness_values), repeats=repeats)
 
-    print(f"Average execution time over 10 runs: {time:.4f} seconds")
-    print(f"Average execution time over 10 runs (broadcast): {time_broadcast:.4f} seconds")
+    print(f"Average execution time over {repeats} runs: {time:.4f} seconds")
+    print(f"Average execution time over {repeats} runs (broadcast): {time_broadcast:.4f} seconds")
     print(f"Speedup: {time / time_broadcast:.2f}")
 
 def test2(pop_size, num_objectives):
@@ -55,6 +57,6 @@ def test2(pop_size, num_objectives):
     print(dom_list_broadcast)
 
 # Main
-pop_size = 500
+pop_size = 1000
 num_objectives = 2
 test(pop_size, num_objectives)
