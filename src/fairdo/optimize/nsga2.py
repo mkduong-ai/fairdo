@@ -1,13 +1,13 @@
 import numpy as np
 
-from fairdo.optimize.geneticoperators.initialization import random_initialization
+from fairdo.optimize.geneticoperators.initialization import random_initialization, variable_probability_initialization
 from fairdo.optimize.geneticoperators.selection import elitist_selection, tournament_selection
 from fairdo.optimize.geneticoperators.crossover import onepoint_crossover, uniform_crossover, simulated_binary_crossover
 from fairdo.optimize.geneticoperators.mutation import fractional_flip_mutation, shuffle_mutation
 
 
 def nsga2(fitness_functions, d, pop_size, num_generations,
-          initialization=random_initialization,
+          initialization=variable_probability_initialization,
           crossover=uniform_crossover,
           mutation=shuffle_mutation,
           return_all_fronts=False):
@@ -65,16 +65,17 @@ def nsga2(fitness_functions, d, pop_size, num_generations,
     population = initialization(pop_size=pop_size, d=d)
     
     # Evaluate the fitness of each individual in the population
-    fitness_values = evaluate_population(fitness_functions, population)
+    fitness_values = evaluate_population(fitness_functions=fitness_functions,
+                                         population=population)
 
     # Perform NSGA-II for the specified number of generations
     for _ in range(num_generations):
         # Select parents
         parents = rng.choice(population, size=2, replace=False, axis=0)
         # Perform crossover
-        offspring = crossover(parents, pop_size)
+        offspring = crossover(parents=parents, num_offspring=pop_size)
         # Perform mutation
-        offspring = mutation(offspring)
+        offspring = mutation(offspring=offspring)
         # Evaluate the fitness of the offspring
         offspring_fitness_values = evaluate_population(fitness_functions, offspring)
         
@@ -135,7 +136,7 @@ def non_dominated_sort(fitness_values):
     fronts : list of ndarrays
         List of fronts, where each front contains the indices of individuals in that front.
     """
-    dominating_counts, dominated_indices = dom_counts_indices(fitness_values)
+    dominating_counts, dominated_indices = dom_counts_indices_fast(fitness_values)
 
     fronts = []
     # Find the first front
@@ -156,6 +157,8 @@ def non_dominated_sort(fitness_values):
 
 def dom_counts_indices(fitness_values):
     """
+    Calculates the number of individuals that dominate each individual and the indices of individuals that are dominated by each individual.
+
     Parameters
     ----------
     fitness_values : ndarray, shape (pop_size, num_fitness_functions)
@@ -165,8 +168,10 @@ def dom_counts_indices(fitness_values):
     -------
     dominating_counts : ndarray, shape (pop_size,)
         The number of individuals that dominate each individual.
+        i-th element of the array is the number of individuals that dominate the i-th individual.
     dominated_indices : list of ndarrays
         The indices of individuals that are dominated by each individual.
+        i-th element of the list is an array containing the indices of individuals that are dominated by the i-th individual.
     """
     pop_size = fitness_values.shape[0]
     dominating_counts = np.zeros(pop_size, dtype=int)
@@ -186,7 +191,9 @@ def dom_counts_indices(fitness_values):
 
 def dom_counts_indices_fast(fitness_values):
     """
-    TODO: Two solutions can dominate each other. This is not handled in the current implementation.
+    Calculates the number of individuals that dominate each individual and the indices of individuals that are dominated by each individual.
+    Faster implementation using broadcasting.
+    
     Parameters
     ----------
     fitness_values : ndarray, shape (pop_size, num_fitness_functions)
@@ -198,14 +205,20 @@ def dom_counts_indices_fast(fitness_values):
         The number of individuals that dominate each individual.
     dominated_indices : list of ndarrays
         The indices of individuals that are dominated by each individual.
+    
+    Notes
+    -----
+    This function uses broadcasting to compare all pairs of individuals in the population. The result is a significant speedup compared to the non-broadcasting implementation.
+    `dominating_counts` differs from the original implementation.
+    The original implementation counts equal fitness values as dominating, while this implementation does not.
     """
     pop_size = fitness_values.shape[0]
     dominating_counts = np.zeros(pop_size, dtype=int)
     dominated_indices = [[] for _ in range(pop_size)]
 
     for i in range(pop_size):
-        dominating_counts[i] = np.sum(np.all(fitness_values[i] >= fitness_values, axis=1)) - 1
-        dominated_indices[i] = np.where(np.all(fitness_values[i] <= fitness_values, axis=1) & ~(np.arange(pop_size) == i))[0].tolist()
+        dominating_counts[i] = np.sum(np.all(fitness_values[i] >= fitness_values, axis=1) & ~np.all(fitness_values[i] == fitness_values, axis=1))
+        dominated_indices[i] = np.where(np.all(fitness_values[i] <= fitness_values, axis=1) & ~np.all(fitness_values[i] == fitness_values, axis=1))[0]
 
     return dominating_counts, dominated_indices
 
@@ -247,7 +260,6 @@ def selection_indices(combined_fitness_values, fronts, pop_size):
             selected_indices.extend(current_front[sorted_indices[:remaining_space]])
             remaining_space = 0
         front_idx += 1
-        #print(selected_indices)
 
     return selected_indices
 
@@ -255,8 +267,6 @@ def selection_indices(combined_fitness_values, fronts, pop_size):
 def crowding_distance(fitness_values):
     """
     Calculate crowding distance for each individual in the population.
-    Normalization skipped because it is not necessary for selection
-    and risk of division by zero.
 
     Parameters
     ----------
@@ -272,12 +282,19 @@ def crowding_distance(fitness_values):
     crowding_distances = np.zeros(pop_size)
 
     for obj_index in range(num_objectives):
+        # Sort the fitness values based on the current objective in ascending order. Best values first.
         sorted_indices = np.argsort(fitness_values[:, obj_index])
         crowding_distances[sorted_indices[0]] = np.inf
         crowding_distances[sorted_indices[-1]] = np.inf
 
+        f_max = fitness_values[sorted_indices[-1], obj_index]
+        f_min = fitness_values[sorted_indices[0], obj_index]
+
+        if f_max == f_min:
+            continue
+
+        # Crowding distance is the sum of the distances to the previous and next individuals. It geometrically describes the sum of the lengths of a cuboid.
         for i in range(1, pop_size - 1):
             crowding_distances[sorted_indices[i]] += (fitness_values[sorted_indices[i + 1], obj_index]
-                                                      - fitness_values[sorted_indices[i - 1], obj_index])
-
+                                                      - fitness_values[sorted_indices[i - 1], obj_index])/ (f_max - f_min)
     return crowding_distances

@@ -1,57 +1,60 @@
 import numpy as np
+import time
+from fairdo.optimize.nsga2 import dom_counts_indices, dom_counts_indices_fast
 
-
-def non_dominated_sort(fitness_values):
+def benchmark(func, repeats=10):
     """
-    Perform non-dominated sorting on the given fitness values.
+    Benchmark the execution time of a function.
 
     Parameters
     ----------
-    fitness_values : ndarray, shape (pop_size, num_fitness_functions)
-        The fitness values of each individual in the population for each fitness function.
+    func: callable
+        The function to benchmark.
+    repeats: int, optional
+        The number of times to repeat the benchmark.
 
     Returns
     -------
-    fronts : list of ndarrays
-        List of fronts, where each front contains the indices of individuals in that front.
+    float
+        The average execution time in seconds.
     """
-    # TODO: Sign reversal for maximization
-    pop_size = fitness_values.shape[0]
-    fronts = []
-    dominating_counts = np.zeros(pop_size, dtype=int)
-    dominated_indices = [[] for _ in range(pop_size)]
-
-    # Calculate the dominating counts and the indices of individuals that are dominated by each individual
-    for i in range(pop_size):
-        dominating_counts[i] = np.sum(np.all(fitness_values[i] <= fitness_values, axis=1)) - 1
-        dominated_indices[i] = np.where(np.all(fitness_values[i] >= fitness_values, axis=1) & ~(np.arange(pop_size) == i))[0].tolist()
-
-    # Find the first front
-    current_front = np.where(dominating_counts == 0)[0]
-    # Iterate over the fronts
-    while current_front.size > 0:
-        fronts.append(current_front)
-        next_front = []
-        for i in current_front:
-            for j in dominated_indices[i]:
-                dominating_counts[j] -= 1
-                if dominating_counts[j] == 0:
-                    next_front.append(j)
-        current_front = np.array(next_front)
-
-    return fronts
+    total_time = 0
+    for _ in range(repeats):
+        start_time = time.time()
+        func()
+        end_time = time.time()
+        total_time += (end_time - start_time)
+    return total_time / repeats
 
 
 def test(pop_size, num_objectives):
     # Generate random fitness values
     fitness_values = np.random.rand(pop_size, num_objectives)
-    print(fitness_values)
-    
-    fronts = non_dominated_sort(fitness_values)
-    
-    return fronts
+    fitness_values[0, :] = [0, 0]
+    fitness_values[1, :] = [0, 0]
+
+    time = benchmark(lambda: dom_counts_indices(fitness_values), repeats=10)
+    time_broadcast = benchmark(lambda: dom_counts_indices_fast(fitness_values), repeats=10)
+
+    print(f"Average execution time over 10 runs: {time:.4f} seconds")
+    print(f"Average execution time over 10 runs (broadcast): {time_broadcast:.4f} seconds")
+    print(f"Speedup: {time / time_broadcast:.2f}")
+
+def test2(pop_size, num_objectives):
+    fitness_values = np.random.rand(pop_size, num_objectives)
+    fitness_values[0, :] = [0, 0]
+    fitness_values[1, :] = [0, 0]
+
+    counts, dom_list = dom_counts_indices(fitness_values)
+    counts_broadcast, dom_list_broadcast = dom_counts_indices_fast(fitness_values)
+
+    print(counts)
+    print(counts_broadcast)
+    print('---')
+    print(dom_list)
+    print(dom_list_broadcast)
 
 # Main
-pop_size = 4
+pop_size = 500
 num_objectives = 2
-print(test(pop_size, num_objectives))
+test(pop_size, num_objectives)

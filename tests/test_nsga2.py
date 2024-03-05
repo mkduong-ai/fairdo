@@ -5,19 +5,19 @@ import time
 from fairdo.optimize import nsga2
 
 def function3(x):
-    return np.sum(x) * np.random.rand()
+    return np.sum(x) #* np.random.rand()
 
 def function4(x):
-    return -np.sum(x) * np.random.rand()
+    return -np.sum(x) #* np.random.rand()
 
 # Define the number of dimensions
-d = 100
+d = 10000
 
 # Define the number of generations
-num_generations = 200
+num_generations = 100
 
 # Define the population size
-pop_size = 100
+pop_size = 25
 
 # Define the fitness functions to optimize
 fitness_functions = [function3, function4]
@@ -33,9 +33,9 @@ solutions, fitness, fronts = nsga2(fitness_functions, d, pop_size, num_generatio
 print("Time:", time.time() - start)
 
 # Plot the solutions
-plt.figure(figsize=(10, 5))
+plt.figure(figsize=(5, 5))
 # Plot all fronts
-for i in range(3):
+for i in range(len(fronts)):
     plt.scatter(fitness[fronts[i]][:, 0], fitness[fronts[i]][:, 1],
                 label=f'Front {i+1}',
                 s=15)

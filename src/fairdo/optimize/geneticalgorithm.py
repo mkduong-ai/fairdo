@@ -116,12 +116,12 @@ def genetic_algorithm(f, d, pop_size, num_generations,
     # Perform the genetic algorithm for the specified number of generations
     for generation in range(num_generations):
         # Select the parents
-        parents, fitness = selection(population, fitness)
+        parents, fitness = selection(population=population, fitness=fitness)
         # Create the offspring
         num_offspring = pop_size - parents.shape[0]
-        offspring = crossover(parents, num_offspring)
+        offspring = crossover(parents=parents, num_offspring=num_offspring)
         # Mutate the offspring
-        offspring = mutation(offspring)
+        offspring = mutation(offspring=offspring)
 
         # Evaluate the fitness of the offspring
         offspring_fitness = evaluate_population(f, offspring)
