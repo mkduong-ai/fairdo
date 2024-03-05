@@ -2,6 +2,7 @@ import numpy as np
 import time
 from fairdo.optimize.nsga2 import dom_counts_indices, dom_counts_indices_fast
 
+
 def benchmark(func, repeats=10):
     """
     Benchmark the execution time of a function.

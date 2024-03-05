@@ -84,7 +84,7 @@ def nsga2(fitness_functions, d, pop_size, num_generations,
         combined_fitness_values = np.concatenate((fitness_values, offspring_fitness_values))
         
         # Select the best individuals using non-dominated sorting and crowding distance
-        fronts = non_dominated_sort(combined_fitness_values)
+        fronts = non_dominated_sort_fast(combined_fitness_values)
         # Fit the first fronts to the population size. The front that doesnt fit will be selected based on crowding distance
         selected_indices = selection_indices(combined_fitness_values, fronts, pop_size)
 
@@ -141,6 +141,7 @@ def non_dominated_sort(fitness_values):
     fronts = []
     # Find the first front
     current_front = np.where(dominating_counts == 0)[0]
+
     # Iterate over the fronts
     while current_front.size > 0:
         fronts.append(current_front)
@@ -153,6 +154,47 @@ def non_dominated_sort(fitness_values):
         current_front = np.array(next_front)
 
     return fronts
+
+
+def non_dominated_sort_fast(fitness_values):
+    """
+    Perform non-dominated sorting on the given fitness values.
+    Faster implementation using broadcasting.
+
+    Parameters
+    ----------
+    fitness_values : ndarray, shape (pop_size, num_fitness_functions)
+        The fitness values of each individual in the population for each fitness function.
+
+    Returns
+    -------
+    fronts : list of ndarrays
+        List of fronts, where each front contains the indices of individuals in that front.
+
+    Notes
+    -----
+    This function uses broadcasting to compare all pairs of individuals in the population.
+    The result is a significant speedup compared to the non-broadcasting implementation.
+    """
+    dominating_counts, dominated_indices = dom_counts_indices_fast(fitness_values)
+
+    fronts = []
+    # Find the first front
+    current_front = np.where(dominating_counts == 0)[0]
+
+    while current_front.size > 0:
+        fronts.append(current_front)
+        # Next front is the set of all indices dominated by the current front
+        next_front = np.concatenate([dominated_indices[i] for i in current_front])
+        # Count the number of dominating solutions for each solution
+        unique_next_front, counts = np.unique(next_front, return_counts=True)
+        # Decrement the dominating counts
+        dominating_counts[unique_next_front] -= counts
+        # Next front is the set of all solutions with no dominating solutions
+        current_front = np.where(dominating_counts[unique_next_front] == 0)[0]
+
+    return fronts
+
 
 
 def dom_counts_indices(fitness_values):
