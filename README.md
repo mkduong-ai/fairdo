@@ -61,9 +61,24 @@ merge it with the original data $D$. The generated data $G$ can then be
 pre-processed with our methods to ensure fairness.
 
 ## Installation
+First, setup a Python environment. We recommend using [Miniconda](https://docs.anaconda.com/free/miniconda/index.html). Activate the created environment afterwards and finally install our package.
+A detailed guide is given as follows.
 
 ### Dependencies
 Python (==3.8), `numpy`, `scipy`, `pandas`, `sklearn`
+
+### Setup Conda Environment
+Download Miniconda [here](https://docs.anaconda.com/free/miniconda/index.html).
+
+```bash
+# Create a conda virtual environment
+conda create -n "venv" python=3.8
+
+# Activate conda environment
+conda activate venv
+```
+
+**OR**
 
 ### Setup Python Environment
 
@@ -88,7 +103,7 @@ pip install fairdo
 
 ### Manual Installation (latest version)
 
-To install the latest version, execute following commands:
+To install the latest (development) version, execute following commands:
 ```bash
 # Clone repo
 git clone https://github.com/mkduong-ai/fairdo.git
@@ -128,7 +143,7 @@ pip install sdv==1.10.0
 We did not include the `SDV` package as a dependency, because it is not required
 for the core functionality of the **FairDo** package.
 Using any other synthetic data generation package is also possible.
-Still, some examples in the `tutorials/` folder use the `SDV` package.
+Still, some examples in the `tutorials/` folder require the `SDV` package.
 
 ## Example Usage
 
