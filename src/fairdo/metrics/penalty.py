@@ -136,13 +136,6 @@ def group_missing_penalty(z: np.array, n_groups: np.array,
         raise NotImplementedError("Only sum and max are implemented for agg_group and agg_attribute.")
 
 
-def data_integrity_penalty():
-    """
-    Placeholder for data integrity penalty.
-    """
-    raise NotImplementedError("Data Integrity Penalty is not implemented yet.")
-
-
 def data_size_measure(y: np.array, dims: int, **kwargs) -> float:
     """
     Test function to measure the size of the data.
@@ -156,3 +149,18 @@ def data_size_measure(y: np.array, dims: int, **kwargs) -> float:
     dims: int
     """
     return - len(y) / dims
+
+
+def data_loss(y: np.array, dims: int, **kwargs) -> float:
+    """
+    Calculate the relative amount of data lost after pre-processing.
+
+    Parameters
+    ----------
+    y: np.array
+        Labels of the data.
+        The size of it depicts the current size of the data.
+    dims: int
+        The size of the original data.
+    """
+    return 1 - len(y) / dims

@@ -10,9 +10,157 @@ from fairdo.preprocessing import Preprocessing
 from fairdo.optimize import genetic_algorithm
 
 # fairdo metrics
-from fairdo.metrics import statistical_parity_abs_diff_max
+from fairdo.metrics import statistical_parity_abs_diff_max, data_loss
 from fairdo.metrics.penalty import group_missing_penalty
 
+
+class MultiObjectiveWrapper(Preprocessing):
+    """
+    A preprocessing wrapper class that applies a given multi-objective optimization method to optimize multiple
+    given objective functions and outputs the Pareto front of the solutions.
+    The solutions are returned as a binary numpy array of shape `(n, d)` where n is the number of solutions and d is the
+    number of dimensions.
+    The objective functions are defined as a list of functions to be optimized.
+    They evaluate properties of the dataset such as the fairness and data quality/data loss.
+    The pre-processed dataset is a subset of the original dataset, where the columns are
+    selected based on the multi-objective optimization method.
+
+    Attributes
+    ----------
+    heuristic: callable
+        The method that optimizes multiple fitness functions. It takes multiple fitness functions, the
+        number of dimensions, and some other parameters.
+        It returns solutions in the Pareto front and their corresponding fitness values.
+        All fronts can be returned if requested.
+        The solution has a shape of `(n, dims)` where `n` is the number of solutions and `dims` is the number of dimensions.
+    func: callable
+        The discrimination measure function to be optimized. It is defined within the `fit`
+        method.
+    dims: int
+        The number of dimensions or columns in the dataset. It is defined within the `fit`
+        method.
+    fitness_functions: list of callable
+        The list of objective functions to be minimized. They evaluate properties of the dataset
+        such as the fairness and data quality/data loss.
+    dataset: pd.DataFrame
+        The dataset to be preprocessed. It is defined within the `fit` method.
+    """
+
+    def __init__(self,
+                 heuristic,
+                 protected_attribute,
+                 label,
+                 fitness_functions=[statistical_parity_abs_diff_max, data_loss],
+                 **kwargs):
+        """
+        Constructs all the necessary attributes for the HeuristicWrapper object.
+
+        Parameters
+        ----------
+        heuristic: callable
+            The method that optimizes multiple fitness functions. It takes multiple fitness functions, the
+            number of dimensions, and some other parameters.
+            It returns solutions in the Pareto front and their corresponding fitness values.
+            All fronts can be returned if requested.
+            The solution has a shape of `(n, dims)` where `n` is the number of solutions and `dims` is the number of dimensions.
+        protected_attribute: str or List[str]
+            The protected attribute in the dataset.
+        label: str
+            The target variable in the dataset.
+        fitness_functions: list of callable
+            The list of objective functions to be minimized. They evaluate properties of the dataset
+            such as the fairness and data quality/data loss.
+        kwargs: dict
+            Additional arguments for the heuristic method.
+        """
+        self.heuristic = heuristic
+        self.func = None
+        self.dims = None
+        self.fitness_functions = fitness_functions
+
+        # required by Preprocessing
+        self.dataset = None
+        self.synthetic_dataset = None
+        self.approach = None
+        super().__init__(protected_attribute=protected_attribute, label=label)
+
+    def fit(self, dataset, synthetic_dataset=None, approach='remove'):
+        """
+        Defines the discrimination measure function and the number of dimensions based on the
+        input dataset.
+
+        Parameters
+        ----------
+        dataset: pd.DataFrame
+            The dataset to be preprocessed.
+        synthetic_dataset: pd.DataFrame, optional
+            The synthetic dataset to be used for the 'add' approach.
+            It is required only if the 'add' approach is used.
+        approach: str
+            The approach to be used for the heuristic method.
+            It can be either 'remove' or 'add'.
+
+        Returns
+        -------
+        self
+        """
+        self.dataset = dataset.copy()
+        if synthetic_dataset is not None:
+            self.synthetic_dataset = synthetic_dataset.copy()
+
+        self.approach = approach
+        # Number of dimensions
+        if approach == 'add':
+            self.dims = len(self.synthetic_dataset)
+        elif approach == 'remove':
+            self.dims = len(self.dataset)
+        
+        # get unique values for each protected attribute
+        if isinstance(self.protected_attribute, list):
+            n_groups = np.array([self.dataset[attr].nunique() for attr in self.protected_attribute])
+        else:
+            n_groups = np.array([self.dataset[self.protected_attribute].nunique()])
+
+        # define penalty function
+        penalty = partial(group_missing_penalty,
+                          n_groups=n_groups)
+
+        self.func = partial(f_multiobjective,
+                            dataset=self.dataset,
+                            label=self.label,
+                            protected_attributes=self.protected_attribute,
+                            approach=approach,
+                            synthetic_dataset=self.synthetic_dataset,
+                            fitness_functions=self.fitness_functions,
+                            penalty=penalty)
+        self.func = pass
+
+        return self
+
+    def transform(self):
+        """
+        Applies the heuristic method to the dataset and returns a preprocessed version of it.
+
+        Returns
+        -------
+        self.transformed_data: pd.DataFrame
+            The dataset to be masked based on the heuristic method.
+        masks: np.array of shape (n, dims)
+            The binary masks indicating the selected columns.
+            Represents the `n` solutions in the Pareto front.
+        fitness_values: np.array of shape (n, len(fitness_functions))
+            The fitness values of the solutions in the Pareto front.
+        """
+        masks, fitness_values = self.heuristic(fitness_functions=self.func, d=self.dims)
+
+        # apply the mask to the dataset
+        if self.approach == 'add':
+            self.transformed_data = pd.concat([self.dataset, self.synthetic_dataset], axis=0)
+        elif self.approach == 'remove':
+            self.transformed_data = self.dataset
+
+        return self.transformed_data, masks, fitness_values
+    
 
 class HeuristicWrapper(Preprocessing):
     """
@@ -288,3 +436,49 @@ def f(binary_vector, dataset, label, protected_attributes,
         return disc_measure(x=x, y=y, z=z, dims=len(mask)) + penalty(x=x, y=y, z=z)
     else:
         return disc_measure(x=x, y=y, z=z)
+    
+
+def f_multiobjective(binary_vector, dataset, label, protected_attributes,
+                     approach='remove',
+                     synthetic_dataset=None,
+                     fitness_functions=[statistical_parity_abs_diff_max, data_loss],
+                     penalty=None):
+    """
+    Two different approaches can be used for the heuristic method:
+    1. 'remove': The data points from the given `dataset` are removed to promote fairness.
+    2. 'add': Additional samples are added to the original data to promote fairness.
+    The sample data can be synthetic data.
+    Approach addresses this question: Which of the data points from the `synthetic_dataframe` should be added to the
+    original data to prevent discrimination?
+
+    Parameters
+    ----------
+    binary_vector: np.array
+        Binary vector indicating which columns to include in the discrimination measure calculation.
+    dataset: pd.DataFrame
+        The data to calculate the discrimination measure on.
+    label: str
+        The column in the dataset to use as the target variable.
+    protected_attributes: Union[str, List[str]]
+        The column or columns in the dataset to consider as protected attributes.
+    approach: str
+        The approach to be used for the heuristic method.
+        It can be either 'remove' or 'add'.
+    synthetic_dataset: pd.DataFrame, optional
+        Extra samples to be added to the original data. Samples can be synthetic data.
+        It is required only if the 'add' approach is used.
+    disc_measure: callable, optional (default=statistical_parity_abs_diff_max)
+        A function that takes in x (features), y (labels), and z (protected attributes) and returns a numeric value.
+        Default is `statistical_parity_abs_diff_max` which is the absolute difference between the maximum and minimum
+        statistical parity values.
+    penalty: callable, optional (default=None)
+        A function that takes a dictionary of keyword arguments and returns a numeric value.
+        This function is used to penalize the discrimination loss.
+        Default is None which means no penalty is applied.
+
+    Returns
+    -------
+    float
+        The calculated discrimination measure.
+    """
+    pass
