@@ -3,7 +3,6 @@ import time
 from fairdo.optimize.geneticoperators import kpoint_crossover,\
     uniform_crossover
 
-
 def benchmark(func, repeats=10):
     """
     Benchmark the execution time of a function.
@@ -31,30 +30,18 @@ def benchmark(func, repeats=10):
 
 def test1():
     parents = np.ones((2, 1000))
-    parents[0] = parents[0] * 2
 
-    offspring2 = uniform_crossover(parents, 1000, p=0.5)
-
-
-def test3():
-    parents = np.ones((2, 1000))
-    parents[0] = parents[0] * 2
-
-    offspring2 = kpoint_crossover(parents, 1000, k=2)
-
+    offspring = uniform_crossover(parents, 1000, p=0.5)
 
 def test2():
-    parents = np.ones((2, 10))
-    parents[0] = parents[0] * 2
+    parents = np.ones((2, 1000))
 
-    offspring2 = kpoint_crossover(parents, 10, k=1)
-    print(offspring2)
+    offspring = kpoint_crossover(parents, 1000, k=1)
 
 
 if __name__ == "__main__":
-    # avg_time = benchmark(test1, repeats=10)
-    # print(f"Average execution time over 10 runs: {avg_time:.4f} seconds")
-    # avg_time = benchmark(test3, repeats=10)
-    # print(f"Average execution time over 10 runs: {avg_time:.4f} seconds")
-    test2()
+    avg_time = benchmark(test1, repeats=10)
+    print(f"Average execution time over 10 runs: {avg_time:.4f} seconds")
+    avg_time = benchmark(test2, repeats=10)
+    print(f"Average execution time over 10 runs: {avg_time:.4f} seconds")
 
