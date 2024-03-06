@@ -140,10 +140,10 @@ class MultiObjectiveWrapper(Preprocessing):
                               penalty=penalty) for fitness_function in self.fitness_functions]
 
         return self
-
-    def transform(self):
+    
+    def apply_heuristic(self):
         """
-        Applies the heuristic method to the dataset and returns a preprocessed version of it.
+        Applies the heuristic method to the dataset.
 
         Returns
         -------
@@ -168,6 +168,26 @@ class MultiObjectiveWrapper(Preprocessing):
         self.fitness_values = fitness_values
 
         return self.transformed_data, self.masks, self.fitness_values
+
+    def transform(self,
+                  ideal_solution=np.array([0, 0])):
+        """
+        Applies the heuristic method to the dataset and
+        returns the best solution in the Pareto front, that is,
+        the solution closest to the ideal solution.
+
+        Returns
+        -------
+        data_best: pd.DataFrame
+            The dataset closest to the ideal solution.
+        """
+        self.apply_heuristic()
+        
+        self.index_best = np.argmin(np.linalg.norm(self.fitness_values - ideal_solution, axis=1))
+        solution_best = self.masks[self.index_best]
+        data_best = self.transformed_data[solution_best]
+
+        return data_best
     
     def plot_results(self,
                      x_axis=0, y_axis=1,

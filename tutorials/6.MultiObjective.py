@@ -25,13 +25,8 @@ preprocessor = MultiObjectiveWrapper(heuristic=ga,
                                      label=label,
                                      fitness_functions=[statistical_parity_abs_diff_max, data_loss])
 
-# Fit and transform the data
-data, masks, fitness_values = preprocessor.fit_transform(dataset=data)
-
-# Closest to ideal solution
-ideal_solution = np.array([0, 0])
-closest_solution = masks[np.argmin(np.linalg.norm(fitness_values - ideal_solution, axis=1))]
-optimal_data = data[:, closest_solution]
+# Fit and transform the data, returns the data closest to the ideal solution
+data_best = preprocessor.fit_transform(dataset=data)
 
 # Plot the results
 preprocessor.plot_results(x_label='Max. Statistical Parity', y_label='% of samples removed', title='NSGA-II Optimization Results')
