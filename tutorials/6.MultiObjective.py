@@ -17,7 +17,7 @@ data, label, protected_attributes = load_data('compas', print_info=False)
 # Custom settings for the Genetic Algorithm
 ga = partial(nsga2,
              pop_size=100,
-             num_generations=500,
+             num_generations=100,
              mutation=fractional_flip_mutation,)
 
 # Initialize the wrapper class for custom preprocessors
