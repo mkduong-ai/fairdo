@@ -41,7 +41,7 @@ our approach uses **genetic algorithms** to find a fair subset.
 :rocket: **For a quick start**, use the `DefaultPreprocessing` class with the default settings.
 An example is given in `tutorials/1. Default Preprocessor` and below.
 
-:white_check_mark: **For data integrity**, you want to keep the original data $D$
+:white_check_mark: **For data quality**, you want to keep the original data $D$
 and only add fair synthetic data $G$ on top of it.
 (We include examples in `tutorials/` where we use the [SDV](https://github.com/sdv-dev/SDV) package
 to generate synthetic data.)
@@ -54,7 +54,7 @@ to the original data.
 :dash: **When having limited data**, we advise employing synthetic data $G$ additionally
 and merge it with the original data $D$, i.e., $D \cup G$.
 The pre-processor can then be used on the merged data $D \cup G$ to ensure fairness.
-It is also possible to use the methodology for **data integrity**, as described above.
+It is also possible to use the methodology for **data quality**, as described above.
 
 :briefcase: **When anonymity is required**, only use synthetic data $G$ and do not
 merge it with the original data $D$. The generated data $G$ can then be

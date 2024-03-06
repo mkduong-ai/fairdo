@@ -1,6 +1,6 @@
 import numpy as np
 import time
-from fairdo.optimize.nsga2 import dom_counts_indices_fast
+from fairdo.optimize.multi import dom_counts_indices_fast
 
 
 def benchmark(func, repeats=10):

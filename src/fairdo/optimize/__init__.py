@@ -40,5 +40,5 @@ Example
 """
 
 from fairdo.optimize.baseline import *
-from fairdo.optimize.geneticalgorithm import *
-from fairdo.optimize.nsga2 import nsga2, dom_counts_indices, dom_counts_indices_fast
+from fairdo.optimize.single import *
+from fairdo.optimize.multi import nsga2, dom_counts_indices, dom_counts_indices_fast

@@ -33,8 +33,9 @@ class MultiObjectiveWrapper(Preprocessing):
         It returns solutions in the Pareto front and their corresponding fitness values.
         All fronts can be returned if requested.
         The solution has a shape of `(n, dims)` where `n` is the number of solutions and `dims` is the number of dimensions.
-    func: callable
-        The discrimination measure function to be optimized. It is defined within the `fit`
+    funcs: callable
+        List of objective function to be minimized. Wrapper for user-given `fitness_functions`.
+        It is defined within the `fit`
         method.
     dims: int
         The number of dimensions or columns in the dataset. It is defined within the `fit`
@@ -74,7 +75,7 @@ class MultiObjectiveWrapper(Preprocessing):
             Additional arguments for the heuristic method.
         """
         self.heuristic = heuristic
-        self.func = None
+        self.funcs = None
         self.dims = None
         self.fitness_functions = fitness_functions
 
@@ -82,6 +83,10 @@ class MultiObjectiveWrapper(Preprocessing):
         self.dataset = None
         self.synthetic_dataset = None
         self.approach = None
+
+        # multi-objective specific
+        self.masks = None
+        self.fitness_values = None
         super().__init__(protected_attribute=protected_attribute, label=label)
 
     def fit(self, dataset, synthetic_dataset=None, approach='remove'):
@@ -125,15 +130,14 @@ class MultiObjectiveWrapper(Preprocessing):
         penalty = partial(group_missing_penalty,
                           n_groups=n_groups)
 
-        self.func = partial(f_multiobjective,
-                            dataset=self.dataset,
-                            label=self.label,
-                            protected_attributes=self.protected_attribute,
-                            approach=approach,
-                            synthetic_dataset=self.synthetic_dataset,
-                            fitness_functions=self.fitness_functions,
-                            penalty=penalty)
-        self.func = pass
+        self.funcs = [partial(f,
+                              dataset=self.dataset,
+                              label=self.label,
+                              protected_attributes=self.protected_attribute,
+                              approach=approach,
+                              synthetic_dataset=self.synthetic_dataset,
+                              fitness_function=fitness_function,
+                              penalty=penalty) for fitness_function in self.fitness_functions]
 
         return self
 
@@ -151,16 +155,47 @@ class MultiObjectiveWrapper(Preprocessing):
         fitness_values: np.array of shape (n, len(fitness_functions))
             The fitness values of the solutions in the Pareto front.
         """
-        masks, fitness_values = self.heuristic(fitness_functions=self.func, d=self.dims)
+        masks, fitness_values = self.heuristic(fitness_functions=self.funcs,
+                                               d=self.dims)
 
         # apply the mask to the dataset
         if self.approach == 'add':
             self.transformed_data = pd.concat([self.dataset, self.synthetic_dataset], axis=0)
         elif self.approach == 'remove':
             self.transformed_data = self.dataset
+        
+        self.masks = masks == 1
+        self.fitness_values = fitness_values
 
-        return self.transformed_data, masks, fitness_values
+        return self.transformed_data, self.masks, self.fitness_values
     
+    def plot_results(self,
+                     x_axis=0, y_axis=1,
+                     x_label='Fitness 1', y_label='Fitness 2',
+                     title='Multi-Objective Optimization Results'):
+        """
+        Plot the results of the multi-objective optimization.
+        """
+        if self.fitness_values is None:
+            raise ValueError('No results to plot. Run the `transform` method first.')
+
+        import matplotlib.pyplot as plt
+
+        # Plot the results
+        plt.figure(figsize=(7, 7))
+        plt.scatter(self.fitness_values[:, x_axis], self.fitness_values[:, y_axis],
+                        label=f'Pareto Front',
+                        c='r',
+                        s=30)
+        plt.xlabel(x_label)
+        plt.ylabel(y_label)
+        plt.xlim(0, 1)
+        plt.ylim(0, 1)
+        plt.title(title)
+        plt.legend()
+        plt.grid(True)
+        plt.show()
+
 
 class HeuristicWrapper(Preprocessing):
     """
@@ -270,7 +305,7 @@ class HeuristicWrapper(Preprocessing):
                             protected_attributes=self.protected_attribute,
                             approach=approach,
                             synthetic_dataset=self.synthetic_dataset,
-                            disc_measure=self.disc_measure,
+                            fitness_function=self.disc_measure,
                             penalty=penalty)
 
         return self
@@ -362,7 +397,7 @@ class DefaultPreprocessing(HeuristicWrapper):
 def f(binary_vector, dataset, label, protected_attributes,
       approach='remove',
       synthetic_dataset=None,
-      disc_measure=statistical_parity_abs_diff_max,
+      fitness_function=statistical_parity_abs_diff_max,
       penalty=None):
     """
     Two different approaches can be used for the heuristic method:
@@ -388,10 +423,9 @@ def f(binary_vector, dataset, label, protected_attributes,
     synthetic_dataset: pd.DataFrame, optional
         Extra samples to be added to the original data. Samples can be synthetic data.
         It is required only if the 'add' approach is used.
-    disc_measure: callable, optional (default=statistical_parity_abs_diff_max)
+    fitness_function: callable, optional (default=statistical_parity_abs_diff_max)
         A function that takes in x (features), y (labels), and z (protected attributes) and returns a numeric value.
-        Default is `statistical_parity_abs_diff_max` which is the absolute difference between the maximum and minimum
-        statistical parity values.
+        Default is `statistical_parity_abs_diff_max` which is the absolute difference between the maximum and minimum statistical parity values.
     penalty: callable, optional (default=None)
         A function that takes a dictionary of keyword arguments and returns a numeric value.
         This function is used to penalize the discrimination loss.
@@ -433,52 +467,7 @@ def f(binary_vector, dataset, label, protected_attributes,
         z = z.flatten()
 
     if penalty is not None:
-        return disc_measure(x=x, y=y, z=z, dims=len(mask)) + penalty(x=x, y=y, z=z)
+        return fitness_function(x=x, y=y, z=z, dims=len(mask)) + penalty(x=x, y=y, z=z)
     else:
-        return disc_measure(x=x, y=y, z=z)
+        return fitness_function(x=x, y=y, z=z)
     
-
-def f_multiobjective(binary_vector, dataset, label, protected_attributes,
-                     approach='remove',
-                     synthetic_dataset=None,
-                     fitness_functions=[statistical_parity_abs_diff_max, data_loss],
-                     penalty=None):
-    """
-    Two different approaches can be used for the heuristic method:
-    1. 'remove': The data points from the given `dataset` are removed to promote fairness.
-    2. 'add': Additional samples are added to the original data to promote fairness.
-    The sample data can be synthetic data.
-    Approach addresses this question: Which of the data points from the `synthetic_dataframe` should be added to the
-    original data to prevent discrimination?
-
-    Parameters
-    ----------
-    binary_vector: np.array
-        Binary vector indicating which columns to include in the discrimination measure calculation.
-    dataset: pd.DataFrame
-        The data to calculate the discrimination measure on.
-    label: str
-        The column in the dataset to use as the target variable.
-    protected_attributes: Union[str, List[str]]
-        The column or columns in the dataset to consider as protected attributes.
-    approach: str
-        The approach to be used for the heuristic method.
-        It can be either 'remove' or 'add'.
-    synthetic_dataset: pd.DataFrame, optional
-        Extra samples to be added to the original data. Samples can be synthetic data.
-        It is required only if the 'add' approach is used.
-    disc_measure: callable, optional (default=statistical_parity_abs_diff_max)
-        A function that takes in x (features), y (labels), and z (protected attributes) and returns a numeric value.
-        Default is `statistical_parity_abs_diff_max` which is the absolute difference between the maximum and minimum
-        statistical parity values.
-    penalty: callable, optional (default=None)
-        A function that takes a dictionary of keyword arguments and returns a numeric value.
-        This function is used to penalize the discrimination loss.
-        Default is None which means no penalty is applied.
-
-    Returns
-    -------
-    float
-        The calculated discrimination measure.
-    """
-    pass

@@ -4,7 +4,7 @@ from functools import partial
 from fairdo.utils.dataset import load_data
 # everything needed for custom preprocessing
 from fairdo.preprocessing import HeuristicWrapper
-from fairdo.optimize.geneticalgorithm import genetic_algorithm
+from fairdo.optimize.single import genetic_algorithm
 from fairdo.optimize.geneticoperators import onepoint_crossover, fractional_flip_mutation, elitist_selection
 # fairdo metrics
 from fairdo.metrics import statistical_parity_abs_diff_max

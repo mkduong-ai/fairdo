@@ -19,7 +19,7 @@ from fairdo.metrics import (normalized_mutual_information,
 from fairdo.preprocessing.solverwrapper import f_add, f_remove
 # from fairdo.preprocessing import MetricOptimizer, MetricOptRemover
 import fairdo.optimize.baseline as baseline
-import fairdo.optimize.geneticalgorithm as ga
+import fairdo.optimize.single as ga
 from fairdo.optimize.geneticoperators import *
 
 # Local application/library specific imports

@@ -30,4 +30,4 @@ These pre-processors are used for comparison purposes.
 """
 from fairdo.preprocessing.base import Preprocessing, OriginalData, Unawareness, Random
 from fairdo.preprocessing.metricoptimizer import MetricOptimizer, MetricOptGenerator, MetricOptRemover
-from fairdo.preprocessing.solverwrapper import HeuristicWrapper, DefaultPreprocessing
+from fairdo.preprocessing.solverwrapper import HeuristicWrapper, DefaultPreprocessing, MultiObjectiveWrapper

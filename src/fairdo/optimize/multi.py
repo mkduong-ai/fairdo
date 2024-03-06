@@ -6,7 +6,9 @@ from fairdo.optimize.geneticoperators.crossover import onepoint_crossover, unifo
 from fairdo.optimize.geneticoperators.mutation import fractional_flip_mutation, shuffle_mutation
 
 
-def nsga2(fitness_functions, d, pop_size, num_generations,
+def nsga2(fitness_functions, d,
+          pop_size=100,
+          num_generations=500,
           initialization=variable_probability_initialization,
           crossover=uniform_crossover,
           mutation=shuffle_mutation,
@@ -39,6 +41,7 @@ def nsga2(fitness_functions, d, pop_size, num_generations,
         The function to perform mutation. Default is polynomial_mutation.
     return_all_fronts : bool, optional
         Whether to return all fronts. Default is False.
+        If False, only the first front is returned.
         If True, the `combined population` and `fitness values` are returned along with the `fronts`.
 
     Returns
@@ -96,6 +99,7 @@ def nsga2(fitness_functions, d, pop_size, num_generations,
         return combined_population[fronts[0]], combined_fitness_values[fronts[0]]
     else:
         return combined_population, combined_fitness_values, fronts
+
 
 def evaluate_population(fitness_functions, population):
     """

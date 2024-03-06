@@ -35,17 +35,18 @@ from fairdo.optimize.geneticoperators.initialization import random_initializatio
 from fairdo.optimize.geneticoperators.selection import elitist_selection, tournament_selection
 from fairdo.optimize.geneticoperators.crossover import onepoint_crossover, uniform_crossover
 from fairdo.optimize.geneticoperators.mutation import fractional_flip_mutation, shuffle_mutation
-from fairdo.metrics.penalty import relative_difference_penalty
 
 
-def genetic_algorithm(f, d, pop_size, num_generations,
-                                 initialization=random_initialization,
-                                 selection=elitist_selection,
-                                 crossover=uniform_crossover,
-                                 mutation=fractional_flip_mutation,
-                                 maximize=False,
-                                 tol=1e-6,
-                                 patience=50):
+def genetic_algorithm(f, d,
+                      pop_size=100,
+                      num_generations=500,
+                      initialization=random_initialization,
+                      selection=elitist_selection,
+                      crossover=uniform_crossover,
+                      mutation=fractional_flip_mutation,
+                      maximize=False,
+                      tol=1e-6,
+                      patience=50):
     """
     Perform a genetic algorithm with constraints. The constraint is that the sum of the binary vector must be equal
     to n. The fitness function is the value of the fitness function plus a penalty for individuals that do not satisfy
