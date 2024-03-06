@@ -6,7 +6,7 @@ from fairdo.utils.dataset import load_data
 # everything needed for custom preprocessing
 from fairdo.preprocessing import MultiObjectiveWrapper
 from fairdo.optimize.multi import nsga2
-from fairdo.optimize.geneticoperators import onepoint_crossover, fractional_flip_mutation, elitist_selection
+from fairdo.optimize.geneticoperators import onepoint_crossover, fractional_flip_mutation, elitist_selection, shuffle_mutation
 # fairdo metrics
 from fairdo.metrics import statistical_parity_abs_diff_max, data_loss, group_missing_penalty
 
@@ -17,7 +17,8 @@ data, label, protected_attributes = load_data('compas', print_info=False)
 # Custom settings for the Genetic Algorithm
 ga = partial(nsga2,
              pop_size=100,
-             num_generations=100)
+             num_generations=500,
+             mutation=fractional_flip_mutation,)
 
 # Initialize the wrapper class for custom preprocessors
 preprocessor = MultiObjectiveWrapper(heuristic=ga,
