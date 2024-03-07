@@ -248,6 +248,7 @@ class HeuristicWrapper(Preprocessing):
                  protected_attribute,
                  label,
                  disc_measure=statistical_parity_abs_diff_max,
+                 fitness_functions=None,
                  **kwargs):
         """
         Constructs all the necessary attributes for the HeuristicWrapper object.
@@ -264,13 +265,15 @@ class HeuristicWrapper(Preprocessing):
             The discrimination measure to be optimized.
             Default is `statistical_parity_abs_diff_max` which is the absolute difference between the maximum and
             minimum statistical parity values.
+        fitness_functions: list of callable, optional (default=None)
+            Can only contain one function. It is a wrapper for the user-given `disc_measure`.
         kwargs: dict
             Additional arguments for the heuristic method.
         """
         self.heuristic = heuristic
         self.func = None
         self.dims = None
-        self.disc_measure = disc_measure
+        self.disc_measure = disc_measure if fitness_functions is None else fitness_functions[0]
 
         # required by Preprocessing
         self.dataset = None
@@ -287,10 +290,10 @@ class HeuristicWrapper(Preprocessing):
         ----------
         dataset: pd.DataFrame
             The dataset to be preprocessed.
-        synthetic_dataset: pd.DataFrame, optional
+        synthetic_dataset: pd.DataFrame, optional (default=None)
             The synthetic dataset to be used for the 'add' approach.
             It is required only if the 'add' approach is used.
-        approach: str
+        approach: str, optional (default='remove')
             The approach to be used for the heuristic method.
             It can be either 'remove' or 'add'.
 
@@ -411,7 +414,8 @@ class DefaultPreprocessing(HeuristicWrapper):
         super().__init__(heuristic=heuristic,
                          protected_attribute=protected_attribute,
                          label=label,
-                         disc_measure=disc_measure)
+                         disc_measure=disc_measure,
+                         **kwargs)
 
 
 def f(binary_vector, dataset, label, protected_attributes,
