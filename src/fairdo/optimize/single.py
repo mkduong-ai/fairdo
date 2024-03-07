@@ -70,20 +70,20 @@ def genetic_algorithm(f, d,
         The size of the population.
     num_generations: int
         The number of generations.
-    initialization: callable
+    initialization: callable, optional (default=random_initialization)
         The function to initialize the population.
-    selection: callable
+    selection: callable, optional (default=elitist_selection)
         The function to select the parents from the population.
-    crossover: callable
+    crossover: callable, optional (default=uniform_crossover)
         The function to perform the crossover operation.
-    mutation: callable
+    mutation: callable, optional (default=fractional_flip_mutation)
         The function to perform the mutation operation.
-    maximize: bool, optional
+    maximize: bool, optional (default=False)
         Whether to maximize or minimize the fitness function.
-    tol: float, optional
+    tol: float, optional (default=1e-6)
         The tolerance for early stopping. If the best solution found is within tol of the previous best solution,
         then the algorithm stops.
-    patience: int, optional
+    patience: int, optional (default=50)
         The number of generations to wait before early stopping.
 
     Returns

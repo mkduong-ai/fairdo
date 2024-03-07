@@ -88,6 +88,44 @@ def tournament_selection(population, fitness, num_parents=2, tournament_size=3):
     return parents, parents_fitness
 
 
+def tournament_selection_multi(fronts, num_parents=2, tournament_size=3):
+    """
+    Select parents using Tournament Selection.
+    This method randomly selects a few individuals and chooses the best out of them to become a parent.
+    The process is repeated until the desired number of parents are selected.
+
+    Parameters
+    ----------
+    fronts: list of ndarrays
+        List of non-dominated fronts.
+    num_parents: int
+        Number of parents to select.
+    tournament_size: int
+        Number of individuals participating in each tournament.
+
+    Returns
+    -------
+    parents: ndarray, shape (num_parents, d)
+        Selected parents.
+    fitness: ndarray, shape (num_parents,)
+        Fitness of the selected parents.
+    """
+    # if population.shape[0] < tournament_size:
+    #     raise ValueError("Tournament size cannot be larger than the population size.")
+    # if len(population.shape) != 2:
+    #     population = population.reshape(-1, 1)
+
+    # parents = np.empty((num_parents, population.shape[1]))
+    # parents_fitness = np.empty(num_parents)
+    # for i in range(num_parents):
+    #     tournament_indices = np.random.randint(0, len(population), size=tournament_size)
+    #     tournament_fitnesses = fitness[tournament_indices]
+    #     winner_index = tournament_indices[np.argmax(tournament_fitnesses)]
+    #     parents[i, :] = population[winner_index, :]
+    #     parents_fitness[i] = fitness[winner_index]
+    # return parents, parents_fitness
+    pass
+
 def roulette_wheel_selection(population, fitness, num_parents=2):
     """
     Select parents using Roulette Wheel Selection. The probability of selecting an individual is proportional to its

@@ -36,7 +36,7 @@ preprocessor_multi = MultiObjectiveWrapper(heuristic=ga,
 data_multi = preprocessor_multi.fit_transform(dataset=data)
 
 # Single Objective
-def data_disc_quality(y, z, dims, w=0.6, **kwargs):
+def data_disc_quality(y, z, dims, w=0.8, **kwargs):
     """
     A single objective function that combines the statistical parity and data loss.
     

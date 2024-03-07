@@ -10,6 +10,7 @@ def nsga2(fitness_functions, d,
           pop_size=100,
           num_generations=500,
           initialization=variable_probability_initialization,
+          selection=None,
           crossover=uniform_crossover,
           mutation=shuffle_mutation,
           return_all_fronts=False):
@@ -31,16 +32,16 @@ def nsga2(fitness_functions, d,
         The size of the population.
     num_generations : int
         The number of generations.
-    initialization : callable, optional
-        The function to initialize the population. Default is random_initialization.
-    selection : callable, optional
-        The function to perform selection. Default is tournament_selection.
-    crossover : callable, optional
-        The function to perform crossover. Default is simulated_binary_crossover.
-    mutation : callable, optional
-        The function to perform mutation. Default is polynomial_mutation.
-    return_all_fronts : bool, optional
-        Whether to return all fronts. Default is False.
+    initialization : callable, optional (default=random_initialization)
+        The function to initialize the population.
+    selection : callable, optional (default=tournament_selection_multi)
+        The function to perform selection.
+    crossover : callable, optional (default=uniform_crossover)
+        The function to perform crossover.
+    mutation : callable, optional (default=shuffle_mutation)
+        The function to perform mutation.
+    return_all_fronts : bool, optional (default=False)
+        Whether to return all fronts.
         If False, only the first front is returned.
         If True, the `combined population` and `fitness values` are returned along with the `fronts`.
 
@@ -70,11 +71,14 @@ def nsga2(fitness_functions, d,
     # Evaluate the fitness of each individual in the population
     fitness_values = evaluate_population(fitness_functions=fitness_functions,
                                          population=population)
+    # The fronts of the population. Initially, the fronts are not known
+    fronts = population
 
     # Perform NSGA-II for the specified number of generations
     for _ in range(num_generations):
         # Select parents
         parents = rng.choice(population, size=2, replace=False, axis=0)
+        # parents = tournament_selection_multi(fronts=fronts, num_parents=2, tournament_size=3)
         # Perform crossover
         offspring = crossover(parents=parents, num_offspring=pop_size)
         # Perform mutation
