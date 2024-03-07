@@ -24,30 +24,43 @@ ga = partial(nsga2,
              num_generations=100,
              initialization=variable_probability_initialization,
              crossover=uniform_crossover,
-             mutation=shuffle_mutation)
+             mutation=fractional_flip_mutation)
 
 # Initialize the wrapper class for custom preprocessors
-preprocessor = MultiObjectiveWrapper(heuristic=ga,
+preprocessor_multi = MultiObjectiveWrapper(heuristic=ga,
                                      protected_attribute=protected_attributes[0],
                                      label=label,
                                      fitness_functions=[statistical_parity_abs_diff_max, data_loss])
 
 # Fit and transform the data, returns the data closest to the ideal solution
-data_multi = preprocessor.fit_transform(dataset=data)
-
-# Plot the results
-#preprocessor.plot_results(x_label='Max. Statistical Parity', y_label='% of samples removed', title='NSGA-II Optimization Results')
+data_multi = preprocessor_multi.fit_transform(dataset=data)
 
 # Single Objective
-def data_disc_quality(y, z, dims, **kwargs):
-    return statistical_parity_abs_diff_max(y=y, z=z) + data_loss(y=y, dims=dims)
+def data_disc_quality(y, z, dims, w=0.6, **kwargs):
+    """
+    A single objective function that combines the statistical parity and data loss.
+    
+    Parameters
+    ----------
+    y: np.array
+        The target variable.
+    z: np.array
+        The protected attribute.
+    dims: int
+        The number of samples.
+    
+    Returns
+    -------
+    float
+        The weighted fairness and quality of the data."""
+    return w * statistical_parity_abs_diff_max(y=y, z=z) + (1-w) * data_loss(y=y, dims=dims)
 
 ga = partial(genetic_algorithm,
              pop_size=100,
              num_generations=100,
              initialization=variable_probability_initialization,
              crossover=uniform_crossover,
-             mutation=shuffle_mutation)
+             mutation=fractional_flip_mutation)
 
 # Initialize the wrapper class for custom preprocessors
 preprocessor = HeuristicWrapper(heuristic=ga,
@@ -66,3 +79,6 @@ print("Multi-objective fair data:", len(data_multi),
         statistical_parity_abs_diff_max(data_multi[label], data_multi[protected_attributes[0]].to_numpy()))
 print("Single-objective fair data:", len(data_single),
         statistical_parity_abs_diff_max(data_single[label], data_single[protected_attributes[0]].to_numpy()))
+
+# Plot the results
+preprocessor_multi.plot_results(x_label='Max. Statistical Parity', y_label='% of samples removed', title='NSGA-II Optimization Results')
