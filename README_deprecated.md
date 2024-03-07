@@ -72,3 +72,37 @@ The plots are stored in the same directory as their corresponding .csv file.
 
 To modify or change several settings (datasets, metrics, #runs) in the
 evaluation, change the file ``evaluation/settings.py``.
+
+## Documentation
+
+The documentation is available at [https://fairdo.readthedocs.io/en/latest/](https://fairdo.readthedocs.io/en/latest/).
+To build the documentation manually, follow this guide:
+
+The package follows the PEP8 style guide and is documented with NumPy style
+DocStrings. To build the HTML pages from the documentation manually,
+follow these instructions:
+
+Activate virtual environment and install sphinx.
+```bash
+# Activate the virtual environment
+# On Windows:
+.venv\Scripts\activate
+
+# On macOS and Linux:
+source .venv/bin/activate
+
+# Install Sphinx and a required theme
+pip install sphinx furo
+```
+
+Run document generation script in UNIX-Systems:
+```bash
+# Move to /docs
+cd docs
+
+# Run script to generate documentation
+bash generate_docs.sh
+```
+
+The HTML pages are then located in `docs/_build/html`.
+Open `docs/_build/html/index.html` to view the front page.

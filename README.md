@@ -60,6 +60,44 @@ It is also possible to use the methodology for **data quality**, as described ab
 merge it with the original data $D$. The generated data $G$ can then be
 pre-processed with our methods to ensure fairness.
 
+## Quick Example Usage
+
+In the following example, we use the COMPAS [1] dataset.
+The protected attribute is _race_ and the label is _recidivism_.
+Here, we deploy the **default pre-processor**, which internally uses a genetic algorithm,
+to remove discriminatory samples of the given dataset.
+The default pre-processor prevents removing all individuals of a single group.
+
+```python
+# fairdo package
+from fairdo.utils.dataset import load_data
+from fairdo.preprocessing import DefaultPreprocessing
+# fairdo metrics
+from fairdo.metrics import statistical_parity_abs_diff_max
+
+# Loading a sample dataset with all required information
+# data is a pandas.DataFrame
+data, label, protected_attributes = load_data('compas', print_info=False)
+
+# Initialize DefaultPreprocessing object
+preprocessor = DefaultPreprocessing(protected_attribute=protected_attributes[0],
+                                    label=label)
+
+# Fit and transform the data
+data_fair = preprocessor.fit_transform(dataset=data)
+
+# Print no. samples and discrimination before and after
+disc_before = statistical_parity_abs_diff_max(data[label],
+                                              data[protected_attributes[0]].to_numpy())
+disc_after = statistical_parity_abs_diff_max(data_fair[label],
+                                             data_fair[protected_attributes[0]].to_numpy())
+print(len(data), disc_before)
+print(len(data_fair), disc_after)
+```
+
+By running this example, the **resulting dataset** usually has a statistical **disparity score of <1%** (max. score between all five races),
+while the **original dataset exhibits 27% statistical disparity**.
+
 ## Installation
 First, setup a Python environment. We recommend using [Miniconda](https://docs.anaconda.com/free/miniconda/index.html). Activate the created environment afterwards and finally install our package.
 A detailed guide is given as follows.
@@ -145,78 +183,6 @@ for the core functionality of the **FairDo** package.
 Using any other synthetic data generation package is also possible.
 Still, some examples in the `tutorials/` folder require the `SDV` package.
 
-## Example Usage
-
-In the following example, we use the COMPAS [1] dataset.
-The protected attribute is _race_ and the label is _recidivism_.
-Here, we deploy the **default pre-processor**, which internally uses a genetic algorithm,
-to remove discriminatory samples of the given dataset.
-The default pre-processor prevents removing all individuals of a single group.
-
-```python
-# fairdo package
-from fairdo.utils.dataset import load_data
-from fairdo.preprocessing import DefaultPreprocessing
-# fairdo metrics
-from fairdo.metrics import statistical_parity_abs_diff_max
-
-# Loading a sample dataset with all required information
-# data is a pandas.DataFrame
-data, label, protected_attributes = load_data('compas', print_info=False)
-
-# Initialize DefaultPreprocessing object
-preprocessor = DefaultPreprocessing(protected_attribute=protected_attributes[0],
-                                    label=label)
-
-# Fit and transform the data
-data_fair = preprocessor.fit_transform(dataset=data)
-
-# Print no. samples and discrimination before and after
-disc_before = statistical_parity_abs_diff_max(data[label],
-                                              data[protected_attributes[0]].to_numpy())
-disc_after = statistical_parity_abs_diff_max(data_fair[label],
-                                             data_fair[protected_attributes[0]].to_numpy())
-print(len(data), disc_before)
-print(len(data_fair), disc_after)
-```
-
-By running this example, the **resulting dataset** usually has a statistical **disparity score of <1%** (max. score between all five races),
-while the **original dataset exhibits 27% statistical disparity**.
-
-## Documentation
-
-The documentation is available at [https://fairdo.readthedocs.io/en/latest/](https://fairdo.readthedocs.io/en/latest/).
-To build the documentation manually, follow this guide:
-
-The package follows the PEP8 style guide and is documented with NumPy style
-DocStrings. To build the HTML pages from the documentation manually,
-follow these instructions:
-
-Activate virtual environment and install sphinx.
-```bash
-# Activate the virtual environment
-# On Windows:
-.venv\Scripts\activate
-
-# On macOS and Linux:
-source .venv/bin/activate
-
-# Install Sphinx and a required theme
-pip install sphinx furo
-```
-
-Run document generation script in UNIX-Systems:
-```bash
-# Move to /docs
-cd docs
-
-# Run script to generate documentation
-bash generate_docs.sh
-```
-
-The HTML pages are then located in `docs/_build/html`.
-Open `docs/_build/html/index.html` to view the front page.
-
 ## Citation
 
 When using **FairDo** in your work, cite our paper:
@@ -225,9 +191,13 @@ When using **FairDo** in your work, cite our paper:
 @inproceedings{duong2023framework,
   title={Towards Fairness and Privacy: A Novel Data Pre-processing Optimization Framework for Non-binary Protected Attributes},
   author={Duong, Manh Khoi and Conrad, Stefan},
-  booktitle={The 21st Australasian Data Mining Conference 2023},
+  booktitle={Data Science and Machine Learning},
+  publisher={Springer Nature Singapore},
+  number={CCIS 1943},
+  series={AusDM: Australasian Conference on Data Science and Machine Learning},
   year={2023},
-  organization={Springer Nature}
+  pages={105--120},
+  isbn={978-981-99-8696-5},
 }
 ```
 
