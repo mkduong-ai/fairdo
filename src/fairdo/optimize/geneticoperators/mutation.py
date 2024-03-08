@@ -5,6 +5,7 @@ Mutation Methods
 This module implements various mutation methods used in genetic algorithms.
 These methods are used to introduce diversity in the population by randomly altering the genes of the individuals.
 Each function in this module takes a population of individuals as input and returns a mutated population.
+**The mutation happens outplace**, meaning that the original population is not modified.
 The rate of mutation can be specified by the user.
 
 These mutation methods are based on the works of the following references:
@@ -26,7 +27,7 @@ def fractional_flip_mutation(offspring, mutation_rate=0.05):
     ----------
     offspring: ndarray, shape (n, d)
         The offspring to be mutated. Each row represents an offspring, and each column represents a bit.
-    mutation_rate: float, optional
+    mutation_rate: float, optional (default=0.05)
         The percentage of random bits to flip for each offspring. Default is 0.05.
 
     Returns
@@ -34,15 +35,16 @@ def fractional_flip_mutation(offspring, mutation_rate=0.05):
     offspring: ndarray, shape (n, d)
         The mutated offspring. Each row represents an offspring, and each column represents a bit.
     """
+    offspring_out = offspring.copy()
     num_mutation = int(mutation_rate * offspring.shape[1])
     for idx in range(offspring.shape[0]):
         # select the random bits to flip
         mutation_bits = np.random.choice(np.arange(offspring.shape[1]),
-                                         num_mutation,
+                                         size=num_mutation,
                                          replace=False)
         # flip the bits
-        offspring[idx, mutation_bits] = 1 - offspring[idx, mutation_bits]
-    return offspring
+        offspring_out[idx, mutation_bits] = 1 - offspring_out[idx, mutation_bits]
+    return offspring_out
 
 
 def bit_flip_mutation(offspring, mutation_rate=0.05):
@@ -62,9 +64,10 @@ def bit_flip_mutation(offspring, mutation_rate=0.05):
     offspring: ndarray, shape (n, d)
         The mutated offspring. Each row represents an offspring, and each column represents a bit.
     """
+    offspring_out = offspring.copy()
     mutation_mask = np.random.rand(*offspring.shape) < mutation_rate
-    offspring[mutation_mask] = 1 - offspring[mutation_mask]
-    return offspring
+    offspring_out[mutation_mask] = 1 - offspring_out[mutation_mask]
+    return offspring_out
 
 
 def swap_mutation(offspring):
@@ -81,12 +84,13 @@ def swap_mutation(offspring):
     offspring: ndarray, shape (n, d)
         The mutated offspring. Each row represents an offspring, and each column represents a bit.
     """
+    offspring_out = offspring.copy()
     for idx in range(offspring.shape[0]):
         # select two random bits
         bit1, bit2 = np.random.choice(np.arange(offspring.shape[1]), 2, replace=False)
         # swap the bits
-        offspring[idx, bit1], offspring[idx, bit2] = offspring[idx, bit2], offspring[idx, bit1]
-    return offspring
+        offspring_out[idx, bit1], offspring_out[idx, bit2] = offspring_out[idx, bit2], offspring_out[idx, bit1]
+    return offspring_out
 
 
 def adaptive_mutation(offspring, mutation_rate=0.05, diversity_threshold=0.1):
@@ -119,6 +123,8 @@ def adaptive_mutation(offspring, mutation_rate=0.05, diversity_threshold=0.1):
 def diverse_mutation(offspring, mutation_rate=0.05):
     """
     Mutates the given offspring in a diverse manner to prevent convergence towards 50% selection rate.
+    Using the uniform mutation rate, the mutation rate is adjusted based on the proportion of 1s in each offspring.
+    This means that the mutation rate is higher for offspring with a higher proportion of 1s.
 
     Parameters
     ----------
@@ -163,6 +169,7 @@ def shuffle_mutation(offspring, **kwargs):
     offspring: ndarray, shape (n, d)
         The mutated offspring. Each row represents an offspring, and each column represents a bit.
     """
+    offspring_out = offspring.copy()
     rng = np.random.default_rng()
-    rng.shuffle(offspring, axis=1)
-    return offspring
+    rng.shuffle(offspring_out, axis=1)
+    return offspring_out
