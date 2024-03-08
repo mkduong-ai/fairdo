@@ -1,5 +1,6 @@
 # Standard library imports
 from functools import partial
+import warnings
 
 # Related third-party imports
 import numpy as np
@@ -273,6 +274,10 @@ class HeuristicWrapper(Preprocessing):
         self.heuristic = heuristic
         self.func = None
         self.dims = None
+        if fitness_functions is not None:
+            if len(fitness_functions) > 1:
+                warnings.warn('The `fitness_functions` parameter contains more than one function.\
+                               Only the first function will be used in this wrapper.')
         self.disc_measure = disc_measure if fitness_functions is None else fitness_functions[0]
 
         # required by Preprocessing
