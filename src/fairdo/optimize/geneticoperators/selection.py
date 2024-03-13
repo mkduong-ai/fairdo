@@ -88,7 +88,7 @@ def tournament_selection(population, fitness, num_parents=2, tournament_size=3):
     return parents, parents_fitness
 
 
-def tournament_selection_multi(fronts, num_parents=2, tournament_size=3):
+def tournament_selection_multi(population, fronts, num_parents=2, tournament_size=3):
     """
     Select parents using Tournament Selection.
     This method randomly selects a few individuals and chooses the best out of them to become a parent.
@@ -96,8 +96,12 @@ def tournament_selection_multi(fronts, num_parents=2, tournament_size=3):
 
     Parameters
     ----------
+    population: ndarray, shape (n, d)
+        Population of individuals.
     fronts: list of ndarrays
         List of non-dominated fronts.
+        Each ndarray contains the indices of the individuals in the front.
+        Lower index means higher rank.
     num_parents: int
         Number of parents to select.
     tournament_size: int
@@ -110,10 +114,29 @@ def tournament_selection_multi(fronts, num_parents=2, tournament_size=3):
     fitness: ndarray, shape (num_parents,)
         Fitness of the selected parents.
     """
-    # if population.shape[0] < tournament_size:
-    #     raise ValueError("Tournament size cannot be larger than the population size.")
-    # if len(population.shape) != 2:
-    #     population = population.reshape(-1, 1)
+    if population.shape[0] < tournament_size:
+        raise ValueError("Tournament size cannot be larger than the population size.")
+    if len(population.shape) != 2:
+        population = population.reshape(-1, 1)
+    
+    # Get the lengths of individual arrays in the original list
+    fronts_lengths = np.array([len(front) for front in fronts])
+    
+    # Draw indices from population
+    parents = np.empty((num_parents, population.shape[1]))
+    for i in range(num_parents):
+        random_indices = np.random.choice(len(population), size=tournament_size, replace=False)
+        # Find the source array indices using random indices
+        # source_array_indices = np.searchsorted(np.cumsum(fronts_lengths), random_indices, side='right')
+        for random_index in random_indices:
+            for source_array_index, front in enumerate(fronts):
+                if random_index < len(front):
+                    winner_index = front[random_index]
+                    break
+                random_index -= len(front)
+        
+    
+    # Check which front the individual belongs to
 
     # parents = np.empty((num_parents, population.shape[1]))
     # parents_fitness = np.empty(num_parents)
@@ -124,6 +147,10 @@ def tournament_selection_multi(fronts, num_parents=2, tournament_size=3):
     #     parents[i, :] = population[winner_index, :]
     #     parents_fitness[i] = fitness[winner_index]
     # return parents, parents_fitness
+    
+    
+    # Check which front the individual belongs to
+
     pass
 
 def roulette_wheel_selection(population, fitness, num_parents=2):

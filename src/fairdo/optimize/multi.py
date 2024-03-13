@@ -1,7 +1,7 @@
 import numpy as np
 
 from fairdo.optimize.geneticoperators.initialization import random_initialization, variable_probability_initialization
-from fairdo.optimize.geneticoperators.selection import elitist_selection, tournament_selection
+from fairdo.optimize.geneticoperators.selection import tournament_selection_multi
 from fairdo.optimize.geneticoperators.crossover import onepoint_crossover, uniform_crossover, simulated_binary_crossover
 from fairdo.optimize.geneticoperators.mutation import fractional_flip_mutation, shuffle_mutation
 
@@ -72,13 +72,16 @@ def nsga2(fitness_functions, d,
     fitness_values = evaluate_population(fitness_functions=fitness_functions,
                                          population=population)
     # The fronts of the population. Initially, the fronts are not known
-    fronts = population
+    fronts = []
 
     # Perform NSGA-II for the specified number of generations
     for _ in range(num_generations):
         # Select parents
-        parents = rng.choice(population, size=2, replace=False, axis=0)
-        # parents = tournament_selection_multi(fronts=fronts, num_parents=2, tournament_size=3)
+        # parents = rng.choice(population, size=2, replace=False, axis=0)
+        parents = tournament_selection_multi(population=population,
+                                             fronts=fronts,
+                                             num_parents=2,
+                                             tournament_size=3)
         # Perform crossover
         offspring = crossover(parents=parents, num_offspring=pop_size)
         # Perform mutation
