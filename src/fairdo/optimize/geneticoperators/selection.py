@@ -22,6 +22,8 @@ reproductive trials is best. Proceedings of the Third International Conference o
 
 import numpy as np
 
+# from fairdo.optimize.multi import crowding_distance # circular import error
+
 
 def elitist_selection(population, fitness, num_parents=2):
     """
@@ -88,7 +90,7 @@ def tournament_selection(population, fitness, num_parents=2, tournament_size=3):
     return parents, parents_fitness
 
 
-def tournament_selection_multi(population, fronts, num_parents=2, tournament_size=3):
+def tournament_selection_multi(population, fitness_values, fronts, num_parents=2, tournament_size=3):
     """
     Select parents using Tournament Selection.
     This method randomly selects a few individuals and chooses the best out of them to become a parent.
@@ -98,6 +100,8 @@ def tournament_selection_multi(population, fronts, num_parents=2, tournament_siz
     ----------
     population: ndarray, shape (n, d)
         Population of individuals.
+    fitness_values: ndarray, shape (n, m)
+        Fitness of each individual.
     fronts: list of ndarrays
         List of non-dominated fronts.
         Each ndarray contains the indices of the individuals in the front.
@@ -121,37 +125,82 @@ def tournament_selection_multi(population, fronts, num_parents=2, tournament_siz
     
     # Get the lengths of individual arrays in the original list
     fronts_lengths = np.array([len(front) for front in fronts])
-    
-    # Draw indices from population
+    cum_fronts_lengths = np.cumsum(fronts_lengths)
+
+    # Initialize parents
     parents = np.empty((num_parents, population.shape[1]))
+
     for i in range(num_parents):
-        random_indices = np.random.choice(len(population), size=tournament_size, replace=False)
-        # Find the source array indices using random indices
-        # source_array_indices = np.searchsorted(np.cumsum(fronts_lengths), random_indices, side='right')
-        for random_index in random_indices:
-            for source_array_index, front in enumerate(fronts):
-                if random_index < len(front):
-                    winner_index = front[random_index]
-                    break
-                random_index -= len(front)
+        tournament_candidates = np.random.choice(len(population), size=tournament_size, replace=False)
+
+        # Lower front wins
+        dominating_mask = tournament_candidates < np.broadcast_to(cum_fronts_lengths, (tournament_size, len(cum_fronts_lengths))).T
+        # Each tournament candidate is counted how many fronts + 1 it dominates 
+        dominating_counts = np.sum(dominating_mask, axis=0)
+        # Select candidates with the most dominating counts
+        best_candidates = np.where(np.max(dominating_counts) == dominating_counts)[0]
         
-    
-    # Check which front the individual belongs to
+        # If there are multiple candidates with the same dominating counts, randomly select one
+        if len(best_candidates) == 1:
+            winner_index = tournament_candidates[best_candidates[0]]
+        else:
+            winner_index = np.random.choice(tournament_candidates[best_candidates])
 
-    # parents = np.empty((num_parents, population.shape[1]))
-    # parents_fitness = np.empty(num_parents)
-    # for i in range(num_parents):
-    #     tournament_indices = np.random.randint(0, len(population), size=tournament_size)
-    #     tournament_fitnesses = fitness[tournament_indices]
-    #     winner_index = tournament_indices[np.argmax(tournament_fitnesses)]
-    #     parents[i, :] = population[winner_index, :]
-    #     parents_fitness[i] = fitness[winner_index]
-    # return parents, parents_fitness
+        parents[i, :] = population[winner_index, :]
     
-    
-    # Check which front the individual belongs to
+    return parents
 
-    pass
+
+def elitist_selection_multi(population, fitness_values, fronts, num_parents=2, tournament_size=3):
+    """
+    This function selects the fittest (max fitness) parents from the population.
+
+    Parameters
+    ----------
+    population: ndarray, shape (n, d)
+        Population of individuals.
+    fitness_values: ndarray, shape (n, m)
+        Fitness of each individual.
+    fronts: list of ndarrays
+        List of non-dominated fronts.
+        Each ndarray contains the indices of the individuals in the front.
+        Lower index means higher rank.
+    num_parents: int
+        Number of parents to select.
+    tournament_size: int
+        Number of individuals participating in each tournament.
+
+    Returns
+    -------
+    parents: ndarray, shape (num_parents, d)
+        Selected parents.
+    fitness: ndarray, shape (num_parents,)
+        Fitness of the selected parents.
+    """
+    if population.shape[0] < tournament_size:
+        raise ValueError("Tournament size cannot be larger than the population size.")
+    if len(population.shape) != 2:
+        population = population.reshape(-1, 1)
+
+    print('new elitist')
+    print(fronts[0])
+    print(fitness_values)
+
+    crowding_dists = crowding_distance(fitness_values[fronts[0]])
+    elitist_idx = np.argsort(crowding_dists)[::-1][:num_parents]
+    
+    parents = population[fronts[0][elitist_idx]]
+
+    print(fronts[0])
+    print(elitist_idx)
+    print(fronts[0][elitist_idx])
+    print(population[fronts[0]])
+
+    #elitist_idx = np.random.choice(fronts[0], size=num_parents, replace=False)
+    #parents = population[elitist_idx]
+
+    return parents
+
 
 def roulette_wheel_selection(population, fitness, num_parents=2):
     """
@@ -300,3 +349,40 @@ def rank_selection(population, fitness, num_parents=2):
     fitness = fitness[parent_indices]
 
     return parents, fitness
+
+
+def crowding_distance(fitness_values):
+    """
+    Calculate crowding distance for each individual in the population.
+
+    Parameters
+    ----------
+    fitness_values : ndarray, shape (N, num_fitness_functions)
+        Fitness values of the population.
+
+    Returns
+    -------
+    crowding_distances : ndarray, shape (N,)
+        Crowding distances for each individual.
+    """
+    pop_size, num_objectives = fitness_values.shape
+    crowding_distances = np.zeros(pop_size)
+
+    for obj_index in range(num_objectives):
+        # Sort the fitness values based on the current objective in ascending order. Best values first.
+        sorted_indices = np.argsort(fitness_values[:, obj_index])
+        crowding_distances[sorted_indices[0]] = np.inf
+        crowding_distances[sorted_indices[-1]] = np.inf
+
+        f_max = fitness_values[sorted_indices[-1], obj_index]
+        f_min = fitness_values[sorted_indices[0], obj_index]
+
+        if f_max == f_min:
+            continue
+
+        # Crowding distance is the sum of the distances to the previous and next individuals.
+        # It geometrically describes the sum of the lengths of a cuboid.
+        for i in range(1, pop_size - 1):
+            crowding_distances[sorted_indices[i]] += (fitness_values[sorted_indices[i + 1], obj_index]
+                                                      - fitness_values[sorted_indices[i - 1], obj_index])/ (f_max - f_min)
+    return crowding_distances

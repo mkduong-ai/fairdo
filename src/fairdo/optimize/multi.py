@@ -10,7 +10,7 @@ def nsga2(fitness_functions, d,
           pop_size=100,
           num_generations=500,
           initialization=variable_probability_initialization,
-          selection=None,
+          selection=tournament_selection_multi,
           crossover=uniform_crossover,
           mutation=shuffle_mutation,
           return_all_fronts=False):
@@ -72,16 +72,16 @@ def nsga2(fitness_functions, d,
     fitness_values = evaluate_population(fitness_functions=fitness_functions,
                                          population=population)
     # The fronts of the population. Initially, the fronts are not known
-    fronts = []
+    fronts = [np.arange(pop_size)]
 
     # Perform NSGA-II for the specified number of generations
     for _ in range(num_generations):
         # Select parents
         # parents = rng.choice(population, size=2, replace=False, axis=0)
-        parents = tournament_selection_multi(population=population,
-                                             fronts=fronts,
-                                             num_parents=2,
-                                             tournament_size=3)
+        parents = selection(population=population,
+                            fitness_values=fitness_values,
+                            fronts=fronts,
+                            num_parents=2)
         # Perform crossover
         offspring = crossover(parents=parents, num_offspring=pop_size)
         # Perform mutation
@@ -346,7 +346,8 @@ def crowding_distance(fitness_values):
         if f_max == f_min:
             continue
 
-        # Crowding distance is the sum of the distances to the previous and next individuals. It geometrically describes the sum of the lengths of a cuboid.
+        # Crowding distance is the sum of the distances to the previous and next individuals.
+        # It geometrically describes the sum of the lengths of a cuboid.
         for i in range(1, pop_size - 1):
             crowding_distances[sorted_indices[i]] += (fitness_values[sorted_indices[i + 1], obj_index]
                                                       - fitness_values[sorted_indices[i - 1], obj_index])/ (f_max - f_min)

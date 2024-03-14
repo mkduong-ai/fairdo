@@ -8,9 +8,9 @@ from fairdo.preprocessing import MultiObjectiveWrapper, HeuristicWrapper
 from fairdo.optimize.multi import nsga2
 from fairdo.optimize.single import genetic_algorithm
 from fairdo.optimize.geneticoperators import variable_probability_initialization,\
+    elitist_selection, elitist_selection_multi, tournament_selection_multi,\
     uniform_crossover, onepoint_crossover,\
-    fractional_flip_mutation, shuffle_mutation,\
-    elitist_selection
+    fractional_flip_mutation, shuffle_mutation
 # fairdo metrics
 from fairdo.metrics import statistical_parity_abs_diff_max, data_loss, group_missing_penalty
 
@@ -23,6 +23,7 @@ ga = partial(nsga2,
              pop_size=100,
              num_generations=100,
              initialization=variable_probability_initialization,
+             selection=elitist_selection_multi,
              crossover=uniform_crossover,
              mutation=fractional_flip_mutation)
 
@@ -36,7 +37,7 @@ preprocessor_multi = MultiObjectiveWrapper(heuristic=ga,
 data_multi = preprocessor_multi.fit_transform(dataset=data)
 
 # Single Objective
-def data_disc_quality(y, z, dims, w=0.8, **kwargs):
+def data_disc_quality(y, z, dims, w=1, **kwargs):
     """
     A single objective function that combines the statistical parity and data loss.
     
@@ -75,9 +76,9 @@ data_single = preprocessor.fit_transform(dataset=data)
 print("Size (higher is better) and discrimination (lower is better).")
 print("Original data:", len(data),
       statistical_parity_abs_diff_max(data[label], data[protected_attributes[0]].to_numpy()))
-print("Multi-objective fair data:", len(data_multi),
+print("Multi-objective fair data:", len(data_multi)/len(data),
         statistical_parity_abs_diff_max(data_multi[label], data_multi[protected_attributes[0]].to_numpy()))
-print("Single-objective fair data:", len(data_single),
+print("Single-objective fair data:", len(data_single)/len(data),
         statistical_parity_abs_diff_max(data_single[label], data_single[protected_attributes[0]].to_numpy()))
 
 # Plot the results
