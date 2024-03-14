@@ -101,6 +101,7 @@ def nsga2(fitness_functions, d,
         # Update the population and fitness values
         population = combined_population[selected_indices]
         fitness_values = combined_fitness_values[selected_indices]
+        # fronts = [front[selected_indices] for front in fronts]
     
     if return_all_fronts is False:
         return combined_population[fronts[0]], combined_fitness_values[fronts[0]]
