@@ -73,6 +73,7 @@ def nsga2(fitness_functions, d,
                                          population=population)
     # The fronts of the population. Initially, the fronts are not known
     fronts = [np.arange(pop_size)]
+    fronts_lengths = [pop_size]
 
     # Perform NSGA-II for the specified number of generations
     for _ in range(num_generations):
@@ -80,7 +81,7 @@ def nsga2(fitness_functions, d,
         # parents = rng.choice(population, size=2, replace=False, axis=0)
         parents = selection(population=population,
                             fitness_values=fitness_values,
-                            fronts=fronts,
+                            fronts_lengths=fronts_lengths,
                             num_parents=2)
         # Perform crossover
         offspring = crossover(parents=parents, num_offspring=pop_size)
@@ -101,8 +102,9 @@ def nsga2(fitness_functions, d,
         # Update the population and fitness values
         population = combined_population[selected_indices]
         fitness_values = combined_fitness_values[selected_indices]
-        # fronts = [front[selected_indices] for front in fronts]
-    
+        # fronts are indices from combined population, so we need to update them as well
+        fronts_lengths = [len(front) for front in fronts]
+
     if return_all_fronts is False:
         return combined_population[fronts[0]], combined_fitness_values[fronts[0]]
     else:

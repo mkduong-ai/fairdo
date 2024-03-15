@@ -90,7 +90,7 @@ def tournament_selection(population, fitness, num_parents=2, tournament_size=3):
     return parents, parents_fitness
 
 
-def tournament_selection_multi(population, fitness_values, fronts, num_parents=2, tournament_size=3):
+def tournament_selection_multi(population, fitness_values, fronts_lengths, num_parents=2, tournament_size=3):
     """
     Select parents using Tournament Selection.
     This method randomly selects a few individuals and chooses the best out of them to become a parent.
@@ -102,10 +102,8 @@ def tournament_selection_multi(population, fitness_values, fronts, num_parents=2
         Population of individuals.
     fitness_values: ndarray, shape (n, m)
         Fitness of each individual.
-    fronts: list of ndarrays
-        List of non-dominated fronts.
-        Each ndarray contains the indices of the individuals in the front.
-        Lower index means higher rank.
+    fronts_lengths: list of int
+        Lengths of each front.
     num_parents: int
         Number of parents to select.
     tournament_size: int
@@ -124,7 +122,6 @@ def tournament_selection_multi(population, fitness_values, fronts, num_parents=2
         population = population.reshape(-1, 1)
     
     # Get the lengths of individual arrays in the original list
-    fronts_lengths = np.array([len(front) for front in fronts])
     cum_fronts_lengths = np.cumsum(fronts_lengths)
 
     # Initialize parents
@@ -140,20 +137,22 @@ def tournament_selection_multi(population, fitness_values, fronts, num_parents=2
         # Select candidates with the most dominating counts
         best_candidates = np.where(np.max(dominating_counts) == dominating_counts)[0]
         
-        # If there are multiple candidates with the same dominating counts, randomly select one
+        # If there are multiple candidates in the same front, select one with the largest crowding distance
         if len(best_candidates) == 1:
             winner_index = tournament_candidates[best_candidates[0]]
         else:
-            winner_index = np.random.choice(tournament_candidates[best_candidates])
+            current_front = len(fronts_lengths) - np.max(dominating_counts)
+            crowding_dists = crowding_distance(fitness_values[:fronts_lengths[current_front]])
+            winner_index = tournament_candidates[best_candidates[np.argmax(crowding_dists[best_candidates])]]
 
         parents[i, :] = population[winner_index, :]
     
     return parents
 
 
-def elitist_selection_multi(population, fitness_values, fronts, num_parents=2, tournament_size=3):
+def elitist_selection_multi(population, fitness_values, fronts_lengths, num_parents=2, tournament_size=3):
     """
-    This function selects the fittest (max fitness) parents from the population.
+    Randomly selects from the first front.
 
     Parameters
     ----------
@@ -161,10 +160,8 @@ def elitist_selection_multi(population, fitness_values, fronts, num_parents=2, t
         Population of individuals.
     fitness_values: ndarray, shape (n, m)
         Fitness of each individual.
-    fronts: list of ndarrays
-        List of non-dominated fronts.
-        Each ndarray contains the indices of the individuals in the front.
-        Lower index means higher rank.
+    fronts_lengths: list of int
+        Lengths of each front.
     num_parents: int
         Number of parents to select.
     tournament_size: int
@@ -182,22 +179,12 @@ def elitist_selection_multi(population, fitness_values, fronts, num_parents=2, t
     if len(population.shape) != 2:
         population = population.reshape(-1, 1)
 
-    print('new elitist')
-    print(fronts[0])
-    print(fitness_values)
-
-    crowding_dists = crowding_distance(fitness_values[fronts[0]])
-    elitist_idx = np.argsort(crowding_dists)[::-1][:num_parents]
+    # Select the first front and calculate crowding distance
+    crowding_dists = crowding_distance(fitness_values[:fronts_lengths[0]])
+    # Select the individuals with the largest crowding distance
+    elitist_indices = np.argsort(crowding_dists)[::-1][:num_parents]
     
-    parents = population[fronts[0][elitist_idx]]
-
-    print(fronts[0])
-    print(elitist_idx)
-    print(fronts[0][elitist_idx])
-    print(population[fronts[0]])
-
-    #elitist_idx = np.random.choice(fronts[0], size=num_parents, replace=False)
-    #parents = population[elitist_idx]
+    parents = population[elitist_indices]
 
     return parents
 

@@ -23,7 +23,7 @@ ga = partial(nsga2,
              pop_size=100,
              num_generations=100,
              initialization=variable_probability_initialization,
-             selection=elitist_selection_multi,
+             selection=tournament_selection_multi,
              crossover=uniform_crossover,
              mutation=fractional_flip_mutation)
 
