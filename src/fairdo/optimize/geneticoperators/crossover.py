@@ -16,6 +16,25 @@ Goldberg, D. E. (1989). Genetic Algorithms in Search, Optimization, and Machine 
 import numpy as np
 
 
+def no_crossover(parents, num_offspring):
+    """
+    Perform the crossover operation with no crossover on the parents to create the offspring.
+
+    Parameters
+    ----------
+    parents: numpy array
+        Parents of the offspring with shape (2, d).
+    num_offspring: int
+        Number of offsprings.
+
+    Returns
+    -------
+    offspring: ndarray, shape (num_offspring, d)
+    """
+    # return the parents as they are
+    return np.tile(parents, (num_offspring // 2, 1))
+
+
 def onepoint_crossover(parents, num_offspring):
     """
     Perform the crossover operation with One-point crossover on the parents to create the offspring.
@@ -87,7 +106,7 @@ def kpoint_crossover(parents, num_offspring, k=2):
         parent2_idx = (i + 1) % parents.shape[0]
 
         # Calculate crossover points
-        crossover_points = np.sort(np.random.choice(d - 1, k, replace=False)) + 1
+        crossover_points = np.sort(np.random.choice(d - 1, size=k, replace=False)) + 1
         crossover_points = np.concatenate(([0], crossover_points, [d]))
 
         for j in range(len(crossover_points) - 1):

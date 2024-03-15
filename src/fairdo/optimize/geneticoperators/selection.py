@@ -25,43 +25,18 @@ import numpy as np
 # from fairdo.optimize.multi import crowding_distance # circular import error
 
 
-def elitist_selection(population, fitness, num_parents=2):
+def elitist_selection_multi(population, fitness_values, fronts_lengths, num_parents=2, tournament_size=3):
     """
-    This function selects the fittest (max fitness) parents from the population.
-
-    Parameters
-    ----------
-    population: ndarray, shape (n, d)
-        population of individuals
-    fitness: ndarray, shape (n,)
-        fitness of each individual
-    num_parents: int
-        number of parents to select
-
-    Returns
-    -------
-    parents: ndarray, shape (num_parents, d)
-    fitness: ndarray, shape (num_parents,)
-    """
-    # select the best individuals from the population to be parents
-    idx = np.argsort(fitness)
-    parents = population[idx[-num_parents:]]
-    parents_fitness = fitness[idx[-num_parents:]]
-    return parents, parents_fitness
-
-
-def tournament_selection(population, fitness, num_parents=2, tournament_size=3):
-    """
-    Select parents using Tournament Selection.
-    This method randomly selects a few individuals and chooses the best out of them to become a parent.
-    The process is repeated until the desired number of parents are selected.
+    Randomly selects from the first front.
 
     Parameters
     ----------
     population: ndarray, shape (n, d)
         Population of individuals.
-    fitness: ndarray, shape (n,)
+    fitness_values: ndarray, shape (n, m)
         Fitness of each individual.
+    fronts_lengths: list of int
+        Lengths of each front.
     num_parents: int
         Number of parents to select.
     tournament_size: int
@@ -79,15 +54,14 @@ def tournament_selection(population, fitness, num_parents=2, tournament_size=3):
     if len(population.shape) != 2:
         population = population.reshape(-1, 1)
 
-    parents = np.empty((num_parents, population.shape[1]))
-    parents_fitness = np.empty(num_parents)
-    for i in range(num_parents):
-        tournament_indices = np.random.randint(0, len(population), size=tournament_size)
-        tournament_fitnesses = fitness[tournament_indices]
-        winner_index = tournament_indices[np.argmax(tournament_fitnesses)]
-        parents[i, :] = population[winner_index, :]
-        parents_fitness[i] = fitness[winner_index]
-    return parents, parents_fitness
+    # Select the first front and calculate crowding distance
+    crowding_dists = crowding_distance(fitness_values[:fronts_lengths[0]])
+    # Select the individuals with the largest crowding distance
+    elitist_indices = np.argsort(crowding_dists)[::-1][:num_parents]
+    
+    parents = population[elitist_indices]
+
+    return parents
 
 
 def tournament_selection_multi(population, fitness_values, fronts_lengths, num_parents=2, tournament_size=3):
@@ -153,18 +127,43 @@ def tournament_selection_multi(population, fitness_values, fronts_lengths, num_p
     return parents
 
 
-def elitist_selection_multi(population, fitness_values, fronts_lengths, num_parents=2, tournament_size=3):
+def elitist_selection(population, fitness, num_parents=2):
     """
-    Randomly selects from the first front.
+    This function selects the fittest (max fitness) parents from the population.
+
+    Parameters
+    ----------
+    population: ndarray, shape (n, d)
+        population of individuals
+    fitness: ndarray, shape (n,)
+        fitness of each individual
+    num_parents: int
+        number of parents to select
+
+    Returns
+    -------
+    parents: ndarray, shape (num_parents, d)
+    fitness: ndarray, shape (num_parents,)
+    """
+    # select the best individuals from the population to be parents
+    idx = np.argsort(fitness)
+    parents = population[idx[-num_parents:]]
+    parents_fitness = fitness[idx[-num_parents:]]
+    return parents, parents_fitness
+
+
+def tournament_selection(population, fitness, num_parents=2, tournament_size=3):
+    """
+    Select parents using Tournament Selection.
+    This method randomly selects a few individuals and chooses the best out of them to become a parent.
+    The process is repeated until the desired number of parents are selected.
 
     Parameters
     ----------
     population: ndarray, shape (n, d)
         Population of individuals.
-    fitness_values: ndarray, shape (n, m)
+    fitness: ndarray, shape (n,)
         Fitness of each individual.
-    fronts_lengths: list of int
-        Lengths of each front.
     num_parents: int
         Number of parents to select.
     tournament_size: int
@@ -182,14 +181,15 @@ def elitist_selection_multi(population, fitness_values, fronts_lengths, num_pare
     if len(population.shape) != 2:
         population = population.reshape(-1, 1)
 
-    # Select the first front and calculate crowding distance
-    crowding_dists = crowding_distance(fitness_values[:fronts_lengths[0]])
-    # Select the individuals with the largest crowding distance
-    elitist_indices = np.argsort(crowding_dists)[::-1][:num_parents]
-    
-    parents = population[elitist_indices]
-
-    return parents
+    parents = np.empty((num_parents, population.shape[1]))
+    parents_fitness = np.empty(num_parents)
+    for i in range(num_parents):
+        tournament_indices = np.random.randint(0, len(population), size=tournament_size)
+        tournament_fitnesses = fitness[tournament_indices]
+        winner_index = tournament_indices[np.argmax(tournament_fitnesses)]
+        parents[i, :] = population[winner_index, :]
+        parents_fitness[i] = fitness[winner_index]
+    return parents, parents_fitness
 
 
 def roulette_wheel_selection(population, fitness, num_parents=2):

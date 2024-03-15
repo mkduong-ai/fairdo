@@ -1,18 +1,21 @@
 import numpy as np
 
 from fairdo.optimize.geneticoperators.initialization import random_initialization, variable_probability_initialization
-from fairdo.optimize.geneticoperators.selection import tournament_selection_multi
-from fairdo.optimize.geneticoperators.crossover import onepoint_crossover, uniform_crossover, simulated_binary_crossover
-from fairdo.optimize.geneticoperators.mutation import fractional_flip_mutation, shuffle_mutation
+from fairdo.optimize.geneticoperators.selection import elitist_selection_multi, tournament_selection_multi
+from fairdo.optimize.geneticoperators.crossover import onepoint_crossover,\
+    uniform_crossover, simulated_binary_crossover,\
+    no_crossover, onepoint_crossover
+from fairdo.optimize.geneticoperators.mutation import fractional_flip_mutation,\
+    bit_flip_mutation, shuffle_mutation
 
 
 def nsga2(fitness_functions, d,
           pop_size=100,
           num_generations=500,
           initialization=variable_probability_initialization,
-          selection=tournament_selection_multi,
-          crossover=uniform_crossover,
-          mutation=shuffle_mutation,
+          selection=elitist_selection_multi,
+          crossover=onepoint_crossover,
+          mutation=bit_flip_mutation,
           return_all_fronts=False):
     """
     Perform NSGA-II (Non-dominated Sorting Genetic Algorithm II) for multi-objective optimization.
@@ -58,13 +61,15 @@ def nsga2(fitness_functions, d,
     Notes
     -----
     The fitness functions must map the binary vector to a scalar value, i.e., :math:`f: \{0, 1\}^d \rightarrow \mathbb{R}`.
+    We used the same operators as the authors of NSGA-II in the original paper [1].
+    We only changed the selection operator. The original paper uses binary tournament selection,
+    but we use elitist selection with multiple objectives.
 
     References
     ----------
-    Deb, K., Pratap, A., Agarwal, S., & Meyarivan, T. (2002). A fast and elitist multiobjective genetic algorithm: NSGA-II.
+    [1] Deb, K., Pratap, A., Agarwal, S., & Meyarivan, T. (2002). A fast and elitist multiobjective genetic algorithm: NSGA-II.
+    https://ieeexplore.ieee.org/document/996017
     """
-    rng = np.random.default_rng()
-
     # Generate the initial population
     population = initialization(pop_size=pop_size, d=d)
     
@@ -78,7 +83,6 @@ def nsga2(fitness_functions, d,
     # Perform NSGA-II for the specified number of generations
     for _ in range(num_generations):
         # Select parents
-        # parents = rng.choice(population, size=2, replace=False, axis=0)
         parents = selection(population=population,
                             fitness_values=fitness_values,
                             fronts_lengths=fronts_lengths,

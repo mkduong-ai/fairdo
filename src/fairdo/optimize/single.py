@@ -34,7 +34,7 @@ import numpy as np
 from fairdo.optimize.geneticoperators.initialization import random_initialization, variable_probability_initialization
 from fairdo.optimize.geneticoperators.selection import elitist_selection, tournament_selection
 from fairdo.optimize.geneticoperators.crossover import onepoint_crossover, uniform_crossover
-from fairdo.optimize.geneticoperators.mutation import fractional_flip_mutation, shuffle_mutation
+from fairdo.optimize.geneticoperators.mutation import fractional_flip_mutation, shuffle_mutation, bit_flip_mutation
 
 
 def genetic_algorithm(f, d,

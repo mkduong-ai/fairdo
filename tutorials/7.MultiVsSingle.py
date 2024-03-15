@@ -7,25 +7,27 @@ from fairdo.utils.dataset import load_data
 from fairdo.preprocessing import MultiObjectiveWrapper, HeuristicWrapper
 from fairdo.optimize.multi import nsga2
 from fairdo.optimize.single import genetic_algorithm
-from fairdo.optimize.geneticoperators import variable_probability_initialization,\
+from fairdo.optimize.geneticoperators import variable_probability_initialization, random_initialization,\
     elitist_selection, elitist_selection_multi, tournament_selection_multi,\
-    uniform_crossover, onepoint_crossover,\
-    fractional_flip_mutation, shuffle_mutation
+    uniform_crossover, onepoint_crossover, no_crossover, \
+    fractional_flip_mutation, shuffle_mutation,\
+    bit_flip_mutation
 # fairdo metrics
 from fairdo.metrics import statistical_parity_abs_diff_max, data_loss, group_missing_penalty
 
 # Loading a sample database and encoding for appropriate usage
 # data is a pandas dataframe
 data, label, protected_attributes = load_data('compas', print_info=False)
+n_groups = data[protected_attributes[0]].unique()
 
 # Multi Objective
 ga = partial(nsga2,
              pop_size=100,
              num_generations=100,
              initialization=variable_probability_initialization,
-             selection=tournament_selection_multi,
-             crossover=uniform_crossover,
-             mutation=fractional_flip_mutation)
+             selection=elitist_selection_multi,
+             crossover=onepoint_crossover,
+             mutation=bit_flip_mutation)
 
 # Initialize the wrapper class for custom preprocessors
 preprocessor_multi = MultiObjectiveWrapper(heuristic=ga,
@@ -37,7 +39,7 @@ preprocessor_multi = MultiObjectiveWrapper(heuristic=ga,
 data_multi = preprocessor_multi.fit_transform(dataset=data)
 
 # Single Objective
-def data_disc_quality(y, z, dims, w=1, **kwargs):
+def data_disc_quality(y, z, dims, w=0.5, **kwargs):
     """
     A single objective function that combines the statistical parity and data loss.
     
@@ -54,14 +56,15 @@ def data_disc_quality(y, z, dims, w=1, **kwargs):
     -------
     float
         The weighted fairness and quality of the data."""
-    return w * statistical_parity_abs_diff_max(y=y, z=z) + (1-w) * data_loss(y=y, dims=dims)
+    discrimination = statistical_parity_abs_diff_max(y=y, z=z) + group_missing_penalty(z=z, n_groups=n_groups)
+    return w * discrimination + (1-w) * data_loss(y=y, dims=dims)
 
 ga = partial(genetic_algorithm,
              pop_size=100,
              num_generations=100,
              initialization=variable_probability_initialization,
-             crossover=uniform_crossover,
-             mutation=fractional_flip_mutation)
+             crossover=onepoint_crossover,
+             mutation=bit_flip_mutation)
 
 # Initialize the wrapper class for custom preprocessors
 preprocessor = HeuristicWrapper(heuristic=ga,
