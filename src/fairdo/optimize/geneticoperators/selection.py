@@ -142,7 +142,10 @@ def tournament_selection_multi(population, fitness_values, fronts_lengths, num_p
             winner_index = tournament_candidates[best_candidates[0]]
         else:
             current_front = len(fronts_lengths) - np.max(dominating_counts)
-            crowding_dists = crowding_distance(fitness_values[:fronts_lengths[current_front]])
+            if current_front == 0:
+                crowding_dists = crowding_distance(fitness_values[:fronts_lengths[current_front]])
+            else:
+                crowding_dists = crowding_distance(fitness_values[cum_fronts_lengths[current_front - 1]:cum_fronts_lengths[current_front]])
             winner_index = tournament_candidates[best_candidates[np.argmax(crowding_dists[best_candidates])]]
 
         parents[i, :] = population[winner_index, :]
