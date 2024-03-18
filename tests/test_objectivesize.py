@@ -7,7 +7,7 @@ from fairdo.preprocessing import HeuristicWrapper
 from fairdo.optimize.single import genetic_algorithm
 from fairdo.optimize.geneticoperators import uniform_crossover, onepoint_crossover, shuffle_mutation, adaptive_mutation, bit_flip_mutation, fractional_flip_mutation, elitist_selection, variable_probability_initialization
 # fairdo metrics
-from fairdo.metrics import statistical_parity_abs_diff_max, data_size_measure
+from fairdo.metrics import statistical_parity_abs_diff_max, data_loss
 
 # Loading a sample database and encoding for appropriate usage
 # data is a pandas dataframe
@@ -25,7 +25,7 @@ ga = partial(genetic_algorithm,
 preprocessor = HeuristicWrapper(heuristic=ga,
                                 protected_attribute=protected_attributes[0],
                                 label=label,
-                                disc_measure=data_size_measure)
+                                disc_measure=data_loss)
                                 
 # Fit and transform the data
 data_fair = preprocessor.fit_transform(dataset=data)

@@ -39,7 +39,7 @@ preprocessor_multi = MultiObjectiveWrapper(heuristic=ga,
 data_multi = preprocessor_multi.fit_transform(dataset=data)
 
 # Single Objective
-def data_disc_quality(y, z, dims, w=0.5, agg='sum', **kwargs):
+def data_disc_quality(y, z, dims, w=0.5, agg_group='max', **kwargs):
     """
     A single objective function that combines the statistical parity and data loss.
     
@@ -56,10 +56,10 @@ def data_disc_quality(y, z, dims, w=0.5, agg='sum', **kwargs):
     -------
     float
         The weighted fairness and quality of the data."""
-    if agg == 'sum':
-        discrimination = statistical_parity_abs_diff_max(y=y, z=z) + group_missing_penalty(z=z, n_groups=n_groups)
+    if agg_group== 'sum':
+        discrimination = statistical_parity_abs_diff_sum(y=y, z=z) + group_missing_penalty(z=z, n_groups=n_groups, agg_group=agg_group)
     else:
-        discrimination = np.max([statistical_parity_abs_diff_max(y=y, z=z), group_missing_penalty(z=z, n_groups=n_groups)])
+        discrimination = np.max([statistical_parity_abs_diff_max(y=y, z=z), group_missing_penalty(z=z, n_groups=n_groups, agg_group=agg_group)])
     return w * discrimination + (1-w) * data_loss(y=y, dims=dims)
 
 ga = partial(genetic_algorithm,
@@ -80,11 +80,11 @@ data_single = preprocessor.fit_transform(dataset=data)
 
 # Print no. samples and discrimination before and after
 print("Size (higher is better) and discrimination (lower is better).")
-print("Original data:", len(data),
+print("Original data:", 0,
       statistical_parity_abs_diff_max(data[label], data[protected_attributes[0]].to_numpy()))
-print("Multi-objective fair data:", len(data_multi)/len(data),
+print("Multi-objective fair data:", 1-len(data_multi)/len(data),
         statistical_parity_abs_diff_max(data_multi[label], data_multi[protected_attributes[0]].to_numpy()))
-print("Single-objective fair data:", len(data_single)/len(data),
+print("Single-objective fair data:", 1-len(data_single)/len(data),
         statistical_parity_abs_diff_max(data_single[label], data_single[protected_attributes[0]].to_numpy()))
 
 # Plot the results

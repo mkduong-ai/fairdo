@@ -208,6 +208,11 @@ class MultiObjectiveWrapper(Preprocessing):
                         label=f'Pareto Front',
                         c='r',
                         s=30)
+        base_solution = np.ones(len(self.dataset))
+        plt.scatter(self.funcs[x_axis](base_solution), self.funcs[y_axis](base_solution),
+                    label=f'Original Dataset',
+                    c='b',
+                    s=30)
         plt.xlabel(x_label)
         plt.ylabel(y_label)
         plt.xlim(0, 1)
