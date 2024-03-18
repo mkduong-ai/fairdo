@@ -13,7 +13,7 @@ from fairdo.optimize.geneticoperators import variable_probability_initialization
     fractional_flip_mutation, shuffle_mutation,\
     bit_flip_mutation
 # fairdo metrics
-from fairdo.metrics import statistical_parity_abs_diff_max, data_loss, group_missing_penalty
+from fairdo.metrics import statistical_parity_abs_diff_max, statistical_parity_abs_diff_sum, data_loss, group_missing_penalty
 
 # Loading a sample database and encoding for appropriate usage
 # data is a pandas dataframe
@@ -39,7 +39,7 @@ preprocessor_multi = MultiObjectiveWrapper(heuristic=ga,
 data_multi = preprocessor_multi.fit_transform(dataset=data)
 
 # Single Objective
-def data_disc_quality(y, z, dims, w=0.5, **kwargs):
+def data_disc_quality(y, z, dims, w=0.5, agg='sum', **kwargs):
     """
     A single objective function that combines the statistical parity and data loss.
     
@@ -56,7 +56,10 @@ def data_disc_quality(y, z, dims, w=0.5, **kwargs):
     -------
     float
         The weighted fairness and quality of the data."""
-    discrimination = statistical_parity_abs_diff_max(y=y, z=z) + group_missing_penalty(z=z, n_groups=n_groups)
+    if agg == 'sum':
+        discrimination = statistical_parity_abs_diff_max(y=y, z=z) + group_missing_penalty(z=z, n_groups=n_groups)
+    else:
+        discrimination = np.max([statistical_parity_abs_diff_max(y=y, z=z), group_missing_penalty(z=z, n_groups=n_groups)])
     return w * discrimination + (1-w) * data_loss(y=y, dims=dims)
 
 ga = partial(genetic_algorithm,
