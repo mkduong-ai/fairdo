@@ -41,7 +41,7 @@ def biased_random_initialization(pop_size, d, selection_probability=0.8):
     return population
 
 
-def variable_probability_initialization(pop_size, d, min_p=0.5, max_p=0.99):
+def variable_initialization(pop_size, d, min_p=0.5, max_p=0.99):
     """
     Initialize the population with a variable probability of selecting items.
 

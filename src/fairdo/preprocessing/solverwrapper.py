@@ -503,5 +503,5 @@ def f(binary_vector, dataset, label, protected_attributes,
     if penalty is not None:
         return fitness_function(x=x, y=y, z=z, dims=len(mask)) + penalty(x=x, y=y, z=z)
     else:
-        return fitness_function(x=x, y=y, z=z)
+        return fitness_function(x=x, y=y, z=z, dims=len(mask))
     

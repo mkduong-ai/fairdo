@@ -1,6 +1,6 @@
 import numpy as np
 
-from fairdo.optimize.geneticoperators.initialization import random_initialization, variable_probability_initialization
+from fairdo.optimize.geneticoperators.initialization import random_initialization, variable_initialization
 from fairdo.optimize.geneticoperators.selection import elitist_selection_multi, tournament_selection_multi
 from fairdo.optimize.geneticoperators.crossover import onepoint_crossover,\
     uniform_crossover, simulated_binary_crossover,\
@@ -12,7 +12,7 @@ from fairdo.optimize.geneticoperators.mutation import fractional_flip_mutation,\
 def nsga2(fitness_functions, d,
           pop_size=100,
           num_generations=500,
-          initialization=variable_probability_initialization,
+          initialization=variable_initialization,
           selection=elitist_selection_multi,
           crossover=onepoint_crossover,
           mutation=bit_flip_mutation,

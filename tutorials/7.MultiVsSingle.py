@@ -7,7 +7,7 @@ from fairdo.utils.dataset import load_data
 from fairdo.preprocessing import MultiObjectiveWrapper, HeuristicWrapper
 from fairdo.optimize.multi import nsga2
 from fairdo.optimize.single import genetic_algorithm
-from fairdo.optimize.geneticoperators import variable_probability_initialization, random_initialization,\
+from fairdo.optimize.geneticoperators import variable_initialization, random_initialization,\
     elitist_selection, elitist_selection_multi, tournament_selection_multi,\
     uniform_crossover, onepoint_crossover, no_crossover, \
     fractional_flip_mutation, shuffle_mutation,\
@@ -24,7 +24,7 @@ n_groups = data[protected_attributes[0]].unique()
 ga = partial(nsga2,
              pop_size=100,
              num_generations=100,
-             initialization=variable_probability_initialization,
+             initialization=variable_initialization,
              selection=elitist_selection_multi,
              crossover=onepoint_crossover,
              mutation=bit_flip_mutation)
@@ -65,7 +65,7 @@ def data_disc_quality(y, z, dims, w=0.5, agg_group='max', **kwargs):
 ga = partial(genetic_algorithm,
              pop_size=100,
              num_generations=100,
-             initialization=variable_probability_initialization,
+             initialization=variable_initialization,
              crossover=onepoint_crossover,
              mutation=bit_flip_mutation)
 
