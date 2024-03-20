@@ -42,7 +42,7 @@ def elitist_selection(population, fitness, num_parents=2):
     fitness: ndarray, shape (num_parents,)
     """
     # select the best individuals from the population to be parents
-    idx = np.argsort(fitness)
+    idx = np.argpartition(fitness, -num_parents)[-num_parents:]
     parents = population[idx[-num_parents:]]
     parents_fitness = fitness[idx[-num_parents:]]
     return parents, parents_fitness
@@ -80,7 +80,7 @@ def tournament_selection(population, fitness, num_parents=2, tournament_size=3):
     parents = np.empty((num_parents, population.shape[1]))
     parents_fitness = np.empty(num_parents)
     for i in range(num_parents):
-        tournament_indices = np.random.randint(0, len(population), size=tournament_size)
+        tournament_indices = np.random.randint(len(population), size=tournament_size)
         tournament_fitnesses = fitness[tournament_indices]
         winner_index = tournament_indices[np.argmax(tournament_fitnesses)]
         parents[i, :] = population[winner_index, :]
@@ -128,7 +128,7 @@ def roulette_wheel_selection(population, fitness, num_parents=2):
         fitness = fitness - 2*np.min(fitness)
     fitness_sum = np.sum(fitness)
     selection_probs = fitness / fitness_sum
-    parents_idx = np.random.choice(np.arange(len(population)), size=num_parents, p=selection_probs)
+    parents_idx = np.random.choice(len(population), size=num_parents, p=selection_probs)
     return population[parents_idx], fitness[parents_idx]
 
 
@@ -179,7 +179,7 @@ def stochastic_universal_sampling(population, fitness, num_parents=2):
     distance = 1.0 / num_parents
 
     # Initialize the start of the pointers
-    start = np.random.uniform(0, distance)
+    start = np.random.uniform(distance)
 
     # Initialize the parents
     parents = np.empty((num_parents, population.shape[1]))
@@ -229,7 +229,7 @@ def rank_selection(population, fitness, num_parents=2):
     selection_probabilities = ranks / total_ranks
 
     # Select parents based on selection probabilities
-    parent_indices = np.random.choice(np.arange(len(population)), size=num_parents, p=selection_probabilities)
+    parent_indices = np.random.choice(len(population), size=num_parents, p=selection_probabilities)
 
     parents = population[parent_indices]
     fitness = fitness[parent_indices]

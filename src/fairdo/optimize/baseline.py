@@ -44,10 +44,10 @@ def random_method(f, d, pop_size=100, num_generations=500):
     np.array, float
         The final solution vector and its fitness value.
     """
-    best_solution = np.random.randint(0, 2, size=d)
+    best_solution = np.random.randint(2, size=d)
     best_fitness = f(best_solution)
     for _ in range(pop_size * num_generations):
-        new_solution = np.random.randint(0, 2, size=d)
+        new_solution = np.random.randint(2, size=d)
         new_fitness = f(new_solution)
         if new_fitness < best_fitness:
             best_solution = new_solution
@@ -80,7 +80,7 @@ def random_method_vectorized(f, d, pop_size=100, num_generations=500):
     np.array, float
         The final solution vector and its fitness value.
     """
-    solutions = np.random.randint(0, 2, size=(pop_size * num_generations, d))
+    solutions = np.random.randint(2, size=(pop_size * num_generations, d))
     fitness_values = np.apply_along_axis(f, 1, solutions)
 
     best_index = np.argmin(fitness_values)
