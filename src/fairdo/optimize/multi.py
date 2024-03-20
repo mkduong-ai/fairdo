@@ -66,7 +66,7 @@ def nsga2(fitness_functions, d,
 
     # Generate the initial population
     population = initialization(pop_size=pop_size, d=d)
-    
+
     # Evaluate the fitness of each individual in the population
     fitness_values = evaluate_population(fitness_functions=fitness_functions,
                                          population=population)
@@ -81,11 +81,11 @@ def nsga2(fitness_functions, d,
         offspring = mutation(offspring=offspring)
         # Evaluate the fitness of the offspring
         offspring_fitness_values = evaluate_population(fitness_functions, offspring)
-        
+
         # Combine the parents and the offspring
         combined_population = np.concatenate((population, offspring))
         combined_fitness_values = np.concatenate((fitness_values, offspring_fitness_values))
-        
+
         # Select the best individuals using non-dominated sorting and crowding distance
         fronts = non_dominated_sort_fast(combined_fitness_values)
         # Fit the first fronts to the population size. The front that doesnt fit will be selected based on crowding distance
@@ -94,7 +94,7 @@ def nsga2(fitness_functions, d,
         # Update the population and fitness values
         population = combined_population[selected_indices]
         fitness_values = combined_fitness_values[selected_indices]
-    
+
     if return_all_fronts is False:
         return combined_population[fronts[0]], combined_fitness_values[fronts[0]]
     else:
@@ -122,7 +122,7 @@ def evaluate_population(fitness_functions, population):
     for i, fitness_function in enumerate(fitness_functions):
         # TODO: Parallelize this loop
         fitness_values[:, i] = np.apply_along_axis(fitness_function, axis=1, arr=population).flatten()
-    
+
     return fitness_values
 
 
@@ -239,7 +239,7 @@ def dom_counts_indices_fast(fitness_values):
     """
     Calculates the number of individuals that dominate each individual and the indices of individuals that are dominated by each individual.
     Faster implementation using broadcasting.
-    
+
     Parameters
     ----------
     fitness_values : ndarray, shape (pop_size, num_fitness_functions)
@@ -251,7 +251,7 @@ def dom_counts_indices_fast(fitness_values):
         The number of individuals that dominate each individual.
     dominated_indices : list of ndarrays
         The indices of individuals that are dominated by each individual.
-    
+
     Notes
     -----
     This function uses broadcasting to compare all pairs of individuals in the population. The result is a significant speedup compared to the non-broadcasting implementation.
@@ -340,7 +340,8 @@ def crowding_distance(fitness_values):
             continue
 
         # Crowding distance is the sum of the distances to the previous and next individuals. It geometrically describes the sum of the lengths of a cuboid.
-        for i in range(1, pop_size - 1):
-            crowding_distances[sorted_indices[i]] += (fitness_values[sorted_indices[i + 1], obj_index]
-                                                      - fitness_values[sorted_indices[i - 1], obj_index])/ (f_max - f_min)
+        nxt = fitness_values[sorted_indices[2:], obj_index]
+        prv = fitness_values[sorted_indices[:-2], obj_index]
+        crowding_distances[sorted_indices[1:-1]] += (nxt - prv)/ (f_max - f_min)
+
     return crowding_distances
