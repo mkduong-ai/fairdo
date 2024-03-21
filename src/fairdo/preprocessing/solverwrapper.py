@@ -138,7 +138,7 @@ class MultiObjectiveWrapper(Preprocessing):
                               approach=approach,
                               synthetic_dataset=self.synthetic_dataset,
                               fitness_function=fitness_function,
-                              penalty=penalty) for fitness_function in self.fitness_functions]
+                              penalty=None) for fitness_function in self.fitness_functions]
 
         return self
     
