@@ -302,8 +302,8 @@ def selection_indices(combined_fitness_values, fronts, pop_size):
             # If the current front cannot fit entirely, select individuals based on crowding distance
             crowding_distances = crowding_distance(combined_fitness_values[current_front])
             # Select individuals with larger crowding distances first
-            sorted_indices = np.argsort(crowding_distances)[::-1]
-            selected_indices.extend(current_front[sorted_indices[:remaining_space]])
+            indices = np.argpartition(crowding_distances, -remaining_space)[-remaining_space:]
+            selected_indices.extend(current_front[indices])
             remaining_space = 0
         front_idx += 1
 

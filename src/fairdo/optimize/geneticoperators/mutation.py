@@ -37,7 +37,7 @@ def fractional_flip_mutation(offspring, mutation_rate=0.05):
     num_mutation = int(mutation_rate * offspring.shape[1])
     for idx in range(offspring.shape[0]):
         # select the random bits to flip
-        mutation_bits = np.random.choice(np.arange(offspring.shape[1]),
+        mutation_bits = np.random.choice(offspring.shape[1],
                                          num_mutation,
                                          replace=False)
         # flip the bits
@@ -83,7 +83,7 @@ def swap_mutation(offspring):
     """
     for idx in range(offspring.shape[0]):
         # select two random bits
-        bit1, bit2 = np.random.choice(np.arange(offspring.shape[1]), 2, replace=False)
+        bit1, bit2 = np.random.choice(offspring.shape[1], 2, replace=False)
         # swap the bits
         offspring[idx, bit1], offspring[idx, bit2] = offspring[idx, bit2], offspring[idx, bit1]
     return offspring
@@ -134,30 +134,30 @@ def diverse_mutation(offspring, mutation_rate=0.05):
     """
     # Calculate the proportion of 1s in each offspring
     proportion_ones = np.mean(offspring, axis=1)
-    
+
     # Adjust the mutation rate based on the proportion of 1s
     mutated_proportion_ones = proportion_ones + np.random.uniform(-0.1, 0.1, size=proportion_ones.shape)
     mutated_proportion_ones = np.clip(mutated_proportion_ones, 0, 1)  # Ensure values are within [0, 1] range
-    
+
     # Generate mutated offspring
     mutation_probs = mutation_rate * mutated_proportion_ones
     mutated_mask = np.random.rand(*offspring.shape) < mutation_probs[:, np.newaxis]
     mutated_offspring = np.where(mutated_mask, 1 - offspring, offspring)
-    
+
     return mutated_offspring
 
 
 def shuffle_mutation(offspring, **kwargs):
     """
     Mutates the given offspring by shuffling the bits of each offspring.
-    
+
     Parameters
     ----------
     offspring: ndarray, shape (n, d)
         The offspring to be mutated. Each row represents an offspring, and each column represents a bit.
     kwargs: dict
         Additional keyword arguments. Ignored.
-    
+
     Returns
     -------
     offspring: ndarray, shape (n, d)
