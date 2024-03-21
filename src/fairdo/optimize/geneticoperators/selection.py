@@ -3,6 +3,11 @@ Selection Methods
 =================
 
 This module implements various selection methods used in genetic algorithms.
+In multi objective optimization, the selection methods are used to select the parents based on the Pareto front
+and it is assumed that the fitness values are to be **minimized**.
+In single objective optimization, the selection methods are used to select the parents based on the fitness values
+and it is assumed that the fitness values are to be **maximized**.
+
 These methods are used to select the individuals from the current generation that will be used to produce the offspring
 for the next generation.
 Each function in this module takes a population of individuals and their fitness values as input,
