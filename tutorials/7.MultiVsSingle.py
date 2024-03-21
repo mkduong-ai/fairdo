@@ -20,20 +20,48 @@ from fairdo.metrics import statistical_parity_abs_diff_max, statistical_parity_a
 data, label, protected_attributes = load_data('compas', print_info=False)
 n_groups = data[protected_attributes[0]].unique()
 
+pop_size=100
+num_generations=100
+
 # Multi Objective
 ga = partial(nsga2,
-             pop_size=100,
-             num_generations=100,
+             pop_size=pop_size,
+             num_generations=num_generations,
              initialization=variable_initialization,
              selection=elitist_selection_multi,
              crossover=onepoint_crossover,
              mutation=bit_flip_mutation)
 
+# Penalized discrimination
+def penalized_discrimination(y, z, agg_group='max', **kwargs):
+    """
+    Penalized discrimination function that combines the statistical parity and group missing penalty.
+    
+    Parameters
+    ----------
+    y: np.array
+        The target variable.
+    z: np.array
+        The protected attribute.
+    
+    Returns
+    -------
+    float
+        The penalized discrimination."""
+    if agg_group=='sum':
+        penalized_discrimination = statistical_parity_abs_diff_sum(y=y, z=z) + group_missing_penalty(z=z, n_groups=n_groups, agg_group=agg_group)
+    elif agg_group=='max':
+        penalized_discrimination = np.max([statistical_parity_abs_diff_max(y=y, z=z), group_missing_penalty(z=z, n_groups=n_groups, agg_group=agg_group)])
+    else:
+        raise ValueError("Invalid aggregation group. Supported values are 'sum' and 'max'.")
+    return penalized_discrimination
+
+
 # Initialize the wrapper class for custom preprocessors
 preprocessor_multi = MultiObjectiveWrapper(heuristic=ga,
                                      protected_attribute=protected_attributes[0],
                                      label=label,
-                                     fitness_functions=[statistical_parity_abs_diff_max, data_loss])
+                                     fitness_functions=[penalized_discrimination, penalized_discrimination])
 
 # Fit and transform the data, returns the data closest to the ideal solution
 data_multi = preprocessor_multi.fit_transform(dataset=data)
@@ -65,8 +93,8 @@ def data_disc_quality(y, z, dims, w=0.5, agg_group='max', **kwargs):
     return w * penalized_discrimination + (1-w) * data_loss(y=y, dims=dims)
 
 ga = partial(genetic_algorithm,
-             pop_size=100,
-             num_generations=100,
+             pop_size=pop_size,
+             num_generations=num_generations,
              initialization=variable_initialization,
              crossover=onepoint_crossover,
              mutation=bit_flip_mutation)

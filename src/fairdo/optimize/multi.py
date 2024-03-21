@@ -97,10 +97,10 @@ def nsga2(fitness_functions, d,
         # Combine the parents and the offspring
         combined_population = np.concatenate((population, offspring))
         combined_fitness_values = np.concatenate((fitness_values, offspring_fitness_values))
-        
+
         # Select the best individuals using non-dominated sorting and crowding distance
-        fronts = non_dominated_sort_fast(combined_fitness_values)
-        # Fit the first fronts to the population size. The front that doesnt fit will be selected based on crowding distance
+        fronts = non_dominated_sort(combined_fitness_values)
+        # Fit the first fronts to the population size. The front that doesn't fit will be selected based on crowding distance
         selected_indices = selection_indices(combined_fitness_values, fronts, pop_size)
 
         # Update the population and fitness values
