@@ -99,7 +99,7 @@ def nsga2(fitness_functions, d,
         combined_fitness_values = np.concatenate((fitness_values, offspring_fitness_values))
 
         # Select the best individuals using non-dominated sorting and crowding distance
-        fronts = non_dominated_sort(combined_fitness_values)
+        fronts = non_dominated_sort_fast(combined_fitness_values)
         # Fit the first fronts to the population size. The front that doesn't fit will be selected based on crowding distance
         selected_indices = selection_indices(combined_fitness_values, fronts, pop_size)
 
@@ -202,14 +202,15 @@ def non_dominated_sort_fast(fitness_values):
 
     while current_front.size > 0:
         fronts.append(current_front)
-        # Next front is the set of all indices dominated by the current front
+        # Next front is a subset of all indices dominated by the current front
         next_front = np.concatenate([dominated_indices[i] for i in current_front])
         # Count the number of dominating solutions for each solution
         unique_next_front, counts = np.unique(next_front, return_counts=True)
         # Decrement the dominating counts
         dominating_counts[unique_next_front] -= counts
         # Next front is the set of all solutions with no dominating solutions
-        current_front = np.where(dominating_counts[unique_next_front] == 0)[0]
+        current_front = np.where(dominating_counts == 0)[0]
+        current_front = np.setdiff1d(current_front, np.concatenate(fronts))
 
     return fronts
 

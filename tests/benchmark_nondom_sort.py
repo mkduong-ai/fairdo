@@ -1,6 +1,7 @@
 import numpy as np
 import time
 from fairdo.optimize.multi import dom_counts_indices, dom_counts_indices_fast
+from fairdo.optimize.multi import non_dominated_sort, non_dominated_sort_fast
 from utils import benchmark
 
 
@@ -34,6 +35,6 @@ def test2(pop_size, num_objectives):
     print(dom_list_broadcast)
 
 # Main
-pop_size = 1000
+pop_size = 100
 num_objectives = 2
 test(pop_size, num_objectives)

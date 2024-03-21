@@ -128,8 +128,8 @@ class MultiObjectiveWrapper(Preprocessing):
             n_groups = np.array([self.dataset[self.protected_attribute].nunique()])
 
         # define penalty function
-        penalty = partial(group_missing_penalty,
-                          n_groups=n_groups)
+        #penalty = partial(group_missing_penalty,
+        #                  n_groups=n_groups)
 
         self.funcs = [partial(f,
                               dataset=self.dataset,
