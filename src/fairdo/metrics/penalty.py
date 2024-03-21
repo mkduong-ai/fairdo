@@ -14,7 +14,9 @@ from fairdo.utils.helper import nunique
 
 def group_missing_penalty(z: np.array, n_groups: np.array,
                           agg_attribute='max',
-                          agg_group='max', **kwargs) -> float:
+                          agg_group='max',
+                          eps=0.1,
+                          **kwargs) -> float:
     """
     Calculate the penalty for missing groups in a protected attribute.
     The number of groups `n_groups` is used to calculate the penalty.
@@ -31,10 +33,17 @@ def group_missing_penalty(z: np.array, n_groups: np.array,
         (n_samples,) represents one protected attribute.
         
         Each protected attribute can consists of >2 groups.
-    n_groups: np.array
+    n_groups: np.array or int
         Number of groups for each protected attribute.
     agg_group: str, optional
         Aggregation function for the group. Default is 'sum'.
+    agg_attribute: str, optional
+        Aggregation function for the attribute. Default is 'max'.
+    eps: float, optional
+        Small value to add to the penalty. Default is 0.1.
+        Acts as an upper bound for the maximum discrimination possible
+        that is not a supremum. This is to ensure that missing a group
+        is always worse than having a group with a large discrimination.
 
     Returns
     -------
@@ -45,34 +54,19 @@ def group_missing_penalty(z: np.array, n_groups: np.array,
 
     if agg_group == 'max':
         if agg_attribute == 'max':
-            return int(np.any(n_avail_groups < n_groups))
+            return int(np.any(n_avail_groups < n_groups)) * (1 + eps)
         elif agg_attribute == 'sum':
-            return np.sum(n_avail_groups < n_groups)
+            return np.sum((n_avail_groups < n_groups) * (1 + eps))
     elif agg_group == 'sum':
         n_missing_groups = n_groups - n_avail_groups
         group_penalties = n_missing_groups * (2 * n_groups - n_missing_groups - 1) / 2
         
-        if agg_attribute == 'sum':
-            return np.sum(group_penalties)
-        elif agg_attribute == 'max':
+        if agg_attribute == 'max':
             return np.max(group_penalties)
+        elif agg_attribute == 'sum':
+            return np.sum(group_penalties)
     else:
         raise NotImplementedError("Only sum and max are implemented for agg_group and agg_attribute.")
-
-
-def data_size_measure(y: np.array, dims: int, **kwargs) -> float:
-    """
-    Test function to measure the size of the data.
-    The function returns the negative of the length of the vector `y` divided by `dims`.
-    This is used to test whether genetic algorithms are able to select all the data points.
-
-    Parameters
-    ----------
-    y: np.array
-        Vector to measure the size of.
-    dims: int
-    """
-    return - len(y) / dims
 
 
 def data_loss(y: np.array, dims: int, **kwargs) -> float:

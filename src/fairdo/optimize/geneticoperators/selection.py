@@ -3,6 +3,11 @@ Selection Methods
 =================
 
 This module implements various selection methods used in genetic algorithms.
+In multi objective optimization, the selection methods are used to select the parents based on the Pareto front
+and it is assumed that the fitness values are to be **minimized**.
+In single objective optimization, the selection methods are used to select the parents based on the fitness values
+and it is assumed that the fitness values are to be **maximized**.
+
 These methods are used to select the individuals from the current generation that will be used to produce the offspring
 for the next generation.
 Each function in this module takes a population of individuals and their fitness values as input,
@@ -21,6 +26,110 @@ reproductive trials is best. Proceedings of the Third International Conference o
 """
 
 import numpy as np
+
+# from fairdo.optimize.multi import crowding_distance # circular import error
+
+
+def elitist_selection_multi(population, fitness_values, fronts_lengths, num_parents=2, tournament_size=3):
+    """
+    Randomly selects from the first front.
+
+    Parameters
+    ----------
+    population: ndarray, shape (n, d)
+        Population of individuals.
+    fitness_values: ndarray, shape (n, m)
+        Fitness of each individual.
+    fronts_lengths: list of int
+        Lengths of each front.
+    num_parents: int
+        Number of parents to select.
+    tournament_size: int
+        Number of individuals participating in each tournament.
+
+    Returns
+    -------
+    parents: ndarray, shape (num_parents, d)
+        Selected parents.
+    fitness: ndarray, shape (num_parents,)
+        Fitness of the selected parents.
+    """
+    if population.shape[0] < tournament_size:
+        raise ValueError("Tournament size cannot be larger than the population size.")
+    if len(population.shape) != 2:
+        population = population.reshape(-1, 1)
+
+    # Select the first front and calculate crowding distance
+    crowding_dists = crowding_distance(fitness_values[:fronts_lengths[0]])
+    # Select the individuals with the largest crowding distance
+    elitist_indices = np.argsort(crowding_dists)[::-1][:num_parents]
+    
+    parents = population[elitist_indices]
+
+    return parents
+
+
+def tournament_selection_multi(population, fitness_values, fronts_lengths, num_parents=2, tournament_size=3):
+    """
+    Select parents using Tournament Selection.
+    This method randomly selects a few individuals and chooses the best out of them to become a parent.
+    The process is repeated until the desired number of parents are selected.
+
+    Parameters
+    ----------
+    population: ndarray, shape (n, d)
+        Population of individuals.
+    fitness_values: ndarray, shape (n, m)
+        Fitness of each individual.
+    fronts_lengths: list of int
+        Lengths of each front.
+    num_parents: int
+        Number of parents to select.
+    tournament_size: int
+        Number of individuals participating in each tournament.
+
+    Returns
+    -------
+    parents: ndarray, shape (num_parents, d)
+        Selected parents.
+    fitness: ndarray, shape (num_parents,)
+        Fitness of the selected parents.
+    """
+    if population.shape[0] < tournament_size:
+        raise ValueError("Tournament size cannot be larger than the population size.")
+    if len(population.shape) != 2:
+        population = population.reshape(-1, 1)
+    
+    # Get the lengths of individual arrays in the original list
+    cum_fronts_lengths = np.cumsum(fronts_lengths)
+
+    # Initialize parents
+    parents = np.empty((num_parents, population.shape[1]))
+
+    for i in range(num_parents):
+        tournament_candidates = np.random.choice(len(population), size=tournament_size, replace=False)
+
+        # Lower front wins
+        dominating_mask = tournament_candidates < np.broadcast_to(cum_fronts_lengths, (tournament_size, len(cum_fronts_lengths))).T
+        # Each tournament candidate is counted how many fronts + 1 it dominates 
+        dominating_counts = np.sum(dominating_mask, axis=0)
+        # Select candidates with the most dominating counts
+        best_candidates = np.where(np.max(dominating_counts) == dominating_counts)[0]
+        
+        # If there are multiple candidates in the same front, select one with the largest crowding distance
+        if len(best_candidates) == 1:
+            winner_index = tournament_candidates[best_candidates[0]]
+        else:
+            current_front = len(fronts_lengths) - np.max(dominating_counts)
+            if current_front == 0:
+                crowding_dists = crowding_distance(fitness_values[:fronts_lengths[current_front]])
+            else:
+                crowding_dists = crowding_distance(fitness_values[cum_fronts_lengths[current_front - 1]:cum_fronts_lengths[current_front]])
+            winner_index = tournament_candidates[best_candidates[np.argmax(crowding_dists[best_candidates])]]
+
+        parents[i, :] = population[winner_index, :]
+    
+    return parents
 
 
 def elitist_selection(population, fitness, num_parents=2):
@@ -235,3 +344,40 @@ def rank_selection(population, fitness, num_parents=2):
     fitness = fitness[parent_indices]
 
     return parents, fitness
+
+
+def crowding_distance(fitness_values):
+    """
+    Calculate crowding distance for each individual in the population.
+
+    Parameters
+    ----------
+    fitness_values : ndarray, shape (N, num_fitness_functions)
+        Fitness values of the population.
+
+    Returns
+    -------
+    crowding_distances : ndarray, shape (N,)
+        Crowding distances for each individual.
+    """
+    pop_size, num_objectives = fitness_values.shape
+    crowding_distances = np.zeros(pop_size)
+
+    for obj_index in range(num_objectives):
+        # Sort the fitness values based on the current objective in ascending order. Best values first.
+        sorted_indices = np.argsort(fitness_values[:, obj_index])
+        crowding_distances[sorted_indices[0]] = np.inf
+        crowding_distances[sorted_indices[-1]] = np.inf
+
+        f_max = fitness_values[sorted_indices[-1], obj_index]
+        f_min = fitness_values[sorted_indices[0], obj_index]
+
+        if f_max == f_min:
+            continue
+
+        # Crowding distance is the sum of the distances to the previous and next individuals.
+        # It geometrically describes the sum of the lengths of a cuboid.
+        for i in range(1, pop_size - 1):
+            crowding_distances[sorted_indices[i]] += (fitness_values[sorted_indices[i + 1], obj_index]
+                                                      - fitness_values[sorted_indices[i - 1], obj_index])/ (f_max - f_min)
+    return crowding_distances

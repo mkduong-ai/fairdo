@@ -1,17 +1,21 @@
 import numpy as np
 
-from fairdo.optimize.geneticoperators.initialization import random_initialization, variable_probability_initialization
-from fairdo.optimize.geneticoperators.selection import elitist_selection, tournament_selection
-from fairdo.optimize.geneticoperators.crossover import onepoint_crossover, uniform_crossover, simulated_binary_crossover
-from fairdo.optimize.geneticoperators.mutation import fractional_flip_mutation, shuffle_mutation
+from fairdo.optimize.geneticoperators.initialization import random_initialization, variable_initialization
+from fairdo.optimize.geneticoperators.selection import elitist_selection_multi, tournament_selection_multi
+from fairdo.optimize.geneticoperators.crossover import onepoint_crossover,\
+    uniform_crossover, simulated_binary_crossover,\
+    no_crossover, onepoint_crossover
+from fairdo.optimize.geneticoperators.mutation import fractional_flip_mutation,\
+    bit_flip_mutation, shuffle_mutation
 
 
 def nsga2(fitness_functions, d,
           pop_size=100,
           num_generations=500,
-          initialization=variable_probability_initialization,
-          crossover=uniform_crossover,
-          mutation=shuffle_mutation,
+          initialization=variable_initialization,
+          selection=elitist_selection_multi,
+          crossover=onepoint_crossover,
+          mutation=bit_flip_mutation,
           return_all_fronts=False):
     """
     Perform NSGA-II (Non-dominated Sorting Genetic Algorithm II) for multi-objective optimization.
@@ -31,16 +35,16 @@ def nsga2(fitness_functions, d,
         The size of the population.
     num_generations : int
         The number of generations.
-    initialization : callable, optional
-        The function to initialize the population. Default is random_initialization.
-    selection : callable, optional
-        The function to perform selection. Default is tournament_selection.
-    crossover : callable, optional
-        The function to perform crossover. Default is simulated_binary_crossover.
-    mutation : callable, optional
-        The function to perform mutation. Default is polynomial_mutation.
-    return_all_fronts : bool, optional
-        Whether to return all fronts. Default is False.
+    initialization : callable, optional (default=random_initialization)
+        The function to initialize the population.
+    selection : callable, optional (default=tournament_selection_multi)
+        The function to perform selection.
+    crossover : callable, optional (default=uniform_crossover)
+        The function to perform crossover.
+    mutation : callable, optional (default=shuffle_mutation)
+        The function to perform mutation.
+    return_all_fronts : bool, optional (default=False)
+        Whether to return all fronts.
         If False, only the first front is returned.
         If True, the `combined population` and `fitness values` are returned along with the `fronts`.
 
@@ -57,24 +61,32 @@ def nsga2(fitness_functions, d,
     Notes
     -----
     The fitness functions must map the binary vector to a scalar value, i.e., :math:`f: \{0, 1\}^d \rightarrow \mathbb{R}`.
+    We used the same operators as the authors of NSGA-II in the original paper [1].
+    We only changed the selection operator. The original paper uses binary tournament selection,
+    but we use elitist selection with multiple objectives.
 
     References
     ----------
-    Deb, K., Pratap, A., Agarwal, S., & Meyarivan, T. (2002). A fast and elitist multiobjective genetic algorithm: NSGA-II.
+    [1] Deb, K., Pratap, A., Agarwal, S., & Meyarivan, T. (2002). A fast and elitist multiobjective genetic algorithm: NSGA-II.
+    https://ieeexplore.ieee.org/document/996017
     """
-    rng = np.random.default_rng()
-
     # Generate the initial population
     population = initialization(pop_size=pop_size, d=d)
     
     # Evaluate the fitness of each individual in the population
     fitness_values = evaluate_population(fitness_functions=fitness_functions,
                                          population=population)
+    # The fronts of the population. Initially, the fronts are not known
+    fronts = [np.arange(pop_size)]
+    fronts_lengths = [pop_size]
 
     # Perform NSGA-II for the specified number of generations
     for _ in range(num_generations):
         # Select parents
-        parents = rng.choice(population, size=2, replace=False, axis=0)
+        parents = selection(population=population,
+                            fitness_values=fitness_values,
+                            fronts_lengths=fronts_lengths,
+                            num_parents=2)
         # Perform crossover
         offspring = crossover(parents=parents, num_offspring=pop_size)
         # Perform mutation
@@ -85,16 +97,18 @@ def nsga2(fitness_functions, d,
         # Combine the parents and the offspring
         combined_population = np.concatenate((population, offspring))
         combined_fitness_values = np.concatenate((fitness_values, offspring_fitness_values))
-        
+
         # Select the best individuals using non-dominated sorting and crowding distance
         fronts = non_dominated_sort_fast(combined_fitness_values)
-        # Fit the first fronts to the population size. The front that doesnt fit will be selected based on crowding distance
+        # Fit the first fronts to the population size. The front that doesn't fit will be selected based on crowding distance
         selected_indices = selection_indices(combined_fitness_values, fronts, pop_size)
 
         # Update the population and fitness values
         population = combined_population[selected_indices]
         fitness_values = combined_fitness_values[selected_indices]
-    
+        # fronts are indices from combined population, so we need to update them as well
+        fronts_lengths = [len(front) for front in fronts]
+
     if return_all_fronts is False:
         return combined_population[fronts[0]], combined_fitness_values[fronts[0]]
     else:
@@ -188,14 +202,15 @@ def non_dominated_sort_fast(fitness_values):
 
     while current_front.size > 0:
         fronts.append(current_front)
-        # Next front is the set of all indices dominated by the current front
+        # Next front is a subset of all indices dominated by the current front
         next_front = np.concatenate([dominated_indices[i] for i in current_front])
         # Count the number of dominating solutions for each solution
         unique_next_front, counts = np.unique(next_front, return_counts=True)
         # Decrement the dominating counts
         dominating_counts[unique_next_front] -= counts
         # Next front is the set of all solutions with no dominating solutions
-        current_front = np.where(dominating_counts[unique_next_front] == 0)[0]
+        current_front = np.where(dominating_counts == 0)[0]
+        current_front = np.setdiff1d(current_front, np.concatenate(fronts))
 
     return fronts
 
@@ -339,7 +354,8 @@ def crowding_distance(fitness_values):
         if f_max == f_min:
             continue
 
-        # Crowding distance is the sum of the distances to the previous and next individuals. It geometrically describes the sum of the lengths of a cuboid.
+        # Crowding distance is the sum of the distances to the previous and next individuals.
+        # It geometrically describes the sum of the lengths of a cuboid.
         for i in range(1, pop_size - 1):
             crowding_distances[sorted_indices[i]] += (fitness_values[sorted_indices[i + 1], obj_index]
                                                       - fitness_values[sorted_indices[i - 1], obj_index])/ (f_max - f_min)

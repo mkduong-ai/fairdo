@@ -1,5 +1,6 @@
 # Standard library imports
 from functools import partial
+import warnings
 
 # Related third-party imports
 import numpy as np
@@ -127,8 +128,8 @@ class MultiObjectiveWrapper(Preprocessing):
             n_groups = np.array([self.dataset[self.protected_attribute].nunique()])
 
         # define penalty function
-        penalty = partial(group_missing_penalty,
-                          n_groups=n_groups)
+        #penalty = partial(group_missing_penalty,
+        #                  n_groups=n_groups)
 
         self.funcs = [partial(f,
                               dataset=self.dataset,
@@ -137,7 +138,7 @@ class MultiObjectiveWrapper(Preprocessing):
                               approach=approach,
                               synthetic_dataset=self.synthetic_dataset,
                               fitness_function=fitness_function,
-                              penalty=penalty) for fitness_function in self.fitness_functions]
+                              penalty=None) for fitness_function in self.fitness_functions]
 
         return self
     
@@ -207,6 +208,11 @@ class MultiObjectiveWrapper(Preprocessing):
                         label=f'Pareto Front',
                         c='r',
                         s=30)
+        base_solution = np.ones(len(self.dataset))
+        plt.scatter(self.funcs[x_axis](base_solution), self.funcs[y_axis](base_solution),
+                    label=f'Original Dataset',
+                    c='b',
+                    s=30)
         plt.xlabel(x_label)
         plt.ylabel(y_label)
         plt.xlim(0, 1)
@@ -248,6 +254,7 @@ class HeuristicWrapper(Preprocessing):
                  protected_attribute,
                  label,
                  disc_measure=statistical_parity_abs_diff_max,
+                 fitness_functions=None,
                  **kwargs):
         """
         Constructs all the necessary attributes for the HeuristicWrapper object.
@@ -264,13 +271,19 @@ class HeuristicWrapper(Preprocessing):
             The discrimination measure to be optimized.
             Default is `statistical_parity_abs_diff_max` which is the absolute difference between the maximum and
             minimum statistical parity values.
+        fitness_functions: list of callable, optional (default=None)
+            Can only contain one function. It is a wrapper for the user-given `disc_measure`.
         kwargs: dict
             Additional arguments for the heuristic method.
         """
         self.heuristic = heuristic
         self.func = None
         self.dims = None
-        self.disc_measure = disc_measure
+        if fitness_functions is not None:
+            if len(fitness_functions) > 1:
+                warnings.warn('The `fitness_functions` parameter contains more than one function.\
+                               Only the first function will be used in this wrapper.')
+        self.disc_measure = disc_measure if fitness_functions is None else fitness_functions[0]
 
         # required by Preprocessing
         self.dataset = None
@@ -287,10 +300,10 @@ class HeuristicWrapper(Preprocessing):
         ----------
         dataset: pd.DataFrame
             The dataset to be preprocessed.
-        synthetic_dataset: pd.DataFrame, optional
+        synthetic_dataset: pd.DataFrame, optional (default=None)
             The synthetic dataset to be used for the 'add' approach.
             It is required only if the 'add' approach is used.
-        approach: str
+        approach: str, optional (default='remove')
             The approach to be used for the heuristic method.
             It can be either 'remove' or 'add'.
 
@@ -411,7 +424,8 @@ class DefaultPreprocessing(HeuristicWrapper):
         super().__init__(heuristic=heuristic,
                          protected_attribute=protected_attribute,
                          label=label,
-                         disc_measure=disc_measure)
+                         disc_measure=disc_measure,
+                         **kwargs)
 
 
 def f(binary_vector, dataset, label, protected_attributes,
@@ -489,5 +503,5 @@ def f(binary_vector, dataset, label, protected_attributes,
     if penalty is not None:
         return fitness_function(x=x, y=y, z=z, dims=len(mask)) + penalty(x=x, y=y, z=z)
     else:
-        return fitness_function(x=x, y=y, z=z)
+        return fitness_function(x=x, y=y, z=z, dims=len(mask))
     
