@@ -124,8 +124,8 @@ def main():
     n_runs = 10
 
     # settings
-    pop_size = 10
-    num_generations = 10
+    pop_size = 100
+    num_generations = 100
 
     initializers = [variable_initialization, random_initialization]
     selections = [elitist_selection_multi, tournament_selection_multi]
@@ -172,7 +172,7 @@ def main():
             if i == 0:
                 if not os.path.exists(f'results/{data_str}'):
                     os.makedirs(f'results/{data_str}')
-                    
+
                 plot_filename = f'results/{data_str}/pareto_plot_{initializer.__name__}_{selection.__name__}_{crossover.__name__}_{mutation.__name__}.pdf'
                 print(plot_filename)
                 save_pareto_plot(pf, baseline, plot_filename)
