@@ -120,7 +120,9 @@ def save_pareto_plot(pf, baseline, filename):
 
 def process_run(args):
     i, data, label, protected_attributes, n_groups, pop_size, num_generations, initializer, selection, crossover, mutation, ref_point, data_str = args
-    pf, baseline = run_optimization(data, label, protected_attributes, n_groups, pop_size, num_generations, initializer, selection, crossover, mutation)
+    pf, baseline = run_optimization(data, label, protected_attributes, n_groups,
+                                    pop_size, num_generations,
+                                    initializer, selection, crossover, mutation)
     ind = HV(ref_point=ref_point)
     hv = ind(pf)
     new_row = {'Trial': i,
@@ -190,7 +192,7 @@ def main_deprecated():
 
     # settings
     pop_size = 100
-    num_generations = 100
+    num_generations = 200
 
     initializers = [variable_initialization, random_initialization]
     selections = [elitist_selection_multi, tournament_selection_multi]
@@ -203,7 +205,7 @@ def main_deprecated():
     data, label, protected_attributes = load_data(data_str, print_info=False)
     n_groups = len(data[protected_attributes[0]].unique())
 
-     # Create an empty DataFrame to store results
+    # Create an empty DataFrame to store results
     results_df = pd.DataFrame(columns=['Trial', 'Dataset', 'Label', 'Protected_Attributes', 'N_Groups',
                                        'Initializer', 'Selection', 'Crossover', 'Mutation',
                                        'Hypervolume', 'Pareto_Front', 'Baseline'])
