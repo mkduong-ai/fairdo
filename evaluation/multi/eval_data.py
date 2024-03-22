@@ -7,6 +7,7 @@ import os
 import numpy as np
 import pandas as pd
 from pymoo.indicators.hv import HV
+from pathos.multiprocessing import ProcessPool
 # plot
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -117,7 +118,71 @@ def save_pareto_plot(pf, baseline, filename):
     # plt.show()
 
 
+def process_run(args):
+    i, data, label, protected_attributes, n_groups, pop_size, num_generations, initializer, selection, crossover, mutation, ref_point, data_str = args
+    pf, baseline = run_optimization(data, label, protected_attributes, n_groups, pop_size, num_generations, initializer, selection, crossover, mutation)
+    ind = HV(ref_point=ref_point)
+    hv = ind(pf)
+    new_row = {'Trial': i,
+               'Dataset': data_str,
+               'Label': label,
+               'Protected_Attributes': protected_attributes,
+               'N_Groups': n_groups,
+               'Initializer': initializer.__name__,
+               'Selection': selection.__name__,
+               'Crossover': crossover.__name__,
+               'Mutation': mutation.__name__,
+               'Hypervolume': hv,
+               'Pareto_Front': pf,
+               'Baseline': baseline}
+    
+    print(i)
+    # Save Pareto plot
+    if i == 0:
+        if not os.path.exists(f'results/{data_str}'):
+            os.makedirs(f'results/{data_str}')
+
+        plot_filename = f'results/{data_str}/pareto_plot_{initializer.__name__}_{selection.__name__}_{crossover.__name__}_{mutation.__name__}.pdf'
+        print(plot_filename)
+        save_pareto_plot(pf, baseline, plot_filename)
+
+    return new_row
+
+
 def main():
+    ref_point = np.array([1.0, 1.0])
+
+    # number of runs
+    n_runs = 10
+
+    # settings
+    pop_size = 100
+    num_generations = 200
+
+    initializers = [variable_initialization, random_initialization]
+    selections = [elitist_selection_multi, tournament_selection_multi]
+    crossovers = [uniform_crossover, onepoint_crossover]
+    mutations = [bit_flip_mutation, shuffle_mutation]
+
+    # Loading a sample database and encoding for appropriate usage
+    # data is a pandas dataframe
+    data_str = 'compas'
+    data, label, protected_attributes = load_data(data_str, print_info=False)
+    n_groups = len(data[protected_attributes[0]].unique())
+
+    args_list = [(i, data, label, protected_attributes, n_groups, pop_size, num_generations, initializer, selection, crossover, mutation, ref_point, data_str)  
+                 for initializer, selection, crossover, mutation in itertools.product(initializers, selections, crossovers, mutations)
+                 for i in range(n_runs)]
+
+    with ProcessPool() as pool:
+        print('Number of processes:', pool.ncpus)
+        results = pool.map(process_run, args_list)
+
+    results_df = pd.DataFrame(results)
+    results_df.to_csv(f'results/{data_str}/optimization_results.csv', index=False)
+
+
+def main_deprecated():
     ref_point = np.array([1.0, 1.0])
 
     # number of runs
