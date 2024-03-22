@@ -170,7 +170,7 @@ def main():
         save_pareto_plot(pf, baseline, plot_filename)
 
     # Save DataFrame to CSV
-    results_df.to_csv('results/optimization_results.csv', index=False)
+    results_df.to_csv(f'results/{data_str}/optimization_results.csv', index=False)
 
 
 if __name__ == '__main__':

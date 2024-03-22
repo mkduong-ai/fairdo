@@ -59,11 +59,17 @@ def elitist_selection_multi(population, fitness_values, fronts_lengths, num_pare
     if len(population.shape) != 2:
         population = population.reshape(-1, 1)
 
-    # Select the first front and calculate crowding distance
-    crowding_dists = crowding_distance(fitness_values[:fronts_lengths[0]])
-    # Select the individuals with the largest crowding distance
-    elitist_indices = np.argsort(crowding_dists)[::-1][:num_parents]
-    
+    if fronts_lengths[0] > num_parents:
+        # Select the first front and calculate crowding distance
+        crowding_dists = crowding_distance(fitness_values[:fronts_lengths[0]])
+        # Select the individuals with the largest crowding distance
+        # elitist_indices = np.argsort(crowding_dists)[-num_parents:]
+        elitist_indices = np.argpartition(crowding_dists, -num_parents)[-num_parents:]
+    else:
+        # If the first front is smaller than the number of parents, select all first num_parents individuals
+        elitist_indices = np.arange(num_parents)
+        print('useful')
+
     parents = population[elitist_indices]
 
     return parents
