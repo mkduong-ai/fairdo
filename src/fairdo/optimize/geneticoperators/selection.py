@@ -107,6 +107,7 @@ def tournament_selection_multi(population, fitness_values, fronts_lengths, num_p
     parents = np.empty((num_parents, population.shape[1]))
 
     for i in range(num_parents):
+        # tournament_candidates = np.sort(np.random.choice(len(population), size=tournament_size, replace=False))
         tournament_candidates = np.random.choice(len(population), size=tournament_size, replace=False)
 
         # Lower front wins
@@ -116,16 +117,28 @@ def tournament_selection_multi(population, fitness_values, fronts_lengths, num_p
         # Select candidates with the most dominating counts
         best_candidates = np.where(np.max(dominating_counts) == dominating_counts)[0]
         
-        # If there are multiple candidates in the same front, select one with the largest crowding distance
+        # Select the winner
         if len(best_candidates) == 1:
+            # If there is only one candidate in the front, select it
             winner_index = tournament_candidates[best_candidates[0]]
         else:
+            # If there are multiple candidates in the same front, select one with the largest crowding distance
             current_front = len(fronts_lengths) - np.max(dominating_counts)
             if current_front == 0:
                 crowding_dists = crowding_distance(fitness_values[:fronts_lengths[current_front]])
+                # Select the candidate from the tournament with the largest crowding distance
+                best_tournament_candidate_in_current_front = np.argmax(crowding_dists[tournament_candidates[best_candidates]])
+                # Select the real index of the candidate in the population
+                winner_index = tournament_candidates[best_candidates][best_tournament_candidate_in_current_front]
             else:
+                # Calculate the crowding distance for the current front
                 crowding_dists = crowding_distance(fitness_values[cum_fronts_lengths[current_front - 1]:cum_fronts_lengths[current_front]])
-            winner_index = tournament_candidates[best_candidates[np.argmax(crowding_dists[best_candidates])]]
+                # Select the best candidates from the tournament and adjust position for the current front
+                tournament_candidates_adjusted = tournament_candidates[best_candidates] - cum_fronts_lengths[current_front - 1]
+                # Select the candidate from the tournament with the largest crowding distance
+                best_tournament_candidate_in_current_front = np.argmax(crowding_dists[tournament_candidates_adjusted])
+                # Select the real index of the candidate in the population
+                winner_index = tournament_candidates_adjusted[best_tournament_candidate_in_current_front] + cum_fronts_lengths[current_front - 1]
 
         parents[i, :] = population[winner_index, :]
     

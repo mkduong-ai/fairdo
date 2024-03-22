@@ -177,6 +177,12 @@ class MultiObjectiveWrapper(Preprocessing):
         returns the best solution in the Pareto front, that is,
         the solution closest to the ideal solution.
 
+        Parameters
+        ----------
+        ideal_solution: np.array, optional (default=[0, 0])
+            The ideal solution to be used for the optimization.
+            Default is [0, 0].
+
         Returns
         -------
         data_best: pd.DataFrame
@@ -187,8 +193,34 @@ class MultiObjectiveWrapper(Preprocessing):
         self.index_best = np.argmin(np.linalg.norm(self.fitness_values - ideal_solution, axis=1))
         solution_best = self.masks[self.index_best]
         data_best = self.transformed_data[solution_best]
-
+        
         return data_best
+    
+    def get_pareto_front(self, return_baseline=False):
+        """
+        Get the Pareto front of the solutions.
+        Return the baseline solution if it is requested.
+
+        Parameters
+        ----------
+        return_baseline: bool, optional (default=False)
+            Whether to return the result of the original baseline dataset.
+        
+        Returns
+        -------
+        np.array of shape (n, len(fitness_functions))
+            The Pareto front of the solutions.
+        """
+        if self.fitness_values is None:
+            raise ValueError('No results to return. Run the `transform` method first.')
+        
+        if return_baseline:
+            base_solution = np.ones(len(self.dataset))
+            base_fitness = np.array([func(base_solution) for func in self.funcs]).reshape(1, -1)
+
+            return self.fitness_values, base_fitness
+        else:
+            return self.fitness_values
     
     def plot_results(self,
                      x_axis=0, y_axis=1,
