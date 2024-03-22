@@ -10,6 +10,7 @@ from pymoo.indicators.hv import HV
 # plot
 import matplotlib.pyplot as plt
 import seaborn as sns
+sns.set_theme()
 
 # fairdo package
 from fairdo.utils.dataset import load_data
@@ -119,6 +120,9 @@ def save_pareto_plot(pf, baseline, filename):
 def main():
     ref_point = np.array([1.0, 1.0])
 
+    # number of runs
+    n_runs = 10
+
     # settings
     pop_size = 10
     num_generations = 10
@@ -132,42 +136,48 @@ def main():
     # data is a pandas dataframe
     data_str = 'compas'
     data, label, protected_attributes = load_data(data_str, print_info=False)
-    n_groups = data[protected_attributes[0]].unique()
+    n_groups = len(data[protected_attributes[0]].unique())
 
      # Create an empty DataFrame to store results
-    results_df = pd.DataFrame(columns=['Dataset', 'Label', 'Protected_Attributes', 'N_Groups',
+    results_df = pd.DataFrame(columns=['Trial', 'Dataset', 'Label', 'Protected_Attributes', 'N_Groups',
                                        'Initializer', 'Selection', 'Crossover', 'Mutation',
                                        'Hypervolume', 'Pareto_Front', 'Baseline'])
     
     for initializer, selection, crossover, mutation in itertools.product(initializers, selections, crossovers, mutations):
-        pf, baseline = run_optimization(data, label, protected_attributes, n_groups,
-                              pop_size, num_generations,
-                              initializer, selection, crossover, mutation)
+        for i in range(n_runs):
+            pf, baseline = run_optimization(data, label, protected_attributes, n_groups,
+                                pop_size, num_generations,
+                                initializer, selection, crossover, mutation)
 
-        ind = HV(ref_point=ref_point)
-        hv = ind(pf)
+            ind = HV(ref_point=ref_point)
+            hv = ind(pf)
 
-        # Append results to DataFrame
-        new_row = {'Dataset': data_str,
-           'Label': label,
-           'Protected_Attributes': protected_attributes,
-           'N_Groups': n_groups,
-           'Initializer': initializer.__name__,
-           'Selection': selection.__name__,
-           'Crossover': crossover.__name__,
-           'Mutation': mutation.__name__,
-           'Hypervolume': hv,
-           'Pareto_Front': pf,
-           'Baseline': baseline}
+            # Append results to DataFrame
+            new_row = {'Trial': i,
+            'Dataset': data_str,
+            'Label': label,
+            'Protected_Attributes': protected_attributes,
+            'N_Groups': n_groups,
+            'Initializer': initializer.__name__,
+            'Selection': selection.__name__,
+            'Crossover': crossover.__name__,
+            'Mutation': mutation.__name__,
+            'Hypervolume': hv,
+            'Pareto_Front': pf,
+            'Baseline': baseline}
 
-        results_df = pd.concat([results_df, pd.DataFrame([new_row])], ignore_index=True)
-        
-        # Save Pareto plot
-        if not os.path.exists(f'results/{data_str}'):
-            os.makedirs(f'results/{data_str}')
-        plot_filename = f'results/{data_str}/pareto_plot_{initializer.__name__}_{selection.__name__}_{crossover.__name__}_{mutation.__name__}.pdf'
-        print(plot_filename)
-        save_pareto_plot(pf, baseline, plot_filename)
+            results_df = pd.concat([results_df, pd.DataFrame([new_row])], ignore_index=True)
+            
+            # Save Pareto plot
+            if i == 0:
+                if not os.path.exists(f'results/{data_str}'):
+                    os.makedirs(f'results/{data_str}')
+                    
+                plot_filename = f'results/{data_str}/pareto_plot_{initializer.__name__}_{selection.__name__}_{crossover.__name__}_{mutation.__name__}.pdf'
+                print(plot_filename)
+                save_pareto_plot(pf, baseline, plot_filename)
+
+            print('Run:', i)
 
     # Save DataFrame to CSV
     results_df.to_csv(f'results/{data_str}/optimization_results.csv', index=False)
