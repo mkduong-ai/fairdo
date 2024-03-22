@@ -9,7 +9,7 @@ from sklearn.metrics import roc_auc_score, balanced_accuracy_score, f1_score, ac
     recall_score
 
 ## fairness metrics
-from fado.metrics import pearsonr, pearsonr_abs, mutual_information, normalized_mutual_information,\
+from fairdo.metrics import pearsonr, pearsonr_abs, mutual_information, normalized_mutual_information,\
     rdc, statistical_parity_abs_diff, \
     equal_opportunity_abs_diff, disparate_impact_ratio, disparate_impact_ratio_objective,\
     predictive_equality_abs_diff, average_odds_error, average_odds_difference,\
