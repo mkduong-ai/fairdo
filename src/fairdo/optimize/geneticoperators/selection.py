@@ -68,7 +68,6 @@ def elitist_selection_multi(population, fitness_values, fronts_lengths, num_pare
     else:
         # If the first front is smaller than the number of parents, select all first num_parents individuals
         elitist_indices = np.arange(num_parents)
-        print('useful')
 
     parents = population[elitist_indices]
 
