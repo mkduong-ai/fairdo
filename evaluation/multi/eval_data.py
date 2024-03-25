@@ -168,7 +168,7 @@ def main():
 
     # Loading a sample database and encoding for appropriate usage
     # data is a pandas dataframe
-    data_str = 'adult'
+    data_str = 'bank'
     data, label, protected_attributes = load_data(data_str, print_info=False)
     n_groups = len(data[protected_attributes[0]].unique())
 
