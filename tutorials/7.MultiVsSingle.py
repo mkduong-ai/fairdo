@@ -94,9 +94,13 @@ def data_disc_quality(y, z, dims, w=0.5, agg_group='max', **kwargs):
     float
         The weighted fairness and quality of the data."""
     if agg_group=='sum':
-        penalized_discrimination = statistical_parity_abs_diff_sum(y=y, z=z) + group_missing_penalty(z=z, n_groups=n_groups, agg_group=agg_group)
+        penalized_discrimination = statistical_parity_abs_diff_sum(y=y, z=z) +\
+                                   group_missing_penalty(z=z, n_groups=n_groups, agg_group=agg_group)
     elif agg_group=='max':
-        penalized_discrimination = np.max([statistical_parity_abs_diff_max(y=y, z=z), group_missing_penalty(z=z, n_groups=n_groups, agg_group=agg_group)])
+        penalized_discrimination = np.max([statistical_parity_abs_diff_max(y=y, z=z),
+                                           group_missing_penalty(z=z,
+                                                                 n_groups=n_groups,
+                                                                 agg_group=agg_group)])
     else:
         raise ValueError("Invalid aggregation group. Supported values are 'sum' and 'max'.")
     return w * penalized_discrimination + (1-w) * data_loss(y=y, dims=dims)
