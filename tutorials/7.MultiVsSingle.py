@@ -33,7 +33,7 @@ ga = partial(nsga2,
              mutation=bit_flip_mutation)
 
 # Penalized discrimination
-def penalized_discrimination(y, z, agg_group='max', **kwargs):
+def penalized_discrimination(y, z, agg_group='max', eps=0.01,**kwargs):
     """
     Penalized discrimination function that combines the statistical parity and group missing penalty.
     
@@ -49,9 +49,18 @@ def penalized_discrimination(y, z, agg_group='max', **kwargs):
     float
         The penalized discrimination."""
     if agg_group=='sum':
-        penalized_discrimination = statistical_parity_abs_diff_sum(y=y, z=z) + group_missing_penalty(z=z, n_groups=n_groups, agg_group=agg_group)
+        penalized_discrimination = statistical_parity_abs_diff_sum(y=y,
+                                                                   z=z) + \
+                                   group_missing_penalty(z=z,
+                                                         n_groups=n_groups,
+                                                         agg_group=agg_group)
     elif agg_group=='max':
-        penalized_discrimination = np.max([statistical_parity_abs_diff_max(y=y, z=z), group_missing_penalty(z=z, n_groups=n_groups, agg_group=agg_group)])
+        penalized_discrimination = np.max([statistical_parity_abs_diff_max(y=y,
+                                                                           z=z),
+                                           group_missing_penalty(z=z,
+                                                                 n_groups=n_groups,
+                                                                 agg_group=agg_group,
+                                                                 eps=eps)])/(1+eps)
     else:
         raise ValueError("Invalid aggregation group. Supported values are 'sum' and 'max'.")
     return penalized_discrimination

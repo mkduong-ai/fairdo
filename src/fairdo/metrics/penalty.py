@@ -15,7 +15,7 @@ from fairdo.utils.helper import nunique
 def group_missing_penalty(z: np.array, n_groups: np.array,
                           agg_attribute='max',
                           agg_group='max',
-                          eps=0.1,
+                          eps=0.01,
                           **kwargs) -> float:
     """
     Calculate the penalty for missing groups in a protected attribute.

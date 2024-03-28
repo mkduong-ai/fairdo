@@ -6,7 +6,8 @@ from fairdo.utils.dataset import load_data
 # everything needed for custom preprocessing
 from fairdo.preprocessing import MultiObjectiveWrapper
 from fairdo.optimize.multi import nsga2
-from fairdo.optimize.geneticoperators import onepoint_crossover, fractional_flip_mutation, elitist_selection, shuffle_mutation
+from fairdo.optimize.geneticoperators import variable_initialization, random_initialization,\
+    onepoint_crossover, fractional_flip_mutation, elitist_selection, shuffle_mutation
 # fairdo metrics
 from fairdo.metrics import statistical_parity_abs_diff_max, data_loss, group_missing_penalty
 
