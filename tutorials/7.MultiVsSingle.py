@@ -76,7 +76,7 @@ preprocessor_multi = MultiObjectiveWrapper(heuristic=ga,
 data_multi = preprocessor_multi.fit_transform(dataset=data)
 
 # Single Objective
-def data_disc_quality(y, z, dims, w=0.5, agg_group='max', **kwargs):
+def data_disc_quality(y, z, dims, w=0.5, agg_group='max', eps=0.01, **kwargs):
     """
     A single objective function that combines the statistical parity and data loss.
     
@@ -95,12 +95,16 @@ def data_disc_quality(y, z, dims, w=0.5, agg_group='max', **kwargs):
         The weighted fairness and quality of the data."""
     if agg_group=='sum':
         penalized_discrimination = statistical_parity_abs_diff_sum(y=y, z=z) +\
-                                   group_missing_penalty(z=z, n_groups=n_groups, agg_group=agg_group)
+                                   group_missing_penalty(z=z,
+                                                         n_groups=n_groups,
+                                                         agg_group=agg_group,
+                                                         eps=eps)
     elif agg_group=='max':
         penalized_discrimination = np.max([statistical_parity_abs_diff_max(y=y, z=z),
                                            group_missing_penalty(z=z,
                                                                  n_groups=n_groups,
-                                                                 agg_group=agg_group)])
+                                                                 agg_group=agg_group,
+                                                                 eps=eps)])/(1 + eps)
     else:
         raise ValueError("Invalid aggregation group. Supported values are 'sum' and 'max'.")
     return w * penalized_discrimination + (1-w) * data_loss(y=y, dims=dims)
