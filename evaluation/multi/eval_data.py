@@ -30,7 +30,8 @@ from fairdo.metrics import statistical_parity_abs_diff_max,\
     data_loss, group_missing_penalty
 
 
-def penalized_discrimination(y, z, n_groups, agg_group='max', **kwargs):
+# Penalized discrimination
+def penalized_discrimination(y, z, n_groups, agg_group='max', eps=0.01,**kwargs):
     """
     Penalized discrimination function that combines the statistical parity and group missing penalty.
     
@@ -40,17 +41,24 @@ def penalized_discrimination(y, z, n_groups, agg_group='max', **kwargs):
         The target variable.
     z: np.array
         The protected attribute.
-    n_groups: int
-        The number of groups.
     
     Returns
     -------
     float
         The penalized discrimination."""
     if agg_group=='sum':
-        penalized_discrimination = statistical_parity_abs_diff_sum(y=y, z=z) + group_missing_penalty(z=z, n_groups=n_groups, agg_group=agg_group)
+        penalized_discrimination = statistical_parity_abs_diff_sum(y=y,
+                                                                   z=z) + \
+                                   group_missing_penalty(z=z,
+                                                         n_groups=n_groups,
+                                                         agg_group=agg_group)
     elif agg_group=='max':
-        penalized_discrimination = np.max([statistical_parity_abs_diff_max(y=y, z=z), group_missing_penalty(z=z, n_groups=n_groups, agg_group=agg_group)])
+        penalized_discrimination = np.max([statistical_parity_abs_diff_max(y=y,
+                                                                           z=z),
+                                           group_missing_penalty(z=z,
+                                                                 n_groups=n_groups,
+                                                                 agg_group=agg_group,
+                                                                 eps=eps)])/(1+eps)
     else:
         raise ValueError("Invalid aggregation group. Supported values are 'sum' and 'max'.")
     return penalized_discrimination
@@ -105,7 +113,7 @@ def save_pareto_plot(pf, baseline, filename):
     plt.ylim(0, 1)
     
     # Set axis labels
-    plt.xlabel(r'Discrimination $\tilde{\psi}$')
+    plt.xlabel(r'Discrimination $\hat{\psi}$')
     plt.ylabel(r'Data Loss $\mathcal{L}$')
     
     # Set plot title
@@ -150,8 +158,7 @@ def process_run(args):
 
     return new_row
 
-
-def main():
+def run_dataset(data_str):
     ref_point = np.array([1.0, 1.0])
 
     # number of runs
@@ -168,7 +175,6 @@ def main():
 
     # Loading a sample database and encoding for appropriate usage
     # data is a pandas dataframe
-    data_str = 'bank'
     data, label, protected_attributes = load_data(data_str, print_info=False)
     n_groups = len(data[protected_attributes[0]].unique())
 
@@ -183,6 +189,13 @@ def main():
     results_df = pd.DataFrame(results)
     results_df.to_csv(f'results/{data_str}/optimization_results.csv', index=False)
 
+
+def main():
+    # Run for all datasets
+    data_strs = ['adult', 'bank', 'compas']
+    for data_str in data_strs:
+        run_dataset(data_str)
+    
 
 def main_deprecated():
     ref_point = np.array([1.0, 1.0])
