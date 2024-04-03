@@ -70,7 +70,7 @@ def penalized_discrimination(y, z, agg_group='max', eps=0.01,**kwargs):
 preprocessor_multi = MultiObjectiveWrapper(heuristic=ga,
                                      protected_attribute=protected_attributes[0],
                                      label=label,
-                                     fitness_functions=[penalized_discrimination, penalized_discrimination])
+                                     fitness_functions=[penalized_discrimination, data_loss])
 
 # Fit and transform the data, returns the data closest to the ideal solution
 data_multi = preprocessor_multi.fit_transform(dataset=data)
