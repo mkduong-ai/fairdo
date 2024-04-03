@@ -12,10 +12,14 @@ from pathos.multiprocessing import ProcessPool
 import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set_theme()
+# sklearn
+from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neural_network import MLPClassifier
+# import ML metrics
+from sklearn.metrics import balanced_accuracy_score, f1_score, roc_auc_score
 
 # fairdo package
 from fairdo.utils.dataset import load_data
@@ -78,13 +82,41 @@ def plot_results(results_df):
     plt.show()
 
 
-def main():
-    # number of runs
-    n_runs = 10
-
+def preprocess_training_data(data, label, protected_attributes, n_groups):
     # settings
     pop_size = 100
     num_generations = 200
+
+    # Setting up pre-processor (Best settings from previous experiment)
+    ga = partial(nsga2,
+                pop_size=pop_size,
+                num_generations=num_generations,
+                initialization=variable_initialization,
+                selection=elitist_selection_multi,
+                crossover=onepoint_crossover,
+                mutation=bit_flip_mutation)
+
+    # Optimize training data for fairness
+    # Initialize the wrapper class for custom preprocessors
+    preprocessor_multi = MultiObjectiveWrapper(heuristic=ga,
+                                               protected_attribute=protected_attributes[0],
+                                               label=label,
+                                               fitness_functions=[partial(penalized_discrimination, n_groups=n_groups),
+                                                                  data_loss])
+    
+    # Fit and transform the data, returns the data closest to the ideal solution
+    data_multi = preprocessor_multi.fit_transform(dataset=data)
+
+    # Return the fitness values of the returned data as well as the baseline
+    index_best = preprocessor_multi.best_index
+    pf, baseline_fitness = preprocessor_multi.get_pareto_front(return_baseline=True)
+
+    return data_multi, pf[index_best], baseline_fitness
+
+
+def main():
+    # number of runs
+    n_runs = 10
 
     # Loading a sample database and encoding for appropriate usage
     # data is a pandas dataframe
@@ -92,56 +124,57 @@ def main():
     data, label, protected_attributes = load_data(data_str, print_info=False)
     n_groups = len(data[protected_attributes[0]].unique())
 
-    # Create an empty DataFrame to store results
-    results_df = pd.DataFrame(columns=['Trial', 'Dataset', 'Label', 'Protected_Attributes', 'N_Groups',
-                                       'Initializer', 'Selection', 'Crossover', 'Mutation',
-                                       'Hypervolume', 'Pareto_Front', 'Baseline'])
+    # Split the data before optimizing for fairness
+    train_df, test_df = train_test_split(data, test_size=0.2, random_state=42)
 
-    # Setting up pre-processor (Best settings from previous runs)
-    ga = partial(nsga2,
-             pop_size=pop_size,
-             num_generations=num_generations,
-             initialization=variable_initialization,
-             selection=elitist_selection_multi,
-             crossover=onepoint_crossover,
-             mutation=bit_flip_mutation)
+    for i in range(n_runs):
+        # Optimize training data for fairness
+        fair_df, fitness, baseline_fitness = preprocess_training_data(train_df, label, protected_attributes, n_groups)
 
-    # Select best data
-    # Initialize the wrapper class for custom preprocessors
-    preprocessor_multi = MultiObjectiveWrapper(heuristic=ga,
-                                               protected_attribute=protected_attributes[0],
-                                               label=label,
-                                               fitness_functions=[statistical_parity_abs_diff_max,
-                                                                  penalized_discrimination])
+        # Train and evaluate classifier
+        classifiers = [SVC(), LogisticRegression(), RandomForestClassifier(), MLPClassifier()]
 
-    data_multi = preprocessor_multi.fit_transform(dataset=data)
+        results = []
+        for clf in classifiers:
+            # Split data to features X and label y
+            X_fair_train, y_fair_train = fair_df.loc[:, fair_df.columns!=label], fair_df[label]
+            X_orig_train, y_orig_train = train_df.loc[:, train_df.columns!=label], train_df[label]
+            X_test, y_test = test_df.loc[:, test_df.columns!=label], test_df[label]
 
-    # Initialize classifiers
-    classifiers = [SVC(), LogisticRegression(), RandomForestClassifier(), MLPClassifier()]
+            # Train and evaluate classifier on fair data
+            clf.fit(X_fair_train, y_fair_train)
+            accuracy = clf.score(X_test, y_test)
+            balanced_accuracy = balanced_accuracy_score(y_test, clf.predict(X_test))
+            f1 = f1_score(y_test, clf.predict(X_test))
+            roc_auc = roc_auc_score(y_test, clf.predict(X_test))
 
-    # Evaluate classifiers
-    results = []
-    for clf in classifiers:
-        for i in range(n_runs):
-            # Train and evaluate classifier
-            clf.fit(data_multi['X_train'], data_multi['y_train'])
+            # Train and evaluate classifier on original data
+            clf.fit(X_orig_train, y_orig_train)
+            accuracy_orig = clf.score(X_test, y_test)
+            balanced_accuracy_orig = balanced_accuracy_score(y_test, clf.predict(X_test))
+            f1_orig = f1_score(y_test, clf.predict(X_test))
+            roc_auc_orig = roc_auc_score(y_test, clf.predict(X_test))
+
             results.append({'Trial': i,
                             'Dataset': data_str,
                             'Label': label,
                             'Protected_Attributes': protected_attributes,
                             'N_Groups': n_groups,
                             'Classifier': clf.__class__.__name__,
-                            'Accuracy': clf.score(data_multi['X_test'], data_multi['y_test']),
-                            'Statistical_Parity': statistical_parity_abs_diff_max(y=data_multi['y_test'],
-                                                                                  z=data_multi['z_test']),
-                            'Penalized_Discrimination': penalized_discrimination(y=data_multi['y_test'],
-                                                                                z=data_multi['z_test'],
-                                                                                n_groups=n_groups)})
+                            'Accuracy': accuracy,
+                            'Balanced_Accuracy': balanced_accuracy,
+                            'F1': f1,
+                            'ROC_AUC': roc_auc,
+                            'Accuracy_Orig': accuracy_orig,
+                            'Balanced_Accuracy_Orig': balanced_accuracy_orig,
+                            'F1_Orig': f1_orig,
+                            'ROC_AUC_Orig': roc_auc_orig,
+                            'Fitness': fitness,
+                            'Baseline_Fitness': baseline_fitness})
 
-    # Plot results
+
     results_df = pd.DataFrame(results)
-    results_df.to_csv(f'results/{data_str}/evaluation_results.csv', index=False)
-    plot_results(results_df)
+    results_df.to_csv(f'results/{data_str}/classifier_results.csv', index=False)
 
 
 if __name__ == '__main__':
