@@ -163,9 +163,7 @@ def preprocess_training_data_single(data, label, protected_attributes, n_groups)
     return data_single, best_fitness, baseline_fitness
 
 
-def run_dataset(data_str):
-    approach = 'multi' # 'single' or 'multi'
-
+def run_dataset_single_thread(data_str, approach='multi'):
     # number of runs
     n_runs = 10
 
@@ -252,11 +250,20 @@ def run_dataset(data_str):
     results_df = pd.DataFrame(results)
     results_df.to_csv(f'results/{data_str}/{approach}_classifier_results.csv', index=False)
 
+    print(f'Saved results for {data_str} with {approach} approach to results/{data_str}/{approach}_classifier_results.csv')
+
+
 def main():
     # Run for all datasets
     data_strs = ['adult', 'bank', 'compas']
-    for data_str in data_strs:
-        run_dataset(data_str)
+    approaches = ['multi', 'single']
+
+    with ProcessPool() as pool:
+        print('Number of processes:', pool.ncpus)
+        args_list = list(itertools.product(data_strs, approaches))
+
+        print(args_list)
+        pool.map(lambda args: run_dataset_single_thread(*args), args_list)
 
 
 if __name__ == '__main__':
