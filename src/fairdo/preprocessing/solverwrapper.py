@@ -88,6 +88,7 @@ class MultiObjectiveWrapper(Preprocessing):
         # multi-objective specific
         self.masks = None
         self.fitness_values = None
+        self.fitness = None # Best weighted fitness value
         super().__init__(protected_attribute=protected_attribute, label=label)
 
     def fit(self, dataset, synthetic_dataset=None, approach='remove'):
@@ -195,6 +196,31 @@ class MultiObjectiveWrapper(Preprocessing):
         data_best = self.transformed_data[solution_best]
         
         return data_best
+
+    def get_best_fitness(self, return_baseline):
+        """
+        Get the best fitness value of the solutions.
+        
+        Parameters
+        ----------
+        return_baseline: bool
+            Whether to return the fitness of the original baseline dataset.
+
+        Returns
+        -------
+        float
+            The best fitness value.
+        """
+        if self.fitness_values is None:
+            raise ValueError('No results to return. Run the `transform` method first.')
+        
+        if return_baseline:
+            baseline_solution = np.ones(len(self.dataset))
+            baseline_fitness = np.array([func(baseline_solution) for func in self.funcs]).reshape(1, -1)
+            
+            return self.fitness_values[self.index_best], baseline_fitness
+        else:
+            return self.fitness_values[self.index_best]
     
     def get_pareto_front(self, return_baseline=False):
         """
@@ -215,10 +241,10 @@ class MultiObjectiveWrapper(Preprocessing):
             raise ValueError('No results to return. Run the `transform` method first.')
         
         if return_baseline:
-            base_solution = np.ones(len(self.dataset))
-            base_fitness = np.array([func(base_solution) for func in self.funcs]).reshape(1, -1)
+            baseline_solution = np.ones(len(self.dataset))
+            baseline_fitness = np.array([func(baseline_solution) for func in self.funcs]).reshape(1, -1)
 
-            return self.fitness_values, base_fitness
+            return self.fitness_values, baseline_fitness
         else:
             return self.fitness_values
     
@@ -321,6 +347,10 @@ class HeuristicWrapper(Preprocessing):
         self.dataset = None
         self.synthetic_dataset = None
         self.approach = None
+
+        # single-objective specific
+        self.mask = None # Mask to select best solution
+
         super().__init__(protected_attribute=protected_attribute, label=label)
 
     def fit(self, dataset, synthetic_dataset=None, approach='remove'):
@@ -384,15 +414,42 @@ class HeuristicWrapper(Preprocessing):
         pd.DataFrame
             The preprocessed (fair) dataset.
         """
-        mask = self.heuristic(f=self.func, d=self.dims)[0] == 1
+        self.mask = self.heuristic(f=self.func, d=self.dims)[0] == 1
 
         # apply the mask to the dataset
         if self.approach == 'add':
-            self.transformed_data = pd.concat([self.dataset, self.synthetic_dataset[mask]], axis=0)
+            self.transformed_data = pd.concat([self.dataset, self.synthetic_dataset[self.mask]], axis=0)
         elif self.approach == 'remove':
-            self.transformed_data = self.dataset[mask]
+            self.transformed_data = self.dataset[self.mask]
 
         return self.transformed_data
+    
+    def get_best_fitness(self, return_baseline=False):
+        """
+        Get the best fitness value of the solution.
+        
+        Parameters
+        ----------
+        return_baseline: bool, optional (default=False)
+            Whether to return the fitness of the original baseline dataset.
+
+        Returns
+        -------
+        float
+            The best fitness value.
+        """
+        if self.mask is None:
+            raise ValueError('No results to return. Run the `transform` method first.')
+        
+        best_fitness = self.func(self.mask)
+        
+        if return_baseline:
+            baseline_solution = np.ones(len(self.dataset))
+            baseline_fitness = self.func(baseline_solution)
+            
+            return best_fitness, baseline_fitness
+        else:
+            return best_fitness
 
 
 class DefaultPreprocessing(HeuristicWrapper):

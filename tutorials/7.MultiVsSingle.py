@@ -76,7 +76,7 @@ preprocessor_multi = MultiObjectiveWrapper(heuristic=ga,
 data_multi = preprocessor_multi.fit_transform(dataset=data)
 
 # Single Objective
-def data_disc_quality(y, z, dims, w=0.5, agg_group='max', eps=0.01, **kwargs):
+def weighted_loss(y, z, n_groups, dims, w=0.5, agg_group='max', eps=0.01, **kwargs):
     """
     A single objective function that combines the statistical parity and data loss.
     
@@ -92,22 +92,9 @@ def data_disc_quality(y, z, dims, w=0.5, agg_group='max', eps=0.01, **kwargs):
     Returns
     -------
     float
-        The weighted fairness and quality of the data."""
-    if agg_group=='sum':
-        penalized_discrimination = statistical_parity_abs_diff_sum(y=y, z=z) +\
-                                   group_missing_penalty(z=z,
-                                                         n_groups=n_groups,
-                                                         agg_group=agg_group,
-                                                         eps=eps)
-    elif agg_group=='max':
-        penalized_discrimination = np.max([statistical_parity_abs_diff_max(y=y, z=z),
-                                           group_missing_penalty(z=z,
-                                                                 n_groups=n_groups,
-                                                                 agg_group=agg_group,
-                                                                 eps=eps)])/(1 + eps)
-    else:
-        raise ValueError("Invalid aggregation group. Supported values are 'sum' and 'max'.")
-    return w * penalized_discrimination + (1-w) * data_loss(y=y, dims=dims)
+        The weighted fairness and quality of the data."""    
+    return w * penalized_discrimination(y=y, z=z, n_groups=n_groups, agg_group=agg_group, eps=eps) +\
+        (1-w) * data_loss(y=y, dims=dims)
 
 ga = partial(genetic_algorithm,
              pop_size=pop_size,
@@ -120,7 +107,7 @@ ga = partial(genetic_algorithm,
 preprocessor = HeuristicWrapper(heuristic=ga,
                                 protected_attribute=protected_attributes[0],
                                 label=label,
-                                fitness_functions=[data_disc_quality])
+                                fitness_functions=[weighted_loss])
 
 # Fit and transform the data
 data_single = preprocessor.fit_transform(dataset=data)

@@ -2,6 +2,7 @@
 from functools import partial
 import itertools
 import os
+import time
 
 # third party
 import numpy as np
@@ -19,7 +20,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neural_network import MLPClassifier
 # import ML metrics
-from sklearn.metrics import balanced_accuracy_score, f1_score, roc_auc_score
+from sklearn.metrics import balanced_accuracy_score, f1_score, roc_auc_score, normalized_mutual_info_score
 
 # fairdo package
 from fairdo.utils.dataset import load_data
@@ -72,6 +73,28 @@ def penalized_discrimination(y, z, n_groups, agg_group='max', eps=0.01,**kwargs)
     return penalized_discrimination
 
 
+# Single Objective
+def weighted_loss(y, z, n_groups, dims, w=0.5, agg_group='max', eps=0.01, **kwargs):
+    """
+    A single objective function that combines the statistical parity and data loss.
+    
+    Parameters
+    ----------
+    y: np.array
+        The target variable.
+    z: np.array
+        The protected attribute.
+    dims: int
+        The number of samples.
+    
+    Returns
+    -------
+    float
+        The weighted fairness and quality of the data."""    
+    return w * penalized_discrimination(y=y, z=z, n_groups=n_groups, agg_group=agg_group, eps=eps) +\
+        (1-w) * data_loss(y=y, dims=dims)
+
+
 def plot_results(results_df):
     # Plot results
     fig, ax = plt.subplots(1, 2, figsize=(15, 5))
@@ -82,10 +105,10 @@ def plot_results(results_df):
     plt.show()
 
 
-def preprocess_training_data(data, label, protected_attributes, n_groups):
+def preprocess_training_data_multi(data, label, protected_attributes, n_groups):
     # settings
-    pop_size = 100
-    num_generations = 200
+    pop_size = 200
+    num_generations = 400
 
     # Setting up pre-processor (Best settings from previous experiment)
     ga = partial(nsga2,
@@ -108,19 +131,46 @@ def preprocess_training_data(data, label, protected_attributes, n_groups):
     data_multi = preprocessor_multi.fit_transform(dataset=data)
 
     # Return the fitness values of the returned data as well as the baseline
-    index_best = preprocessor_multi.best_index
-    pf, baseline_fitness = preprocessor_multi.get_pareto_front(return_baseline=True)
+    best_fitness, baseline_fitness = preprocessor_multi.get_best_fitness(return_baseline=True)
 
-    return data_multi, pf[index_best], baseline_fitness
+    return data_multi, best_fitness, baseline_fitness
 
 
-def main():
+def preprocess_training_data_single(data, label, protected_attributes, n_groups):
+    # settings
+    pop_size = 200
+    num_generations = 400
+    
+    ga = partial(genetic_algorithm,
+             pop_size=pop_size,
+             num_generations=num_generations,
+             initialization=variable_initialization,
+             crossover=onepoint_crossover,
+             mutation=bit_flip_mutation)
+    
+    # Initialize the wrapper class for custom preprocessors
+    preprocessor = HeuristicWrapper(heuristic=ga,
+                                protected_attribute=protected_attributes[0],
+                                label=label,
+                                fitness_functions=[weighted_loss])
+    
+    # Fit and transform the data
+    data_single = preprocessor.fit_transform(dataset=data)
+
+    # Return the fitness values of the returned data as well as the baseline
+    best_fitness, baseline_fitness = preprocessor.get_best_fitness(return_baseline=True)
+
+    return data_single, best_fitness, baseline_fitness
+
+
+def run_dataset(data_str):
+    approach = 'multi' # 'single' or 'multi'
+
     # number of runs
     n_runs = 10
 
     # Loading a sample database and encoding for appropriate usage
     # data is a pandas dataframe
-    data_str = 'compas'
     data, label, protected_attributes = load_data(data_str, print_info=False)
     n_groups = len(data[protected_attributes[0]].unique())
 
@@ -128,8 +178,16 @@ def main():
     train_df, test_df = train_test_split(data, test_size=0.2, random_state=42)
 
     for i in range(n_runs):
+        print(f'Run: {i}')
         # Optimize training data for fairness
-        fair_df, fitness, baseline_fitness = preprocess_training_data(train_df, label, protected_attributes, n_groups)
+        if approach == 'multi':
+            start = time.time()
+            fair_df, fitness, baseline_fitness = preprocess_training_data_multi(train_df, label, protected_attributes, n_groups)
+            elapsed = time.time() - start
+        else:
+            start = time.time()
+            fair_df, fitness, baseline_fitness = preprocess_training_data_single(train_df, label, protected_attributes, n_groups)
+            elapsed = time.time() - start
 
         # Train and evaluate classifier
         classifiers = [SVC(), LogisticRegression(), RandomForestClassifier(), MLPClassifier()]
@@ -143,19 +201,31 @@ def main():
 
             # Train and evaluate classifier on fair data
             clf.fit(X_fair_train, y_fair_train)
+            # Metrics for classification
+            y_pred = clf.predict(X_test)
             accuracy = clf.score(X_test, y_test)
-            balanced_accuracy = balanced_accuracy_score(y_test, clf.predict(X_test))
-            f1 = f1_score(y_test, clf.predict(X_test))
-            roc_auc = roc_auc_score(y_test, clf.predict(X_test))
+            balanced_accuracy = balanced_accuracy_score(y_test, y_pred)
+            f1 = f1_score(y_test, y_pred)
+            roc_auc = roc_auc_score(y_test, y_pred)
+            # Fairness metrics (No penalty because groups might be missing)
+            statistical_parity = statistical_parity_abs_diff_max(y_pred, test_df[protected_attributes[0]].to_numpy())
+            nmi = normalized_mutual_info_score(y_pred, test_df[protected_attributes[0]].to_numpy())
 
             # Train and evaluate classifier on original data
             clf.fit(X_orig_train, y_orig_train)
+            # Metrics for classification
+            y_pred = clf.predict(X_test)
             accuracy_orig = clf.score(X_test, y_test)
-            balanced_accuracy_orig = balanced_accuracy_score(y_test, clf.predict(X_test))
-            f1_orig = f1_score(y_test, clf.predict(X_test))
-            roc_auc_orig = roc_auc_score(y_test, clf.predict(X_test))
+            balanced_accuracy_orig = balanced_accuracy_score(y_test, y_pred)
+            f1_orig = f1_score(y_test, y_pred)
+            roc_auc_orig = roc_auc_score(y_test, y_pred)
+            # Fairness metrics (No penalty because groups might be missing)
+            statistical_parity_orig = statistical_parity_abs_diff_max(y_pred, test_df[protected_attributes[0]].to_numpy())
+            nmi_orig = normalized_mutual_info_score(y_pred, test_df[protected_attributes[0]].to_numpy())
 
             results.append({'Trial': i,
+                            'Approach': approach,
+                            'Time': elapsed,
                             'Dataset': data_str,
                             'Label': label,
                             'Protected_Attributes': protected_attributes,
@@ -165,16 +235,28 @@ def main():
                             'Balanced_Accuracy': balanced_accuracy,
                             'F1': f1,
                             'ROC_AUC': roc_auc,
+                            'Statistical_Parity': statistical_parity,
+                            'NMI': nmi,
                             'Accuracy_Orig': accuracy_orig,
                             'Balanced_Accuracy_Orig': balanced_accuracy_orig,
                             'F1_Orig': f1_orig,
                             'ROC_AUC_Orig': roc_auc_orig,
+                            'Statistical_Parity_Orig': statistical_parity_orig,
+                            'NMI_Orig': nmi_orig,
                             'Fitness': fitness,
                             'Baseline_Fitness': baseline_fitness})
+        
+            print(f'Classifier: {clf.__class__.__name__}')
 
 
     results_df = pd.DataFrame(results)
-    results_df.to_csv(f'results/{data_str}/classifier_results.csv', index=False)
+    results_df.to_csv(f'results/{data_str}/{approach}_classifier_results.csv', index=False)
+
+def main():
+    # Run for all datasets
+    data_strs = ['adult', 'bank', 'compas']
+    for data_str in data_strs:
+        run_dataset(data_str)
 
 
 if __name__ == '__main__':
