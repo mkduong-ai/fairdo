@@ -170,11 +170,13 @@ def run_dataset_single_thread(data_str, approach='multi'):
 
     # Loading a sample database and encoding for appropriate usage
     # data is a pandas dataframe
-    data, label, protected_attributes = load_data(data_str, print_info=True)
+    data, label, protected_attributes = load_data(data_str, print_info=False)
     n_groups = len(data[protected_attributes[0]].unique())
 
     # Split the data before optimizing for fairness
-    train_df, test_df = train_test_split(data, test_size=0.2, random_state=42)
+    train_df, test_df = train_test_split(data, test_size=0.2, stratify=data[protected_attributes[0]], random_state=42)
+    # print(train_df[protected_attributes[0]].value_counts())
+    # print(len(train_df[protected_attributes[0]].unique()))
 
     results = []
     for i in range(n_runs):
