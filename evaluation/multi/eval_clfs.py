@@ -174,7 +174,9 @@ def run_dataset_single_thread(data_str, approach='multi'):
     n_groups = len(data[protected_attributes[0]].unique())
 
     # Split the data before optimizing for fairness
-    train_df, test_df = train_test_split(data, test_size=0.2, stratify=data[protected_attributes[0]], random_state=42)
+    train_df, test_df = train_test_split(data, test_size=0.2,
+                                         stratify=data[protected_attributes[0]],
+                                         random_state=42)
     # print(train_df[protected_attributes[0]].value_counts())
     # print(len(train_df[protected_attributes[0]].unique()))
 
