@@ -172,7 +172,8 @@ class MultiObjectiveWrapper(Preprocessing):
         return self.transformed_data, self.masks, self.fitness_values
 
     def transform(self,
-                  ideal_solution=np.array([0, 0])):
+                  ideal_solution=np.array([0, 0]),
+                  w=0.5):
         """
         Applies the heuristic method to the dataset and
         returns the best solution in the Pareto front, that is,
@@ -183,6 +184,8 @@ class MultiObjectiveWrapper(Preprocessing):
         ideal_solution: np.array, optional (default=[0, 0])
             The ideal solution to be used for the optimization.
             Default is [0, 0].
+        w: float or np.array, optional (default=0.5)
+            The weight to be used for the weighted fitness value.
 
         Returns
         -------
@@ -191,7 +194,13 @@ class MultiObjectiveWrapper(Preprocessing):
         """
         self.apply_heuristic()
         
-        self.index_best = np.argmin(np.linalg.norm(self.fitness_values - ideal_solution, axis=1))
+        # Check whether weight is numeric or array
+        if isinstance(w, (int, float)):
+            w = np.array([w, 1 - w])
+
+        self.index_best = np.argmin(np.linalg.norm(w * self.fitness_values - ideal_solution,
+                                                   order=1,
+                                                   axis=1))
         solution_best = self.masks[self.index_best]
         data_best = self.transformed_data[solution_best]
         
@@ -442,7 +451,7 @@ class HeuristicWrapper(Preprocessing):
             raise ValueError('No results to return. Run the `transform` method first.')
         
         best_fitness = self.func(self.mask)
-        
+
         if return_baseline:
             baseline_solution = np.ones(len(self.dataset))
             baseline_fitness = self.func(baseline_solution)
