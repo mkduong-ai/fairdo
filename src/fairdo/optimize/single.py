@@ -106,6 +106,9 @@ def genetic_algorithm(f, d,
         f_orig = f
         f = lambda x: -f_orig(x)
 
+    if pop_size < 3:
+        raise ValueError("The population size must be at least 3.")
+
     # Generate the initial population
     population = initialization(pop_size=pop_size, d=d)
     # Evaluate the function for each vector in the population
