@@ -107,7 +107,7 @@ ga = partial(genetic_algorithm,
 preprocessor = HeuristicWrapper(heuristic=ga,
                                 protected_attribute=protected_attributes[0],
                                 label=label,
-                                fitness_functions=[weighted_loss])
+                                fitness_functions=[partial(weighted_loss, n_groups=n_groups)])
 
 # Fit and transform the data
 data_single = preprocessor.fit_transform(dataset=data)
