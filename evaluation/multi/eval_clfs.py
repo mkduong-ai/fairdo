@@ -56,25 +56,25 @@ def penalized_discrimination(y, z, n_groups, agg_group='max', eps=0.01,**kwargs)
     float
         The penalized discrimination."""
     if agg_group=='sum':
-        penalized_discrimination = statistical_parity_abs_diff_sum(y=y,
-                                                                   z=z) + \
+        disc_score = statistical_parity_abs_diff_sum(y=y,
+                                                     z=z) + \
                                    group_missing_penalty(z=z,
                                                          n_groups=n_groups,
                                                          agg_group=agg_group)
     elif agg_group=='max':
-        penalized_discrimination = np.max([statistical_parity_abs_diff_max(y=y,
-                                                                           z=z),
+        disc_score = np.max([statistical_parity_abs_diff_max(y=y,
+                                                             z=z),
                                            group_missing_penalty(z=z,
                                                                  n_groups=n_groups,
                                                                  agg_group=agg_group,
-                                                                 eps=eps)])/(1+eps)
+                                                                 eps=eps)])#/(1+eps)
     else:
         raise ValueError("Invalid aggregation group. Supported values are 'sum' and 'max'.")
-    return penalized_discrimination
+    return disc_score
 
 
 # Single Objective
-def weighted_loss(y, z, n_groups, dims, w=0.5, agg_group='max', eps=0.01, **kwargs):
+def weighted_loss(y, z, n_groups, dims, y_orig, z_orig, w=0.5, agg_group='max', eps=0.01, **kwargs):
     """
     A single objective function that combines the statistical parity and data loss.
     
@@ -90,8 +90,9 @@ def weighted_loss(y, z, n_groups, dims, w=0.5, agg_group='max', eps=0.01, **kwar
     Returns
     -------
     float
-        The weighted fairness and quality of the data."""    
-    return w * penalized_discrimination(y=y, z=z, n_groups=n_groups, agg_group=agg_group, eps=eps) +\
+        The weighted fairness and quality of the data."""
+    beta = penalized_discrimination(y=y_orig, z=z_orig, n_groups=n_groups, agg_group=agg_group, eps=eps)
+    return w * penalized_discrimination(y=y, z=z, n_groups=n_groups, agg_group=agg_group, eps=eps)/beta +\
         (1-w) * data_loss(y=y, dims=dims)
 
 
@@ -124,7 +125,8 @@ def preprocess_training_data_multi(data, label, protected_attributes, n_groups):
     preprocessor_multi = MultiObjectiveWrapper(heuristic=ga,
                                                protected_attribute=protected_attributes[0],
                                                label=label,
-                                               fitness_functions=[partial(penalized_discrimination, n_groups=n_groups),
+                                               fitness_functions=[partial(penalized_discrimination,
+                                                                          n_groups=n_groups),
                                                                   data_loss])
     
     # Fit and transform the data, returns the data closest to the ideal solution
@@ -148,11 +150,18 @@ def preprocess_training_data_single(data, label, protected_attributes, n_groups)
              crossover=onepoint_crossover,
              mutation=bit_flip_mutation)
     
+    # Parameters for beta normalization
+    y_orig = data[label].to_numpy()
+    z_orig = data[protected_attributes[0]].to_numpy()
+
     # Initialize the wrapper class for custom preprocessors
     preprocessor = HeuristicWrapper(heuristic=ga,
                                 protected_attribute=protected_attributes[0],
                                 label=label,
-                                fitness_functions=[partial(weighted_loss, n_groups=n_groups)])
+                                fitness_functions=[partial(weighted_loss,
+                                                           y_orig=y_orig,
+                                                           z_orig=z_orig,
+                                                           n_groups=n_groups)])
     
     # Fit and transform the data
     data_single = preprocessor.fit_transform(dataset=data)
@@ -253,7 +262,7 @@ def run_dataset_single_thread(data_str, approach='multi'):
 
 
     results_df = pd.DataFrame(results)
-    results_df.to_csv(f'results/{data_str}/{approach}_classifier_results.csv', index=False)
+    results_df.to_csv(f'results/{data_str}/{approach}_beta_classifier_results.csv', index=False)
 
     print(f'Saved results for {data_str} with {approach} approach to results/{data_str}/{approach}_classifier_results.csv')
 
@@ -262,6 +271,7 @@ def main():
     # Run for all datasets
     data_strs = ['adult', 'bank', 'compas']
     approaches = ['multi', 'single']
+    approaches = ['single']
 
     with ProcessPool() as pool:
         print('Number of processes:', pool.ncpus)
