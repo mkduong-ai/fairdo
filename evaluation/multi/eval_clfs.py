@@ -201,15 +201,19 @@ def run_dataset_single_thread(data_str, approach='multi'):
             start = time.time()
             fair_df, fitness, baseline_fitness = preprocess_training_data_single(train_df, label, protected_attributes, n_groups)
             elapsed = time.time() - start
+        
+        # Split data to features X and label y
+        X_fair_train, y_fair_train = fair_df.loc[:, fair_df.columns!=label], fair_df[label]
+        X_orig_train, y_orig_train = train_df.loc[:, train_df.columns!=label], train_df[label]
+        X_test, y_test = test_df.loc[:, test_df.columns!=label], test_df[label]
 
         # Train and evaluate classifier
         classifiers = [SVC(), LogisticRegression(), RandomForestClassifier(), MLPClassifier()]
 
         for clf in classifiers:
-            # Split data to features X and label y
-            X_fair_train, y_fair_train = fair_df.loc[:, fair_df.columns!=label], fair_df[label]
-            X_orig_train, y_orig_train = train_df.loc[:, train_df.columns!=label], train_df[label]
-            X_test, y_test = test_df.loc[:, test_df.columns!=label], test_df[label]
+            # Training data/Original data
+            statistical_parity_train_fair = statistical_parity_abs_diff_max(y_fair_train, fair_df[protected_attributes[0]].to_numpy())
+            statistical_parity_train = statistical_parity_abs_diff_max(train_df[label].to_numpy(), train_df[protected_attributes[0]].to_numpy())
 
             # Train and evaluate classifier on fair data
             clf.fit(X_fair_train, y_fair_train)
@@ -242,6 +246,10 @@ def run_dataset_single_thread(data_str, approach='multi'):
                             'Label': label,
                             'Protected_Attributes': protected_attributes,
                             'N_Groups': n_groups,
+                            'Statistical_Parity_Train': statistical_parity_train,
+                            'Statistical_Parity_Train_Fair': statistical_parity_train_fair,
+                            'Len_Train': len(train_df),
+                            'Len_Train_Fair': len(fair_df),
                             'Classifier': clf.__class__.__name__,
                             'Accuracy': accuracy,
                             'Balanced_Accuracy': balanced_accuracy,
