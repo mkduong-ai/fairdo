@@ -164,17 +164,19 @@ def preprocess_training_data_single(data, label, protected_attributes, n_groups)
 
 
 def run_dataset_single_thread(data_str, approach='multi'):
+    print(f'Running {data_str} with {approach} approach')
     # number of runs
     n_runs = 10
 
     # Loading a sample database and encoding for appropriate usage
     # data is a pandas dataframe
-    data, label, protected_attributes = load_data(data_str, print_info=False)
+    data, label, protected_attributes = load_data(data_str, print_info=True)
     n_groups = len(data[protected_attributes[0]].unique())
 
     # Split the data before optimizing for fairness
     train_df, test_df = train_test_split(data, test_size=0.2, random_state=42)
 
+    results = []
     for i in range(n_runs):
         print(f'Run: {i}')
         # Optimize training data for fairness
@@ -190,7 +192,6 @@ def run_dataset_single_thread(data_str, approach='multi'):
         # Train and evaluate classifier
         classifiers = [SVC(), LogisticRegression(), RandomForestClassifier(), MLPClassifier()]
 
-        results = []
         for clf in classifiers:
             # Split data to features X and label y
             X_fair_train, y_fair_train = fair_df.loc[:, fair_df.columns!=label], fair_df[label]
@@ -257,7 +258,6 @@ def main():
     # Run for all datasets
     data_strs = ['adult', 'bank', 'compas']
     approaches = ['multi', 'single']
-    approaches = ['single']
 
     with ProcessPool() as pool:
         print('Number of processes:', pool.ncpus)
