@@ -152,7 +152,7 @@ def preprocess_training_data_single(data, label, protected_attributes, n_groups)
     preprocessor = HeuristicWrapper(heuristic=ga,
                                 protected_attribute=protected_attributes[0],
                                 label=label,
-                                fitness_functions=[weighted_loss])
+                                fitness_functions=[partial(weighted_loss, n_groups=n_groups)])
     
     # Fit and transform the data
     data_single = preprocessor.fit_transform(dataset=data)
@@ -257,6 +257,7 @@ def main():
     # Run for all datasets
     data_strs = ['adult', 'bank', 'compas']
     approaches = ['multi', 'single']
+    approaches = ['single']
 
     with ProcessPool() as pool:
         print('Number of processes:', pool.ncpus)
