@@ -111,7 +111,8 @@ class MultiObjectiveWrapper(Preprocessing):
         -------
         self
         """
-        self.dataset = dataset.copy()
+        super().fit(dataset=dataset)
+
         if synthetic_dataset is not None:
             self.synthetic_dataset = synthetic_dataset.copy()
 
@@ -140,6 +141,9 @@ class MultiObjectiveWrapper(Preprocessing):
                               synthetic_dataset=self.synthetic_dataset,
                               fitness_function=fitness_function,
                               penalty=None) for fitness_function in self.fitness_functions]
+        
+        # Optimization step
+        self.apply_heuristic()
 
         return self
     
@@ -179,6 +183,9 @@ class MultiObjectiveWrapper(Preprocessing):
         returns the best solution in the Pareto front, that is,
         the solution closest to the ideal solution.
 
+        If fitted before, it is possible to return a different dataset
+        by changing the `ideal_solution` and `w` parameters.
+
         Parameters
         ----------
         ideal_solution: np.array, optional (default=[0, 0])
@@ -192,7 +199,8 @@ class MultiObjectiveWrapper(Preprocessing):
         data_best: pd.DataFrame
             The dataset closest to the ideal solution.
         """
-        self.apply_heuristic()
+        if self.dataset is None:
+            raise Exception('Model not fitted. Run the `fit` method first.')
         
         # Check whether weight is numeric or array
         if isinstance(w, (int, float)):
@@ -382,7 +390,8 @@ class HeuristicWrapper(Preprocessing):
         -------
         self
         """
-        self.dataset = dataset.copy()
+        super().fit(dataset=dataset)
+
         if synthetic_dataset is not None:
             self.synthetic_dataset = synthetic_dataset.copy()
 
@@ -400,8 +409,8 @@ class HeuristicWrapper(Preprocessing):
             n_groups = np.array([self.dataset[self.protected_attribute].nunique()])
 
         # define penalty function
-        penalty = partial(group_missing_penalty,
-                          n_groups=n_groups)
+        # penalty = partial(group_missing_penalty,
+        #                  n_groups=n_groups)
 
         self.func = partial(f,
                             dataset=self.dataset,
@@ -410,7 +419,10 @@ class HeuristicWrapper(Preprocessing):
                             approach=approach,
                             synthetic_dataset=self.synthetic_dataset,
                             fitness_function=self.disc_measure,
-                            penalty=penalty)
+                            penalty=None)
+        
+        # Optimization step
+        self.mask = self.heuristic(f=self.func, d=self.dims)[0] == 1
 
         return self
 
@@ -423,8 +435,6 @@ class HeuristicWrapper(Preprocessing):
         pd.DataFrame
             The preprocessed (fair) dataset.
         """
-        self.mask = self.heuristic(f=self.func, d=self.dims)[0] == 1
-
         # apply the mask to the dataset
         if self.approach == 'add':
             self.transformed_data = pd.concat([self.dataset, self.synthetic_dataset[self.mask]], axis=0)

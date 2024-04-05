@@ -68,6 +68,9 @@ class Preprocessing(metaclass=abc.ABCMeta):
         -------
         self
         """
+        if self.dataset is None:
+            raise Exception('Model not fitted. Run the `fit` method first.')
+        
         return self.fit(*args, **kwargs).transform()
 
     def _check_valid_datatype(self):
@@ -126,7 +129,7 @@ class Unawareness(Preprocessing):
             The dataset without the protected attribute.
         """
         if self.dataset is None:
-            raise Exception('Model not fitted.')
+            raise Exception('Model not fitted. Run the `fit` method first.')
         if self.protected_attribute is None or self.protected_attribute not in self.dataset.columns:
             raise Exception('Protected attribute not given.')
 
@@ -157,7 +160,7 @@ class Random(Preprocessing):
             The random subset of the dataset.
         """
         if self.dataset is None:
-            raise Exception('Model not fitted.')
+            raise Exception('Model not fitted. Run the `fit` method first.')
 
         self.transformed_data = self.dataset.sample(frac=self.frac, axis=0,
                                                     random_state=self.random_state)

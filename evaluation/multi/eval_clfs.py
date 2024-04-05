@@ -129,8 +129,14 @@ def preprocess_training_data_multi(data, label, protected_attributes, n_groups):
                                                                           n_groups=n_groups),
                                                                   data_loss])
     
+    # Parameters for beta normalization
+    y_orig = data[label].to_numpy()
+    z_orig = data[protected_attributes[0]].to_numpy()
+    beta = penalized_discrimination(y=y_orig, z=z_orig, n_groups=n_groups)
+
     # Fit and transform the data, returns the data closest to the ideal solution
-    data_multi = preprocessor_multi.fit_transform(dataset=data)
+    preprocessor_multi.fit(dataset=data)
+    data_multi = preprocessor_multi.transform(w=np.array([beta, 1-beta]))
 
     # Return the fitness values of the returned data as well as the baseline
     best_fitness, baseline_fitness = preprocessor_multi.get_best_fitness(return_baseline=True)
