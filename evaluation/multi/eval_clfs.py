@@ -136,7 +136,7 @@ def preprocess_training_data_multi(data, label, protected_attributes, n_groups):
 
     # Fit and transform the data, returns the data closest to the ideal solution
     preprocessor_multi.fit(dataset=data)
-    data_multi = preprocessor_multi.transform(w=np.array([beta, 1-beta]))
+    data_multi = preprocessor_multi.transform(w=(1/beta))
 
     # Return the fitness values of the returned data as well as the baseline
     best_fitness, baseline_fitness = preprocessor_multi.get_best_fitness(return_baseline=True)
