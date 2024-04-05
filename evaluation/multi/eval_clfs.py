@@ -285,7 +285,6 @@ def main():
     # Run for all datasets
     data_strs = ['adult', 'bank', 'compas']
     approaches = ['multi', 'single']
-    approaches = ['multi']
 
     with ProcessPool() as pool:
         print('Number of processes:', pool.ncpus)
