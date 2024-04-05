@@ -207,7 +207,7 @@ class MultiObjectiveWrapper(Preprocessing):
             w = np.array([w, 1 - w])
 
         self.index_best = np.argmin(np.linalg.norm(w * self.fitness_values - ideal_solution,
-                                                   order=1,
+                                                   ord=1,
                                                    axis=1))
         solution_best = self.masks[self.index_best]
         data_best = self.transformed_data[solution_best]
