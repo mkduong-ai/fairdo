@@ -35,7 +35,7 @@ class Preprocessing(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def transform(self):
-        pass
+        return self
 
     def fit(self, dataset):
         """
@@ -68,9 +68,6 @@ class Preprocessing(metaclass=abc.ABCMeta):
         -------
         self
         """
-        if self.dataset is None:
-            raise Exception('Model not fitted. Run the `fit` method first.')
-        
         return self.fit(*args, **kwargs).transform()
 
     def _check_valid_datatype(self):

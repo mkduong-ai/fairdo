@@ -216,7 +216,8 @@ class MultiObjectiveWrapper(Preprocessing):
 
     def get_best_fitness(self, return_baseline):
         """
-        Get the best fitness value of the solutions.
+        Get the best fitness value of the solutions according to
+        the weights set in the `transform` method.
         
         Parameters
         ----------
@@ -228,7 +229,7 @@ class MultiObjectiveWrapper(Preprocessing):
         float
             The best fitness value.
         """
-        if self.fitness_values is None:
+        if self.index_best is None:
             raise ValueError('No results to return. Run the `transform` method first.')
         
         if return_baseline:
