@@ -92,6 +92,7 @@ def weighted_loss(y, z, n_groups, dims, y_orig, z_orig, w=0.5, agg_group='max', 
     float
         The weighted fairness and quality of the data."""
     beta = penalized_discrimination(y=y_orig, z=z_orig, n_groups=n_groups, agg_group=agg_group, eps=eps)
+    beta = 1/(1+eps)
     return w * penalized_discrimination(y=y, z=z, n_groups=n_groups, agg_group=agg_group, eps=eps)/beta +\
         (1-w) * data_loss(y=y, dims=dims)
 
@@ -110,6 +111,7 @@ def preprocess_training_data_multi(data, label, protected_attributes, n_groups):
     # settings
     pop_size = 200
     num_generations = 400
+    eps = 0.01
 
     # Setting up pre-processor (Best settings from previous experiment)
     ga = partial(nsga2,
@@ -126,7 +128,8 @@ def preprocess_training_data_multi(data, label, protected_attributes, n_groups):
                                                protected_attribute=protected_attributes[0],
                                                label=label,
                                                fitness_functions=[partial(penalized_discrimination,
-                                                                          n_groups=n_groups),
+                                                                          n_groups=n_groups,
+                                                                          eps=eps),
                                                                   data_loss])
     
     # Parameters for beta normalization
@@ -136,7 +139,8 @@ def preprocess_training_data_multi(data, label, protected_attributes, n_groups):
 
     # Fit and transform the data, returns the data closest to the ideal solution
     preprocessor_multi.fit(dataset=data)
-    data_multi = preprocessor_multi.transform(w=np.array([1/beta, 1]))
+    # data_multi = preprocessor_multi.transform(w=np.array([1/beta, 1]))
+    data_multi = preprocessor_multi.transform(w=np.array([1/(1+eps), 1]))
 
     # Return the fitness values of the returned data as well as the baseline
     best_fitness, baseline_fitness = preprocessor_multi.get_best_fitness(return_baseline=True)
@@ -154,7 +158,8 @@ def preprocess_training_data_single(data, label, protected_attributes, n_groups)
              num_generations=num_generations,
              initialization=variable_initialization,
              crossover=onepoint_crossover,
-             mutation=bit_flip_mutation)
+             mutation=bit_flip_mutation,
+             patience=num_generations)
     
     # Parameters for beta normalization
     y_orig = data[label].to_numpy()
@@ -276,7 +281,7 @@ def run_dataset_single_thread(data_str, approach='multi'):
 
 
     results_df = pd.DataFrame(results)
-    results_df.to_csv(f'results/{data_str}/{approach}_beta_classifier_results.csv', index=False)
+    results_df.to_csv(f'results/{data_str}/{approach}_classifier_results.csv', index=False)
 
     print(f'Saved results for {data_str} with {approach} approach to results/{data_str}/{approach}_classifier_results.csv')
 
@@ -285,7 +290,7 @@ def main():
     # Run for all datasets
     data_strs = ['adult', 'bank', 'compas']
     approaches = ['multi', 'single']
-    approaches = ['single']
+    # approaches = ['single']
 
     with ProcessPool() as pool:
         print('Number of processes:', pool.ncpus)
