@@ -224,7 +224,7 @@ def run_dataset_single_thread(data_str, approach='multi'):
         for clf in classifiers:
             # Training data/Original data
             statistical_parity_train_fair = statistical_parity_abs_diff_max(y_fair_train, fair_df[protected_attributes[0]].to_numpy())
-            statistical_parity_train = statistical_parity_abs_diff_max(train_df[label].to_numpy(), train_df[protected_attributes[0]].to_numpy())
+            statistical_parity_train = statistical_parity_abs_diff_max(y_orig_train, train_df[protected_attributes[0]].to_numpy())
 
             # Train and evaluate classifier on fair data
             clf.fit(X_fair_train, y_fair_train)
