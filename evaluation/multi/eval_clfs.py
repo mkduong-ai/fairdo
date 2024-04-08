@@ -33,6 +33,10 @@ from fairdo.optimize.geneticoperators import variable_initialization, random_ini
     uniform_crossover, onepoint_crossover, no_crossover, \
     fractional_flip_mutation, shuffle_mutation,\
     bit_flip_mutation
+
+# fairlearn
+from fairlearn.preprocessing import CorrelationRemover
+
 # fairdo metrics
 from fairdo.metrics import statistical_parity_abs_diff_max,\
     statistical_parity_abs_diff_sum,\
@@ -106,6 +110,21 @@ def plot_results(results_df):
     ax[1].set_title('Statistical Parity')
     plt.show()
 
+
+def preprocess_correlation_remover(data, label, protected_attributes, **kwargs):
+    # Use fairlearn CorrelationRemover
+    data = data.reset_index(drop=True)
+    corr_remover = CorrelationRemover(sensitive_feature_ids=protected_attributes, alpha=0.5)
+    data_fair = corr_remover.fit_transform(data, data[label])
+    
+    # Make sure the data is a pandas dataframe
+    data_fair_df = pd.DataFrame(data_fair, columns=data.drop(columns=protected_attributes).columns)
+    # Re-add the protected attribute column
+    data_fair_df[protected_attributes[0]] = data[protected_attributes[0]]
+    # Fairlearn transforms the label, re-add the original label
+    data_fair_df[label] = data[label]
+
+    return data_fair_df, 1, 1
 
 def preprocess_training_data_multi(data, label, protected_attributes, n_groups):
     # settings
@@ -186,7 +205,7 @@ def preprocess_training_data_single(data, label, protected_attributes, n_groups)
 def run_dataset_single_thread(data_str, approach='multi'):
     print(f'Running {data_str} with {approach} approach')
     # number of runs
-    n_runs = 10
+    n_runs = 2
 
     # Loading a sample database and encoding for appropriate usage
     # data is a pandas dataframe
@@ -208,11 +227,15 @@ def run_dataset_single_thread(data_str, approach='multi'):
             start = time.time()
             fair_df, fitness, baseline_fitness = preprocess_training_data_multi(train_df, label, protected_attributes, n_groups)
             elapsed = time.time() - start
-        else:
+        elif approach == 'single':
             start = time.time()
             fair_df, fitness, baseline_fitness = preprocess_training_data_single(train_df, label, protected_attributes, n_groups)
             elapsed = time.time() - start
-        
+        elif approach == 'correlationremover':
+            start = time.time()
+            fair_df, fitness, baseline_fitness = preprocess_correlation_remover(train_df, label, protected_attributes)
+            elapsed = time.time() - start
+
         # Split data to features X and label y
         X_fair_train, y_fair_train = fair_df.loc[:, fair_df.columns!=label], fair_df[label]
         X_orig_train, y_orig_train = train_df.loc[:, train_df.columns!=label], train_df[label]
@@ -289,8 +312,9 @@ def run_dataset_single_thread(data_str, approach='multi'):
 def main():
     # Run for all datasets
     data_strs = ['adult', 'bank', 'compas']
-    approaches = ['multi', 'single']
-    # approaches = ['single']
+    data_strs = ['compas']
+    approaches = ['multi', 'single', 'correlationremover']
+    approaches = ['correlationremover']
 
     with ProcessPool() as pool:
         print('Number of processes:', pool.ncpus)
