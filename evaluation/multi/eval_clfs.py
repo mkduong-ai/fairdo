@@ -119,10 +119,10 @@ def preprocess_correlation_remover(data, label, protected_attributes, **kwargs):
     
     # Make sure the data is a pandas dataframe
     data_fair_df = pd.DataFrame(data_fair, columns=data.drop(columns=protected_attributes).columns)
-    # Re-add the protected attribute column
+    # Re-add the protected attribute column because CorrelationRemover removes it
     data_fair_df[protected_attributes[0]] = data[protected_attributes[0]]
-    # Fairlearn transforms the label, re-add the original label
-    data_fair_df[label] = data[label]
+    # Fairlearn transforms the label, round the label to integers
+    data_fair_df[label] = data_fair_df[label].round()
 
     return data_fair_df, 1, 1
 
@@ -205,7 +205,7 @@ def preprocess_training_data_single(data, label, protected_attributes, n_groups)
 def run_dataset_single_thread(data_str, approach='multi'):
     print(f'Running {data_str} with {approach} approach')
     # number of runs
-    n_runs = 2
+    n_runs = 10
 
     # Loading a sample database and encoding for appropriate usage
     # data is a pandas dataframe
@@ -312,7 +312,6 @@ def run_dataset_single_thread(data_str, approach='multi'):
 def main():
     # Run for all datasets
     data_strs = ['adult', 'bank', 'compas']
-    data_strs = ['compas']
     approaches = ['multi', 'single', 'correlationremover']
     approaches = ['correlationremover']
 
