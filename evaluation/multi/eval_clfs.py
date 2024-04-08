@@ -155,11 +155,12 @@ def preprocess_training_data_multi(data, label, protected_attributes, n_groups):
     y_orig = data[label].to_numpy()
     z_orig = data[protected_attributes[0]].to_numpy()
     beta = penalized_discrimination(y=y_orig, z=z_orig, n_groups=n_groups)
+    beta = 1/(1+eps)
 
     # Fit and transform the data, returns the data closest to the ideal solution
     preprocessor_multi.fit(dataset=data)
     # data_multi = preprocessor_multi.transform(w=np.array([1/beta, 1]))
-    data_multi = preprocessor_multi.transform(w=np.array([1/(1+eps), 1]))
+    data_multi = preprocessor_multi.transform(w=np.array([beta, 1]))
 
     # Return the fitness values of the returned data as well as the baseline
     best_fitness, baseline_fitness = preprocessor_multi.get_best_fitness(return_baseline=True)
