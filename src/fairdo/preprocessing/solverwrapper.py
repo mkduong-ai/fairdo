@@ -89,6 +89,7 @@ class MultiObjectiveWrapper(Preprocessing):
         self.masks = None
         self.fitness_values = None
         self.fitness = None # Best weighted fitness value
+        self.index_best = None
         super().__init__(protected_attribute=protected_attribute, label=label)
 
     def fit(self, dataset, synthetic_dataset=None, approach='remove'):
