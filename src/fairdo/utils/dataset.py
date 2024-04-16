@@ -29,7 +29,7 @@ def downcast(data):
     return data
 
 
-def load_data(dataset_str, print_info=True):
+def load_data(dataset_str, multi_protected_attr=False, print_info=True):
     """
     Load the dataset and preprocess it. The preprocessing steps include:
     - Dropping rows with missing values
@@ -60,10 +60,15 @@ def load_data(dataset_str, print_info=True):
 
         # Label encoding protected_attribute and label
         label = 'income'
-        protected_attributes = ['race']
+        if multi_protected_attr:
+            protected_attributes = ['race', 'sex']
+        else:
+            protected_attributes = ['race']
 
     elif dataset_str == 'compas':
-        use_cols = ['race', 'priors_count', 'age_cat', 'c_charge_degree', 'two_year_recid']
+        use_cols = ['race', 'sex', 'juv_fel_count', 'decile_score',
+                    'juv_misd_count', 'juv_other_count', 'is_violent_recid', 'v_decile_score', #'is_recid',
+                     'priors_count', 'age_cat', 'c_charge_degree', 'two_year_recid']
         data = pd.read_csv(
             "https://raw.githubusercontent.com/propublica/compas-analysis/master/compas-scores-two-years.csv",
             usecols=use_cols)
@@ -74,7 +79,10 @@ def load_data(dataset_str, print_info=True):
 
         # Label encoding protected_attribute and label
         label = 'two_year_recid'
-        protected_attributes = ['race']
+        if multi_protected_attr:
+            protected_attributes = ['race', 'sex', 'age_cat']
+        else:
+            protected_attributes = ['race']
 
     elif dataset_str == 'bank':
         # Loading Bank Marketing dataset
@@ -89,7 +97,10 @@ def load_data(dataset_str, print_info=True):
 
         # Label encoding protected_attribute and label
         label = 'y'
-        protected_attributes = ['job']
+        if multi_protected_attr:
+            protected_attributes = ['job', 'marital']
+        else:
+            protected_attributes = ['job']
 
     elif dataset_str == 'german':
         # Loading German Credit dataset
