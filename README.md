@@ -207,3 +207,6 @@ bias (May 2016),
 https://www.propublica.org/article/machine-bias-risk-assessments-in-criminal-sentencing
 
 [2] Rawls, J.: A Theory of Justice (1971), Belknap Press, ISBN: 978-0-674-00078-0
+
+## Notes
+We credit OpenMoji for the emojis used in our logo.
