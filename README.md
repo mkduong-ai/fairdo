@@ -11,7 +11,7 @@
 <br/>
 <p align="center">
 <a href="https://github.com/mkduong-ai/fairdo">
-<img align="center" width=70% src="https://media.githubusercontent.com/media/mkduong-ai/fairdo/main/assets/Pipeline.png"></img>
+<img align="center" width=70% src="https://media.githubusercontent.com/media/mkduong-ai/fairdo/main/assets/FairdoLogo.drawio.png"></img>
 </a>
 </p>
 </div>
