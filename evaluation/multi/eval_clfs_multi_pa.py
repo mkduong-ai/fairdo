@@ -177,6 +177,7 @@ def preprocess_correlation_remover(data, label, protected_attributes, **kwargs):
 
     return data_fair_df, 1, 1
 
+
 def preprocess_training_data_multi(data, label, protected_attributes, n_groups):
     # settings
     pop_size = 200
