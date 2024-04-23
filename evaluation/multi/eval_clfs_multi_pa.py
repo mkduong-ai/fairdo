@@ -328,8 +328,8 @@ def main():
         args_list = list(itertools.product(data_strs, approaches))
 
         print(args_list)
-        #pool.map(lambda args: run_dataset_single_thread(*args), args_list)
-        map(lambda args: run_dataset_single_thread(*args), args_list) # single thread
+        pool.map(lambda args: run_dataset_single_thread(*args), args_list)
+        #map(lambda args: run_dataset_single_thread(*args), args_list) # single thread
 
 if __name__ == '__main__':
     main()
