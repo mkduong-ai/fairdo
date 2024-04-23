@@ -35,7 +35,7 @@ from fairdo.optimize.geneticoperators import variable_initialization, random_ini
     bit_flip_mutation
 
 # fairlearn
-from fairlearn.preprocessing import CorrelationRemover
+#from fairlearn.preprocessing import CorrelationRemover
 
 # fairdo metrics
 from fairdo.metrics import statistical_parity_abs_diff_max,\
