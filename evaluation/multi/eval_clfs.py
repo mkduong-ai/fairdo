@@ -95,7 +95,7 @@ def weighted_loss(y, z, n_groups, dims, y_orig, z_orig, w=0.5, agg_group='max', 
     -------
     float
         The weighted fairness and quality of the data."""
-    beta = penalized_discrimination(y=y_orig, z=z_orig, n_groups=n_groups, agg_group=agg_group, eps=eps)
+    #beta = penalized_discrimination(y=y_orig, z=z_orig, n_groups=n_groups, agg_group=agg_group, eps=eps)
     beta = 1/(1+eps)
     return w * penalized_discrimination(y=y, z=z, n_groups=n_groups, agg_group=agg_group, eps=eps)/beta +\
         (1-w) * data_loss(y=y, dims=dims)
