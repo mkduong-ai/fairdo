@@ -329,7 +329,7 @@ def main():
 
         print(args_list)
         pool.map(lambda args: run_dataset_single_thread(*args), args_list)
-        #map(lambda args: run_dataset_single_thread(*args), args_list) # single thread
+        #list(map(lambda args: run_dataset_single_thread(*args), args_list)) # single thread
 
 if __name__ == '__main__':
     main()
