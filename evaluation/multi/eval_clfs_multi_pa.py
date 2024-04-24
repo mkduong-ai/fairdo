@@ -110,6 +110,24 @@ def weighted_loss_multi(y, z, n_groups, dims, y_orig, z_orig, w=0.5, agg_group='
            (1-w) * data_loss(y=y, dims=dims)
 
 
+def dataset_intersectional_column(data, protected_attributes):
+    """
+    Parameters
+    ----------
+    data: pandas DataFrame
+
+    Returns
+    -------
+    data: pandas DataFrame
+        Returns a dataframe with an extra column of combines protected attributes
+    """
+    protected_attribute = 'pa_merged'
+    for col in protected_attributes:
+        data[protected_attribute] += data[col].astype(str)
+    
+    return data, protected_attribute
+
+
 def plot_results(results_df):
     # Plot results
     fig, ax = plt.subplots(1, 2, figsize=(15, 5))
