@@ -230,7 +230,7 @@ def run_dataset_single_thread(data_str, approach='multi'):
     # Label encode the protected attribute
     le = LabelEncoder()
     data[protected_attribute] = le.fit_transform(data[protected_attribute])
-    n_groups = data[protected_attributes].nunique()
+    n_groups = data[protected_attribute].nunique()
 
     # Split the data before optimizing for fairness
     train_df, test_df = train_test_split(data, test_size=0.2,

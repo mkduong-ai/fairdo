@@ -135,7 +135,6 @@ def evaluate_population_single_cpu(fitness_functions, population):
     num_fitness_functions = len(fitness_functions)
     fitness_values = np.zeros((population.shape[0], num_fitness_functions))
     for i, fitness_function in enumerate(fitness_functions):
-        # TODO: Parallelize this loop
         fitness_values[:, i] = np.apply_along_axis(fitness_function, axis=1, arr=population).flatten()
     
     return fitness_values
