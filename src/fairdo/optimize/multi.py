@@ -1,4 +1,5 @@
 import numpy as np
+import pathos.multiprocessing as mp
 
 from fairdo.optimize.geneticoperators.initialization import random_initialization, variable_initialization
 from fairdo.optimize.geneticoperators.selection import elitist_selection_multi, tournament_selection_multi
@@ -115,7 +116,7 @@ def nsga2(fitness_functions, d,
         return combined_population, combined_fitness_values, fronts
 
 
-def evaluate_population(fitness_functions, population):
+def evaluate_population_single_cpu(fitness_functions, population):
     """
     Evaluate the fitness of each individual in the population using the given fitness functions.
 
@@ -138,6 +139,57 @@ def evaluate_population(fitness_functions, population):
         fitness_values[:, i] = np.apply_along_axis(fitness_function, axis=1, arr=population).flatten()
     
     return fitness_values
+
+
+def evaluate_individual(args):
+    """
+    Calculates the fitness of an individual. The fitness is the value of the fitness function
+    plus a penalty for individuals that do not satisfy the size constraint.
+
+    Parameters
+    ----------
+    args: tuple
+        The arguments to pass to the function. The arguments are (f, individual).
+
+    Returns
+    -------
+    fitness: float
+        The fitness of the individual.
+    """
+    fitness_functions, individual = args
+    fitness = evaluate_population_single_cpu(fitness_functions, individual.reshape(1, -1))[0]
+    return fitness
+
+
+def evaluate_population(fitness_functions, population):
+    """
+    Evaluate the fitness of each individual in the population using the given fitness functions.
+
+    Parameters
+    ----------
+    fitness_functions : list of callables
+        The list of fitness functions to evaluate.
+    population : ndarray, shape (pop_size, d)
+        The population of binary vectors.
+
+    Returns
+    -------
+    fitness_values : ndarray, shape (pop_size, num_fitness_functions)
+        The fitness values of each individual in the population for each fitness function.
+    """
+    try:
+        # use multiprocessing to speed up the evaluation if the population is large enough
+        if mp.cpu_count() > 1 and population.shape[0] >= 200:
+            with mp.Pool(mp.cpu_count()) as pool:
+                return np.array(pool.map(evaluate_individual, [(fitness_functions, individual) for individual in population]))
+        else:
+            return evaluate_population_single_cpu(fitness_functions, population)
+    except Exception as e:
+        print(f"Multiprocessing pool failed with error: {e}")
+        print("Falling back to single process execution")
+        return evaluate_population_single_cpu(f, population)
+
+
 
 
 def non_dominated_sort(fitness_values):
