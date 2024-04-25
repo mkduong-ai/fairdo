@@ -244,15 +244,15 @@ def run_dataset_single_thread(data_str, approach='multi'):
         print(f'Run: {i}')
         # Optimize training data for fairness
         if approach == 'multi':
-            start = time.time()
+            start = time.perf_counter()
             fair_df, fitness, baseline_fitness = preprocess_training_data_multi(train_df, label, protected_attribute, n_groups,
                                                                                 intersectional=intersectional)
-            elapsed = time.time() - start
+            elapsed = time.perf_counter() - start
         elif approach == 'single':
-            start = time.time()
+            start = time.perf_counter()
             fair_df, fitness, baseline_fitness = preprocess_training_data_single(train_df, label, protected_attribute, n_groups,
                                                                                  intersectional=intersectional)
-            elapsed = time.time() - start
+            elapsed = time.perf_counter() - start
 
         # Split data to features X and label y
         X_fair_train, y_fair_train = fair_df.loc[:, fair_df.columns!=label], fair_df[label]
