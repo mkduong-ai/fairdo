@@ -187,7 +187,7 @@ def evaluate_population(fitness_functions, population):
     except Exception as e:
         print(f"Multiprocessing pool failed with error: {e}")
         print("Falling back to single process execution")
-        return evaluate_population_single_cpu(f, population)
+        return evaluate_population_single_cpu(fitness_functions, population)
 
 
 
