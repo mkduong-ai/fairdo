@@ -45,6 +45,28 @@ from fairdo.metrics import statistical_parity_abs_diff_max,\
     statistical_parity_abs_diff_intersectionality
 
 
+def dataset_intersectional_column(data, protected_attributes):
+    """
+    Parameters
+    ----------
+    data: pandas DataFrame
+
+    Returns
+    -------
+    data: pandas DataFrame
+        Returns a dataframe with an extra column of combines protected attributes
+    """
+    protected_attribute = 'pa_merged'
+    
+    # Initialize the protected attribute column with empty strings
+    data[protected_attribute] = ''
+    
+    for col in protected_attributes:
+        data[protected_attribute] += data[col].astype(str) + '_'
+    
+    return data, protected_attribute
+
+
 def penalized_discrimination_multi(y, z, n_groups, agg_group='max', eps=0.01,
                                    intersectional=False, **kwargs):
     """
@@ -61,26 +83,15 @@ def penalized_discrimination_multi(y, z, n_groups, agg_group='max', eps=0.01,
     -------
     float
         The penalized discrimination."""
-    if intersectional is False:
-        disc_score = np.max([statistical_parity_abs_diff_multi(y=y,
-                                                            z=z,
-                                                            agg_attribute=np.max,
-                                                            agg_group=np.max),
-                                        group_missing_penalty(z=z,
-                                                                n_groups=n_groups,
-                                                                agg_attribute='max',
-                                                                agg_group='max',
-                                                                eps=eps)])#/(1+eps)
-    else:
-        disc_score = np.max([statistical_parity_abs_diff_intersectionality(y=y,
-                                                            z=z,
-                                                            agg_attribute=np.max,
-                                                            agg_group=np.max),
-                                        group_missing_penalty(z=z,
-                                                                n_groups=n_groups,
-                                                                agg_attribute='max',
-                                                                agg_group='max',
-                                                                eps=eps)])#/(1+eps)
+    disc_score = np.max([statistical_parity_abs_diff_multi(y=y,
+                                                        z=z,
+                                                        agg_attribute=np.max,
+                                                        agg_group=np.max),
+                                    group_missing_penalty(z=z,
+                                                            n_groups=n_groups,
+                                                            agg_attribute='max',
+                                                            agg_group='max',
+                                                            eps=eps)])#/(1+eps)
     return disc_score
 
 
@@ -108,24 +119,6 @@ def weighted_loss_multi(y, z, n_groups, dims, y_orig, z_orig, w=0.5, agg_group='
     return w * penalized_discrimination_multi(y=y, z=z, n_groups=n_groups, agg_group=agg_group, eps=eps,
                                               intersectional=intersectional)/beta +\
            (1-w) * data_loss(y=y, dims=dims)
-
-
-def dataset_intersectional_column(data, protected_attributes):
-    """
-    Parameters
-    ----------
-    data: pandas DataFrame
-
-    Returns
-    -------
-    data: pandas DataFrame
-        Returns a dataframe with an extra column of combines protected attributes
-    """
-    protected_attribute = 'pa_merged'
-    for col in protected_attributes:
-        data[protected_attribute] += data[col].astype(str)
-    
-    return data, protected_attribute
 
 
 def plot_results(results_df):
@@ -166,9 +159,9 @@ def preprocess_training_data_multi(data, label, protected_attributes, n_groups,
                                                                   data_loss])
     
     # Parameters for beta normalization
-    y_orig = data[label].to_numpy()
+    # y_orig = data[label].to_numpy()
     # z_orig = data[protected_attributes[0]].to_numpy()
-    z_orig = data[protected_attributes].to_numpy()
+    # z_orig = data[protected_attributes].to_numpy()
     #beta = penalized_discrimination_multi(y=y_orig, z=z_orig, n_groups=n_groups,
     #                                      intersectional=intersectional)
     #beta = 1/(1+eps)
@@ -231,14 +224,16 @@ def run_dataset_single_thread(data_str, approach='multi'):
     # Loading a sample database and encoding for appropriate usage
     # data is a pandas dataframe
     data, label, protected_attributes = load_data(data_str, multi_protected_attr=True, print_info=False)
-    n_groups = data[protected_attributes].nunique().to_numpy()
+    data, protected_attribute = dataset_intersectional_column(data, protected_attributes)
+    #n_groups = data[protected_attributes].nunique().to_numpy()
+    n_groups = data[protected_attributes].nunique()
 
     # Split the data before optimizing for fairness
     train_df, test_df = train_test_split(data, test_size=0.2,
-                                         stratify=data[protected_attributes[0]],
+                                         stratify=data[protected_attribute],
                                          random_state=42)
-    # print(train_df[protected_attributes[0]].value_counts())
-    # print(len(train_df[protected_attributes[0]].unique()))
+    # print(train_df[protected_attribute].value_counts())
+    # print(len(train_df[protected_attribute].unique()))
 
     results = []
     for i in range(n_runs):
@@ -246,12 +241,12 @@ def run_dataset_single_thread(data_str, approach='multi'):
         # Optimize training data for fairness
         if approach == 'multi':
             start = time.time()
-            fair_df, fitness, baseline_fitness = preprocess_training_data_multi(train_df, label, protected_attributes, n_groups,
+            fair_df, fitness, baseline_fitness = preprocess_training_data_multi(train_df, label, protected_attribute, n_groups,
                                                                                 intersectional=intersectional)
             elapsed = time.time() - start
         elif approach == 'single':
             start = time.time()
-            fair_df, fitness, baseline_fitness = preprocess_training_data_single(train_df, label, protected_attributes, n_groups,
+            fair_df, fitness, baseline_fitness = preprocess_training_data_single(train_df, label, protected_attribute, n_groups,
                                                                                  intersectional=intersectional)
             elapsed = time.time() - start
 
@@ -264,13 +259,10 @@ def run_dataset_single_thread(data_str, approach='multi'):
         classifiers = [SVC(), LogisticRegression(), RandomForestClassifier(), MLPClassifier()]
 
         for clf in classifiers:
-            if intersectional:
-                sdp = statistical_parity_abs_diff_intersectionality
-            else:
-                sdp = statistical_parity_abs_diff_multi
+            sdp = statistical_parity_abs_diff_multi
             # Training data/Original data
-            statistical_parity_train_fair = sdp(y_fair_train, fair_df[protected_attributes].to_numpy())
-            statistical_parity_train = sdp(y_orig_train, train_df[protected_attributes].to_numpy())
+            statistical_parity_train_fair = sdp(y_fair_train, fair_df[protected_attribute].to_numpy())
+            statistical_parity_train = sdp(y_orig_train, train_df[protected_attribute].to_numpy())
 
             # Train and evaluate classifier on fair data
             clf.fit(X_fair_train, y_fair_train)
@@ -281,7 +273,7 @@ def run_dataset_single_thread(data_str, approach='multi'):
             f1 = f1_score(y_test, y_pred)
             roc_auc = roc_auc_score(y_test, y_pred)
             # Fairness metrics (No penalty because groups might be missing)
-            statistical_parity = sdp(y_pred, test_df[protected_attributes].to_numpy())
+            statistical_parity = sdp(y_pred, test_df[protected_attribute].to_numpy())
             nmi = normalized_mutual_info_score(y_pred, test_df[protected_attributes[0]].to_numpy())
 
             # Train and evaluate classifier on original data
@@ -293,7 +285,7 @@ def run_dataset_single_thread(data_str, approach='multi'):
             f1_orig = f1_score(y_test, y_pred)
             roc_auc_orig = roc_auc_score(y_test, y_pred)
             # Fairness metrics (No penalty because groups might be missing)
-            statistical_parity_orig = sdp(y_pred, test_df[protected_attributes].to_numpy())
+            statistical_parity_orig = sdp(y_pred, test_df[protected_attribute].to_numpy())
             nmi_orig = normalized_mutual_info_score(y_pred, test_df[protected_attributes[0]].to_numpy())
 
             results.append({'Trial': i,

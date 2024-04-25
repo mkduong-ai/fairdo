@@ -40,7 +40,7 @@ def statistical_parity_abs_diff_multi(y: np.array, z: np.array,
         y = 1 - y
 
     y = y.astype(int)
-    z = z.astype(int)
+    # z = z.astype(int)
 
     # get unique values for each attribute
     groups = [np.unique(z[:, i]) for i in range(z.shape[1])]
