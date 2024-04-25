@@ -135,8 +135,8 @@ def plot_results(results_df):
 def preprocess_training_data_multi(data, label, protected_attributes, n_groups,
                                    intersectional):
     # settings
-    pop_size = 200
-    num_generations = 400
+    pop_size = 20
+    num_generations = 4
     eps = 0.01
 
     # Setting up pre-processor (Best settings from previous experiment)
@@ -182,8 +182,8 @@ def preprocess_training_data_multi(data, label, protected_attributes, n_groups,
 def preprocess_training_data_single(data, label, protected_attributes, n_groups,
                                     intersectional):
     # settings
-    pop_size = 200
-    num_generations = 400
+    pop_size = 20
+    num_generations = 4
     
     ga = partial(genetic_algorithm,
              pop_size=pop_size,
@@ -219,7 +219,7 @@ def preprocess_training_data_single(data, label, protected_attributes, n_groups,
 def run_dataset_single_thread(data_str, approach='multi'):
     print(f'Running {data_str} with {approach} approach')
     # number of runs
-    n_runs = 10
+    n_runs = 2
     intersectional= True
 
     # Loading a sample database and encoding for appropriate usage
@@ -234,7 +234,7 @@ def run_dataset_single_thread(data_str, approach='multi'):
 
     # Split the data before optimizing for fairness
     train_df, test_df = train_test_split(data, test_size=0.2,
-                                         stratify=data[protected_attribute],
+                                         stratify=data[protected_attribute].to_numpy(),
                                          random_state=42)
     print(train_df[protected_attribute].value_counts())
     print(len(train_df[protected_attribute].unique()))
@@ -260,7 +260,8 @@ def run_dataset_single_thread(data_str, approach='multi'):
         X_test, y_test = test_df.loc[:, test_df.columns!=label], test_df[label]
 
         # Train and evaluate classifier
-        classifiers = [SVC(), LogisticRegression(), RandomForestClassifier(), MLPClassifier()]
+        # classifiers = [SVC(), LogisticRegression(), RandomForestClassifier(), MLPClassifier()]
+        classifiers = [LogisticRegression()]
 
         for clf in classifiers:
             sdp = statistical_parity_abs_diff_multi
@@ -335,6 +336,7 @@ def run_dataset_single_thread(data_str, approach='multi'):
 def main():
     # Run for all datasets
     data_strs = ['adult', 'bank', 'compas']
+    data_strs = ['bank', 'compas']
     approaches = ['multi', 'single']
 
     with ProcessPool() as pool:
