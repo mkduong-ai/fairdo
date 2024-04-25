@@ -93,7 +93,7 @@ def nsga2(fitness_functions, d,
         # Perform mutation
         offspring = mutation(offspring=offspring)
         # Evaluate the fitness of the offspring
-        offspring_fitness_values = evaluate_population(fitness_functions, offspring)
+        offspring_fitness_values = evaluate_population_single_cpu(fitness_functions, offspring)
         
         # Combine the parents and the offspring
         combined_population = np.concatenate((population, offspring))
@@ -114,7 +114,6 @@ def nsga2(fitness_functions, d,
         return combined_population[fronts[0]], combined_fitness_values[fronts[0]]
     else:
         return combined_population, combined_fitness_values, fronts
-
 
 def evaluate_population_single_cpu(fitness_functions, population):
     """
@@ -160,7 +159,7 @@ def evaluate_individual(args):
     return fitness
 
 
-def evaluate_population(fitness_functions, population):
+def evaluate_population_parallel(fitness_functions, population):
     """
     Evaluate the fitness of each individual in the population using the given fitness functions.
 

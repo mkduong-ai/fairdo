@@ -236,8 +236,8 @@ def run_dataset_single_thread(data_str, approach='multi'):
     train_df, test_df = train_test_split(data, test_size=0.2,
                                          stratify=data[protected_attribute],
                                          random_state=42)
-    # print(train_df[protected_attribute].value_counts())
-    # print(len(train_df[protected_attribute].unique()))
+    print(train_df[protected_attribute].value_counts())
+    print(len(train_df[protected_attribute].unique()))
 
     results = []
     for i in range(n_runs):
@@ -278,7 +278,7 @@ def run_dataset_single_thread(data_str, approach='multi'):
             roc_auc = roc_auc_score(y_test, y_pred)
             # Fairness metrics (No penalty because groups might be missing)
             statistical_parity = sdp(y_pred, test_df[protected_attribute].to_numpy())
-            nmi = normalized_mutual_info_score(y_pred, test_df[protected_attributes[0]].to_numpy())
+            nmi = normalized_mutual_info_score(y_pred, test_df[protected_attribute].to_numpy())
 
             # Train and evaluate classifier on original data
             clf.fit(X_orig_train, y_orig_train)
@@ -290,7 +290,7 @@ def run_dataset_single_thread(data_str, approach='multi'):
             roc_auc_orig = roc_auc_score(y_test, y_pred)
             # Fairness metrics (No penalty because groups might be missing)
             statistical_parity_orig = sdp(y_pred, test_df[protected_attribute].to_numpy())
-            nmi_orig = normalized_mutual_info_score(y_pred, test_df[protected_attributes[0]].to_numpy())
+            nmi_orig = normalized_mutual_info_score(y_pred, test_df[protected_attribute].to_numpy())
 
             results.append({'Trial': i,
                             'Approach': approach,
@@ -342,8 +342,8 @@ def main():
         args_list = list(itertools.product(data_strs, approaches))
 
         print(args_list)
-        #pool.map(lambda args: run_dataset_single_thread(*args), args_list)
-        list(map(lambda args: run_dataset_single_thread(*args), args_list)) # single thread
+        pool.map(lambda args: run_dataset_single_thread(*args), args_list)
+        #list(map(lambda args: run_dataset_single_thread(*args), args_list)) # single thread
 
 if __name__ == '__main__':
     main()
