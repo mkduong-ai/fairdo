@@ -15,6 +15,7 @@ import seaborn as sns
 sns.set_theme()
 # sklearn
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
 from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
@@ -226,6 +227,9 @@ def run_dataset_single_thread(data_str, approach='multi'):
     data, label, protected_attributes = load_data(data_str, multi_protected_attr=True, print_info=False)
     data, protected_attribute = dataset_intersectional_column(data, protected_attributes)
     #n_groups = data[protected_attributes].nunique().to_numpy()
+    # Label encode the protected attribute
+    le = LabelEncoder()
+    data[protected_attribute] = le.fit_transform(data[protected_attribute])
     n_groups = data[protected_attributes].nunique()
 
     # Split the data before optimizing for fairness
