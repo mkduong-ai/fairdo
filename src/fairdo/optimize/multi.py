@@ -93,7 +93,7 @@ def nsga2(fitness_functions, d,
         # Perform mutation
         offspring = mutation(offspring=offspring)
         # Evaluate the fitness of the offspring
-        offspring_fitness_values = evaluate_population_single_cpu(fitness_functions, offspring)
+        offspring_fitness_values = evaluate_population(fitness_functions, offspring)
         
         # Combine the parents and the offspring
         combined_population = np.concatenate((population, offspring))
@@ -114,8 +114,9 @@ def nsga2(fitness_functions, d,
         return combined_population[fronts[0]], combined_fitness_values[fronts[0]]
     else:
         return combined_population, combined_fitness_values, fronts
-
-def evaluate_population_single_cpu(fitness_functions, population):
+    
+    
+def evaluate_population(fitness_functions, population):
     """
     Evaluate the fitness of each individual in the population using the given fitness functions.
 
@@ -155,7 +156,7 @@ def evaluate_individual(args):
         The fitness of the individual.
     """
     fitness_functions, individual = args
-    fitness = evaluate_population_single_cpu(fitness_functions, individual.reshape(1, -1))[0]
+    fitness = evaluate_population(fitness_functions, individual.reshape(1, -1))[0]
     return fitness
 
 
@@ -181,13 +182,11 @@ def evaluate_population_parallel(fitness_functions, population):
             with mp.Pool(mp.cpu_count()) as pool:
                 return np.array(pool.map(evaluate_individual, [(fitness_functions, individual) for individual in population]))
         else:
-            return evaluate_population_single_cpu(fitness_functions, population)
+            return evaluate_population(fitness_functions, population)
     except Exception as e:
         print(f"Multiprocessing pool failed with error: {e}")
         print("Falling back to single process execution")
-        return evaluate_population_single_cpu(fitness_functions, population)
-
-
+        return evaluate_population(fitness_functions, population)
 
 
 def non_dominated_sort(fitness_values):
