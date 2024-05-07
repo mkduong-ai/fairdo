@@ -51,16 +51,20 @@ def statistical_parity_abs_diff_multi(y: np.array, z: np.array,
         # calculate statistical parities for all groups in one pass
         parities = {i: np.sum(y & (z[:, k] == i)) / np.sum(z[:, k] == i) for i in zk}
         # generate all possible pairs of values for the attribute
-        pairs = generate_pairs(zk)
-        group_disparity = [np.abs(parities[i] - parities[j]) for i, j in pairs]
-        # print(group_disparity)
-        try:
-            attributes_disparity.append(agg_group(group_disparity))
-        except ValueError:
-            warnings.warn(f"Could not aggregate disparity for attribute {k} with aggregation function {agg_group}. "
-                          f"The disparity for this attribute is {group_disparity}. "
-                          f"Returning disparity of 0.")
-            attributes_disparity.append(0)
+        if agg_group == np.max:
+            group_disparity = np.max(list(parities.values())) - np.min(list(parities.values()))
+            attributes_disparity.append(group_disparity)
+        else:
+            pairs = generate_pairs(zk)
+            group_disparity = [np.abs(parities[i] - parities[j]) for i, j in pairs]
+
+            try:
+                attributes_disparity.append(agg_group(group_disparity))
+            except ValueError:
+                warnings.warn(f"Could not aggregate disparity for attribute {k} with aggregation function {agg_group}. "
+                            f"The disparity for this attribute is {group_disparity}. "
+                            f"Returning disparity of 0.")
+                attributes_disparity.append(0)
     return agg_attribute(attributes_disparity)
 
 
@@ -86,8 +90,12 @@ def statistical_parity_abs_diff_intersectionality(y: np.array, z: np.array,
     z_subgroups = np.apply_along_axis(lambda x: ''.join(map(str, x)), axis=1, arr=z)
     all_subgroups = list(set(z_subgroups))
     parities = {i: np.sum(y & (z_subgroups == i)) / np.sum(z_subgroups == i) for i in all_subgroups}
-    pairs = generate_pairs(list(all_subgroups))
-    group_disparity = [np.abs(parities[i] - parities[j]) for i, j in pairs]
+    
+    if agg_group == np.max:
+        group_disparity = np.max(list(parities.values())) - np.min(list(parities.values()))
+    else:
+        pairs = generate_pairs(list(all_subgroups))
+        group_disparity = [np.abs(parities[i] - parities[j]) for i, j in pairs]
 
     return agg_group(group_disparity)
 
