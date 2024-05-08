@@ -68,7 +68,7 @@ def dataset_intersectional_column(data, protected_attributes):
     return data, protected_attribute
 
 
-def penalized_discrimination_multi(y, z, n_groups, agg_group='max', eps=0.01,
+def penalized_discrimination_multi_quality(y, z, n_groups, agg_group='max', eps=0.01,
                                    **kwargs):
     """
     Max SDP. We limit ourselves to 'max' discriminating attribute and 'max' disc. group.
@@ -93,6 +93,29 @@ def penalized_discrimination_multi(y, z, n_groups, agg_group='max', eps=0.01,
                                                         agg_attribute='max',
                                                         agg_group=agg_group,
                                                         eps=eps)])
+    return disc_score
+
+
+def penalized_discrimination_multi(y, z, n_groups, agg_group='max', eps=0.01,
+                                   **kwargs):
+    """
+    Max SDP. We limit ourselves to 'max' discriminating attribute and 'max' disc. group.
+    
+    Parameters
+    ----------
+    y: np.array
+        The target variable.
+    z: np.array
+        The protected attribute.
+    
+    Returns
+    -------
+    float
+        The penalized discrimination."""
+    disc_score = statistical_parity_abs_diff_multi(y=y,
+                                                z=z,
+                                                agg_attribute=np.max,
+                                                agg_group=np.max)
     return disc_score
 
 
