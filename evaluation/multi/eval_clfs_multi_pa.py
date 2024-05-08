@@ -69,7 +69,7 @@ def dataset_intersectional_column(data, protected_attributes):
 
 
 def penalized_discrimination_multi(y, z, n_groups, agg_group='max', eps=0.01,
-                                   intersectional=False, **kwargs):
+                                   **kwargs):
     """
     Max SDP. We limit ourselves to 'max' discriminating attribute and 'max' disc. group.
     
@@ -89,15 +89,15 @@ def penalized_discrimination_multi(y, z, n_groups, agg_group='max', eps=0.01,
                                                         agg_attribute=np.max,
                                                         agg_group=np.max),
                                     group_missing_penalty(z=z,
-                                                            n_groups=n_groups,
-                                                            agg_attribute='max',
-                                                            agg_group='max',
-                                                            eps=eps)])#/(1+eps)
+                                                        n_groups=n_groups,
+                                                        agg_attribute='max',
+                                                        agg_group=agg_group,
+                                                        eps=eps)])
     return disc_score
 
 
-def weighted_loss_multi(y, z, n_groups, dims, y_orig, z_orig, w=0.5, agg_group='max', eps=0.01,
-                        intersectional=False, **kwargs):
+def weighted_loss_multi_quality(y, z, n_groups, dims, y_orig, z_orig, w=0.5, agg_group='max', eps=0.01,
+                                **kwargs):
     """
     A single objective function that combines the statistical parity and data loss.
     
@@ -117,9 +117,30 @@ def weighted_loss_multi(y, z, n_groups, dims, y_orig, z_orig, w=0.5, agg_group='
     #beta = penalized_discrimination_multi(y=y_orig, z=z_orig, n_groups=n_groups, agg_group=agg_group, eps=eps)
     #beta = 1/(1+eps)
     beta = 1
-    return w * penalized_discrimination_multi(y=y, z=z, n_groups=n_groups, agg_group=agg_group, eps=eps,
-                                              intersectional=intersectional)/beta +\
+    return w * penalized_discrimination_multi(y=y, z=z, n_groups=n_groups, agg_group=agg_group, eps=eps)/beta +\
            (1-w) * data_loss(y=y, dims=dims)
+
+
+def weighted_loss_multi(y, z, n_groups, dims, y_orig, z_orig, w=0.5, agg_group='max', eps=0.01, **kwargs):
+    """
+    A single objective function that combines the statistical parity and data loss.
+    
+    Parameters
+    ----------
+    y: np.array
+        The target variable.
+    z: np.array
+        The protected attribute.
+    dims: int
+        The number of samples.
+    
+    Returns
+    -------
+    float
+        The weighted fairness and quality of the data."""
+    #beta = penalized_discrimination_multi(y=y_orig, z=z_orig, n_groups=n_groups, agg_group=agg_group, eps=eps)
+    #beta = 1/(1+eps)
+    return penalized_discrimination_multi(y=y, z=z, n_groups=n_groups, agg_group=agg_group, eps=eps)
 
 
 def plot_results(results_df):
@@ -132,8 +153,7 @@ def plot_results(results_df):
     plt.show()
 
 
-def preprocess_training_data_multi(data, label, protected_attributes, n_groups,
-                                   intersectional):
+def preprocess_training_data_multi(data, label, protected_attributes, n_groups):
     # settings
     pop_size = 200
     num_generations = 400
@@ -155,8 +175,7 @@ def preprocess_training_data_multi(data, label, protected_attributes, n_groups,
                                                label=label,
                                                fitness_functions=[partial(penalized_discrimination_multi,
                                                                           n_groups=n_groups,
-                                                                          eps=eps,
-                                                                          intersectional=intersectional),
+                                                                          eps=eps),
                                                                   data_loss])
     
     # Parameters for beta normalization
@@ -179,8 +198,7 @@ def preprocess_training_data_multi(data, label, protected_attributes, n_groups,
     return data_multi, best_fitness, baseline_fitness
 
 
-def preprocess_training_data_single(data, label, protected_attributes, n_groups,
-                                    intersectional):
+def preprocess_training_data_single(data, label, protected_attributes, n_groups):
     # settings
     pop_size = 200
     num_generations = 400
@@ -204,8 +222,7 @@ def preprocess_training_data_single(data, label, protected_attributes, n_groups,
                                 fitness_functions=[partial(weighted_loss_multi,
                                                            y_orig=y_orig,
                                                            z_orig=z_orig,
-                                                           n_groups=n_groups,
-                                                           intersectional=intersectional)])
+                                                           n_groups=n_groups)])
     
     # Fit and transform the data
     data_single = preprocessor.fit_transform(dataset=data)
@@ -225,13 +242,17 @@ def run_dataset_single_thread(data_str, approach='multi'):
     # Loading a sample database and encoding for appropriate usage
     # data is a pandas dataframe
     data, label, protected_attributes = load_data(data_str, multi_protected_attr=True, print_info=False)
-    data, protected_attribute = dataset_intersectional_column(data, protected_attributes)
-    #n_groups = data[protected_attributes].nunique().to_numpy()
-    # Label encode the protected attribute
-    le = LabelEncoder()
-    data[protected_attribute] = le.fit_transform(data[protected_attribute])
-    n_groups = data[protected_attribute].nunique()
-
+    if intersectional:
+        data, protected_attribute = dataset_intersectional_column(data, protected_attributes)
+        
+        # Label encode the protected attribute
+        le = LabelEncoder()
+        data[protected_attribute] = le.fit_transform(data[protected_attribute])
+        n_groups = data[protected_attribute].nunique()
+    else:
+        protected_attribute = protected_attributes
+        n_groups = data[protected_attributes].nunique().to_numpy()
+    
     # Split the data before optimizing for fairness
     stratified = True
     try:
@@ -251,13 +272,11 @@ def run_dataset_single_thread(data_str, approach='multi'):
         # Optimize training data for fairness
         if approach == 'multi':
             start = time.perf_counter()
-            fair_df, fitness, baseline_fitness = preprocess_training_data_multi(train_df, label, protected_attribute, n_groups,
-                                                                                intersectional=intersectional)
+            fair_df, fitness, baseline_fitness = preprocess_training_data_multi(train_df, label, protected_attribute, n_groups)
             elapsed = time.perf_counter() - start
         elif approach == 'single':
             start = time.perf_counter()
-            fair_df, fitness, baseline_fitness = preprocess_training_data_single(train_df, label, protected_attribute, n_groups,
-                                                                                 intersectional=intersectional)
+            fair_df, fitness, baseline_fitness = preprocess_training_data_single(train_df, label, protected_attribute, n_groups)
             elapsed = time.perf_counter() - start
 
         # Split data to features X and label y
@@ -344,7 +363,8 @@ def main():
     # Run for all datasets
     data_strs = ['adult', 'bank', 'compas']
     # data_strs = ['bank', 'compas']
-    approaches = ['multi', 'single']
+    #approaches = ['multi', 'single']
+    approaches = ['single']
 
     with ProcessPool() as pool:
         print('Number of processes:', pool.ncpus)
