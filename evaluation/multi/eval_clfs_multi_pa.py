@@ -378,10 +378,12 @@ def run_dataset_single_thread(data_str, approach='multi'):
     if not os.path.exists(f'results/multi_pa/{data_str}'):
         os.makedirs(f'results/multi_pa/{data_str}')
 
-    results_df.to_csv(f'results/multi_pa/{data_str}/{approach}_intersectional_classifier_results.csv', index=False)
-
-    print(f'Saved results for {data_str} with {approach} approach to results/multi_pa/{data_str}/{approach}_intersectional_classifier_results.csv')
-
+    if intersectional:
+        results_df.to_csv(f'results/multi_pa/{data_str}/{approach}_intersectional_classifier_results.csv', index=False)
+        print(f'Saved results for {data_str} with {approach} approach to results/multi_pa/{data_str}/{approach}_intersectional_classifier_results.csv')
+    else:
+        results_df.to_csv(f'results/multi_pa/{data_str}/{approach}_classifier_results.csv', index=False)
+        print(f'Saved results for {data_str} with {approach} approach to results/multi_pa/{data_str}/{approach}_classifier_results.csv')
 
 def main():
     # Run for all datasets
