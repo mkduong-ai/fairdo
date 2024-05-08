@@ -1,6 +1,7 @@
 # Fairness-Agnostic Data Optimization
 
 **FairDo** is a Python package for mitigating bias in data.
+It can be used to create datasets that comply with the **Artificial Intelligence Act** (AI Act).
 
 - **Official repository** of: [Towards Fairness and Privacy: A Novel Data Pre-processing Optimization Framework for Non-binary Protected Attributes](https://link.springer.com/chapter/10.1007/978-981-99-8696-5_8)
 - **Documentation**: [https://fairdo.readthedocs.io/en/latest/](https://fairdo.readthedocs.io/en/latest/)
@@ -15,6 +16,14 @@
 </a>
 </p>
 </div>
+
+According to the **Artificial Intelligence Act** (AI Act) adopted by the European Parliament in March 19 2024,
+one of the key requirements for high-risk AI applications is to ensure that they are **fair**.
+A quote from Recital (67) of the AI Act states:
+
+> [...] The data sets should also have the appropriate statistical properties, including as regards the persons or groups of persons in relation to whom the high-risk AI system is intended to be used, with specific attention to the mitigation of possible biases in the data sets. [...]
+
+The **FairDo** package is designed to help data scientists and AI developers to **mitigate bias** in their data accordingly.
 
 **FairDo** works specifically for tabular data (`pandas.DataFrame`) where the data is pre-processed in
 such a way that it becomes fair according to a user-given fairness metric.
