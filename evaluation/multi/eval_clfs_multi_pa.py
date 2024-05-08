@@ -96,29 +96,6 @@ def penalized_discrimination_multi_quality(y, z, n_groups, agg_group='max', eps=
     return disc_score
 
 
-def penalized_discrimination_multi(y, z, n_groups, agg_group='max', eps=0.01,
-                                   **kwargs):
-    """
-    Max SDP. We limit ourselves to 'max' discriminating attribute and 'max' disc. group.
-    
-    Parameters
-    ----------
-    y: np.array
-        The target variable.
-    z: np.array
-        The protected attribute.
-    
-    Returns
-    -------
-    float
-        The penalized discrimination."""
-    disc_score = statistical_parity_abs_diff_multi(y=y,
-                                                z=z,
-                                                agg_attribute=np.max,
-                                                agg_group=np.max)
-    return disc_score
-
-
 def weighted_loss_multi_quality(y, z, n_groups, dims, y_orig, z_orig, w=0.5, agg_group='max', eps=0.01,
                                 **kwargs):
     """
@@ -142,6 +119,29 @@ def weighted_loss_multi_quality(y, z, n_groups, dims, y_orig, z_orig, w=0.5, agg
     beta = 1
     return w * penalized_discrimination_multi(y=y, z=z, n_groups=n_groups, agg_group=agg_group, eps=eps)/beta +\
            (1-w) * data_loss(y=y, dims=dims)
+
+
+def penalized_discrimination_multi(y, z, n_groups, agg_group='max', eps=0.01,
+                                   **kwargs):
+    """
+    Max SDP. We limit ourselves to 'max' discriminating attribute and 'max' disc. group.
+    
+    Parameters
+    ----------
+    y: np.array
+        The target variable.
+    z: np.array
+        The protected attribute.
+    
+    Returns
+    -------
+    float
+        The penalized discrimination."""
+    disc_score = statistical_parity_abs_diff_multi(y=y,
+                                                z=z,
+                                                agg_attribute=np.max,
+                                                agg_group=np.max)
+    return disc_score
 
 
 def weighted_loss_multi(y, z, n_groups, dims, y_orig, z_orig, w=0.5, agg_group='max', eps=0.01, **kwargs):
