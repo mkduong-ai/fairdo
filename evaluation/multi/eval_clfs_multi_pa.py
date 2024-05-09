@@ -260,7 +260,7 @@ def run_dataset_single_thread(data_str, approach='multi'):
     print(f'Running {data_str} with {approach} approach')
     # number of runs
     n_runs = 10
-    intersectional= True
+    intersectional= False
 
     # Loading a sample database and encoding for appropriate usage
     # data is a pandas dataframe
