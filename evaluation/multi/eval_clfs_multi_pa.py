@@ -287,7 +287,7 @@ def run_dataset_single_thread(data_str, approach='multi'):
                                              random_state=42)
         stratified = False
     print(train_df[protected_attribute].value_counts())
-    print(len(train_df[protected_attribute].unique()))
+    #print(len(train_df[protected_attribute].unique()))
 
     results = []
     for i in range(n_runs):
