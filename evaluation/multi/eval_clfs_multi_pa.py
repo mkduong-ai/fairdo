@@ -43,7 +43,8 @@ from fairdo.metrics import statistical_parity_abs_diff_max,\
     statistical_parity_abs_diff_sum,\
     data_loss, group_missing_penalty,\
     statistical_parity_abs_diff_multi,\
-    statistical_parity_abs_diff_intersectionality
+    statistical_parity_abs_diff_intersectionality,\
+    total_correlation
 
 
 def dataset_intersectional_column(data, protected_attributes):
@@ -256,11 +257,11 @@ def preprocess_training_data_single(data, label, protected_attributes, n_groups)
     return data_single, best_fitness, baseline_fitness
 
 
-def run_dataset_single_thread(data_str, approach='multi'):
+def run_dataset_single_thread(data_str, approach='multi', intersectional=False):
     print(f'Running {data_str} with {approach} approach')
     # number of runs
     n_runs = 10
-    intersectional= False
+    #intersectional= False
 
     # Loading a sample database and encoding for appropriate usage
     # data is a pandas dataframe
@@ -327,7 +328,7 @@ def run_dataset_single_thread(data_str, approach='multi'):
             roc_auc = roc_auc_score(y_test, y_pred)
             # Fairness metrics (No penalty because groups might be missing)
             statistical_parity = sdp(y_pred, test_df[protected_attribute].to_numpy())
-            nmi = normalized_mutual_info_score(y_pred, test_df[protected_attribute].to_numpy())
+            tc = total_correlation(y_pred, test_df[protected_attribute].to_numpy())
 
             # Train and evaluate classifier on original data
             clf.fit(X_orig_train, y_orig_train)
@@ -339,7 +340,8 @@ def run_dataset_single_thread(data_str, approach='multi'):
             roc_auc_orig = roc_auc_score(y_test, y_pred)
             # Fairness metrics (No penalty because groups might be missing)
             statistical_parity_orig = sdp(y_pred, test_df[protected_attribute].to_numpy())
-            nmi_orig = normalized_mutual_info_score(y_pred, test_df[protected_attribute].to_numpy())
+            tc_orig = total_correlation(y_pred, test_df[protected_attribute].to_numpy())
+            # nmi_orig = normalized_mutual_info_score(y_pred, test_df[protected_attribute].to_numpy())
 
             results.append({'Trial': i,
                             'Approach': approach,
@@ -359,13 +361,13 @@ def run_dataset_single_thread(data_str, approach='multi'):
                             'F1': f1,
                             'ROC_AUC': roc_auc,
                             'Statistical_Parity': statistical_parity,
-                            'NMI': nmi,
+                            'Total_Correlation': tc,
                             'Accuracy_Orig': accuracy_orig,
                             'Balanced_Accuracy_Orig': balanced_accuracy_orig,
                             'F1_Orig': f1_orig,
                             'ROC_AUC_Orig': roc_auc_orig,
                             'Statistical_Parity_Orig': statistical_parity_orig,
-                            'NMI_Orig': nmi_orig,
+                            'Total_Correlation_Orig': tc_orig,
                             'Fitness': fitness,
                             'Baseline_Fitness': baseline_fitness,
                             'Split_Stratified': stratified})
@@ -391,10 +393,11 @@ def main():
     # data_strs = ['bank', 'compas']
     #approaches = ['multi', 'single']
     approaches = ['single']
+    intersectionals = [False, True]
 
     with ProcessPool() as pool:
         print('Number of processes:', pool.ncpus)
-        args_list = list(itertools.product(data_strs, approaches))
+        args_list = list(itertools.product(data_strs, approaches, intersectionals))
 
         print(args_list)
         pool.map(lambda args: run_dataset_single_thread(*args), args_list)

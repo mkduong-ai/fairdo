@@ -100,9 +100,9 @@ def mutual_information(y: np.array, z: np.array, bins=2, **kwargs) -> float:
 
     Parameters
     ----------
-    y: np.array
+    y: np.array (n_samples,)
         Flattened array, can be a prediction or the truth label.
-    z: np.array
+    z: np.array (n_samples,)
         Flattened array of the same shape as y.
     bins: int, optional
         Number of bins for discretization. Default is 2.
@@ -129,9 +129,9 @@ def normalized_mutual_information(y: np.array, z: np.array, **kwargs) -> float:
 
     Parameters
     ----------
-    y: np.array
+    y: np.array (n_samples,)
         Flattened array, can be a prediction or the truth label.
-    z: np.array
+    z: np.array (n_samples,)
         Flattened array of the same shape as y.
     **kwargs
         Additional keyword arguments. These are not currently used.
@@ -144,6 +144,156 @@ def normalized_mutual_information(y: np.array, z: np.array, **kwargs) -> float:
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         return normalized_mutual_info_score(y, z)
+
+
+def entropy_estimate_cat(x: np.array, **kwargs) -> float:
+    """Calculate the entropy of a categorical variable.
+    
+    Parameters
+    ----------
+    x: np.array (n_samples,)
+        Array of shape (n_samples,) containing the labels.
+    
+    Returns
+    -------
+    float
+        The entropy of the label distribution."""
+    prob_dist = np.bincount(x) / len(x)
+    prob_dist = prob_dist[prob_dist > 0]  # Remove zeros
+    return -np.sum(prob_dist * np.log2(prob_dist))
+
+
+def joint_entropy_cat(x: np.array):
+    """Calculate the joint entropy of multiple categorical variables.
+
+    Parameters
+    ----------
+    x: np.array (n_samples, n_variables)
+        Array of shape (n_samples, n_variables) containing the labels.
+    
+    Returns
+    -------
+    float
+        The joint entropy of the categorical variables.
+    """
+    if x.ndim > 1:
+        x_idx = np.ravel_multi_index(x.T, np.max(x, axis=0) + 1)
+    else:
+        x_idx = x
+    prob_dist = np.bincount(x_idx) / len(x_idx)
+    prob_dist = prob_dist[prob_dist > 0]
+    return -np.sum(prob_dist * np.log2(prob_dist))
+
+
+def conditional_entropy_cat(x: np.array, y: np.array) -> float:
+    """
+    Calculate the conditional entropy of a categorical variable given another categorical variable.
+
+    Parameters
+    ----------
+    x : np.array (n_samples,)
+        Array of shape (n_samples,) containing the labels.
+    
+    y : np.array (n_samples,) or (n_samples, n_variables)
+        Array containing the labels.
+    
+    Returns
+    -------
+    float
+        The conditional entropy of the label distribution.
+    """
+    xy = np.column_stack((x, y))
+    
+    # Calculate the entropy of the joint distribution H(X, Y)
+    H_XY = joint_entropy_cat(xy)
+    
+    # Calculate the entropy of Y
+    H_Y = joint_entropy_cat(y)
+    
+    # Calculate the conditional entropy H(X|Y) = H(X, Y) - H(Y)
+    return H_XY - H_Y
+
+
+def total_correlation(*arrays) -> float:
+    """Calculate the total correlation (multi-information) of multiple categorical variables.
+    
+    Parameters
+    ----------
+    *arrays: np.array
+        Arrays of shape (n_samples,) containing the labels.
+    
+    Returns
+    -------
+    float
+        The total correlation of the categorical variables.
+        
+    References
+    ----------
+    [1] Watanabe, S. (1960). Information theoretical analysis of multivariate correlation. IBM Journal of Research and Development, 4(1), 66-82.
+    [2] Garner, W. R. (1962). Uncertainty and Structure as Psychological Concepts, JohnWiley & Sons, New York
+    """
+    # Calculate sum of individual entropies
+    sum_individual_entropies = np.sum([entropy_estimate_cat(arr) for arr in arrays])
+
+    # Calculate joint entropy
+    joint_entropy = joint_entropy_cat(np.column_stack(arrays))
+
+    # Total correlation is the sum of individual entropies minus the joint entropy
+    tc = sum_individual_entropies - joint_entropy
+    return tc
+
+
+def dual_total_correlation(*arrays):
+    """Calculate the dual total correlation using mutual information for more than two variables.
+    
+    Parameters
+    ----------
+    *arrays: np.array
+        Arrays of shape (n_samples,) containing the labels.
+    
+    Returns
+    -------
+    float
+        The dual total correlation of the categorical variables.
+
+    References
+    ----------
+    [1] Han, Te Sun (1978). Nonnegative entropy measures of multivariate symmetric correlations. Information and Control. 36 (2): 133–156.
+    """
+    n = len(arrays)
+    if n < 2:
+        raise ValueError("Need at least two variables to calculate dual total correlation.")
+    
+    xs = np.column_stack(arrays)
+    
+    # Calculate joint entropy
+    joint_entropy = joint_entropy_cat(xs)
+
+    # Calculate conditional entropy
+    conditional_entropy = 0
+    for i in range(xs.shape[1]):
+        H_i = conditional_entropy_cat(xs[:, i], xs[:, np.arange(n) != i])
+        conditional_entropy += H_i
+
+    dtc = joint_entropy - conditional_entropy
+    return dtc
+
+
+def o_information(*arrays):
+    """
+    Calculate the O-information of multiple categorical variables.
+    The O-information is the difference between the total correlation and the dual total correlation.
+    
+    Parameters
+    ----------
+    *arrays: np.array
+        Arrays of shape (n_samples,) containing the labels.
+    
+    Returns
+    -------
+    float
+        The O-information of the categorical variables."""
+    return calculate_total_correlation(*arrays) - calculate_dual_total_correlation(*arrays)
 
 
 def pearsonr(y: np.array, z: np.array, **kwargs) -> float:
