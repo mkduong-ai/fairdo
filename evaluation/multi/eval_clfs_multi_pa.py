@@ -393,7 +393,7 @@ def main():
     # data_strs = ['bank', 'compas']
     #approaches = ['multi', 'single']
     approaches = ['single']
-    intersectionals = [False, True]
+    intersectionals = [False]#, True]
 
     with ProcessPool() as pool:
         print('Number of processes:', pool.ncpus)

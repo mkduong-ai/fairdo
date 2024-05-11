@@ -233,8 +233,14 @@ def total_correlation(*arrays) -> float:
     [2] Garner, W. R. (1962). Uncertainty and Structure as Psychological Concepts, JohnWiley & Sons, New York
     """
     # Calculate sum of individual entropies
-    sum_individual_entropies = np.sum([entropy_estimate_cat(arr) for arr in arrays])
-
+    try:
+        sum_individual_entropies = np.sum([entropy_estimate_cat(arr) for arr in arrays])
+    except ValueError:
+        warnings.warn(ValueError)
+        warnings.warn("Error in calculating individual entropies.")
+        warnings.warn("Calculating joint entropy instead.")
+        
+        sum_individual_entropies = np.sum([joint_entropy_cat(arr) for arr in arrays])
     # Calculate joint entropy
     joint_entropy = joint_entropy_cat(np.column_stack(arrays))
 
