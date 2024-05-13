@@ -391,9 +391,10 @@ def main():
     # Run for all datasets
     data_strs = ['adult', 'bank', 'compas']
     # data_strs = ['bank', 'compas']
+    #data_strs = ['compas']
     #approaches = ['multi', 'single']
     approaches = ['single']
-    intersectionals = [False]#, True]
+    intersectionals = [False, True]#, True]
 
     with ProcessPool() as pool:
         print('Number of processes:', pool.ncpus)

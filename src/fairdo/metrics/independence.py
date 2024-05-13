@@ -235,8 +235,7 @@ def total_correlation(*arrays) -> float:
     # Calculate sum of individual entropies
     try:
         sum_individual_entropies = np.sum([entropy_estimate_cat(arr) for arr in arrays])
-    except ValueError:
-        warnings.warn(ValueError)
+    except:
         warnings.warn("Error in calculating individual entropies.")
         warnings.warn("Calculating joint entropy instead.")
         
