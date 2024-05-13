@@ -234,12 +234,19 @@ def total_correlation(*arrays) -> float:
     """
     # Calculate sum of individual entropies
     try:
-        sum_individual_entropies = np.sum([entropy_estimate_cat(arr) for arr in arrays])
+        sum_individual_entropies = sum([entropy_estimate_cat(arr) for arr in arrays])
     except:
-        warnings.warn("Error in calculating individual entropies.")
-        warnings.warn("Calculating joint entropy instead.")
-        
-        sum_individual_entropies = np.sum([joint_entropy_cat(arr) for arr in arrays])
+        warnings.warn("Calculate total correlation along axis=1.")
+
+        sum_individual_entropies = 0
+        for i in range(len(arrays)):
+            if len(arrays[i].shape) == 1:
+                sum_individual_entropies += entropy_estimate_cat(arrays[i])
+            elif len(arrays[i].shape) == 2:
+                sum_individual_entropies += sum(entropy_estimate_cat(arrays[i][:, j]) for j in range(arrays[i].shape[1]))
+            else:
+                raise Exception(f"{i}-th Parameter is not 1d or 2d.")
+    
     # Calculate joint entropy
     joint_entropy = joint_entropy_cat(np.column_stack(arrays))
 
@@ -298,7 +305,7 @@ def o_information(*arrays):
     -------
     float
         The O-information of the categorical variables."""
-    return calculate_total_correlation(*arrays) - calculate_dual_total_correlation(*arrays)
+    return total_correlation(*arrays) - dual_total_correlation(*arrays)
 
 
 def pearsonr(y: np.array, z: np.array, **kwargs) -> float:
