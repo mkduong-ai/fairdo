@@ -350,7 +350,7 @@ def run_dataset_single_thread(data_str, approach='multi', intersectional=False):
                             'Label': label,
                             'Protected_Attributes': protected_attributes,
                             'N_Groups': n_groups,
-                            'N_Groups_Fair': fair_df[protected_attribute].nunique(),
+                            'N_Groups_Fair': fair_df[protected_attribute].nunique().to_numpy() if not intersectional else fair_df[protected_attribute].nunique(),
                             'Statistical_Parity_Train': statistical_parity_train,
                             'Statistical_Parity_Train_Fair': statistical_parity_train_fair,
                             'Len_Train': len(train_df),
