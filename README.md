@@ -22,7 +22,7 @@ It can be used to create datasets to comply with the **AI Act**:
 - Interpretability and integrity: **Under**- and **oversampling** technique
 - Works with tabular data: `pandas.DataFrame`
 - Simplicity: Follows `.fit_transform()` convention and includes many examples
-- Handles a variety of cases: non-binary groups, multiple protected attributes, individual fairness 
+- Handles a variety of cases: **non-binary groups, multiple protected attributes, individual fairness** 
 - Customizable: custom fairness definition, solver, objective
 
 ## How does it work?
@@ -75,7 +75,7 @@ while the **original dataset exhibits 27% statistical disparity**.
 
 ## Advices
 :rocket: **For a quick start**, use the `DefaultPreprocessing` class with the default settings.
-An example is given in `tutorials/1. Default Preprocessor` and below.
+An example is given in `tutorials/1. Default Preprocessor`.
 
 :white_check_mark: **For data quality**, you want to keep the original data $D$
 and only add fair synthetic data $G$ on top of it.
