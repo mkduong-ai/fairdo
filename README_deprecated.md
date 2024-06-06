@@ -106,3 +106,28 @@ bash generate_docs.sh
 
 The HTML pages are then located in `docs/_build/html`.
 Open `docs/_build/html/index.html` to view the front page.
+
+### Development Installation
+
+Installing in development mode is useful to make changes in the source code take effect instantly.
+This means that the package is installed in such a way that changes to the source code
+are immediately reflected without the need to reinstall the package. This can be done in the following
+way:
+```bash
+# Clone repo
+git clone https://github.com/mkduong-ai/fairdo.git
+
+# Move to repo folder
+cd fairdo
+
+# Development installation
+pip install -e.
+```
+
+
+## References
+[1] Larson, J., Angwin, J., Mattu, S.,  Kirchner, L.: Machine
+bias (May 2016),
+https://www.propublica.org/article/machine-bias-risk-assessments-in-criminal-sentencing
+
+[2] Rawls, J.: A Theory of Justice (1971), Belknap Press, ISBN: 978-0-674-00078-0
