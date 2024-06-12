@@ -260,17 +260,22 @@ class MultiObjectiveWrapper(Preprocessing):
     def plot_results(self,
                      x_axis=0, y_axis=1,
                      x_label='Fitness 1', y_label='Fitness 2',
-                     title='Multi-Objective Optimization Results'):
+                     title='Multi-Objective Optimization Results',
+                     figsize=(7, 7)):
         """
         Plot the results of the multi-objective optimization.
         """
         if self.fitness_values is None:
             raise ValueError('No results to plot. Run the `transform` method first.')
+        
+        if self.fitness_values.shape[1] < 2:
+            raise ValueError('The number of fitness functions is less than 2.\
+                              At least two fitness functions are required to plot the Pareto front.')
 
         import matplotlib.pyplot as plt
 
         # Plot the results
-        plt.figure(figsize=(7, 7))
+        plt.figure(figsize=figsize)
         plt.scatter(self.fitness_values[:, x_axis], self.fitness_values[:, y_axis],
                         label=f'Pareto Front',
                         c='r',
