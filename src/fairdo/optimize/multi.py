@@ -93,7 +93,7 @@ def nsga2(fitness_functions, d,
         # Perform mutation
         offspring = mutation(offspring=offspring)
         # Evaluate the fitness of the offspring
-        offspring_fitness_values = evaluate_population(fitness_functions, offspring)
+        offspring_fitness_values = evaluate_population_parallel(fitness_functions, offspring)
         
         # Combine the parents and the offspring
         combined_population = np.concatenate((population, offspring))
@@ -140,26 +140,6 @@ def evaluate_population(fitness_functions, population):
     return fitness_values
 
 
-def evaluate_individual(args):
-    """
-    Calculates the fitness of an individual. The fitness is the value of the fitness function
-    plus a penalty for individuals that do not satisfy the size constraint.
-
-    Parameters
-    ----------
-    args: tuple
-        The arguments to pass to the function. The arguments are (f, individual).
-
-    Returns
-    -------
-    fitness: float
-        The fitness of the individual.
-    """
-    fitness_functions, individual = args
-    fitness = evaluate_population(fitness_functions, individual.reshape(1, -1))[0]
-    return fitness
-
-
 def evaluate_population_parallel(fitness_functions, population):
     """
     Evaluate the fitness of each individual in the population using the given fitness functions.
@@ -180,7 +160,12 @@ def evaluate_population_parallel(fitness_functions, population):
         # use multiprocessing to speed up the evaluation if the population is large enough
         if mp.cpu_count() > 1 and population.shape[0] >= 200:
             with mp.Pool(mp.cpu_count()) as pool:
-                return np.array(pool.map(evaluate_individual, [(fitness_functions, individual) for individual in population]))
+                num_fitness_functions = len(fitness_functions)
+                fitness_values = np.zeros((population.shape[0], num_fitness_functions))
+                for i, fitness_function in enumerate(fitness_functions):
+                    fitness_values[:, i] = np.array(pool.map(fitness_function, population))
+                
+                return fitness_values
         else:
             return evaluate_population(fitness_functions, population)
     except Exception as e:
