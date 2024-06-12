@@ -258,8 +258,8 @@ class MultiObjectiveWrapper(Preprocessing):
             return self.fitness_values
     
     def plot_results(self,
-                     x_axis=0, y_axis=1,
-                     x_label='Fitness 1', y_label='Fitness 2',
+                     xaxis=0, yaxis=1,
+                     xlabel='Fitness 1', ylabel='Fitness 2',
                      title='Multi-Objective Optimization Results',
                      figsize=(7, 7)):
         """
@@ -276,17 +276,17 @@ class MultiObjectiveWrapper(Preprocessing):
 
         # Plot the results
         plt.figure(figsize=figsize)
-        plt.scatter(self.fitness_values[:, x_axis], self.fitness_values[:, y_axis],
+        plt.scatter(self.fitness_values[:, xaxis], self.fitness_values[:, yaxis],
                         label=f'Pareto Front',
                         c='r',
                         s=30)
         base_solution = np.ones(len(self.dataset))
-        plt.scatter(self.funcs[x_axis](base_solution), self.funcs[y_axis](base_solution),
+        plt.scatter(self.funcs[xaxis](base_solution), self.funcs[yaxis](base_solution),
                     label=f'Original Dataset',
                     c='b',
                     s=30)
-        plt.xlabel(x_label)
-        plt.ylabel(y_label)
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
         plt.xlim(0, 1)
         plt.ylim(0, 1)
         plt.title(title)
