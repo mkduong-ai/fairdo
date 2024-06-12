@@ -29,6 +29,35 @@ def downcast(data):
     return data
 
 
+def dataset_intersectional_column(data, protected_attributes):
+    """
+    Combine the protected attributes into a single column named 'pa_merged'.
+    This column will be used to identify the intersectional groups.
+
+    Parameters
+    ----------
+    data: pandas DataFrame
+    protected_attributes: list of str
+        List of protected attributes to combine
+
+    Returns
+    -------
+    data: pandas DataFrame
+        Returns a dataframe with an extra column of combines protected attributes
+    protected_attribute: str
+        The name of the column with the combined protected attributes
+    """
+    protected_attribute = 'pa_merged'
+    
+    # Initialize the protected attribute column with empty strings
+    data[protected_attribute] = ''
+    
+    for col in protected_attributes:
+        data[protected_attribute] += data[col].astype(str) + '_'
+    
+    return data, protected_attribute
+
+
 def load_data(dataset_str, multi_protected_attr=False, print_info=True):
     """
     Load the dataset and preprocess it. The preprocessing steps include:
