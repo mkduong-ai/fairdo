@@ -197,7 +197,7 @@ def main():
         run_dataset(data_str)
     
 
-def main_deprecated():
+def main_single_core():
     ref_point = np.array([1.0, 1.0])
 
     # number of runs
