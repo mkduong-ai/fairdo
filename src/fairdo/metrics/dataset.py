@@ -50,6 +50,7 @@ def statistical_parity_abs_diff_multi(y: np.array, z: np.array,
     for k, zk in enumerate(groups):
         # calculate statistical parities for all groups in one pass
         parities = {i: np.sum(y & (z[:, k] == i)) / np.sum(z[:, k] == i) for i in zk}
+        # parities = {i: np.mean(y[z[:, k] == i]) for i in zk} # slower than the above method
         # generate all possible pairs of values for the attribute
         if agg_group == np.max:
             group_disparity = np.max(list(parities.values())) - np.min(list(parities.values()))
