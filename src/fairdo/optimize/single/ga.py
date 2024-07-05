@@ -1,31 +1,25 @@
 """
-Genetic Algorithm
-=================
-
 This module implements the Genetic Algorithm for combinatorial optimization problems.
 It reflects the process of natural selection where the fittest individuals are selected for
-reproduction to produce the offspring of the next generation.
+reproduction to produce the offspring for the next generation [1]_ [2]_.
 
-The main functions in this module are **genetic_algorithm_constraint** and **genetic_algorithm**,
-which perform the Genetic Algorithm on a given fitness function to be maximized.
-These functions take as input the fitness `f`, the dimensionality `d` of `f`,
-the population size `pop_size`, and number of generation `num_generations`.
+The optimization algorithm is ``genetic_algorithm``, which takes the fitness ``f``, the dimensionality ``d``,
+the population size ``pop_size``, and number of generation ``num_generations`` as inputs.
 The algorithm iteratively applies selection, crossover, and mutation operations to
 evolve the population over a number of generations.
+The genetic operators can be customized by passing
+the corresponding functions from ``fairdo.optimize.operators`` as arguments.
 
-The `select_parents`, `crossover`, and `mutate` functions can be passed to `genetic_algorithm_constraint` or
-`genetic_algorithm` to customize the selection, crossover, and mutation operations.
-These functions are defined in the :mod:`operators.crossover`, :mod:`operators.mutation`, and
-:mod:`operators.selection` modules respectively.
+References
+----------
 
-This implementation of the Genetic Algorithm is based on the works of the following references:
+.. [1] Goldberg, D. E. (1989).
+    Genetic Algorithms in Search, Optimization, and Machine Learning.
+    Addison-Wesley.
 
-Goldberg, D. E. (1989). Genetic Algorithms in Search, Optimization, and Machine Learning. Addison-Wesley.
-
-Holland, J. H. (1975). Adaptation in Natural and Artificial Systems. University of Michigan Press.
-
-Deb, K., Pratap, A., Agarwal, S., & Meyarivan, T. (2002).
-A fast and elitist multiobjective genetic algorithm: NSGA-II. IEEE Transactions on Evolutionary Computation.
+.. [2] Holland, J. H. (1975).
+    Adaptation in Natural and Artificial Systems.
+    University of Michigan Press.
 """
 
 import pathos.multiprocessing as mp

@@ -1,3 +1,25 @@
+"""
+Non-dominated Sorting Genetic Algorithm II (NSGA-II) for multi-objective optimization [1]_.
+It maintains a population of solutions and uses non-dominated sorting and crowding distance to select the best solutions.
+Fitness functions are minimized by default.
+Returns the Pareto front of the population.
+
+The optimization problem is defined as follows:
+
+.. math::
+
+        \min_{\mathbf{x} \in \{0, 1\}^d} \quad (f_1(\mathbf{x}), f_2(\mathbf{x}), \ldots, f_n(\mathbf{x}))
+
+where :math:`f_1, f_2, \ldots, f_n` are objective functions to minimize.
+
+References
+----------
+
+.. [1] Deb, K., Pratap, A., Agarwal, S., & Meyarivan, T. (2002).
+    A fast and elitist multiobjective genetic algorithm: NSGA-II.
+    IEEE Transactions on Evolutionary Computation.
+"""
+
 import numpy as np
 import pathos.multiprocessing as mp
 
