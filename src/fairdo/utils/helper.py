@@ -43,6 +43,7 @@ def nunique(a, axis=0):
     
     return out
 
+
 def generate_pairs(lst):
     """
     Generate all possible pairs of elements in a list without repetitions

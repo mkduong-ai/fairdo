@@ -2,9 +2,6 @@
 Utility Functions
 =================
 
-The Utils module provides a collection of utility functions that are used across the package.
-
-It includes penalty functions to penalize solutions that do not satisfy the constraint and other
-mathematical functions.
+The ``utils`` package provides a collection of mixed functions that are used across the package.
 """
 from . import dataset, helper
