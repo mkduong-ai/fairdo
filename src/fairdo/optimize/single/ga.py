@@ -96,8 +96,9 @@ def genetic_algorithm(f, d,
     To avoid having to rewrite the selection, crossover, and mutation functions to work with minimization problems,
     the fitness function is negated if we are minimizing.
     The fitness function must map the binary vector to a positive value, i.e.,
-    $f: \{0, 1\}^d \rightarrow \mathbb{R}^+$.
+    :math:`f: \{0, 1\}^d \rightarrow \mathbb{R}^+`.
     """
+
     # negate the fitness function if we are minimizing
     if not maximize:
         f_orig = f

@@ -289,7 +289,7 @@ def setup_experiment(data_str, objective_str):
     num_generations = 500
     # create methods
     methods = {
-        'Baseline (Original)': baseline.ones_vector_method,
+        'Baseline (Original)': baseline.ones_array_method,
         'Random Heuristic': partial(baseline.random_method,
                                     pop_size=pop_size,
                                     num_generations=num_generations),

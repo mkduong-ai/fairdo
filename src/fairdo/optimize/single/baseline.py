@@ -1,48 +1,72 @@
 import numpy as np
 
 
-def ones_vector_method(f, d):
+def ones_array_method(f, d):
     """
-    Returns a vector of ones and the fitness of that vector.
-    This essentially means that the original data is returned without removing any samples.
+    Returns an array of ones and the fitness of that array.
+    When used as a binary mask, this method returns the original dataset.
 
     Parameters
     ----------
     f : callable
-        A function that calculates the fitness of a vector.
+        Objective/fitness function to minimize.
     d : int
-        The dimension of the vector.
+        Dimension of the flattened numpy array to evaluate on ``f``.
 
     Returns
     -------
-    np.array, float
-        A vector of ones and the fitness value of that vector.
+    np.array (d,)
+        Numpy array of ones.
+    float
+        Fitness of the ones array.
+
+    Examples
+    --------
+    >>> from fairdo.optimize.single import ones_array_method
+    >>> ones_array_method(lambda x: x.sum(), 5)
+    (array([1., 1., 1., 1., 1.]), 5.0)
+
+    >>> ones_array_method(lambda x: x.sum(), 3)
+    (array([1., 1., 1.]), 3.0)
     """
     return np.ones(d), f(np.ones(d))
 
 
 def random_method(f, d, pop_size=100, num_generations=500):
     """
-    This function generates a random binary vector and evaluates its performance.
-    In a for-loop, it generates a new binary vector and evaluates its performance.
-    If the new binary vector performs better than the current one, the current vector is replaced with the new one.
-    This process is repeated for a total of ``pop_size * num_generations`` times.
+    Generates a random binary vector (numpy array) and evaluates it on ``f``
+    for a total of ``pop_size * num_generations`` times.
+    Returns solution with the lowest value.
 
     Parameters
     ----------
     f : callable
-        A function that calculates the fitness of a vector.
+        Objective/fitness function to minimize.
     d : int
-        The dimension of the vector.
+        Dimension of the vector.
     pop_size : int
-        The size of the population.
+        Size of the population.
     num_generations : int
-        The number of generations.
+        Number of generations.
 
     Returns
     -------
-    np.array, float
-        The final solution vector and its fitness value.
+    np.array (d,)
+        Numpy array of the best solution found.
+    float
+        Fitness of the best solution found.
+
+    Examples
+    --------
+    >>> from fairdo.optimize.single import random_method
+    >>> random_method(lambda x: x.sum(), 5)
+    (array([0, 0, 0, 0, 0]), 0.0)
+
+    >>> random_method(lambda x: x.sum(), 3)
+    (array([0, 0, 0]), 0.0)
+
+    >>> random_method(lambda x: x.sum(), 10)
+    (array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), 0.0)
     """
     best_solution = np.random.randint(2, size=d)
     best_fitness = f(best_solution)
@@ -57,28 +81,41 @@ def random_method(f, d, pop_size=100, num_generations=500):
 
 def random_method_vectorized(f, d, pop_size=100, num_generations=500):
     """
-    This function is not essentially faster than the original function but requires more memory.
+    Vectorized version of the ``fairdo.optimize.single.random_method`` function.
 
-    This function generates a random binary vector and evaluates its performance.
-    In a for-loop, it generates a new binary vector and evaluates its performance.
-    If the new binary vector performs better than the current one, the current vector is replaced with the new one.
-    This process is repeated for a total of ``pop_size * num_generations`` times.
+    Generates a random binary vector (numpy array) and evaluates it on ``f``
+    for a total of ``pop_size * num_generations`` times.
+    Returns solution with the lowest value.
 
     Parameters
     ----------
     f : callable
-        A function that calculates the fitness of a vector.
+        Objective/fitness function to minimize.
     d : int
-        The dimension of the vector.
+        Dimension of the vector.
     pop_size : int
-        The size of the population.
+        Size of the population.
     num_generations : int
-        The number of generations.
+        Number of generations.
 
     Returns
     -------
-    np.array, float
-        The final solution vector and its fitness value.
+    np.array (d,)
+        Numpy array of the best solution found.
+    float
+        Fitness of the best solution found.
+
+    Examples
+    --------
+    >>> from fairdo.optimize.single import random_method
+    >>> random_method(lambda x: x.sum(), 5)
+    (array([0, 0, 0, 0, 0]), 0.0)
+
+    >>> random_method(lambda x: x.sum(), 3)
+    (array([0, 0, 0]), 0.0)
+
+    >>> random_method(lambda x: x.sum(), 10)
+    (array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), 0.0)
     """
     solutions = np.random.randint(2, size=(pop_size * num_generations, d))
     fitness_values = np.apply_along_axis(f, 1, solutions)
