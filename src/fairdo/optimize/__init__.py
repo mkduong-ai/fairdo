@@ -2,10 +2,12 @@
 Optimize Module
 ===============
 
-The Optimize module provides methods for optimizing fairness in datasets.
-**The solvers are used with Preprocessors** to optimize the fairness of a dataset.
-All solvers take an objective function :math:`f`, number of dimensions of the problem :math:`d`,
-and specific hyperparameters as parameters.
+The ``optimize`` module provides optimization algorithms (single- and multi-objective) that take an objective function or multiple objective functions
+and the dimensionality of the problem
+as inputs and returns the best solution found by the algorithm
+as a numpy array.
+
+The solvers can be used with classes in ``preprocessing`` to optimize the fairness of a dataset.
 
 Wrapping it as a pre-processing method, all solvers return a **binary mask** that can be used to filter the dataset.
 
@@ -23,22 +25,21 @@ are equivalent to objective functions.)
 
 Example
 -------
->>> from fairdo.optimize import genetic_algorithm_constraint
+>>> from fairdo.optimize.so import genetic_algorithm
 >>> from fairdo.optimize.geneticoperators import onepoint_crossover, fractional_flip_mutation, elitist_selection
 >>> # Define f, d, n, pop_size, num_generations...
 >>> f = lambda x: 1 if x[0] == 1 and x[1] == 1 else 0
 >>> d = 2
->>> n = 0 # no constraints
 >>> pop_size = 100
 >>> num_generations = 100
->>> # Now you can use my_mutation_function as an argument to genetic_algorithm_constraint
->>> best_solution, fitness = genetic_algorithm_constraint(f, d, n, pop_size, num_generations,
+>>> # Now you can use my_mutation_function as an argument to genetic_algorithm
+>>> best_solution, fitness = genetic_algorithm_constraint(f, d, pop_size, num_generations,
 >>>                                                       selection=elitist_selection,
 >>>                                                       crossover=onepoint_crossover,
 >>>                                                       mutate=fractional_flip_mutation, maximize=False)
 
 """
-
+from . import baseline, single, multi
 from fairdo.optimize.baseline import *
-from fairdo.optimize.single import *
+from fairdo.optimize.single import genetic_algorithm
 from fairdo.optimize.multi import nsga2, dom_counts_indices, dom_counts_indices_fast, crowding_distance

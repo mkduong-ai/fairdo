@@ -24,11 +24,3 @@ fairdo.utils.helper module
    :members:
    :undoc-members:
    :show-inheritance:
-
-fairdo.utils.penalty module
----------------------------
-
-.. automodule:: fairdo.utils.penalty
-   :members:
-   :undoc-members:
-   :show-inheritance:

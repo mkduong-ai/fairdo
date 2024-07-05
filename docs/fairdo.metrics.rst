@@ -33,6 +33,14 @@ fairdo.metrics.individual module
    :undoc-members:
    :show-inheritance:
 
+fairdo.metrics.penalty module
+-----------------------------
+
+.. automodule:: fairdo.metrics.penalty
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 fairdo.metrics.prediction module
 --------------------------------
 

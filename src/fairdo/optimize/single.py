@@ -48,11 +48,8 @@ def genetic_algorithm(f, d,
                       tol=1e-6,
                       patience=50):
     """
-    Perform a genetic algorithm with constraints. The constraint is that the sum of the binary vector must be equal
-    to n. The fitness function is the value of the fitness function plus a penalty for individuals that do not satisfy
-    the size constraint.
-
-    The genetic algorithm consists of the following steps which are repeated for a specified number of generations:
+    Perform a genetic algorithm.
+    It consists of the following steps which are repeated for a specified number of generations:
 
     1. Generate an initial population of binary vectors.
     2. Evaluate the fitness of each vector in the population.
@@ -88,9 +85,9 @@ def genetic_algorithm(f, d,
 
     Returns
     -------
-    best_solution : ndarray, shape (d,)
+    best_solution: ndarray, shape (d,)
         The best solution found by the algorithm.
-    best_fitness : float
+    best_fitness: float
         The fitness of the best solution found by the algorithm.
 
     Notes
@@ -99,7 +96,7 @@ def genetic_algorithm(f, d,
     To avoid having to rewrite the selection, crossover, and mutation functions to work with minimization problems,
     the fitness function is negated if we are minimizing.
     The fitness function must map the binary vector to a positive value, i.e.,
-    :math:`f: \{0, 1\}^d \rightarrow \mathbb{R}^+`.
+    $f: \{0, 1\}^d \rightarrow \mathbb{R}^+$.
     """
     # negate the fitness function if we are minimizing
     if not maximize:

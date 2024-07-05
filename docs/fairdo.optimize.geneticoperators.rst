@@ -17,6 +17,14 @@ fairdo.optimize.geneticoperators.crossover module
    :undoc-members:
    :show-inheritance:
 
+fairdo.optimize.geneticoperators.initialization module
+------------------------------------------------------
+
+.. automodule:: fairdo.optimize.geneticoperators.initialization
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 fairdo.optimize.geneticoperators.mutation module
 ------------------------------------------------
 
