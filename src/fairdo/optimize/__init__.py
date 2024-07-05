@@ -25,7 +25,8 @@ The ``optimize`` module is divided into following subpackages:
 Example
 -------
 >>> from fairdo.optimize.single import genetic_algorithm
->>> from fairdo.optimize.operators import onepoint_crossover, fractional_flip_mutation, elitist_selection
+>>> from fairdo.optimize.operators import onepoint_crossover,\\
+fractional_flip_mutation, elitist_selection
 >>> # Define f, d, n, pop_size, num_generations...
 >>> f = lambda x: 1 if x[0] == 1 and x[1] == 1 else 0
 >>> d = 2
@@ -35,7 +36,7 @@ Example
 >>> best_solution, fitness = genetic_algorithm(f, d, pop_size, num_generations,
 >>>                                            selection=elitist_selection,
 >>>                                            crossover=onepoint_crossover,
->>>                                            mutatation=fractional_flip_mutation, maximize=False)
+>>>                                            mutation=fractional_flip_mutation, maximize=False)
 
 """
 from . import single, multi, operators
