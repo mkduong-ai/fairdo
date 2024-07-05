@@ -1,12 +1,12 @@
 import numpy as np
 import pathos.multiprocessing as mp
 
-from fairdo.optimize.geneticoperators.initialization import random_initialization, variable_initialization
-from fairdo.optimize.geneticoperators.selection import elitist_selection_multi, tournament_selection_multi
-from fairdo.optimize.geneticoperators.crossover import onepoint_crossover,\
+from fairdo.optimize.operators.initialization import random_initialization, variable_initialization
+from fairdo.optimize.operators.selection import elitist_selection_multi, tournament_selection_multi
+from fairdo.optimize.operators.crossover import onepoint_crossover,\
     uniform_crossover, simulated_binary_crossover,\
     no_crossover, onepoint_crossover
-from fairdo.optimize.geneticoperators.mutation import fractional_flip_mutation,\
+from fairdo.optimize.operators.mutation import fractional_flip_mutation,\
     bit_flip_mutation, shuffle_mutation
 
 
@@ -27,7 +27,7 @@ def nsga2(fitness_functions, d,
     Parameters
     ----------
     fitness_functions : list of callables
-        The list of fitness functions to optimize. Each function should take a binary vector and return a scalar value.
+        The list of objective functions to minimize. Each function should take a binary vector and return a scalar value.
     d : int
         The number of dimensions.
     pop_size : int
@@ -100,7 +100,8 @@ def nsga2(fitness_functions, d,
 
         # Select the best individuals using non-dominated sorting and crowding distance
         fronts = non_dominated_sort_fast(combined_fitness_values)
-        # Fit the first fronts to the population size. The front that doesn't fit will be selected based on crowding distance
+        # Fit the first fronts to the population size.
+        # The front that doesn't fit will be selected based on crowding distance
         selected_indices = selection_indices(combined_fitness_values, fronts, pop_size)
 
         # Update the population and fitness values
@@ -246,7 +247,6 @@ def non_dominated_sort_fast(fitness_values):
         current_front = np.setdiff1d(current_front, np.concatenate(fronts))
 
     return fronts
-
 
 
 def dom_counts_indices(fitness_values):

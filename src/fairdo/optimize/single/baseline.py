@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def original_method(f, d):
+def ones_vector_method(f, d):
     """
     Returns a vector of ones and the fitness of that vector.
     This essentially means that the original data is returned without removing any samples.

@@ -3,9 +3,9 @@ from functools import partial
 # fairdo package
 from fairdo.utils.dataset import load_data
 # everything needed for custom preprocessing
-from fairdo.preprocessing import HeuristicWrapper
+from fairdo.preprocessing import SingleWrapper
 from fairdo.optimize.single import genetic_algorithm
-from fairdo.optimize.geneticoperators import onepoint_crossover, fractional_flip_mutation, elitist_selection
+from fairdo.optimize.operators import onepoint_crossover, fractional_flip_mutation, elitist_selection
 # fairdo metrics
 from fairdo.metrics import statistical_parity_abs_diff_max
 
@@ -22,10 +22,10 @@ ga = partial(genetic_algorithm,
              num_generations=100)
 
 # Initialize the wrapper class for custom preprocessors
-preprocessor = HeuristicWrapper(heuristic=ga,
-                                protected_attribute=protected_attributes[0],
-                                label=label,
-                                disc_measure=statistical_parity_abs_diff_max)
+preprocessor = SingleWrapper(heuristic=ga,
+                             protected_attribute=protected_attributes[0],
+                             label=label,
+                             disc_measure=statistical_parity_abs_diff_max)
                                 
 # Fit and transform the data
 data_fair = preprocessor.fit_transform(dataset=data)

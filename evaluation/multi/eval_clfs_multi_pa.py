@@ -26,10 +26,10 @@ from sklearn.metrics import balanced_accuracy_score, f1_score, roc_auc_score, no
 # fairdo package
 from fairdo.utils.dataset import load_data
 # everything needed for custom preprocessing
-from fairdo.preprocessing import MultiObjectiveWrapper, HeuristicWrapper
+from fairdo.preprocessing import MultiWrapper, SingleWrapper
 from fairdo.optimize.multi import nsga2
 from fairdo.optimize.single import genetic_algorithm
-from fairdo.optimize.geneticoperators import variable_initialization, random_initialization,\
+from fairdo.optimize.operators import variable_initialization, random_initialization,\
     elitist_selection, elitist_selection_multi, tournament_selection_multi,\
     uniform_crossover, onepoint_crossover, no_crossover, \
     fractional_flip_mutation, shuffle_mutation,\
@@ -194,10 +194,10 @@ def preprocess_training_data_multi(data, label, protected_attributes, n_groups):
 
     # Optimize training data for fairness
     # Initialize the wrapper class for custom preprocessors
-    preprocessor_multi = MultiObjectiveWrapper(heuristic=ga,
-                                               protected_attribute=protected_attributes,
-                                               label=label,
-                                               fitness_functions=[partial(penalized_discrimination_multi,
+    preprocessor_multi = MultiWrapper(heuristic=ga,
+                                      protected_attribute=protected_attributes,
+                                      label=label,
+                                      fitness_functions=[partial(penalized_discrimination_multi,
                                                                           n_groups=n_groups,
                                                                           eps=eps),
                                                                   data_loss])
@@ -240,10 +240,10 @@ def preprocess_training_data_single(data, label, protected_attributes, n_groups)
     # z_orig = data[protected_attributes[0]].to_numpy()
     z_orig = data[protected_attributes].to_numpy()
     # Initialize the wrapper class for custom preprocessors
-    preprocessor = HeuristicWrapper(heuristic=ga,
-                                protected_attribute=protected_attributes,
-                                label=label,
-                                fitness_functions=[partial(weighted_loss_multi,
+    preprocessor = SingleWrapper(heuristic=ga,
+                                 protected_attribute=protected_attributes,
+                                 label=label,
+                                 fitness_functions=[partial(weighted_loss_multi,
                                                            y_orig=y_orig,
                                                            z_orig=z_orig,
                                                            n_groups=n_groups)])

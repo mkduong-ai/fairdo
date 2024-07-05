@@ -16,11 +16,11 @@ from fairdo.metrics import (normalized_mutual_information,
                             statistical_parity_abs_diff,
                             statistical_parity_abs_diff_max,
                             statistical_parity_abs_diff_mean)
-from fairdo.preprocessing.solverwrapper import f_add, f_remove
+from fairdo.preprocessing.wrapper import f_add, f_remove
 # from fairdo.preprocessing import MetricOptimizer, MetricOptRemover
-import fairdo.optimize.baseline as baseline
+import fairdo.optimize.single.baseline as baseline
 import fairdo.optimize.single as ga
-from fairdo.optimize.geneticoperators import *
+from fairdo.optimize.operators import *
 
 # Local application/library specific imports
 from measures import count_groups, count_size, sanity_check
@@ -289,7 +289,7 @@ def setup_experiment(data_str, objective_str):
     num_generations = 500
     # create methods
     methods = {
-        'Baseline (Original)': baseline.original_method,
+        'Baseline (Original)': baseline.ones_vector_method,
         'Random Heuristic': partial(baseline.random_method,
                                     pop_size=pop_size,
                                     num_generations=num_generations),

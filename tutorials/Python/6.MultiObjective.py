@@ -4,9 +4,9 @@ import numpy as np
 # fairdo package
 from fairdo.utils.dataset import load_data
 # everything needed for custom preprocessing
-from fairdo.preprocessing import MultiObjectiveWrapper
+from fairdo.preprocessing import MultiWrapper
 from fairdo.optimize.multi import nsga2
-from fairdo.optimize.geneticoperators import variable_initialization, random_initialization,\
+from fairdo.optimize.operators import variable_initialization, random_initialization,\
     onepoint_crossover, fractional_flip_mutation, elitist_selection, shuffle_mutation
 # fairdo metrics
 from fairdo.metrics import statistical_parity_abs_diff_max, data_loss, group_missing_penalty
@@ -22,10 +22,10 @@ ga = partial(nsga2,
              mutation=fractional_flip_mutation,)
 
 # Initialize the wrapper class for custom preprocessors
-preprocessor = MultiObjectiveWrapper(heuristic=ga,
-                                     protected_attribute=protected_attributes[0],
-                                     label=label,
-                                     fitness_functions=[statistical_parity_abs_diff_max, data_loss])
+preprocessor = MultiWrapper(heuristic=ga,
+                            protected_attribute=protected_attributes[0],
+                            label=label,
+                            fitness_functions=[statistical_parity_abs_diff_max, data_loss])
 
 # Fit and transform the data, returns the data closest to the ideal solution
 data_best = preprocessor.fit_transform(dataset=data)

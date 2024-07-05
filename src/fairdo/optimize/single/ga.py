@@ -15,8 +15,8 @@ evolve the population over a number of generations.
 
 The `select_parents`, `crossover`, and `mutate` functions can be passed to `genetic_algorithm_constraint` or
 `genetic_algorithm` to customize the selection, crossover, and mutation operations.
-These functions are defined in the :mod:`geneticoperators.crossover`, :mod:`geneticoperators.mutation`, and
-:mod:`geneticoperators.selection` modules respectively.
+These functions are defined in the :mod:`operators.crossover`, :mod:`operators.mutation`, and
+:mod:`operators.selection` modules respectively.
 
 This implementation of the Genetic Algorithm is based on the works of the following references:
 
@@ -31,10 +31,10 @@ A fast and elitist multiobjective genetic algorithm: NSGA-II. IEEE Transactions 
 import pathos.multiprocessing as mp
 import numpy as np
 
-from fairdo.optimize.geneticoperators.initialization import random_initialization, variable_initialization
-from fairdo.optimize.geneticoperators.selection import elitist_selection, tournament_selection
-from fairdo.optimize.geneticoperators.crossover import onepoint_crossover, uniform_crossover
-from fairdo.optimize.geneticoperators.mutation import fractional_flip_mutation, shuffle_mutation, bit_flip_mutation
+from fairdo.optimize.operators.initialization import random_initialization, variable_initialization
+from fairdo.optimize.operators.selection import elitist_selection, tournament_selection
+from fairdo.optimize.operators.crossover import onepoint_crossover, uniform_crossover
+from fairdo.optimize.operators.mutation import fractional_flip_mutation, shuffle_mutation, bit_flip_mutation
 
 
 def genetic_algorithm(f, d,
@@ -60,7 +60,7 @@ def genetic_algorithm(f, d,
     Parameters
     ----------
     f: callable
-        The fitness function to minimize.
+        The objective function (fitness) to minimize.
     d: int
         The number of dimensions.
     pop_size: int

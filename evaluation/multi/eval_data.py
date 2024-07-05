@@ -16,10 +16,10 @@ sns.set_theme()
 # fairdo package
 from fairdo.utils.dataset import load_data
 # everything needed for custom preprocessing
-from fairdo.preprocessing import MultiObjectiveWrapper, HeuristicWrapper
+from fairdo.preprocessing import MultiWrapper, SingleWrapper
 from fairdo.optimize.multi import nsga2
 from fairdo.optimize.single import genetic_algorithm
-from fairdo.optimize.geneticoperators import variable_initialization, random_initialization,\
+from fairdo.optimize.operators import variable_initialization, random_initialization,\
     elitist_selection, elitist_selection_multi, tournament_selection_multi,\
     uniform_crossover, onepoint_crossover, no_crossover, \
     fractional_flip_mutation, shuffle_mutation,\
@@ -77,10 +77,10 @@ def run_optimization(data, label, protected_attribute, n_groups,
                  mutation=mutation)
     
     # Initialize the wrapper class for custom preprocessors
-    preprocessor_multi = MultiObjectiveWrapper(heuristic=ga,
-                                               protected_attribute=protected_attribute,
-                                               label=label,
-                                               fitness_functions=[partial(penalized_discrimination, n_groups=n_groups), data_loss])
+    preprocessor_multi = MultiWrapper(heuristic=ga,
+                                      protected_attribute=protected_attribute,
+                                      label=label,
+                                      fitness_functions=[partial(penalized_discrimination, n_groups=n_groups), data_loss])
     
     # Fit and transform the data
     preprocessor_multi.fit_transform(dataset=data)

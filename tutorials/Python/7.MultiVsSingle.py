@@ -4,10 +4,10 @@ import numpy as np
 # fairdo package
 from fairdo.utils.dataset import load_data
 # everything needed for custom preprocessing
-from fairdo.preprocessing import MultiObjectiveWrapper, HeuristicWrapper
+from fairdo.preprocessing import MultiWrapper, SingleWrapper
 from fairdo.optimize.multi import nsga2
 from fairdo.optimize.single import genetic_algorithm
-from fairdo.optimize.geneticoperators import variable_initialization, random_initialization,\
+from fairdo.optimize.operators import variable_initialization, random_initialization,\
     elitist_selection, elitist_selection_multi, tournament_selection_multi,\
     uniform_crossover, onepoint_crossover, no_crossover, \
     fractional_flip_mutation, shuffle_mutation,\
@@ -67,10 +67,10 @@ def penalized_discrimination(y, z, agg_group='max', eps=0.01,**kwargs):
 
 
 # Initialize the wrapper class for custom preprocessors
-preprocessor_multi = MultiObjectiveWrapper(heuristic=ga,
-                                     protected_attribute=protected_attributes[0],
-                                     label=label,
-                                     fitness_functions=[penalized_discrimination, data_loss])
+preprocessor_multi = MultiWrapper(heuristic=ga,
+                                  protected_attribute=protected_attributes[0],
+                                  label=label,
+                                  fitness_functions=[penalized_discrimination, data_loss])
 
 # Fit and transform the data, returns the data closest to the ideal solution
 data_multi = preprocessor_multi.fit_transform(dataset=data)
@@ -104,10 +104,10 @@ ga = partial(genetic_algorithm,
              mutation=bit_flip_mutation)
 
 # Initialize the wrapper class for custom preprocessors
-preprocessor = HeuristicWrapper(heuristic=ga,
-                                protected_attribute=protected_attributes[0],
-                                label=label,
-                                fitness_functions=[partial(weighted_loss, n_groups=n_groups)])
+preprocessor = SingleWrapper(heuristic=ga,
+                             protected_attribute=protected_attributes[0],
+                             label=label,
+                             fitness_functions=[partial(weighted_loss, n_groups=n_groups)])
 
 # Fit and transform the data
 data_single = preprocessor.fit_transform(dataset=data)

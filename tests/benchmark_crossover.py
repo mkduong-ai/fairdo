@@ -1,5 +1,5 @@
 import numpy as np
-from fairdo.optimize.geneticoperators import kpoint_crossover,\
+from fairdo.optimize.operators import kpoint_crossover,\
     uniform_crossover
 from utils import benchmark
 

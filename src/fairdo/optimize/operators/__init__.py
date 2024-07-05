@@ -11,7 +11,7 @@ Example
 -------
 >>> from functools import partial
 >>> from fairdo.optimize import genetic_algorithm_constraint
->>> from fairdo.optimize.geneticoperators import onepoint_crossover, fractional_flip_mutation, elitist_selection
+>>> from fairdo.optimize.operators import onepoint_crossover, fractional_flip_mutation, elitist_selection
 >>> # Specify your mutation function with some preset parameters
 >>> my_mutation_function = partial(fractional_flip_mutation, mutation_rate=0.10)
 >>> # Define f, d, n, pop_size, num_generations...
@@ -27,7 +27,7 @@ Example
 >>>                                       mutate=my_mutation_function, maximize=False)
 
 """
-from fairdo.optimize.geneticoperators.initialization import *
-from fairdo.optimize.geneticoperators.crossover import *
-from fairdo.optimize.geneticoperators.mutation import *
-from fairdo.optimize.geneticoperators.selection import *
+from .initialization import *
+from .crossover import *
+from .mutation import *
+from .selection import *

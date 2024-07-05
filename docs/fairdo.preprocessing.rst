@@ -25,10 +25,10 @@ fairdo.preprocessing.metricoptimizer module
    :undoc-members:
    :show-inheritance:
 
-fairdo.preprocessing.solverwrapper module
------------------------------------------
+fairdo.preprocessing.wrapper module
+-----------------------------------
 
-.. automodule:: fairdo.preprocessing.solverwrapper
+.. automodule:: fairdo.preprocessing.wrapper
    :members:
    :undoc-members:
    :show-inheritance:

@@ -8,14 +8,14 @@ import pandas as pd
 
 # fairdo imports
 from fairdo.preprocessing import Preprocessing
-from fairdo.optimize import genetic_algorithm
+from fairdo.optimize.single import genetic_algorithm
 
 # fairdo metrics
 from fairdo.metrics import statistical_parity_abs_diff_max, data_loss
 from fairdo.metrics.penalty import group_missing_penalty
 
 
-class MultiObjectiveWrapper(Preprocessing):
+class MultiWrapper(Preprocessing):
     """
     A preprocessing wrapper class that applies a given multi-objective optimization method to optimize multiple
     given objective functions and outputs the Pareto front of the solutions.
@@ -295,7 +295,7 @@ class MultiObjectiveWrapper(Preprocessing):
         plt.show()
 
 
-class HeuristicWrapper(Preprocessing):
+class SingleWrapper(Preprocessing):
     """
     A preprocessing wrapper class that applies a given heuristic method to optimize a given
     discrimination measure and outputs a pre-processed dataset.
@@ -468,7 +468,7 @@ class HeuristicWrapper(Preprocessing):
             return best_fitness
 
 
-class DefaultPreprocessing(HeuristicWrapper):
+class DefaultPreprocessing(SingleWrapper):
     """
     DefaultPreprocessing is a processing method that can be used on-the-go.
     It uses a Genetic Algorithm to select a subset of the given dataset to optimize for fairness.
