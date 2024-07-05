@@ -1,6 +1,6 @@
 """
-Utils Module
-============
+Utility Functions
+=================
 
 The Utils module provides a collection of utility functions that are used across the package.
 
