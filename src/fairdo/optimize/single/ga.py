@@ -79,7 +79,7 @@ def genetic_algorithm(f, d,
 
     Returns
     -------
-    best_solution: ndarray, shape (d,)
+    best_solution: ndarray shape (d,)
         The best solution found by the algorithm.
     best_fitness: float
         The fitness of the best solution found by the algorithm.
@@ -90,7 +90,7 @@ def genetic_algorithm(f, d,
     To avoid having to rewrite the selection, crossover, and mutation functions to work with minimization problems,
     the fitness function is negated if we are minimizing.
     The fitness function must map the binary vector to a positive value, i.e.,
-    :math:`f: \{0, 1\}^d \rightarrow \mathbb{R}^+`.
+    :math:`f: \\{0, 1\\}^d \\rightarrow \\mathbb{R}^+`.
     """
 
     # negate the fitness function if we are minimizing

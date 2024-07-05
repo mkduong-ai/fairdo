@@ -4,14 +4,6 @@ It maintains a population of solutions and uses non-dominated sorting and crowdi
 Fitness functions are minimized by default.
 Returns the Pareto front of the population.
 
-The optimization problem is defined as follows:
-
-.. math::
-
-        \min_{\mathbf{x} \in \{0, 1\}^d} \quad (f_1(\mathbf{x}), f_2(\mathbf{x}), \ldots, f_n(\mathbf{x}))
-
-where :math:`f_1, f_2, \ldots, f_n` are objective functions to minimize.
-
 References
 ----------
 
@@ -71,25 +63,26 @@ def nsga2(fitness_functions, d,
 
     Returns
     -------
-    population: ndarray, shape (pop_size, d)
+    population: ndarray shape (pop_size, d)
         The best solution found by NSGA-II.
-    fitness_values: ndarray, shape (pop_size, num_fitness_functions)
+    fitness_values: ndarray shape (pop_size, num_fitness_functions)
         The fitness values of the best solution found by NSGA-II.
-    (fronts: list of ndarrays
+    fronts: list of ndarrays
         List of fronts, where each front contains the indices of individuals in that front.
-        Only returned if return_all_fronts is True.)
+        Only returned if ``return_all_fronts`` is ``True```.)
 
     Notes
     -----
-    The fitness functions must map the binary vector to a scalar value, i.e., $f: \{0, 1\}^d \rightarrow \mathbb{R}$.
+    The fitness functions must map the binary vector to a scalar value, i.e., $f: \\{0, 1\\}^d \\rightarrow \\mathbb{R}$.
     We used the same operators as the authors of NSGA-II in the original paper [1].
     We only changed the selection operator. The original paper uses binary tournament selection,
     but we use elitist selection with multiple objectives.
 
     References
     ----------
-    [1] Deb, K., Pratap, A., Agarwal, S., & Meyarivan, T. (2002). A fast and elitist multiobjective genetic algorithm: NSGA-II.
-    https://ieeexplore.ieee.org/document/996017
+    [1] Deb, K., Pratap, A., Agarwal, S., & Meyarivan, T. (2002).
+        A fast and elitist multiobjective genetic algorithm: NSGA-II.
+        https://ieeexplore.ieee.org/document/996017
     """
 
     # Generate the initial population
