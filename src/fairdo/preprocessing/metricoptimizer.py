@@ -181,7 +181,7 @@ class MetricOptGenerator(Preprocessing):
             Whether the data generator is fitted to the data.
         data_generator: object
             The data generator object
-        synthetic_data: pd.DataFrame
+        synthetic_data: pandas DataFrame
             The synthetic data generated
         random_state: int
         """
@@ -205,7 +205,7 @@ class MetricOptGenerator(Preprocessing):
 
         Parameters
         ----------
-        dataset: pd.DataFrame
+        dataset: pandas DataFrame
 
         Returns
         -------

@@ -1,13 +1,5 @@
 from itertools import combinations
 import numpy as np
-# Attempt to import (optional) sdv libraries
-try:
-    from sdv.single_table import GaussianCopulaSynthesizer
-    from sdv.metadata import SingleTableMetadata
-
-    sdv_installed = True
-except ModuleNotFoundError:
-    sdv_installed = False
 
 
 def nunique(a, axis=0):
@@ -50,7 +42,7 @@ def generate_pairs(lst):
 
     Parameters
     ----------
-    lst: list or np.array
+    lst: array_like
         list of elements
 
     Returns

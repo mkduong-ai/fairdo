@@ -44,7 +44,7 @@ class MultiWrapper(Preprocessing):
     fitness_functions: list of callable
         The list of objective functions to be minimized. They evaluate properties of the dataset
         such as the fairness and data quality/data loss.
-    dataset: pd.DataFrame
+    dataset: pandas DataFrame
         The dataset to be preprocessed. It is defined within the `fit` method.
     """
 
@@ -99,9 +99,9 @@ class MultiWrapper(Preprocessing):
 
         Parameters
         ----------
-        dataset: pd.DataFrame
+        dataset: pandas DataFrame
             The dataset to be preprocessed.
-        synthetic_dataset: pd.DataFrame, optional
+        synthetic_dataset: pandas DataFrame, optional
             The synthetic dataset to be used for the 'add' approach.
             It is required only if the 'add' approach is used.
         approach: str
@@ -144,7 +144,7 @@ class MultiWrapper(Preprocessing):
 
         Returns
         -------
-        self.transformed_data: pd.DataFrame
+        self.transformed_data: pandas DataFrame
             The dataset to be masked based on the heuristic method.
         masks: np.array of shape (n, dims)
             The binary masks indicating the selected columns.
@@ -187,7 +187,7 @@ class MultiWrapper(Preprocessing):
 
         Returns
         -------
-        data_best: pd.DataFrame
+        data_best: pandas DataFrame
             The dataset closest to the ideal solution.
         """
         if self.dataset is None:
@@ -317,7 +317,7 @@ class SingleWrapper(Preprocessing):
     disc_measure: callable
         The discrimination measure to be optimized. It takes the feature matrix (x), labels
         (y), and protected attributes (z) and returns a numeric value.
-    dataset: pd.DataFrame
+    dataset: pandas DataFrame
         The dataset to be preprocessed. It is defined within the `fit` method.
     """
 
@@ -374,9 +374,9 @@ class SingleWrapper(Preprocessing):
 
         Parameters
         ----------
-        dataset: pd.DataFrame
+        dataset: pandas DataFrame
             The dataset to be preprocessed.
-        synthetic_dataset: pd.DataFrame, optional (default=None)
+        synthetic_dataset: pandas DataFrame, optional (default=None)
             The synthetic dataset to be used for the 'add' approach.
             It is required only if the 'add' approach is used.
         approach: str, optional (default='remove')
@@ -429,7 +429,7 @@ class SingleWrapper(Preprocessing):
 
         Returns
         -------
-        pd.DataFrame
+        pandas DataFrame
             The preprocessed (fair) dataset.
         """
         # apply the mask to the dataset
@@ -491,7 +491,7 @@ class DefaultPreprocessing(SingleWrapper):
     disc_measure: callable
         The discrimination measure to be optimized. It takes the feature matrix (x), labels
         (y), and protected attributes (z) and returns a numeric value.
-    dataset: pd.DataFrame
+    dataset: pandas DataFrame
         The dataset to be preprocessed. It is defined within the `fit` method.
     """
 
@@ -550,7 +550,7 @@ def f(binary_vector, dataset, label, protected_attributes,
     ----------
     binary_vector: np.array
         Binary vector indicating which columns to include in the discrimination measure calculation.
-    dataset: pd.DataFrame
+    dataset: pandas DataFrame
         The data to calculate the discrimination measure on.
     label: str
         The column in the dataset to use as the target variable.
@@ -559,7 +559,7 @@ def f(binary_vector, dataset, label, protected_attributes,
     approach: str
         The approach to be used for the heuristic method.
         It can be either 'remove' or 'add'.
-    synthetic_dataset: pd.DataFrame, optional
+    synthetic_dataset: pandas DataFrame, optional
         Extra samples to be added to the original data. Samples can be synthetic data.
         It is required only if the 'add' approach is used.
     fitness_function: callable, optional (default=statistical_parity_abs_diff_max)

@@ -13,9 +13,9 @@ class Preprocessing(metaclass=abc.ABCMeta):
     protected_attribute: str
     label: str
         predicting label
-    dataset: pd.DataFrame
+    dataset: pandas DataFrame
         original dataset
-    transformed_data: pd.DataFrame
+    transformed_data: pandas DataFrame
         dataset after transformation/pre-processing
     """
     def __init__(self, protected_attribute, label):
@@ -43,7 +43,7 @@ class Preprocessing(metaclass=abc.ABCMeta):
 
         Parameters
         ----------
-        dataset: pd.DataFrame
+        dataset: pandas DataFrame
 
         Returns
         -------
@@ -97,7 +97,7 @@ class OriginalData(Preprocessing):
 
         Returns
         -------
-        pd.DataFrame
+        pandas DataFrame
             The original dataset.
         """
         self.transformed_data = self.dataset
@@ -122,7 +122,7 @@ class Unawareness(Preprocessing):
 
         Returns
         -------
-        pd.DataFrame
+        pandas DataFrame
             The dataset without the protected attribute.
         """
         if self.dataset is None:
@@ -153,7 +153,7 @@ class Random(Preprocessing):
 
         Returns
         -------
-        pd.DataFrame
+        pandas DataFrame
             The random subset of the dataset.
         """
         if self.dataset is None:

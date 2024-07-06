@@ -9,7 +9,14 @@ from sdv.single_table import GaussianCopulaSynthesizer
 from sklearn.preprocessing import LabelEncoder
 from requests import get
 
-from fairdo.utils.helper import sdv_installed
+# Attempt to import (optional) sdv libraries
+try:
+    from sdv.single_table import GaussianCopulaSynthesizer
+    from sdv.metadata import SingleTableMetadata
+
+    sdv_installed = True
+except ModuleNotFoundError:
+    sdv_installed = False
 
 
 def downcast(data):
@@ -18,12 +25,12 @@ def downcast(data):
 
     Parameters
     ----------
-    data: pandas DataFrame
+    data : pandas DataFrame
         DataFrame to downcast.
 
     Returns
     -------
-    data: pandas DataFrame
+    data : pandas DataFrame
     """
     fcols = data.select_dtypes('float').columns
     icols = data.select_dtypes('integer').columns
@@ -36,7 +43,7 @@ def downcast(data):
 
 def dataset_intersectional_column(data, protected_attributes):
     """
-    Combine the protected attributes into a single column named ``pa_merged``.
+    Combine the protected attributes into a single column named ``intersectional_group``.
     This column will be used to identify the intersectional groups.
 
     Parameters
@@ -65,9 +72,9 @@ def dataset_intersectional_column(data, protected_attributes):
     0    male  white    male_white_
     1  female  black  female_black_
     >>> print(pa)
-    pa_merged
+    intersectional_group
     """
-    protected_attribute = 'pa_merged'
+    protected_attribute = 'intersectional_group'
     
     # Initialize the protected attribute column with empty strings
     data[protected_attribute] = ''
@@ -217,10 +224,25 @@ def generate_data(data, num_rows=100):
 
     Parameters
     ----------
-    data : pd.DataFrame
+    data : pandas DataFrame
         The real data to be used to generate synthetic data
     num_rows : int
         The number of rows to generate
+
+    Returns
+    -------
+    synthetic_data : pandas DataFrame or None
+        The synthetic data generated
+
+    Examples
+    --------
+    >>> import pandas as pd
+    >>> from fairdo.utils.dataset import generate_data
+    >>> data = pd.DataFrame({'age': [39, 50], 'education': ['Bachelors', 'HS-grad'], 'income': ['<=50K', '<=50K']})
+    >>> generate_data(data, num_rows=2)
+         age  education  income
+    0  39.0  Bachelors  <=50K
+    1  50.0    HS-grad  <=50K
     """
     if not sdv_installed:
         # Inform the user that sdv library is required
@@ -244,8 +266,25 @@ def data_generator(data):
 
     Parameters
     ----------
-    data : pd.DataFrame
+    data : pandas DataFrame
         The real data to be used to generate synthetic data
+
+    Returns
+    -------
+    synthesizer : GaussianCopulaSynthesizer object or None
+        The data generator object
+
+    Examples
+    --------
+    >>> import pandas as pd
+    >>> from fairdo.utils.dataset import data_generator
+    >>> data = pd.DataFrame({'age': [39, 50], 'education': ['Bachelors', 'HS-grad'], 'income': ['<=50K', '<=50K']})
+    >>> synthesizer = data_generator(data)
+    >>> synthetic_data = synthesizer.sample(num_rows=2)
+    >>> print(synthetic_data)
+         age  education  income
+    0  39.0  Bachelors  <=50K
+    1  50.0    HS-grad  <=50K
     """
     if not sdv_installed:
         # Inform the user that sdv library is required
