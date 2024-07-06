@@ -1,7 +1,7 @@
 from fairdo.preprocessing import Preprocessing
 from fairdo.metrics import statistical_parity_abs_diff
 # import third-party synthetic data generation package
-from fairdo.utils.helper import data_generator
+from fairdo.utils.dataset import data_generator
 
 # third party
 import numpy as np

@@ -1,8 +1,5 @@
 """
-Preprocessing Module
-====================
-
-The Preprocessing module provides methods for pre-processing datasets to achieve fairness.
+The ``fairdo.preprocessing`` package provides methods for pre-processing datasets to achieve fairness.
 The base class `Preprocessing` defines the required methods for a pre-processor,
 which are `fit` and `transform`. The `fit` method is used to assign the dataset to an internal variable,
 and the `transform` method is used to apply the pre-processing method to the dataset. The `transform` method

@@ -1,7 +1,4 @@
 """
-Mutation Methods
-================
-
 This module implements various mutation methods used in genetic algorithms.
 These methods are used to introduce diversity in the population by randomly altering the genes of the individuals.
 Each function in this module takes a population of individuals as input and returns a mutated population.

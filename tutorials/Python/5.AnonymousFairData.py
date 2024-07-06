@@ -1,8 +1,7 @@
 # Related third-party imports
-from fairdo.utils.helper import generate_data
 
 # fairdo package
-from fairdo.utils.dataset import load_data
+from fairdo.utils.dataset import load_data, generate_data
 from fairdo.preprocessing import DefaultPreprocessing
 from fairdo.metrics import statistical_parity_abs_diff_max
 

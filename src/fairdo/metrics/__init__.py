@@ -1,8 +1,5 @@
 """
-Metrics Module
-==============
-
-The Metrics module provides a collection of metrics to measure fairness and discrimination in datasets.
+The ``fairdo.metrics`` package provides a collection of metrics to measure fairness and discrimination in datasets.
 It is divided into four submodules:
 
 1. `dataset`: This submodule provides metrics to evaluate fairness at the dataset level.

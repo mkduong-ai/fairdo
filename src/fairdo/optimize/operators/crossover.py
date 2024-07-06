@@ -1,7 +1,4 @@
 """
-Crossover Methods
-=================
-
 This module implements various crossover methods used in genetic algorithms.
 Crossover is a genetic operator to combine two individuals to produce offspring.
 

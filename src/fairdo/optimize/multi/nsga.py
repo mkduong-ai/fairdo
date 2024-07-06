@@ -63,9 +63,9 @@ def nsga2(fitness_functions, d,
 
     Returns
     -------
-    population: ndarray shape (pop_size, d)
+    population: ndarray, shape (pop_size, d)
         The best solution found by NSGA-II.
-    fitness_values: ndarray shape (pop_size, num_fitness_functions)
+    fitness_values: ndarray, shape (pop_size, num_fitness_functions)
         The fitness values of the best solution found by NSGA-II.
     fronts: list of ndarrays
         List of fronts, where each front contains the indices of individuals in that front.

@@ -4,8 +4,12 @@ import zipfile
 
 # Related third-party imports
 import pandas as pd
+from sdv.metadata import SingleTableMetadata
+from sdv.single_table import GaussianCopulaSynthesizer
 from sklearn.preprocessing import LabelEncoder
 from requests import get
+
+from fairdo.utils.helper import sdv_installed
 
 
 def downcast(data):
@@ -15,6 +19,7 @@ def downcast(data):
     Parameters
     ----------
     data: pandas DataFrame
+        DataFrame to downcast.
 
     Returns
     -------
@@ -31,21 +36,36 @@ def downcast(data):
 
 def dataset_intersectional_column(data, protected_attributes):
     """
-    Combine the protected attributes into a single column named 'pa_merged'.
+    Combine the protected attributes into a single column named ``pa_merged``.
     This column will be used to identify the intersectional groups.
 
     Parameters
     ----------
     data: pandas DataFrame
-    protected_attributes: list of str
-        List of protected attributes to combine
+        DataFrame with protected attributes.
+    protected_attributes : list of str
+        List of protected attributes. Each attribute should be a column in the data.
 
     Returns
     -------
-    data: pandas DataFrame
-        Returns a dataframe with an extra column of combines protected attributes
-    protected_attribute: str
-        The name of the column with the combined protected attributes
+    data : pandas DataFrame
+        Returns a DataFrame with an extra column of combined protected attributes.
+    protected_attribute : str
+        The name of the column with the combined protected attributes.
+
+    Examples
+    --------
+    >>> import pandas as pd
+    >>> from fairdo.utils.dataset import dataset_intersectional_column
+    >>> data = pd.DataFrame({'sex': ['male', 'female'], 'race': ['white', 'black']})
+    >>> pas = ['sex', 'race']
+    >>> data_new, pa = dataset_intersectional_column(data, pas)
+    >>> print(data_new)
+          sex   race      pa_merged
+    0    male  white    male_white_
+    1  female  black  female_black_
+    >>> print(pa)
+    pa_merged
     """
     protected_attribute = 'pa_merged'
     
@@ -61,6 +81,7 @@ def dataset_intersectional_column(data, protected_attributes):
 def load_data(dataset_str, multi_protected_attr=False, print_info=True):
     """
     Load the dataset and preprocess it. The preprocessing steps include:
+
     - Dropping rows with missing values
     - Label encode protected attributes and label
     - One-hot encode all other categorical variables
@@ -68,13 +89,34 @@ def load_data(dataset_str, multi_protected_attr=False, print_info=True):
 
     Parameters
     ----------
-    dataset_str: str
+    dataset_str : str
         Name of the dataset to load and preprocess  (e.g., 'adult', 'compas', 'bank', 'german').
+    multi_protected_attr : bool
+        Whether to use multiple protected attributes or not.
+    print_info : bool
+        Whether to print information about the dataset or not.
+
     Returns
     -------
-    df: pandas DataFrame
-    label: str
-    protected_attributes: list of str
+    df : pandas DataFrame
+        Preprocessed DataFrame.
+    label : str
+        Name of the label column.
+    protected_attributes : list of str
+        List of protected attributes.
+
+    Examples
+    --------
+    >>> from fairdo.utils.dataset import load_data
+    >>> data, label, protected_attributes = load_data('adult')
+    >>> print(data.head(2))
+       age  education-num  race  ...  relationship_ Wife  sex_ Female  sex_ Male
+    0   39             13     4  ...                   0            0          1
+    1   50             13     4  ...                   0            0          1
+    >>> print(label)
+    income
+    >>> print(protected_attributes)
+    ['race']
     """
     if dataset_str == 'adult':
         data = pd.read_csv("https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.data", header=None,
@@ -166,3 +208,55 @@ def load_data(dataset_str, multi_protected_attr=False, print_info=True):
         print(data.shape)
 
     return data, label, protected_attributes
+
+
+def generate_data(data, num_rows=100):
+    """
+    Generate synthetic data using the sdv library.
+    The method used is Gaussian Copula.
+
+    Parameters
+    ----------
+    data : pd.DataFrame
+        The real data to be used to generate synthetic data
+    num_rows : int
+        The number of rows to generate
+    """
+    if not sdv_installed:
+        # Inform the user that sdv library is required
+        print("The 'sdv' library is required to generate synthetic data.")
+        print("Please install it by running: pip install sdv==1.10.0")
+        return None
+
+    # Fit the synthesizer to the real data
+    metadata = SingleTableMetadata()
+    metadata.detect_from_dataframe(data)
+    synthesizer = GaussianCopulaSynthesizer(metadata)
+    synthesizer.fit(data)
+
+    synthetic_data = synthesizer.sample(num_rows=num_rows)
+    return synthetic_data
+
+
+def data_generator(data):
+    """
+    Returns the data generator, from which the user can generate synthetic data
+
+    Parameters
+    ----------
+    data : pd.DataFrame
+        The real data to be used to generate synthetic data
+    """
+    if not sdv_installed:
+        # Inform the user that sdv library is required
+        print("The 'sdv' library is required to generate synthetic data.")
+        print("Please install it by running: pip install sdv==1.10.0")
+        return None
+
+    # Fit the synthesizer to the real data
+    metadata = SingleTableMetadata()
+    metadata.detect_from_dataframe(data)
+    synthesizer = GaussianCopulaSynthesizer(metadata)
+    synthesizer.fit(data)
+
+    return synthesizer

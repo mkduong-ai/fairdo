@@ -79,7 +79,7 @@ def genetic_algorithm(f, d,
 
     Returns
     -------
-    best_solution: ndarray shape (d,)
+    best_solution: ndarray, shape (d,)
         The best solution found by the algorithm.
     best_fitness: float
         The fitness of the best solution found by the algorithm.

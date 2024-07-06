@@ -1,8 +1,5 @@
 """
-Optimization Algorithms
-=======================
-
-The ``optimize`` package provides optimization algorithms (single- and multi-objective) that take an objective function
+The ``fairdo.optimize`` package provides optimization algorithms (single- and multi-objective) that take an objective function
 or multiple objective functions and the dimensionality of the problem
 as inputs and returns the best solution found by the algorithm
 as a numpy array.
@@ -16,7 +13,7 @@ and :math:`\mathbf{b}` be the binary mask, then the optimization problem is defi
 
     \\mathbf{b}^* = \\arg\\!\\min_{\\mathbf{b} \\in \\{0, 1\\}^d} \\quad \\psi(\\{d_i \\in \\mathcal{D} \\mid b_i = 1\\}).
 
-The ``optimize`` module is divided into following subpackages:
+The ``fairdo.optimize`` module is divided into following subpackages:
 
 - ``single``: This subpackage contains single-objective optimization algorithms.
 - ``multi``: This subpackage contains multi-objective optimization algorithms.

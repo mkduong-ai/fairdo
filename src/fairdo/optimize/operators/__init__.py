@@ -1,7 +1,4 @@
 """
-Genetic Operators
-========================
-
 This package contains numerous methods for different genetic operators.
 The methods are implemented in respective submodules:
 ``initialization``, ``selection``, ``crossover``, and ``mutation``.
