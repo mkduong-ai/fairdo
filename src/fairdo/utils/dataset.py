@@ -1,3 +1,7 @@
+"""
+This module contains utility functions to load, preprocess, and synthesize datasets.
+"""
+
 # Standard library imports
 import io
 import zipfile

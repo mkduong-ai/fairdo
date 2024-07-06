@@ -1,3 +1,7 @@
+"""
+Helper functions for the fairdo package.
+"""
+
 from itertools import combinations
 import numpy as np
 
@@ -18,6 +22,19 @@ def nunique(a, axis=0):
     -------
     np.array
         The number of unique elements along the given axis.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from fairdo.utils.helper import nunique
+    >>> nunique(np.array([1, 2, 3, 1, 2, 3]))
+    array([3])
+
+    >>> nunique(np.array([[1, 2, 3], [1, 2, 3]]), axis=1)
+    array([3, 3])
+
+    >>> nunique(np.array([[1, 2, 3], [1, 2, 3]]), axis=0)
+    array([1, 1, 1])
     """
     if a.ndim == 1:
         a = a.reshape(-1,1)
@@ -49,5 +66,11 @@ def generate_pairs(lst):
     -------
     list
         list of pairs of elements
+
+    Examples
+    --------
+    >>> from fairdo.utils.helper import generate_pairs
+    >>> generate_pairs([1, 2, 3])
+    [(1, 2), (1, 3), (2, 3)]
     """
     return list(combinations(lst, 2))
