@@ -153,9 +153,9 @@ def nmi(y: np.array, z: np.array, **kwargs) -> float:
     Parameters
     ----------
     y : np.array, shape (n_samples,)
-        Flattened array, can be a prediction or the truth label.
+        Flattened array, can be a prediction or the truth label. Discrete values.
     z : np.array, shape (n_samples,)
-        Flattened array of the same shape as y.
+        Flattened array of the same shape as y. Discrete values.
     **kwargs
         Additional keyword arguments. These are not currently used.
 
@@ -197,9 +197,9 @@ def mi(y: np.array, z: np.array, bins=2, **kwargs) -> float:
     Parameters
     ----------
     y : np.array (n_samples,)
-        Flattened array, can be a prediction or the truth label.
+        Flattened array, can be a prediction or the truth label. Discrete values.
     z : np.array (n_samples,)
-        Flattened array of the same shape as y.
+        Flattened array of the same shape as y. Discrete values.
     bins : int, optional
         Number of bins for discretization. Default is 2.
     **kwargs
@@ -240,7 +240,7 @@ def entropy_estimate_cat(x: np.array, **kwargs) -> float:
     Parameters
     ----------
     x : np.array (n_samples,)
-        Array of shape (n_samples,) containing the labels.
+        Array of shape (n_samples,) containing the categorical labels as numerical values.
     
     Returns
     -------
@@ -267,16 +267,26 @@ def entropy_estimate_cat(x: np.array, **kwargs) -> float:
 def joint_entropy_cat(x: np.array):
     """Calculate the joint entropy of multiple categorical variables.
     The joint entropy is a measure of the information/surprise/uncertainty of a set of random variables.
+    Let :math:`X = (x^(1), x^(2), \\ldots, x^(m)` be a set of categorical variables, i.e.,
+    multivariate random variable, then the joint entropy is calculated as:
+
+    .. math::
+        H(X) = - \\sum_{i=1}^{n} p(X_i) \\log_2 p(X_i)
+        \\iff H(X) = - \\sum_{i=1}^{n} p(x_i^(1), \\ldots, x_i^(m)) \\log_2 p(x_i^(1), \\ldots, x_i^(m))
 
     Parameters
     ----------
     x : np.array (n_samples, n_variables)
-        Array of shape (n_samples, n_variables) containing the labels.
+        Array of shape (n_samples, n_variables) containing the labels as numerical values.
     
     Returns
     -------
     float
-        The joint entropy of the categorical variables.
+        The joint entropy of the categorical variables in the array ``x``.
+
+    References
+    ----------
+    [1] Shannon, C. E. (1948). A mathematical theory of communication. Bell system technical journal, 27(3), 379-423.
 
     Examples
     --------
@@ -298,7 +308,8 @@ def joint_entropy_cat(x: np.array):
 
 def conditional_entropy_cat(x: np.array, y: np.array) -> float:
     """
-    Calculate the conditional entropy of a categorical variable given another categorical variable.
+    Calculate the conditional entropy of a categorical variable ``x`` given another categorical variable ``y``, i.e.,
+    :math:`H(X|Y)`.
 
     Parameters
     ----------
@@ -306,12 +317,25 @@ def conditional_entropy_cat(x: np.array, y: np.array) -> float:
         Array of shape (n_samples,) containing the labels.
     
     y : np.array (n_samples,) or (n_samples, n_variables)
-        Array containing the labels.
+        Array containing the labels. Can represent a single or multiple categorical variables.
     
     Returns
     -------
     float
         The conditional entropy of the label distribution.
+
+    References
+    ----------
+    [1] Shannon, C. E. (1948). A mathematical theory of communication. Bell system technical journal, 27(3), 379-423.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from fairdo.metrics.dependence import conditional_entropy_cat
+    >>> x = np.array([0, 1, 1, 0, 1, 0, 0, 1])
+    >>> y = np.array([0, 1, 1, 0, 1, 0, 0, 1])
+    >>> conditional_entropy_cat(x, y)
+    0
     """
     xy = np.column_stack((x, y))
 
@@ -326,8 +350,14 @@ def conditional_entropy_cat(x: np.array, y: np.array) -> float:
 
 
 def total_correlation(*arrays) -> float:
-    """Calculate the total correlation (multi-information) of multiple categorical variables.
-    
+    """Calculate the total correlation (multi-information) of multiple categorical variables [1]_ [2]_.
+    Given a set of :math:`m` categorical variables :math:`X = (X_1, X_2, \\ldots, X_m)`, the total correlation is:
+
+    .. math::
+        TC(X) = \\left(\\sum_{i=1}^{m} H(X_i)\\right) - H(X_1, X_2, \\ldots, X_m)
+
+    where :math:`H(X_i)` is the entropy of the i-th variable and :math:`H(X_1, X_2, \\ldots, X_m)` is the joint entropy.
+
     Parameters
     ----------
     *arrays: np.array
@@ -340,8 +370,18 @@ def total_correlation(*arrays) -> float:
         
     References
     ----------
-    [1] Watanabe, S. (1960). Information theoretical analysis of multivariate correlation. IBM Journal of Research and Development, 4(1), 66-82.
-    [2] Garner, W. R. (1962). Uncertainty and Structure as Psychological Concepts, JohnWiley & Sons, New York
+    .. [1] Watanabe, S. (1960). Information theoretical analysis of multivariate correlation.
+        IBM Journal of Research and Development, 4(1), 66-82.
+    .. [2] Garner, W. R. (1962). Uncertainty and Structure as Psychological Concepts, JohnWiley & Sons, New York
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from fairdo.metrics.dependence import total_correlation
+    >>> x = np.array([0, 1, 1, 0, 1, 0, 0, 1])
+    >>> y = 1 - x
+    >>> total_correlation(x, y)
+    1.0
     """
     # Calculate sum of individual entropies
     try:
@@ -368,7 +408,15 @@ def total_correlation(*arrays) -> float:
 
 
 def dual_total_correlation(*arrays):
-    """Calculate the dual total correlation using mutual information for more than two variables.
+    """Calculate the dual total correlation [1]_ for more than two variables.
+    Given a set of :math:`m` categorical variables :math:`X = (X_1, X_2, \\ldots, X_m)`, it is given by:
+
+    .. math::
+        DTC(X) = H(X_1, X_2, \\ldots, X_m) - \\sum_{i=1}^{m} H(X_i | X_1, X_2, \\ldots, X_{i-1}, X_{i+1}, \\ldots, X_m)
+
+    where :math:`H(X_1, X_2, \\ldots, X_m)` is the joint entropy and
+    :math:`H(X_i | X_1, X_2, \\ldots, X_{i-1}, X_{i+1}, \\ldots, X_m)`
+    is the conditional entropy of :math:`X_i` given all other variables.
     
     Parameters
     ----------
@@ -382,8 +430,17 @@ def dual_total_correlation(*arrays):
 
     References
     ----------
-    [1] Han, Te Sun. (1978). Nonnegative entropy measures of multivariate symmetric correlations.
+    .. [1] Han, Te Sun. (1978). Nonnegative entropy measures of multivariate symmetric correlations.
         Information and Control. 36 (2): 133–156.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from fairdo.metrics.dependence import dual_total_correlation
+    >>> x = np.array([0, 1, 1, 0, 1, 0, 0, 1])
+    >>> y = 1 - x
+    >>> dual_total_correlation(x, y)
+    1.0
     """
     n = len(arrays)
     if n < 2:
@@ -406,8 +463,13 @@ def dual_total_correlation(*arrays):
 
 def o_information(*arrays):
     """
-    Calculate the O-information of multiple categorical variables.
-    The O-information is the difference between the total correlation and the dual total correlation.
+    Calculate the O-information [1]_ of multiple categorical variables.
+    The O-information is the difference between the total correlation and the dual total correlation:
+
+    .. math::
+        O(X) = TC(X) - DTC(X)
+
+    where :math:`TC(X)` is the total correlation and :math:`DTC(X)` is the dual total correlation.
     
     Parameters
     ----------
@@ -417,7 +479,22 @@ def o_information(*arrays):
     Returns
     -------
     float
-        The O-information of the categorical variables."""
+        The O-information of the categorical variables.
+
+    References
+    ----------
+    .. [1] Han, Te Sun. (1978). Nonnegative entropy measures of multivariate symmetric correlations.
+        Information and Control. 36 (2): 133–156.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from fairdo.metrics.dependence import o_information
+    >>> x = np.array([0, 1, 1, 0, 1, 0, 0, 1])
+    >>> y = 1 - x
+    >>> o_information(x, y)
+    0.0
+    """
     return total_correlation(*arrays) - dual_total_correlation(*arrays)
 
 
@@ -425,11 +502,13 @@ def pearsonr(y: np.array, z: np.array, **kwargs) -> float:
     """
     Calculate the Pearson correlation coefficient between two arrays.
     The protected attribute `z` can be binary or non-binary.
+    It is given by:
 
-    The Pearson correlation coefficient measures the linear relationship between two variables.
-    The calculation of the Pearson correlation coefficient is not affected by scaling,
-    and it ranges from -1 to 1. A value of 1 implies a perfect positive correlation,
-    while a value of -1 implies a perfect negative correlation.
+    .. math::
+        \\text{Pearson}(y, z) = \\frac{\\text{cov}(y, z)}{\\sigma_y \\cdot \\sigma_z}
+
+    where :math:`\\text{cov}(y, z)` is the covariance between `y` and `z`, and :math:`\\sigma_y` and :math:`\\sigma_z`
+    are the standard deviations of `y` and `z`, respectively.
 
     Parameters
     ----------
@@ -444,6 +523,22 @@ def pearsonr(y: np.array, z: np.array, **kwargs) -> float:
     -------
     float
         The Pearson correlation coefficient between y and z.
+
+    Notes
+    -----
+    The Pearson correlation coefficient measures the linear relationship between two variables.
+    The calculation of the Pearson correlation coefficient is not affected by scaling,
+    and it ranges from -1 to 1. A value of 1 implies a perfect positive correlation,
+    while a value of -1 implies a perfect negative correlation.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from fairdo.metrics.dependence import pearsonr
+    >>> y = np.array([0, 1, 1, 0, 1, 0, 0, 1])
+    >>> z = 1 - y
+    >>> pearsonr(y, z)
+    -0.9999999999999998
     """
     return np.corrcoef(y.reshape(1, -1), z.reshape(1, -1))[0, 1]
 
@@ -473,6 +568,15 @@ def pearsonr_abs(y: np.array, z: np.array, **kwargs) -> float:
     -------
     float
         The absolute value of the Pearson correlation coefficient between y and z.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from fairdo.metrics.dependence import pearsonr_abs
+    >>> y = np.array([0, 1, 1, 0, 1, 0, 0, 1])
+    >>> z = 1 - y
+    >>> pearsonr_abs(y, z)
+    0.9999999999999998
     """
     return np.abs(pearsonr(y, z))
 
