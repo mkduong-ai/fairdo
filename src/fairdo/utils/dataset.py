@@ -8,8 +8,6 @@ import zipfile
 
 # Related third-party imports
 import pandas as pd
-from sdv.metadata import SingleTableMetadata
-from sdv.single_table import GaussianCopulaSynthesizer
 from sklearn.preprocessing import LabelEncoder
 from requests import get
 
