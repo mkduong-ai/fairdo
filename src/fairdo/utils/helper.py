@@ -55,7 +55,7 @@ def nunique(a, axis=0):
 
 def generate_pairs(lst):
     """
-    Generate all possible pairs of elements in a list without repetitions
+    Generate all possible pairs :math:`(i, j)` of elements from a list with :math:`i < j`.
 
     Parameters
     ----------

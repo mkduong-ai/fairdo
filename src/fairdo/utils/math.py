@@ -1,12 +1,16 @@
 """
 Mixed math functions used throughout the package.
+
+References
+----------
+.. [1] Shannon, C. E. (1948). A mathematical theory of communication. Bell system technical journal, 27(3), 379-423.
 """
 
 import numpy as np
 
 
 def entropy_estimate_cat(x: np.array, **kwargs) -> float:
-    """Calculate the entropy of a categorical variable.
+    """Calculate the entropy [1]_ of a categorical variable.
     It is caclulated as:
 
     .. math::
@@ -25,10 +29,6 @@ def entropy_estimate_cat(x: np.array, **kwargs) -> float:
     float
         The entropy of the label distribution.
 
-    References
-    ----------
-    [10] Shannon, C. E. (1948). A mathematical theory of communication. Bell system technical journal, 27(3), 379-423.
-
     Examples
     --------
     >>> import numpy as np
@@ -43,14 +43,14 @@ def entropy_estimate_cat(x: np.array, **kwargs) -> float:
 
 
 def joint_entropy_cat(x: np.array):
-    """Calculate the joint entropy of multiple categorical variables.
+    """Calculate the joint entropy [1]_ of multiple categorical variables.
     The joint entropy is a measure of the information/surprise/uncertainty of a set of random variables.
-    Let :math:`X = (x^{(1)}, x^{(2)}, \\ldots, x^{(m)})` be a set of categorical variables, i.e.,
+    Let :math:`X = (X_1, X_2, \\ldots, X_m)` be a set of categorical variables, i.e.,
     multivariate random variable, then the joint entropy is calculated as:
 
     .. math::
-        H(X) = - \\sum_{i=1}^{n} p(X_i) \\log_2 p(X_i)
-        = - \\sum_{i=1}^{n} p(x_i^{(1)}, \\ldots, x_i^{(m)}) \\log_2 p(x_i^{(1)}, \\ldots, x_i^{(m)})
+        H(X) = -\\sum_{x_1 \\in\\mathcal X_1} \\ldots \\sum_{x_m \\in\\mathcal X_m} P(x_1, ..., x_m)
+        \\log_2[P(x_1, ..., x_m)]
 
     Parameters
     ----------
@@ -61,10 +61,6 @@ def joint_entropy_cat(x: np.array):
     -------
     float
         The joint entropy of the categorical variables in the array ``x``.
-
-    References
-    ----------
-    [9] Shannon, C. E. (1948). A mathematical theory of communication. Bell system technical journal, 27(3), 379-423.
 
     Examples
     --------
@@ -86,8 +82,14 @@ def joint_entropy_cat(x: np.array):
 
 def conditional_entropy_cat(x: np.array, y: np.array) -> float:
     """
-    Calculate the conditional entropy of a categorical variable ``x`` given another categorical variable ``y``, i.e.,
-    :math:`H(X|Y)`.
+    Calculate the conditional entropy [1]_ of a categorical variable ``x`` given another categorical variable ``y``,
+    i.e.,
+
+    .. math::
+        H(X|Y) = H(X, Y) - H(Y)
+
+    where :math:`H(X, Y)` is the joint entropy of the categorical variables ``x`` and ``y``
+    and :math:`H(Y)` is the entropy of the variable ``y``.
 
     Parameters
     ----------
@@ -101,10 +103,6 @@ def conditional_entropy_cat(x: np.array, y: np.array) -> float:
     -------
     float
         The conditional entropy of the label distribution.
-
-    References
-    ----------
-    [8] Shannon, C. E. (1948). A mathematical theory of communication. Bell system technical journal, 27(3), 379-423.
 
     Examples
     --------

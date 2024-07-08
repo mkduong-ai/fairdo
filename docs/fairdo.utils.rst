@@ -24,3 +24,11 @@ fairdo.utils.helper module
    :members:
    :undoc-members:
    :show-inheritance:
+
+fairdo.utils.math module
+------------------------
+
+.. automodule:: fairdo.utils.math
+   :members:
+   :undoc-members:
+   :show-inheritance:
