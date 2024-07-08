@@ -1,4 +1,4 @@
-fairdo>=0.1.9
+fairdo>=0.1.10
 sphinx>=7.1.2
 #furo>=2023.7.26
 pydata-sphinx-theme>=0.14.4
