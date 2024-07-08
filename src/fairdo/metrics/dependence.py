@@ -11,6 +11,9 @@ import numpy as np
 from scipy.stats import rankdata
 from sklearn.metrics import mutual_info_score, normalized_mutual_info_score
 
+# fairdo
+from fairdo.utils.math import entropy_estimate_cat, joint_entropy_cat, conditional_entropy_cat
+
 import warnings
 
 
@@ -227,134 +230,12 @@ def mi(y: np.array, z: np.array, bins=2, **kwargs) -> float:
     return mi_value
 
 
-def entropy_estimate_cat(x: np.array, **kwargs) -> float:
-    """Calculate the entropy of a categorical variable.
-    It is caclulated as:
-
-    .. math::
-        H(X) = - \\sum_{i=1}^{n} p(X_i) \\log_2 p(X_i)
-
-    where :math:`p(X_i)` is the probability of the i-th category. The entropy is a measure of the information/uncertainty
-    of a random variable. Higher values indicate more information/uncertainty.
-    
-    Parameters
-    ----------
-    x : np.array (n_samples,)
-        Array of shape (n_samples,) containing the categorical labels as numerical values.
-    
-    Returns
-    -------
-    float
-        The entropy of the label distribution.
-
-    References
-    ----------
-    [10] Shannon, C. E. (1948). A mathematical theory of communication. Bell system technical journal, 27(3), 379-423.
-
-    Examples
-    --------
-    >>> import numpy as np
-    >>> from fairdo.metrics.dependence import entropy_estimate_cat
-    >>> x = np.array([0, 1, 1, 0, 1, 0, 0, 1])
-    >>> entropy_estimate_cat(x)
-    1.0
-    """
-    prob_dist = np.bincount(x) / len(x)
-    prob_dist = prob_dist[prob_dist > 0]  # Remove zeros
-    return -np.sum(prob_dist * np.log2(prob_dist))
-
-
-def joint_entropy_cat(x: np.array):
-    """Calculate the joint entropy of multiple categorical variables.
-    The joint entropy is a measure of the information/surprise/uncertainty of a set of random variables.
-    Let :math:`X = (x^{(1)}, x^{(2)}, \\ldots, x^{(m)}` be a set of categorical variables, i.e.,
-    multivariate random variable, then the joint entropy is calculated as:
-
-    .. math::
-        H(X) = - \\sum_{i=1}^{n} p(X_i) \\log_2 p(X_i)
-        = - \\sum_{i=1}^{n} p(x_i^{(1)}, \\ldots, x_i^{(m)}) \\log_2 p(x_i^{(1)}, \\ldots, x_i^{(m)})
-
-    Parameters
-    ----------
-    x : np.array (n_samples, n_variables)
-        Array of shape (n_samples, n_variables) containing the labels as numerical values.
-    
-    Returns
-    -------
-    float
-        The joint entropy of the categorical variables in the array ``x``.
-
-    References
-    ----------
-    [9] Shannon, C. E. (1948). A mathematical theory of communication. Bell system technical journal, 27(3), 379-423.
-
-    Examples
-    --------
-    >>> import numpy as np
-    >>> from fairdo.metrics.dependence import joint_entropy_cat
-    >>> x = np.array([[0, 1, 1, 0, 1, 0, 0, 1],
-    ...               [0, 1, 1, 0, 1, 0, 0, 1]])
-    >>> joint_entropy_cat(x)
-    -0.0
-    """
-    if x.ndim > 1:
-        x_idx = np.ravel_multi_index(x.T, np.max(x, axis=0) + 1)
-    else:
-        x_idx = x
-    prob_dist = np.bincount(x_idx) / len(x_idx)
-    prob_dist = prob_dist[prob_dist > 0]
-    return -np.sum(prob_dist * np.log2(prob_dist))
-
-
-def conditional_entropy_cat(x: np.array, y: np.array) -> float:
-    """
-    Calculate the conditional entropy of a categorical variable ``x`` given another categorical variable ``y``, i.e.,
-    :math:`H(X|Y)`.
-
-    Parameters
-    ----------
-    x : np.array (n_samples,)
-        Array of shape (n_samples,) containing the labels.
-    
-    y : np.array (n_samples,) or (n_samples, n_variables)
-        Array containing the labels. Can represent a single or multiple categorical variables.
-    
-    Returns
-    -------
-    float
-        The conditional entropy of the label distribution.
-
-    References
-    ----------
-    [8] Shannon, C. E. (1948). A mathematical theory of communication. Bell system technical journal, 27(3), 379-423.
-
-    Examples
-    --------
-    >>> import numpy as np
-    >>> from fairdo.metrics.dependence import conditional_entropy_cat
-    >>> x = np.array([0, 1, 1, 0, 1, 0, 0, 1])
-    >>> y = np.array([0, 1, 1, 0, 1, 0, 0, 1])
-    >>> conditional_entropy_cat(x, y)
-    0
-    """
-    xy = np.column_stack((x, y))
-
-    # Calculate the entropy of the joint distribution H(X, Y)
-    H_XY = joint_entropy_cat(xy)
-
-    # Calculate the entropy of Y
-    H_Y = joint_entropy_cat(y)
-
-    # Calculate the conditional entropy H(X|Y) = H(X, Y) - H(Y)
-    return H_XY - H_Y
-
-
 def total_correlation(*arrays) -> float:
     """Calculate the total correlation (multi-information) of multiple categorical variables [13]_ [4]_.
     Given a set of :math:`m` categorical variables :math:`X = (X_1, X_2, \\ldots, X_m)`, the total correlation is:
 
     .. math::
-        TC(X) = \\left(\\sum_{i=1}^{m} H(X_i)\\right) - H(X_1, X_2, \\ldots, X_m)
+        TC(X) = TC(X_1, X_2, \\ldots, X_m) = \\left(\\sum_{i=1}^{m} H(X_i)\\right) - H(X_1, X_2, \\ldots, X_m)
 
     where :math:`H(X_i)` is the entropy of the i-th variable and :math:`H(X_1, X_2, \\ldots, X_m)` is the joint entropy.
 
@@ -412,7 +293,7 @@ def dual_total_correlation(*arrays):
     Given a set of :math:`m` categorical variables :math:`X = (X_1, X_2, \\ldots, X_m)`, it is given by:
 
     .. math::
-        DTC(X) = H(X_1, X_2, \\ldots, X_m) - \\sum_{i=1}^{m} H(X_i | X_1, X_2, \\ldots, X_{i-1}, X_{i+1}, \\ldots, X_m)
+        DTC(X) = DTC(X_1, X_2, \\ldots, X_m) = (X_1, X_2, \\ldots, X_m) - \\sum_{i=1}^{m} H(X_i | X_1, X_2, \\ldots, X_{i-1}, X_{i+1}, \\ldots, X_m)
 
     where :math:`H(X_1, X_2, \\ldots, X_m)` is the joint entropy and
     :math:`H(X_i | X_1, X_2, \\ldots, X_{i-1}, X_{i+1}, \\ldots, X_m)`
@@ -467,9 +348,9 @@ def o_information(*arrays):
     The O-information is the difference between the total correlation and the dual total correlation:
 
     .. math::
-        O(X) = TC(X) - DTC(X)
+        O(X_1, X_2, \\ldots, X_m) = TC(X_1, X_2, \\ldots, X_m) - DTC(X_1, X_2, \\ldots, X_m)
 
-    where :math:`TC(X)` is the total correlation and :math:`DTC(X)` is the dual total correlation.
+    where :math:`TC` is the total correlation and :math:`DTC` is the dual total correlation.
     
     Parameters
     ----------
@@ -550,7 +431,7 @@ def pearsonr_abs(y: np.array, z: np.array, **kwargs) -> float:
     It is given by:
 
     .. math::
-        \\text{Pearson}(Y, Z) = |\\frac{\\text{cov}(Y, Z)}{\\sigma_Y \\cdot \\sigma_Z}|
+        \\text{Pearson}(Y, Z) = \\left|\\frac{\\text{cov}(Y, Z)}{\\sigma_Y \\cdot \\sigma_Z}\\right|
 
     where :math:`\\text{cov}(Y, Z)` is the covariance between :math:`Y` and :math:`Z`,
     and :math:`\\sigma_Y` and :math:`\\sigma_Z` are the respective standard deviations.
