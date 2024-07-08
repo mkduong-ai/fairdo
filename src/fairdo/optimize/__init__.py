@@ -17,7 +17,8 @@ The ``fairdo.optimize`` module is divided into following subpackages:
 
 - ``single``: This subpackage contains single-objective optimization algorithms.
 - ``multi``: This subpackage contains multi-objective optimization algorithms.
-- ``operators``: This subpackage contains ``initialization``, ``selection``, ``crossover``, and ``mutation`` operators used in genetic algorithms.
+- ``operators``: This subpackage contains ``initialization``, ``selection``, ``crossover``, and ``mutation`` operators\
+    used in genetic algorithms.
 
 References
 ----------

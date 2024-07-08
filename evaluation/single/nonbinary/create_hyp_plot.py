@@ -12,7 +12,7 @@ matplotlib.rcParams['ps.fonttype'] = 42
 sns.set(font_scale=0.8)
 
 # Local application/library specific imports
-from fairdo.metrics import (normalized_mutual_information,
+from fairdo.metrics import (nmi,
                             statistical_parity_abs_diff,
                             statistical_parity_abs_diff_max,
                             statistical_parity_abs_diff_mean)
@@ -109,7 +109,7 @@ def settings(data_str='compas', objective_str='remove_synthetic',
     disc_dict = {
         'Sum SDP': statistical_parity_abs_diff,
         # 'Maximal SDP': statistical_parity_abs_diff_max,
-        # 'NMI': normalized_mutual_information
+        # 'NMI': nmi
     }
 
     # load the results

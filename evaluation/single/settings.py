@@ -56,7 +56,7 @@ def get_evaluation_config(config='comparison_preprocessors', frac=0.75, plot=Fal
         dataset_pro_attributes = [('compas', 'race')]
 
         metrics = [#'statistical_parity_absolute_difference',
-                   'normalized_mutual_information',
+                   'nmi',
                    'consistency_score_objective',
                    'disparate_impact_ratio_objective',
                    'pearsonr_abs']

@@ -4,7 +4,7 @@ from settings import get_evaluation_config
 
 x_axis_mapper = {'statistical_parity_absolute_difference': 'Statistical Parity Abs Diff',
                  'disparate_impact_ratio_objective': 'Disparate Impact Obj',
-                 'normalized_mutual_information': 'Normalized MI',
+                 'nmi': 'Normalized MI',
                  'consistency_score_objective': 'Consistency Obj',
                  'pearsonr': 'Pearson Correlation',
                  'pearsonr_abs': 'Pearson Corr. Abs',}

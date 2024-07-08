@@ -12,7 +12,7 @@ import pathos.multiprocessing as mp
 
 # fairdo imports
 from fairdo.utils.dataset import load_data
-from fairdo.metrics import (normalized_mutual_information,
+from fairdo.metrics import (nmi,
                             statistical_parity_abs_diff,
                             statistical_parity_abs_diff_max,
                             statistical_parity_abs_diff_mean)
@@ -279,7 +279,7 @@ def setup_experiment(data_str, objective_str):
     disc_dict = {
         'Statistical Disparity Sum': statistical_parity_abs_diff,
         'Maximal Statistical Disparity': statistical_parity_abs_diff_max,
-        'NMI': normalized_mutual_information,
+        'NMI': nmi,
         # 'Size': count_size,
         # 'Distinct Groups': count_groups,
         'Sanity Check': sanity_check
@@ -341,7 +341,7 @@ def setup_experiment_hyperparameter(data_str, objective_str):
     disc_dict = {
         'Statistical Disparity Sum': statistical_parity_abs_diff,
         # 'Maximal Statistical Disparity': statistical_parity_abs_diff_max,
-        # 'NMI': normalized_mutual_information,
+        # 'NMI': nmi,
         # 'Size': count_size,
         # 'Distinct Groups': count_groups,
         # 'Sanity Check': sanity_check

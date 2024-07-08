@@ -9,18 +9,18 @@ fairdo.metrics package
 Submodules
 ----------
 
-fairdo.metrics.dataset module
------------------------------
+fairdo.metrics.dependence module
+--------------------------------
 
-.. automodule:: fairdo.metrics.dataset
+.. automodule:: fairdo.metrics.dependence
    :members:
    :undoc-members:
    :show-inheritance:
 
-fairdo.metrics.independence module
-----------------------------------
+fairdo.metrics.group module
+---------------------------
 
-.. automodule:: fairdo.metrics.independence
+.. automodule:: fairdo.metrics.group
    :members:
    :undoc-members:
    :show-inheritance:
@@ -37,14 +37,6 @@ fairdo.metrics.penalty module
 -----------------------------
 
 .. automodule:: fairdo.metrics.penalty
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-fairdo.metrics.prediction module
---------------------------------
-
-.. automodule:: fairdo.metrics.prediction
    :members:
    :undoc-members:
    :show-inheritance:

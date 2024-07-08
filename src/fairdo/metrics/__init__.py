@@ -5,16 +5,16 @@ The metrics are divided into following subpackages:
 - ``fairdo.metrics.group``: This subpackage provides metrics to measure `group fairness`.
 - ``fairdo.metrics.individual``: This subpackage provides metrics to measure `individual fairness`.
 - ``fairdo.metrics.dependence``: This subpackage provides metrics to measure the `(in)dependency` between two variables.
-- ``fairdo.metrics.penalty``: This subpackage contains specialized penalty functions to penalize fairness metrics
-    to guarantee certain constraints such as group coverage [2]_.
+- ``fairdo.metrics.penalty``: This subpackage contains specialized penalty functions to penalize fairness metrics to\
+    guarantee certain constraints such as group coverage [2]_.
 
 Notes
 -----
 
 .. [1] These metrics are used to measure fairness in datasets. They are not to be confused with the metrics
-        used to evaluate the performance of machine learning models. Strictly speaking, these metrics do not
-        necessarily satisfy the properties of a metric, but they are commonly referred to as metrics in the
-        fairness literature or other fairness packages [3]_.
+    used to evaluate the performance of machine learning models. Strictly speaking, these metrics do not
+    necessarily satisfy the properties of a metric, but they are commonly referred to as metrics in the
+    fairness literature or other fairness packages [3]_.
 
 References
 ----------

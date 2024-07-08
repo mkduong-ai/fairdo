@@ -35,6 +35,16 @@ def downcast(data):
     Returns
     -------
     data : pandas DataFrame
+
+    Examples
+    --------
+    >>> import pandas as pd
+    >>> from fairdo.utils.dataset import downcast
+    >>> data = pd.DataFrame({'a': [1, 2], 'b': [1.0, 2.0]})
+    >>> data = downcast(data)
+    >>> print(data.dtypes)
+    a      int8
+    b    float32
     """
     fcols = data.select_dtypes('float').columns
     icols = data.select_dtypes('integer').columns

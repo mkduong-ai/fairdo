@@ -9,7 +9,7 @@ from sklearn.metrics import roc_auc_score, balanced_accuracy_score, f1_score, ac
     recall_score
 
 ## fairness metrics
-from fairdo.metrics import pearsonr, pearsonr_abs, mutual_information, normalized_mutual_information,\
+from fairdo.metrics import pearsonr, pearsonr_abs, mi, nmi,\
     rdc, statistical_parity_abs_diff, \
     equal_opportunity_abs_diff, disparate_impact_ratio, disparate_impact_ratio_objective,\
     predictive_equality_abs_diff, average_odds_error, average_odds_difference,\
@@ -87,10 +87,10 @@ def evaluate_ml_models(results: dict, models_trained: dict, X_test, y_test, z_te
             # Fairness Notion
             # independence
             results[key_model][key_preproc]['Mutual Information'] = \
-                mutual_information(y_pred_argmax, z_test)
+                mi(y_pred_argmax, z_test)
 
             results[key_model][key_preproc]['Normalized MI'] = \
-                normalized_mutual_information(y_pred_argmax, z_test)
+                nmi(y_pred_argmax, z_test)
 
             results[key_model][key_preproc]['Randomized Dependence Coefficient'] = \
                 rdc(y_pred_argmax, z_test)
