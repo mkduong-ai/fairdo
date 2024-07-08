@@ -1,30 +1,34 @@
 """
-The ``fairdo.metrics`` package provides a collection of metrics to measure fairness and discrimination in datasets.
-It is divided into four submodules:
+The ``fairdo.metrics`` package provides a collection of metrics [1]_ to measure fairness/discrimination in datasets.
+The metrics are divided into following subpackages:
 
-1. `dataset`: This submodule provides metrics to evaluate fairness at the dataset level.
-Fairness is measured by comparing the distribution of the label :math:`y` across different groups defined by
-a protected attribute :math:`z`., i.e., :math:`P(y|z)`.
-:math:`y` can be the true label or a prediction, and :math:`z` can be a single protected attribute
-or a list of protected attributes depending on the metric.
+- ``fairdo.metrics.group``: This subpackage provides metrics to measure `group fairness`.
+- ``fairdo.metrics.individual``: This subpackage provides metrics to measure `individual fairness`.
+- ``fairdo.metrics.dependence``: This subpackage provides metrics to measure the `(in)dependency` between two variables.
+- ``fairdo.metrics.penalty``: This subpackage contains specialized penalty functions to penalize fairness metrics
+    to guarantee certain constraints such as group coverage [2]_.
 
-2. `independence`: This submodule provides metrics (derived from statistics) to measure the independence
-between two variables. They are used to measure the independence between the label :math:`y` and the
-protected attribute :math:`z`.
-They are similar to the metrics in the `dataset` submodule when it comes to the requirements.
+Notes
+-----
 
-3. `individual`: This submodule provides metrics to measure individual fairness, i.e.,
-similar individuals should be treated similarly. Metrics in this submodule require the label :math:`y`
-and the data :math:`x`.
-:math:`x` is a matrix of individuals and features (n_individuals, n_features),
-and :math:`y` can be the true label or a prediction.
+.. [1] These metrics are used to measure fairness in datasets. They are not to be confused with the metrics
+        used to evaluate the performance of machine learning models. Strictly speaking, these metrics do not
+        necessarily satisfy the properties of a metric, but they are commonly referred to as metrics in the
+        fairness literature or other fairness packages [3]_.
 
-4. `prediction`: This submodule provides metrics to evaluate the fairness of predictions made by a
-machine learning model. This submodule requires the true label :math:`y_{true}`,
-the predicted label :math:`y_{pred}`.
+References
+----------
 
-Each submodule provides a different perspective on fairness, and together they provide a comprehensive toolkit
-for measuring fairness in datasets.
+.. [2] Manh Khoi Duong and Stefan Conrad. (2024). Trusting Fair Data: Leveraging Quality in
+    Fairness-Driven Data Removal Techniques. In DaWaK 2024: Big Data Analytics
+    and Knowledge Discovery, 26th International Conference. Springer Nature Switzerland.
+
+.. [3] Rachel K. E. Bellamy, Kuntal Dey, Michael Hind, Samuel C. Hoffman, Stephanie
+    Houde, Kalapriya Kannan, Pranay Lohia, Jacquelyn Martino, Sameep Mehta,
+    Aleksandra Mojsilovic, Seema Nagar, Karthikeyan Natesan Ramamurthy, John T.
+    Richards, Diptikalyan Saha, Prasanna Sattigeri, Moninder Singh, Kush R. Varsh-
+    ney, and Yunfeng Zhang. (2018). AI Fairness 360: An Extensible Toolkit for
+    Detecting, Understanding, and Mitigating Unwanted Algorithmic Bias. CoRR, abs/1810.01943.
 """
 
 from .group import *
