@@ -27,8 +27,7 @@ Each submodule provides a different perspective on fairness, and together they p
 for measuring fairness in datasets.
 """
 
-from fairdo.metrics.dataset import *
-from fairdo.metrics.independence import *
-from fairdo.metrics.individual import *
-from fairdo.metrics.prediction import *
-from fairdo.metrics.penalty import *
+from .group import *
+from .individual import *
+from .dependence import *
+from .penalty import *
