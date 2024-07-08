@@ -49,8 +49,8 @@ def joint_entropy_cat(x: np.array):
     multivariate random variable, then the joint entropy is calculated as:
 
     .. math::
-        H(X) = -\\sum_{x_1 \\in\\mathcal X_1} \\ldots \\sum_{x_m \\in\\mathcal X_m} P(x_1, ..., x_m)
-        \\log_2[P(x_1, ..., x_m)]
+        H(X) = -\\sum_{X_1 \\in\\mathcal X_1} \\ldots \\sum_{X_m \\in\\mathcal X_m} P(X_1, ..., X_m)
+        \\log_2[P(X_1, ..., X_m)]
 
     Parameters
     ----------
