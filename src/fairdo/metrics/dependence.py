@@ -87,12 +87,12 @@ def nmi_multi(y: np.array, z: np.array,
               positive_label=1,
               **kwargs):
     """
-    Compute the normalized mutual information for multiple non-binary protected attributes.
+    Compute the normalized mutual information [11]_ for multiple non-binary protected attributes.
 
-    This function calculates the normalized mutual information between ``y``` and each
+    This function calculates the normalized mutual information between ``y`` and each
     protected attribute in ``z``, and then aggregates these scores using the specified ``agg`` function.
     Let :math:`y` be the target variable and :math:`z` be the protected attributes, then the normalized mutual
-    information score for multi. protected attributes is calculated as (pythonic notation):
+    information score for multiple protected attributes is calculated as (pythonic notation):
 
     .. math::
         \\text{NMI}(y, z) = \\text{agg}(\\text{NMI}(y, z[:,0]), \\text{NMI}(y, z[:,1]), \\ldots, \\text{NMI}(y, z[:,-1]))
@@ -117,7 +117,7 @@ def nmi_multi(y: np.array, z: np.array,
 
     References
     ----------
-    [1] Strehl, A., Ghosh, J., & Mooney, R. J. (2002). Impact of similarity measures on web-page clustering.
+    .. [11] Strehl, A., Ghosh, J., & Mooney, R. J. (2002). Impact of similarity measures on web-page clustering.
         In Workshop on The WebKDD (pp. 58-64).
 
     Examples
@@ -145,10 +145,10 @@ def nmi(y: np.array, z: np.array, **kwargs) -> float:
     The formula is given by:
 
     .. math::
-        \\text{NMI}(y, z) = \\frac{2 \\cdot I(y, z)}{H(y) + H(z)}
+        \\text{NMI}(Y, Z) = \\frac{2 \\cdot I(Y, Z)}{H(Y) + H(Z)}
 
-    where :math:`I(y, z)` is the mutual information between `y` and `z`, and :math:`H(y)` and :math:`H(z)`
-    are the entropies of `y` and `z`, respectively.
+    where :math:`I(Y, Z)` is the mutual information between `Y` and `Z`, and :math:`H(Y)` and :math:`H(Z)`
+    are the entropies of :math:`Y` and :math:`Z`, respectively.
 
     Parameters
     ----------
@@ -180,7 +180,7 @@ def nmi(y: np.array, z: np.array, **kwargs) -> float:
 
 def mi(y: np.array, z: np.array, bins=2, **kwargs) -> float:
     """
-    Calculate the mutual information between two arrays.
+    Calculate the mutual information [12]_ between two arrays.
     The protected attribute ``z`` can be binary or non-binary.
 
     Mutual information is a measure of the mutual dependence between two variables.
@@ -212,7 +212,7 @@ def mi(y: np.array, z: np.array, bins=2, **kwargs) -> float:
 
     References
     ----------
-    [1] Cover, T. M., & Thomas, J. A. (2006). Elements of information theory. John Wiley & Sons.
+    .. [12] Cover, T. M., & Thomas, J. A. (2006). Elements of information theory. John Wiley & Sons.
 
     Examples
     --------
@@ -249,7 +249,7 @@ def entropy_estimate_cat(x: np.array, **kwargs) -> float:
 
     References
     ----------
-    [1] Shannon, C. E. (1948). A mathematical theory of communication. Bell system technical journal, 27(3), 379-423.
+    [10] Shannon, C. E. (1948). A mathematical theory of communication. Bell system technical journal, 27(3), 379-423.
 
     Examples
     --------
@@ -272,7 +272,7 @@ def joint_entropy_cat(x: np.array):
 
     .. math::
         H(X) = - \\sum_{i=1}^{n} p(X_i) \\log_2 p(X_i)
-        \\iff H(X) = - \\sum_{i=1}^{n} p(x_i^(1), \\ldots, x_i^(m)) \\log_2 p(x_i^(1), \\ldots, x_i^(m))
+        \\iff H(X) = - \\sum_{i=1}^{n} p(x_i^{(1)}, \\ldots, x_i^{(m)}) \\log_2 p(x_i^{(1)}, \\ldots, x_i^{(m)})
 
     Parameters
     ----------
@@ -286,7 +286,7 @@ def joint_entropy_cat(x: np.array):
 
     References
     ----------
-    [1] Shannon, C. E. (1948). A mathematical theory of communication. Bell system technical journal, 27(3), 379-423.
+    [9] Shannon, C. E. (1948). A mathematical theory of communication. Bell system technical journal, 27(3), 379-423.
 
     Examples
     --------
@@ -326,7 +326,7 @@ def conditional_entropy_cat(x: np.array, y: np.array) -> float:
 
     References
     ----------
-    [1] Shannon, C. E. (1948). A mathematical theory of communication. Bell system technical journal, 27(3), 379-423.
+    [8] Shannon, C. E. (1948). A mathematical theory of communication. Bell system technical journal, 27(3), 379-423.
 
     Examples
     --------
@@ -350,7 +350,7 @@ def conditional_entropy_cat(x: np.array, y: np.array) -> float:
 
 
 def total_correlation(*arrays) -> float:
-    """Calculate the total correlation (multi-information) of multiple categorical variables [1]_ [2]_.
+    """Calculate the total correlation (multi-information) of multiple categorical variables [13]_ [4]_.
     Given a set of :math:`m` categorical variables :math:`X = (X_1, X_2, \\ldots, X_m)`, the total correlation is:
 
     .. math::
@@ -370,9 +370,9 @@ def total_correlation(*arrays) -> float:
         
     References
     ----------
-    .. [1] Watanabe, S. (1960). Information theoretical analysis of multivariate correlation.
+    .. [13] Watanabe, S. (1960). Information theoretical analysis of multivariate correlation.
         IBM Journal of Research and Development, 4(1), 66-82.
-    .. [2] Garner, W. R. (1962). Uncertainty and Structure as Psychological Concepts, JohnWiley & Sons, New York
+    .. [4] Garner, W. R. (1962). Uncertainty and Structure as Psychological Concepts, JohnWiley & Sons, New York
 
     Examples
     --------
@@ -408,7 +408,7 @@ def total_correlation(*arrays) -> float:
 
 
 def dual_total_correlation(*arrays):
-    """Calculate the dual total correlation [1]_ for more than two variables.
+    """Calculate the dual total correlation [5]_ for more than two variables.
     Given a set of :math:`m` categorical variables :math:`X = (X_1, X_2, \\ldots, X_m)`, it is given by:
 
     .. math::
@@ -430,7 +430,7 @@ def dual_total_correlation(*arrays):
 
     References
     ----------
-    .. [1] Han, Te Sun. (1978). Nonnegative entropy measures of multivariate symmetric correlations.
+    .. [5] Han, Te Sun. (1978). Nonnegative entropy measures of multivariate symmetric correlations.
         Information and Control. 36 (2): 133–156.
 
     Examples
@@ -463,7 +463,7 @@ def dual_total_correlation(*arrays):
 
 def o_information(*arrays):
     """
-    Calculate the O-information [1]_ of multiple categorical variables.
+    Calculate the O-information [6]_ of multiple categorical variables.
     The O-information is the difference between the total correlation and the dual total correlation:
 
     .. math::
@@ -483,7 +483,7 @@ def o_information(*arrays):
 
     References
     ----------
-    .. [1] Han, Te Sun. (1978). Nonnegative entropy measures of multivariate symmetric correlations.
+    .. [6] Han, Te Sun. (1978). Nonnegative entropy measures of multivariate symmetric correlations.
         Information and Control. 36 (2): 133–156.
 
     Examples
@@ -505,7 +505,7 @@ def pearsonr(y: np.array, z: np.array, **kwargs) -> float:
     It is given by:
 
     .. math::
-        \\text{Pearson}(y, z) = \\frac{\\text{cov}(y, z)}{\\sigma_y \\cdot \\sigma_z}
+        \\text{Pearson}(Y, Z) = \\frac{\\text{cov}(Y, Z)}{\\sigma_Y \\cdot \\sigma_Z}
 
     where :math:`\\text{cov}(y, z)` is the covariance between `y` and `z`, and :math:`\\sigma_y` and :math:`\\sigma_z`
     are the standard deviations of `y` and `z`, respectively.
@@ -584,8 +584,7 @@ def pearsonr_abs(y: np.array, z: np.array, **kwargs) -> float:
 def rdc(y: np.array, z: np.array, f=np.sin, k=20, s=1 / 6., n=1, **kwargs):
     """
     The Randomized Dependence Coefficient by
-    David Lopez-Paz, Philipp Hennig, Bernhard Schoelkopf [1]_
-
+    David Lopez-Paz, Philipp Hennig, Bernhard Schoelkopf [7]_.
     According to the paper, the coefficient should be relatively insensitive to
     the settings of the f, k, and s parameters.
 
@@ -614,7 +613,7 @@ def rdc(y: np.array, z: np.array, f=np.sin, k=20, s=1 / 6., n=1, **kwargs):
 
     References
     ----------
-    .. [1] David Lopez-Paz, Philipp Hennig, Bernhard Schoelkopf. (2013). The Randomized Dependence Coefficient.
+    .. [7] David Lopez-Paz, Philipp Hennig, Bernhard Schoelkopf. (2013). The Randomized Dependence Coefficient.
            In Advances in Neural Information Processing Systems 26 (NIPS 2013).
            http://papers.nips.cc/paper/5138-the-randomized-dependence-coefficient.pdf
 
