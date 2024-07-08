@@ -189,10 +189,10 @@ def mi(y: np.array, z: np.array, bins=2, **kwargs) -> float:
     Higher values indicate a higher dependency between the two variables. It is defined as:
 
     .. math::
-        I(y, z) = \\sum_{y, z} p(y, z) \\log \\left(\\frac{p(y, z)}{p(y) \\cdot p(z)}\\right)
+        I(Y, Z) = \\sum_{Y, Z} p(Y, Z) \\log \\left(\\frac{p(Y, Z)}{p(Y) \\cdot p(Z)}\\right)
 
-    where :math:`p(y, z)` is the joint probability distribution of `y` and `z`, and :math:`p(y)` and :math:`p(z)`
-    are the marginal probability distributions of `y` and `z`, respectively.
+    where :math:`p(Y, Z)` is the joint probability distribution of :math:`Y` and :math:`Z`, and :math:`p(Y)` and
+    :math:`p(Z)` are the respective marginal probability distributions.
 
     Parameters
     ----------
@@ -232,9 +232,9 @@ def entropy_estimate_cat(x: np.array, **kwargs) -> float:
     It is caclulated as:
 
     .. math::
-        H(x) = - \\sum_{i=1}^{n} p(x_i) \\log_2 p(x_i)
+        H(X) = - \\sum_{i=1}^{n} p(X_i) \\log_2 p(X_i)
 
-    where :math:`p(x_i)` is the probability of the i-th category. The entropy is a measure of the information/uncertainty
+    where :math:`p(X_i)` is the probability of the i-th category. The entropy is a measure of the information/uncertainty
     of a random variable. Higher values indicate more information/uncertainty.
     
     Parameters
@@ -267,12 +267,12 @@ def entropy_estimate_cat(x: np.array, **kwargs) -> float:
 def joint_entropy_cat(x: np.array):
     """Calculate the joint entropy of multiple categorical variables.
     The joint entropy is a measure of the information/surprise/uncertainty of a set of random variables.
-    Let :math:`X = (x^(1), x^(2), \\ldots, x^(m)` be a set of categorical variables, i.e.,
+    Let :math:`X = (x^{(1)}, x^{(2)}, \\ldots, x^{(m)}` be a set of categorical variables, i.e.,
     multivariate random variable, then the joint entropy is calculated as:
 
     .. math::
         H(X) = - \\sum_{i=1}^{n} p(X_i) \\log_2 p(X_i)
-        \\iff H(X) = - \\sum_{i=1}^{n} p(x_i^{(1)}, \\ldots, x_i^{(m)}) \\log_2 p(x_i^{(1)}, \\ldots, x_i^{(m)})
+        = - \\sum_{i=1}^{n} p(x_i^{(1)}, \\ldots, x_i^{(m)}) \\log_2 p(x_i^{(1)}, \\ldots, x_i^{(m)})
 
     Parameters
     ----------
@@ -507,8 +507,8 @@ def pearsonr(y: np.array, z: np.array, **kwargs) -> float:
     .. math::
         \\text{Pearson}(Y, Z) = \\frac{\\text{cov}(Y, Z)}{\\sigma_Y \\cdot \\sigma_Z}
 
-    where :math:`\\text{cov}(y, z)` is the covariance between `y` and `z`, and :math:`\\sigma_y` and :math:`\\sigma_z`
-    are the standard deviations of `y` and `z`, respectively.
+    where :math:`\\text{cov}(Y, Z)` is the covariance between :math:`Y` and :math:`Z`,
+    and :math:`\\sigma_Y` and :math:`\\sigma_Z` are the respective standard deviations.
 
     Parameters
     ----------
@@ -522,7 +522,7 @@ def pearsonr(y: np.array, z: np.array, **kwargs) -> float:
     Returns
     -------
     float
-        The Pearson correlation coefficient between y and z.
+        The Pearson correlation coefficient between ``y`` and ``z``.
 
     Notes
     -----
@@ -547,13 +547,13 @@ def pearsonr_abs(y: np.array, z: np.array, **kwargs) -> float:
     """
     Calculate the absolute value of the Pearson correlation coefficient between two arrays.
     The protected attribute `z` can be binary or non-binary.
+    It is given by:
 
-    The Pearson correlation coefficient measures the linear relationship between two datasets.
-    The calculation of the Pearson correlation coefficient is not affected by scaling,
-    and it ranges from -1 to 1. A value of 1 implies a perfect positive correlation,
-    while a value of -1 implies a perfect negative correlation. The absolute value is taken
-    to disregard the direction of the correlation. Any correlation is considered as dependency
-    and therefore unfairness.
+    .. math::
+        \\text{Pearson}(Y, Z) = |\\frac{\\text{cov}(Y, Z)}{\\sigma_Y \\cdot \\sigma_Z}|
+
+    where :math:`\\text{cov}(Y, Z)` is the covariance between :math:`Y` and :math:`Z`,
+    and :math:`\\sigma_Y` and :math:`\\sigma_Z` are the respective standard deviations.
 
     Parameters
     ----------
@@ -567,7 +567,7 @@ def pearsonr_abs(y: np.array, z: np.array, **kwargs) -> float:
     Returns
     -------
     float
-        The absolute value of the Pearson correlation coefficient between y and z.
+        The absolute value of the Pearson correlation coefficient between ``y`` and ``z``.
 
     Examples
     --------
