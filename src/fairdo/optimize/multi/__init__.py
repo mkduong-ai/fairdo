@@ -2,6 +2,9 @@
 This module contains implementations of multi-objective optimization algorithms.
 All algorithms are designed to minimize objective functions which
 take a binary vector as input.
+The algorithms return a set of solutions that are non-dominated, i.e.,
+Pareto optimal solutions (Pareto front).
+A solution is Pareto optimal if there is no other solution that is better in all objectives.
 The multi-objective optimization problem is defined as follows:
 
 .. math::
