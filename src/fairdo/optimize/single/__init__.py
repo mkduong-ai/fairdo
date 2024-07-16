@@ -1,5 +1,5 @@
 """
-This module contains the optimization methods for single-objective optimization.
+This module contains optimization methods for single-objective optimization problems.
 The optimization algorithms are designed to minimize an objective function that takes a binary vector as input.
 The optimization problem is defined as follows:
 
