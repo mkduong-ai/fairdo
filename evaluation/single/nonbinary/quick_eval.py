@@ -290,7 +290,7 @@ def setup_experiment(data_str, objective_str):
     # create methods
     methods = {
         'Baseline (Original)': baseline.ones_array_method,
-        'Random Heuristic': partial(baseline.random_method,
+        'Random Heuristic': partial(baseline.random_bits_method,
                                     pop_size=pop_size,
                                     num_generations=num_generations),
         'GA (Elitist)': partial(ga.genetic_algorithm,

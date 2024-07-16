@@ -37,7 +37,7 @@ def ones_array_method(f, d, *args, **kwargs):
     return np.ones(d), f(np.ones(d))
 
 
-def random_method(f, d, pop_size=100, num_generations=500, *args, **kwargs):
+def random_bits_method(f, d, pop_size=100, num_generations=500, *args, **kwargs):
     """
     Generates a random binary vector (numpy array) and evaluates it on ``f``
     for a total of ``pop_size * num_generations`` times.
@@ -63,14 +63,14 @@ def random_method(f, d, pop_size=100, num_generations=500, *args, **kwargs):
 
     Examples
     --------
-    >>> from fairdo.optimize.single import random_method
-    >>> random_method(lambda x: x.sum(), 5)
+    >>> from fairdo.optimize.single import random_bits_method
+    >>> random_bits_method(lambda x: x.sum(), 5)
     (array([0, 0, 0, 0, 0]), 0.0)
 
-    >>> random_method(lambda x: x.sum(), 3)
+    >>> random_bits_method(lambda x: x.sum(), 3)
     (array([0, 0, 0]), 0.0)
 
-    >>> random_method(lambda x: x.sum(), 10)
+    >>> random_bits_method(lambda x: x.sum(), 10)
     (array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), 0.0)
     """
     best_solution = np.random.randint(2, size=d)
@@ -84,7 +84,7 @@ def random_method(f, d, pop_size=100, num_generations=500, *args, **kwargs):
     return best_solution, best_fitness
 
 
-def random_method_vectorized(f, d, pop_size=100, num_generations=500, *args, **kwargs):
+def random_bits_method_vectorized(f, d, pop_size=100, num_generations=500, *args, **kwargs):
     """
     Vectorized version of the ``fairdo.optimize.single.random_method`` function.
 
@@ -112,14 +112,14 @@ def random_method_vectorized(f, d, pop_size=100, num_generations=500, *args, **k
 
     Examples
     --------
-    >>> from fairdo.optimize.single import random_method
-    >>> random_method(lambda x: x.sum(), 5)
+    >>> from fairdo.optimize.single import random_bits_method_vectorized
+    >>> random_bits_method_vectorized(lambda x: x.sum(), 5)
     (array([0, 0, 0, 0, 0]), 0.0)
 
-    >>> random_method(lambda x: x.sum(), 3)
+    >>> random_bits_method_vectorized(lambda x: x.sum(), 3)
     (array([0, 0, 0]), 0.0)
 
-    >>> random_method(lambda x: x.sum(), 10)
+    >>> random_bits_method_vectorized(lambda x: x.sum(), 10)
     (array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), 0.0)
     """
     solutions = np.random.randint(2, size=(pop_size * num_generations, d))
@@ -142,6 +142,10 @@ def brute_force(f, d, pop_size=None, num_generations=None, *args, **kwargs):
         Objective/fitness function to minimize.
     d : int
         Dimension of the vector.
+    pop_size : int
+        Size of the population.
+    num_generations : int
+        Number of generations.
 
     Returns
     -------

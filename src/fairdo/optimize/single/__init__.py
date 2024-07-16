@@ -9,5 +9,5 @@ The optimization problem is defined as follows:
 
 where :math:`f` is the objective function to minimize.
 """
-from .baseline import ones_array_method, random_method, random_method_vectorized, brute_force
+from .baseline import ones_array_method, random_bits_method, random_bits_method_vectorized, brute_force
 from .ga import genetic_algorithm
