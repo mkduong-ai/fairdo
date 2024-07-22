@@ -55,7 +55,7 @@ def downcast(data):
 
 def dataset_intersectional_column(data, protected_attributes):
     """
-    Combine the protected attributes into a single column named ``intersectional_group``.
+    Combine the protected attributes into a single column named ``subgroup``.
     This column will be used to identify the intersectional groups.
 
     Parameters
@@ -80,13 +80,13 @@ def dataset_intersectional_column(data, protected_attributes):
     >>> pas = ['sex', 'race']
     >>> data_new, pa = dataset_intersectional_column(data, pas)
     >>> print(data_new)
-          sex   race      pa_merged
+          sex   race       subgroup
     0    male  white    male_white_
     1  female  black  female_black_
     >>> print(pa)
-    intersectional_group
+    subgroup
     """
-    protected_attribute = 'intersectional_group'
+    protected_attribute = 'subgroup'
     
     # Initialize the protected attribute column with empty strings
     data[protected_attribute] = ''
