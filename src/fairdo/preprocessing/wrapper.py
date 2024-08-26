@@ -111,6 +111,23 @@ class MultiWrapper(Preprocessing):
         Returns
         -------
         self
+
+        Examples
+        --------
+        >>> from fairdo.utils.dataset import load_data
+        >>> from fairdo.preprocessing.wrapper import MultiWrapper
+        >>> from fairdo.metrics import statistical_parity_abs_diff_max, data_loss
+        >>> from fairdo.optimize.multi import nsga2
+        >>> # Load the COMPAS dataset
+        >>> data, label, protected_attributes = load_data('compas', print_info=False)
+        >>> # Define the heuristic method
+        >>> heuristic = nsga2
+        >>> fitness_functions = [statistical_parity_abs_diff_max, data_loss]
+        >>> wrapper = MultiWrapper(heuristic=heuristic,
+        ...                        protected_attribute=protected_attributes,
+        ...                        label=label,
+        ...                        fitness_functions=fitness_functions)
+        >>> wrapper.fit(data) # Fit the model
         """
         super().fit(dataset=dataset)
 
@@ -189,6 +206,26 @@ class MultiWrapper(Preprocessing):
         -------
         data_best: pandas DataFrame
             The dataset closest to the ideal solution.
+
+        Examples
+        --------
+        >>> from fairdo.utils.dataset import load_data
+        >>> from fairdo.preprocessing.wrapper import MultiWrapper
+        >>> from fairdo.metrics import statistical_parity_abs_diff_max, data_loss
+        >>> from fairdo.optimize.multi import nsga2
+        >>> # Load the COMPAS dataset
+        >>> data, label, protected_attributes = load_data('compas', print_info=False)
+        >>> # Define the heuristic method
+        >>> heuristic = nsga2
+        >>> fitness_functions = [statistical_parity_abs_diff_max, data_loss]
+        >>> wrapper = MultiWrapper(heuristic=heuristic,
+        ...                        protected_attribute=protected_attributes,
+        ...                        label=label,
+        ...                        fitness_functions=fitness_functions)
+        >>> # Fit the model
+        >>> wrapper.fit(data)
+        >>> # Transform the dataset
+        >>> transformed_data = wrapper.transform()
         """
         if self.dataset is None:
             raise Exception('Model not fitted. Run the `fit` method first.')
