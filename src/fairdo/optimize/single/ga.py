@@ -91,6 +91,16 @@ def genetic_algorithm(f, d,
     the fitness function is negated if we are minimizing.
     The fitness function must map the binary vector to a positive value, i.e.,
     :math:`f: \\{0, 1\\}^d \\rightarrow \\mathbb{R}^+`.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from fairdo.optimize.single import genetic_algorithm
+    >>> f = lambda x: np.sum(x)
+    >>> d = 10
+    >>> best_solution, best_fitness = genetic_algorithm(f, d)
+    >>> print(best_solution)
+    [1 1 1 1 1 1 1 1 1 1]
     """
 
     # negate the fitness function if we are minimizing
@@ -160,6 +170,16 @@ def evaluate_individual(args):
     -------
     fitness: float
         The fitness of the individual.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from fairdo.optimize.single import evaluate_individual
+    >>> f = lambda x: np.sum(x)
+    >>> individual = np.array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+    >>> fitness = evaluate_individual((f, individual))
+    >>> print(fitness)
+    10
     """
     f, individual = args
     fitness = f(individual)
@@ -184,6 +204,20 @@ def evaluate_population_single_cpu(f, population):
     -------
     fitness: ndarray, shape (pop_size,)
         The fitness values of the population.
+
+    Notes
+    -----
+    This function is used to evaluate the fitness of a population using a single CPU.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from fairdo.optimize.single import evaluate_population_single_cpu
+    >>> f = lambda x: np.sum(x)
+    >>> population = np.array([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1]])
+    >>> fitness = evaluate_population_single_cpu(f, population)
+    >>> print(fitness)
+    [10]
     """
     # fallback to single process execution if multiprocessing fails
     fitness = np.apply_along_axis(f, axis=1, arr=population)
@@ -207,6 +241,20 @@ def evaluate_population(f, population):
     -------
     fitness: ndarray, shape (pop_size,)
         The fitness values of the population.
+    
+    Notes
+    -----
+    This function is used to evaluate the fitness of a population using multiprocessing.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from fairdo.optimize.single import evaluate_population
+    >>> f = lambda x: np.sum(x)
+    >>> population = np.array([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1]])
+    >>> fitness = evaluate_population(f, population)
+    >>> print(fitness)
+    [10]
     """
     try:
         # use multiprocessing to speed up the evaluation if the population is large enough
