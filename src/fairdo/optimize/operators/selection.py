@@ -50,6 +50,10 @@ def elitist_selection_multi(population, fitness_values, fronts_lengths, num_pare
         Selected parents.
     fitness: ndarray, shape (num_parents,)
         Fitness of the selected parents.
+    
+    Notes
+    -----
+    Only works for NSGA-II.
     """
     if population.shape[0] < tournament_size:
         raise ValueError("Tournament size cannot be larger than the population size.")
@@ -96,6 +100,10 @@ def tournament_selection_multi(population, fitness_values, fronts_lengths, num_p
         Selected parents.
     fitness: ndarray, shape (num_parents,)
         Fitness of the selected parents.
+    
+    Notes
+    -----
+    Only works for NSGA-II.
     """
     if population.shape[0] < tournament_size:
         raise ValueError("Tournament size cannot be larger than the population size.")
@@ -164,6 +172,11 @@ def elitist_selection(population, fitness, num_parents=2):
     -------
     parents: ndarray, shape (num_parents, d)
     fitness: ndarray, shape (num_parents,)
+
+    Notes
+    -----
+    This function assumes that the fitness values are to be maximized.
+    Does not work for multi-objective optimization.
     """
     # select the best individuals from the population to be parents
     idx = np.argpartition(fitness, -num_parents)[-num_parents:]
@@ -195,6 +208,11 @@ def tournament_selection(population, fitness, num_parents=2, tournament_size=3):
         Selected parents.
     fitness: ndarray, shape (num_parents,)
         Fitness of the selected parents.
+    
+    Notes
+    -----
+    This function assumes that the fitness values are to be maximized.
+    Does not work for multi-objective optimization.
     """
     if population.shape[0] < tournament_size:
         raise ValueError("Tournament size cannot be larger than the population size.")
@@ -238,6 +256,8 @@ def roulette_wheel_selection(population, fitness, num_parents=2):
     -----
     This function normally assumes that the fitness is non-negative.
     However, if the fitness is negative, then the fitness values are shifted to be non-negative.
+    This function assumes that the fitness values are to be maximized.
+    Does not work for multi-objective optimization.
 
     References
     ----------
@@ -280,6 +300,8 @@ def stochastic_universal_sampling(population, fitness, num_parents=2):
     -----
     This function normally assumes that the fitness is non-negative.
     However, if the fitness is negative, then the fitness values are shifted to be non-negative.
+    This function assumes that the fitness values are to be maximized.
+    Does not work for multi-objective optimization.
 
     References
     ----------
@@ -344,6 +366,11 @@ def rank_selection(population, fitness, num_parents=2):
         The selected parents.
     fitness: ndarray, shape (num_parents,)
         The fitness of the selected parents.
+    
+    Notes
+    -----
+    This function assumes that the fitness values are to be maximized.
+    Does not work for multi-objective optimization.
     """
     # Rank individuals based on fitness
     ranks = np.argsort(np.argsort(fitness))

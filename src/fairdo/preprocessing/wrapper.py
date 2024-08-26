@@ -151,11 +151,11 @@ class MultiWrapper(Preprocessing):
                               penalty=None) for fitness_function in self.fitness_functions]
         
         # Optimization step
-        self.apply_heuristic()
+        self._apply_heuristic()
 
         return self
     
-    def apply_heuristic(self):
+    def _apply_heuristic(self):
         """
         Applies the heuristic method to the dataset.
 
@@ -280,8 +280,10 @@ class MultiWrapper(Preprocessing):
         
         Returns
         -------
-        np.array of shape (n, len(fitness_functions))
+        self.fitness_values: np.array of shape (n, len(fitness_functions))
             The Pareto front of the solutions.
+        baseline_fitness: np.array of shape (1, len(fitness_functions))
+            The fitness values of the baseline solution. Only returned if `return_baseline` is True.
         """
         if self.fitness_values is None:
             raise ValueError('No results to return. Run the `transform` method first.')
@@ -298,9 +300,54 @@ class MultiWrapper(Preprocessing):
                      xaxis=0, yaxis=1,
                      xlabel='Fitness 1', ylabel='Fitness 2',
                      title='Multi-Objective Optimization Results',
-                     figsize=(7, 7)):
+                     figsize=(7, 7),
+                     show=True,
+                     savefig=False,
+                     filename='pareto_front.png'):
         """
         Plot the results of the multi-objective optimization.
+
+        Parameters
+        ----------
+        xaxis: int, optional (default=0)
+            The index of the fitness function to be plotted on the x-axis.
+        yaxis: int, optional (default=1)
+            The index of the fitness function to be plotted on the y-axis.
+        xlabel: str, optional (default='Fitness 1')
+            The label of the x-axis.
+        ylabel: str, optional (default='Fitness 2')
+            The label of the y-axis.
+        title: str, optional (default='Multi-Objective Optimization Results')
+            The title of the plot.
+        figsize: tuple, optional (default=(7, 7))
+            The size of the plot.
+        show: bool, optional (default=True)
+            Whether to show the plot.
+        savefig: bool, optional (default=False)
+            Whether to save the plot.
+        filename: str, optional (default='pareto_front.png')
+        
+        Examples
+        --------
+        >>> from fairdo.utils.dataset import load_data
+        >>> from fairdo.preprocessing.wrapper import MultiWrapper
+        >>> from fairdo.metrics import statistical_parity_abs_diff_max, data_loss
+        >>> from fairdo.optimize.multi import nsga2
+        >>> # Load the COMPAS dataset
+        >>> data, label, protected_attributes = load_data('compas', print_info=False)
+        >>> # Define the heuristic method
+        >>> heuristic = nsga2
+        >>> fitness_functions = [statistical_parity_abs_diff_max, data_loss]
+        >>> wrapper = MultiWrapper(heuristic=heuristic,
+        ...                        protected_attribute=protected_attributes,
+        ...                        label=label,
+        ...                        fitness_functions=fitness_functions)
+        >>> # Fit the model
+        >>> wrapper.fit(data)
+        >>> # Transform the dataset
+        >>> transformed_data = wrapper.transform()
+        >>> # Plot the results
+        >>> wrapper.plot_results()
         """
         if self.fitness_values is None:
             raise ValueError('No results to plot. Run the `transform` method first.')
@@ -329,7 +376,15 @@ class MultiWrapper(Preprocessing):
         plt.title(title)
         plt.legend()
         plt.grid(True)
-        plt.show()
+
+        if savefig:
+            plt.savefig(filename,
+                        bbox_inches='tight',
+                        dpi=300,
+                        pad_inches=0)
+        
+        if show:
+            plt.show()
 
 
 class SingleWrapper(Preprocessing):
